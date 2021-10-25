@@ -2,49 +2,56 @@
 @author: jmcunha/alisboa
 
 Info: Fluids and materials properties
-      Instead of this script - go to SQL/database WITH ALL MATERIALS PROPERTIES
 
 """
+import json
 
+def fluid_material_cp(fluid_name,temperature):
 
-# Fluid/Material Specific Heat kJ/kg.K , T in ºC
-def fluid_material_cp(fluid_type,T):
+    with open('Json_files/medium_list.json') as f:
+        data = json.load(f)
 
-    if fluid_type == "steam": # Steam
-        fluid_cp =0.00000017068 * T ** 3 - 0.000028553 * T ** 2 + 0.0047923 * T + 1.6617
+    try:
+        fluid_cp = data[fluid_name]['specific_heat_c0'] + data[fluid_name]['specific_heat_c1'] * temperature \
+                   + data[fluid_name]['specific_heat_c2'] * temperature**2 + data[fluid_name]['specific_heat_c3'] * temperature**3
 
-    elif fluid_type == "oil": # Thermal Oil
-        fluid_cp = 2
+    except:
+        print('fluid does not exist in db. fluid_cp = 1')
+        fluid_cp = 1
 
-    elif fluid_type == "water": # Water
-        fluid_cp = 4.18
-
-    elif fluid_type == "flue_gas": # Flue_gas
-        fluid_cp = 2.57 * 10 ** (-4) * T + 0.978
-        fluid_cp = 2
-
-    else: # Air
-        fluid_cp =  1.005
-        fluid_cp = 2
 
     return fluid_cp
 
 
-def fluid_material_rho(fluid_type):
 
-    if fluid_type == "steam": # Steam
+def fluid_material_rho(fluid_name,temperature):
+
+    with open('Json_files/medium_list.json') as f:
+        data = json.load(f)
+
+    try:
+        rho = data[fluid_name]['density_c0'] + data[fluid_name]['density_c1'] * temperature \
+                   + data[fluid_name]['density_c2'] * temperature ** 2 + data[fluid_name][
+                       'density_c3'] * temperature ** 3
+
+    except:
+        print('fluid does not exist in db. rho = 1')
         rho = 1
-
-    elif fluid_type == "oil": # Thermal Oil
-        rho = 800
-
-    elif fluid_type == "water": # Water
-        rho = 1000
-
-    elif fluid_type == "flue_gas": # Flue_gas
-        rho = 1
-
-    else: # Air
-        rho =  1.005
 
     return rho
+
+
+def fluid_material_state(fluid_name):
+
+    with open('Json_files/medium_list.json') as f:
+        data = json.load(f)
+
+    try:
+        state = data[fluid_name]['fluid_type']
+
+    except:
+        print('fluid does not exist in db. rho = 1')
+        state = 'liquid'
+
+    return state
+

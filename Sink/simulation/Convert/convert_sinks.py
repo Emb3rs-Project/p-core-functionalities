@@ -112,8 +112,13 @@ def convert_sinks(in_var):
         ###################################################################################################
         ###################################################################################################
 
+    # create backup for sink group
+    for sink in group_of_sinks:
 
 
+
+
+    # convert each stream
     for sink in group_of_sinks:
 
         country, latitude, longitude = sink['location']
@@ -254,6 +259,9 @@ def convert_sinks(in_var):
     output = json.dumps(output, indent=2)
 
     return output
+
+import os
+
 
 
 class VAR():

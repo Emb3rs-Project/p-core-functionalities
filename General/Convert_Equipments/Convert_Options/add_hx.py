@@ -5,6 +5,8 @@
 
 from KB_General.equipment_details import equipment_details
 from General.Auxiliary_General.linearize_values import linearize_values
+from KB_General.hx_type_and_u import hx_type_and_u
+
 import numpy as np
 
 class Add_HX():
@@ -28,7 +30,7 @@ class Add_HX():
 
         # COMPUTE
         # Design Equipment
-        self.equipment_sub_type_and_u(hot_stream_fluid, cold_stream_fluid)
+        self.equipment_sub_type, self.u_value = hx_type_and_u(hot_stream_fluid,cold_stream_fluid)
         self.compute_delta_T_lmtd_counter()
 
         # 100% power
@@ -77,34 +79,6 @@ class Add_HX():
         }
 
         return info
-
-
-    def equipment_sub_type_and_u(self, fluid_1, fluid_2):
-
-        if (fluid_1 == 'liquid' or fluid_1 == 'water' or fluid_1 == 'oil') and (fluid_2 == 'liquid' or fluid_2 == 'water' or fluid_2 == 'oil'):
-            equipment_sub_type = 'hx_plate'
-            u_value = 2000  # [W/m2.K]
-
-        elif (fluid_1 == 'flue_gas' and fluid_2 == 'oil') or (fluid_1 == 'oil' and fluid_2 == 'flue_gas'):
-            equipment_sub_type = 'hx_economizer'
-            u_value = 50  # [W/m2.K]
-
-        elif (fluid_1 == 'oil' and fluid_2 == 'steam') :
-            equipment_sub_type = 'hx_kettle_boiler'
-            u_value = 800  # [W/m2.K]
-
-
-        elif (fluid_1 == 'steam' and fluid_2 == 'water') or (fluid_1 == 'liquid' and fluid_2 == 'water'):
-            equipment_sub_type = 'hx_shell_and_tubes'
-            u_value = 800
-
-        else:
-            print('No fluids match')
-            equipment_sub_type = 'hx_plate'
-            u_value = 2000  # [W/m2.K]
-
-        self.equipment_sub_type = equipment_sub_type
-        self.u_value = u_value
 
 
     def compute_delta_T_lmtd_counter(self):
