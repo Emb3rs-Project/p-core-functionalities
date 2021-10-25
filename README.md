@@ -18,26 +18,26 @@ Whenever a user performs a simulation on the platform, the CF source simulation 
   - hourly_generation
 
 OUTPUT: vector with multiple dictionaries ('source_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies',..)
-      Where:
-        -  source_id
-        -  source_grid_supply_temperature
-        -  source_grid_return_temperature
-        - streams_converted
+Where:
+  -  source_id
+  -  source_grid_supply_temperature
+  -  source_grid_return_temperature
+  - streams_converted
 
-            Where in streams_converted:
-            - stream_id
-            - hourly_stream_capacity [kWh]
-            - conversion_technologies - multiple dictionaries with technologies possible to implement
-              Important:
-                conversion_technologies =
-                 - 'equipment'
-                 - 'max_capacity'  [kW]
-                 - 'turnkey_a' [€/kW]
-                 - 'turnkey_b' [€]
-                 - 'conversion_efficiency'  []
-                 - 'om_fix'   [€/year.kW]
-                 - 'om_var'  [€/kWh]
-                 - 'emissions'  [kg.CO2/kWh]
+  Where in streams_converted:
+  - stream_id
+  - hourly_stream_capacity [kWh]
+  - conversion_technologies - multiple dictionaries with technologies possible to implement
+    Important:
+      conversion_technologies =
+        - 'equipment'
+        - 'max_capacity'  [kW]
+        - 'turnkey_a' [€/kW]
+        - 'turnkey_b' [€]
+        - 'conversion_efficiency'  []
+        - 'om_fix'   [€/year.kW]
+        - 'om_var'  [€/kWh]
+        - 'emissions'  [kg.CO2/kWh]
 
 
 
