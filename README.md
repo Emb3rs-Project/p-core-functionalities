@@ -8,16 +8,16 @@ Whenever a user performs a simulation on the platform, the CF source simulation 
 - source_location = (country,latitude,longitude)
 - consumer_type - 'household' or 'non-household'
 - Source streams - vector with dictionaries with:
-    - stream_id
-    - object_type
-    - stream_type
-    - fluid
-    - capacity
-    - supply_temperature
-    - target_temperature
-    - hourly_generation
+  - stream_id
+  - object_type
+  - stream_type
+  - fluid
+  - capacity
+  - supply_temperature
+  - target_temperature
+  - hourly_generation
 
-OUTPUT: vector with multiple dictionaries [{'source_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies'},..]
+OUTPUT: vector with multiple dictionaries ('source_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies',..)
       Where:
         -  source_id
         -  source_grid_supply_temperature
@@ -29,7 +29,7 @@ OUTPUT: vector with multiple dictionaries [{'source_id', 'stream_id', 'hourly_st
             - hourly_stream_capacity [kWh]
             - conversion_technologies - multiple dictionaries with technologies possible to implement
               Important:
-                 # conversion_technologies = {
+                conversion_technologies =
                  - 'equipment'
                  - 'max_capacity'  [kW]
                  - 'turnkey_a' [€/kW]
