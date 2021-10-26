@@ -7,7 +7,7 @@ In this submodule there are 2 main functions to characterize buildings, the buii
 The building function generates the building yearly space heating and cooling demand from the user input data. It has 3 main types of buildings (residential, hotel and office).
 It reads the user input data from the platform frontdend namely:
 
-###**Mandatory/Basic User inputs:**
+###Mandatory/Basic User inputs:
 1. latitude
 1. longitude
 1. number_floor
