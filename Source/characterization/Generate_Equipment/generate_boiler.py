@@ -14,7 +14,7 @@ class Boiler():
     def __init__(self,in_var):
 
         # Defined Vars
-        self.id = 1000 # Create ID for each boiler
+        self.id = 1001 # Create ID for each boiler
         self.object_type = 'equipment'
         self.streams = []
         self.excess_heat_fluid = 'flue_gas'  # Excess heat fluid type
