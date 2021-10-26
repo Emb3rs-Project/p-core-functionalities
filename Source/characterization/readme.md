@@ -161,7 +161,6 @@ It outputs a json file containing the following information on the 2 streams gen
     - supply_flowrate,
     - supply_capacity,
     - schedule
-
 1. Excess Heat
     - excess_heat_fluid (fluegas)
     - excess_heat_supply_temperature,
