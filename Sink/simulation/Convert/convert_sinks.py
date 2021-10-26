@@ -8,7 +8,7 @@ INPUT: group_of_sinks = [sink_1,sink_2,...] each sink with dictionary {sink_id,s
          # id
          # location = [country, consumer_type,latitude,longitude]
          # consumer_type - 'household' or 'non-household'
-         # streams -> vector with dictionaries with {id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation}
+         # streams -> array with dictionaries with {id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation}
 
      Important:
          # hourly_generation for streams (profile 1 and 0), hourly_generation for building  (kWh profile)
@@ -29,7 +29,7 @@ OUTPUT: vector with multiple dictionaries {'sink_id', 'stream_id', 'hourly_strea
              # hourly_stream_capacity [kWh]
              # conversion_technologies - multiple dictionaries with technologies possible to implement
 
-              Important:
+              Where in conversion_technologies:
                  # conversion_technologies = {
                  #         'equipment'
                  #         'max_capacity'  [kW]
@@ -39,11 +39,11 @@ OUTPUT: vector with multiple dictionaries {'sink_id', 'stream_id', 'hourly_strea
                  #         'om_fix'   [€/year.kW]
                  #         'om_var'  [€/kWh]
                  #         'emissions'  [kg.CO2/kWh]
+                 #         'tecnhologies' - technologies info in details,
                  #     }
 
 
 """
-
 from General.Convert_Equipments.Auxiliary.sink_get_hx_temperatures import sink_get_hx_temperatures
 from General.Convert_Equipments.Convert_Options.add_boiler import Add_Boiler
 from General.Convert_Equipments.Convert_Options.add_hx import Add_HX
@@ -112,9 +112,12 @@ def convert_sinks(in_var):
         ###################################################################################################
         ###################################################################################################
 
-    # create backup for sink group
-    for sink in group_of_sinks:
 
+    ###################################################################################################
+    # create backup for sink group
+    # for sink in group_of_sinks:
+    #  CREATE BACKUP FOR INDIVIDUAL STREAMS OR SOURCE
+    ###################################################################################################
 
 
 
@@ -274,24 +277,16 @@ stream_1 = {'id':2,
             'object_type':'stream',
             'stream_type':'inflow',
             'fluid':'water',
-            'capacity':1000,
-            'supply_temperature': 50,
-            'target_temperature':85,
+            'capacity':263,
+            'supply_temperature': 10,
+            'target_temperature':80,
             'hourly_generation':[1000,1000,1000]}
 
-stream_2 = {'id':3,
-            'object_type':'stream',
-            'stream_type':'inflow',
-            'fluid':'water',
-            'capacity':1000,
-            'supply_temperature': 50,
-            'target_temperature':95,
-            'hourly_generation':[1000,1000,1000]}
 
 invar.group_of_sinks = [ {'id':1,
                         'consumer_type': 'non-household',
                         'location':['Portugal',10,10],
-                        'streams':[stream_1,stream_2]
+                        'streams':[stream_1]
                                 }]
 
 out = convert_sinks(invar)
