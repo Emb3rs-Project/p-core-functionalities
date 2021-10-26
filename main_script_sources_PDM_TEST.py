@@ -105,41 +105,25 @@ class Info_HX_Recovery():
         self.all_objects = all_objects
 
 
+
 class Source_simplified():
-    def __init__(self, id, excess_heat_fluid,fluid_cp, excess_heat_supply_temperature, excess_heat_flowrate, sunday_on,
-                 saturday_on, shutdown_periods, daily_periods):
-        self.id = id
-        self.fluid = excess_heat_fluid
-        self.supply_temperature = excess_heat_supply_temperature
-        self.flowrate = excess_heat_flowrate
-        self.sunday_on = sunday_on
-        self.saturday_on = saturday_on
-        self.shutdown_periods = shutdown_periods
-        self.daily_periods = daily_periods
-        self.fluid_cp = fluid_cp
-        self.target_temperature = 50
+    def __init__(self):
+        # Input
+        # Input
+        self.object_id = 5
+        self.type_of_object = 'source'
+        self.streams = [{'supply_temperature':500,'target_temperature':55,'fluid':'flue_gas','fluid_cp':10,'flowrate':10,'saturday_on':1
+                         ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]},
+                        {'supply_temperature':150,'target_temperature':100,'fluid':'water','fluid_cp':10,'flowrate':10,'saturday_on':1
+                         ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]}]
 
 
 
 # SOURCE Simple ----------------------------------------
-source_simple = []
-biomass = Source_simplified(1, 'flue_gas',2, 200, 3584, 0, 0, [[60, 75], [150, 155], [360, 365]], [[0, 12]])
-source_simple.append(simple_user(biomass))
-plastic = Source_simplified(2, 'flue_gas',2, 250, 1624, 0, 1, [[65, 80], [160, 165], [361, 365]], [[0, 5]])
-source_simple.append(simple_user(plastic))
-limestone = Source_simplified(3, 'flue_gas',2, 150, 1223, 1, 1, [[59, 74], [152, 172], [362, 365]], [[0, 24]])
-source_simple.append(simple_user(limestone))
-iron = Source_simplified(4, 'flue_gas',2, 480, 3028, 0, 1, [[59, 74], [153, 168], [363, 365]], [[0, 24]])
-source_simple.append(simple_user(iron))
-print(source_simple[2].flowrate, source_simple[2].fluid, )
+source = Source_simplified()
+industry_stream_test = simple_user(source)
+print(industry_stream_test)
 
-"""
-Test:
-print(source_simple[2].flowrate, source_simple[2].fluid, )
-
-Expected:
-1223 flue_gas
-"""
 
 # SOURCE Detailed ----------------------------------------
 # create chp

@@ -9,12 +9,10 @@ from KB_General.fluid_material import fluid_material_cp
 
 
 def combustion_mass_flows (P_equip,eff_equip, fuel_type):
-    data = fuel_properties('Portugal',fuel_type,'non_household')
+    data = fuel_properties('Portugal',fuel_type,'non_household')  # country and consumer type do not matter
     lhv_fuel = data['lhv_fuel']
-    AFR_fuel = data['AFR_fuel']
-
+    AFR_fuel = data['air_to_fuel_ratio']
     excess_air_fuel = data['excess_air_fuel']
-
 
     fuel_consumption = (P_equip/eff_equip)/lhv_fuel  # [kg/h]
     m_air = fuel_consumption * AFR_fuel * excess_air_fuel  # [kg/h]

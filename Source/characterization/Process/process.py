@@ -240,7 +240,7 @@ class Process:
                 hour_old = hday[i]
 
         # OUTPUT
-        profile_hourly = np.asarray(profile_hour)
+        profile_hourly = profile_hour
         #profile_optimization = np.asarray(profile_10min)
 
         return profile_hourly

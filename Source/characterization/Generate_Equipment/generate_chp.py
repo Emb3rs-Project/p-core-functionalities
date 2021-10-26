@@ -22,8 +22,13 @@ class Chp():
         self.inflow_T_in = self.excess_heat_return_temperature = 20  # Ambient Temperature
 
         # INPUT Equipment Characteristics FROM USER
-        # self.electrical_generation = in_var.electrical_generation  # Generate_in_var electrical_generation [kW]
-        # self.supply_temperature = in_var.supply_temperature
+        self.electrical_generation = in_var.electrical_generation  # Generate_in_var electrical_generation [kW]
+        self.supply_temperature = in_var.supply_temperature
+
+        if self.supply_temperature < 100:
+            self.equipment_sub_type = 'chp_gas_engine'
+        else:
+            self.equipment_sub_type = 'chp_gas_turbine'
 
         self.equipment_sub_type = in_var.equipment_sub_type  # CHP type (gas_engine/ gas_turbine)
         self.open_closed_loop = in_var.open_closed_loop  # Open heating circuit? (1-Yes, 0-No)
@@ -123,10 +128,10 @@ class Chp():
 
         # Supply Heat
         # Flowrate [kg/h]
-       # self.supply_flowrate = compute_flow_rate(self.supply_fluid,
-        #                                         self.supply_capacity,
-         #                                        self.supply_temperature,
-          #                                       self.return_temperature)
+        self.supply_flowrate = compute_flow_rate(self.supply_fluid,
+                                                 self.supply_capacity,
+                                                 self.supply_temperature,
+                                                 self.return_temperature)
 
     def output_stream(self):
 
@@ -140,14 +145,14 @@ class Chp():
                                    self.supply_capacity,
                                    self.schedule))
 
-       # self.streams.append(Stream(self.id,
-        #                           'supply_heat',
-         #                          self.supply_fluid,
-          #                         self.return_temperature,
-           #                        self.supply_temperature,
-            #                       self.supply_flowrate,
-             #                      self.supply_capacity,
-              #                     self.schedule))
+        self.streams.append(Stream(self.id,
+                                   'supply_heat',
+                                   self.supply_fluid,
+                                   self.return_temperature,
+                                   self.supply_temperature,
+                                   self.supply_flowrate,
+                                   self.supply_capacity,
+                                   self.schedule))
 
         self.streams.append(Stream(self.id,
                                    'excess_heat',

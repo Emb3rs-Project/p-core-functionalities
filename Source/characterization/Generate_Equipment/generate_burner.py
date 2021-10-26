@@ -25,6 +25,7 @@ class Burner():
         # INPUT
         self.equipment_sub_type = 'burner'  # burner
         self.global_conversion_efficiency = in_var.global_conversion_efficiency
+        self.supply_temperature = in_var.supply_temperature
 
         # Schedule
         saturday_on = in_var.saturday_on
@@ -85,10 +86,10 @@ class Burner():
 
         # Supply Heat
         # Flowrate [kg/h]
-        #self.supply_flowrate = compute_flow_rate(self.supply_fluid,
-        #                                         self.supply_capacity,
-        #                                         self.supply_temperature,
-        #                                         self.return_temperature)
+        self.supply_flowrate = compute_flow_rate(self.supply_fluid,
+                                                 self.supply_capacity,
+                                                 self.supply_temperature,
+                                                self.return_temperature)
 
         # Excess Heat
         # Supply Capacity [kW]
@@ -121,14 +122,14 @@ class Burner():
                                    self.schedule))
 
         # Supply Heat
-        #self.streams.append(Stream(self.id,
-        #                           'supply_heat',
-        #                           self.supply_fluid,
-        #                           self.return_temperature,
-        #                           self.supply_temperature,
-        #                           self.supply_flowrate,
-        #                           self.supply_capacity,
-        #                          self.schedule))
+        self.streams.append(Stream(self.id,
+                                   'supply_heat',
+                                   self.supply_fluid,
+                                   self.return_temperature,
+                                   self.supply_temperature,
+                                   self.supply_flowrate,
+                                   self.supply_capacity,
+                                  self.schedule))
 
         # Excess Heat
         self.streams.append(Stream(self.id,

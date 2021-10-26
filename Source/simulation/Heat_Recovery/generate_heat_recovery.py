@@ -218,7 +218,7 @@ def generate_heat_recovery(in_var):
 
                             data = fuel_properties('Portugal',equipment.fuel_type,'non-household')
                             cost = data['price']
-                            CO2_emission_per_kw = data['CO2_emission']
+                            CO2_emission_per_kw = data['co2_emissions']
 
                             df_economic = df_economic.append({'Equipment_ID': save_object.equipment,
                                                               'CO2_Savings_Year': row['Recovered_Energy'] * CO2_emission_per_kw,

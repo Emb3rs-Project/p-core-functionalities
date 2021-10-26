@@ -6,6 +6,7 @@
 from General.Auxiliary_General.schedule_hour import schedule_hour
 from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from General.Auxiliary_General.stream import Stream
+from General.Auxiliary_General.compute_cop_err import compute_cop_err
 
 class Cooling_Equipment():
 
@@ -13,13 +14,14 @@ class Cooling_Equipment():
     def __init__(self,in_var):
 
         # Defined Vars
+        self.id = 23
         self.object_type = 'equipment'
         self.streams = []
 
         # INPUT Equipment Characteristics FROM USER
         self.equipment_sub_type = in_var.equipment_sub_type  # Equipment type (co2_chiller/ cooling_tower/ thermal_chiller/ air_cooled_chiller/ water_cooled_chiller)
-        #self.supply_temperature = in_var.supply_temperature
-        #self.return_temperature = in_var.return_temperature
+        self.supply_temperature = in_var.supply_temperature
+        self.return_temperature = in_var.return_temperature
         self.fuel_type = 'electricity'  # Electricity
         self.global_conversion_efficiency = in_var.global_conversion_efficiency  # COP
         self.supply_fluid = 'water'
@@ -75,10 +77,10 @@ class Cooling_Equipment():
 
         # Supply Heat
         # Flowrate [kg/h]
-       # self.supply_flowrate = compute_flow_rate(self.supply_fluid,
-        #                                         self.supply_capacity,
-         #                                        self.return_temperature,
-          #                                       self.supply_temperature)
+        self.supply_flowrate = compute_flow_rate(self.supply_fluid,
+                                                 self.supply_capacity,
+                                                 self.return_temperature,
+                                                 self.supply_temperature)
 
         # Excess Heat
         if self.equipment_sub_type == 'co2_chiller':
@@ -100,17 +102,18 @@ class Cooling_Equipment():
 
     def output_stream(self):
 
-        #self.streams.append(Stream('supply_heat',
-         #                          self.supply_fluid,
-          #                         self.return_temperature,
-           #                        self.supply_temperature,
-            #                       self.supply_flowrate,
-             #                      self.supply_capacity,
-              #                     self.schedule))
-
+        self.streams.append(Stream(self.id,
+                                   'supply_heat',
+                                   self.supply_fluid,
+                                   self.return_temperature,
+                                   self.supply_temperature,
+                                   self.supply_flowrate,
+                                   self.supply_capacity,
+                                   self.schedule))
 
         if self.equipment_sub_type == 'co2_chiller':
-            self.streams.append(Stream('excess_heat',
+            self.streams.append(Stream(self.id,
+                                       'excess_heat',
                                        self.excess_heat_fluid,
                                        self.excess_heat_supply_temperature,
                                        self.excess_heat_return_temperature,

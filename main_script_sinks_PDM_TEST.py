@@ -86,7 +86,7 @@ class Building():
         self.sunday_on = 0
         self.shutdown_periods = []
         self.daily_periods = [[7, 19]]
-
+        self.space_heating_type = 1  # Space heating system - 0=Conventional, 1=Low temperature
         # show options
         if self.space_heating_type == 0:
             self.target_temperature_heat = 75
@@ -97,7 +97,6 @@ class Building():
 
         ###################
         # Optional/Expert User inputs -  should be shown on the platform as default values
-        self.space_heating_type = 1  # Space heating system - 0=Conventional, 1=Low temperature
         self.T_cool_on = 24  # cooling start temperature working hours [ºC]
         self.T_heat_on = 22  # heating start temperature working hours [ºC]
         self.T_off_min = 12  # heating start temperature off peak [ºC]
@@ -124,10 +123,11 @@ class Building():
             self.Q_gain = self.number_person_per_floor * 108 + (15 + 12) * self.area_floor  # occupancy and appliances heat gains [W]
             self.renewal_air_per_person = 10 * 10 ** (-3)  # [m3/s]
 
-class Industry_Process():
+class Industry():
     def __init__(self):
         # Input
-        self.sink_id = 2
+        self.object_id = 2
+        self.type_of_object = 'sink'
         self.streams = [{'supply_temperature':10,'target_temperature':55,'fluid':'water','fluid_cp':10,'flowrate':10,'saturday_on':1
                          ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]},
                         {'supply_temperature':10,'target_temperature':55,'fluid':'water','fluid_cp':10,'flowrate':10,'saturday_on':1
@@ -138,10 +138,10 @@ class Industry_Process():
 # SINK -------------------------------------------------
 # Industry
 # user can create multiples industry streams for one industry by running the same code -> same sink id must be used
-industry_data = Industry_Process()
+industry_data = Industry()
 industry_stream_test = simple_user(industry_data)
 
-print(industry_stream_test.flowrate,industry_stream_test.hourly_generation)
+print(industry_stream_test)
 
 # Office/Hotel/Residential Building
 building_data = Building()

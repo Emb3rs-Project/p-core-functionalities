@@ -22,8 +22,13 @@ class Boiler():
         self.excess_heat_return_temperature = 20  # Ambient Temperature
 
         # INPUT
-        self.equipment_sub_type = in_var.equipment_sub_type  # Boiler type (hot_water_boiler/ steam_boiler/ condensing_boiler)
-        #self.supply_temperature = in_var.supply_temperature
+        self.supply_temperature = in_var.supply_temperature
+
+        if self.supply_temperature  > 100:
+            self.equipment_sub_type = 'steam_boiler'
+        else:
+            self.equipment_sub_type = 'hot_water_boiler'
+
         self.supply_capacity_nominal = in_var.supply_capacity_nominal  # Generate_Equipment heat supply capacity [kW]
         self.global_conversion_efficiency = in_var.global_conversion_efficiency
 
@@ -39,7 +44,7 @@ class Boiler():
 
         self.open_closed_loop = in_var.open_closed_loop  # Open heating circuit? (1-Yes, 0-No)
         self.fuel_type = in_var.fuel_type  # Fuel type  (Natural gas, Fuel oil, Biomass)
-        #self.supply_fluid = in_var.supply_fluid
+        self.supply_fluid = in_var.supply_fluid
 
         if self.open_closed_loop == 1:
             self.return_temperature = 20  # KB_General - Ambient Temperature
@@ -91,10 +96,10 @@ class Boiler():
 
         # Supply Heat
         # Flowrate [kg/h]
-        #self.supply_flowrate = compute_flow_rate(self.supply_fluid,
-        #                                         self.supply_capacity,
-        #                                         self.supply_temperature,
-        #                                         self.return_temperature)
+        self.supply_flowrate = compute_flow_rate(self.supply_fluid,
+                                                 self.supply_capacity,
+                                                 self.supply_temperature,
+                                                 self.return_temperature)
 
         # Excess Heat
         # Supply Capacity [kW]
@@ -127,14 +132,14 @@ class Boiler():
                                    self.schedule))
 
         # Supply Heat
-        #self.streams.append(Stream(self.id,
-        #                           'supply_heat',
-        #                           self.supply_fluid,
-        #                           self.return_temperature,
-        #                           self.supply_temperature,
-        #                           self.supply_flowrate,
-        #                           self.supply_capacity,
-        #                          self.schedule))
+        self.streams.append(Stream(self.id,
+                                   'supply_heat',
+                                   self.supply_fluid,
+                                   self.return_temperature,
+                                   self.supply_temperature,
+                                   self.supply_flowrate,
+                                   self.supply_capacity,
+                                  self.schedule))
 
         # Excess Heat
         self.streams.append(Stream(self.id,
