@@ -24,7 +24,7 @@ INPUT: object with:
             # building_type - 'office','residential' or ' hotel'
             # building_orientation - 'N','S','E' or 'W'
 
-            IMPORTANT:
+            IMPORTANT -  for Mandatory/Basic User:
                 # if  building_type = 'residential' -> mandatory input -> number_person_per_floor
                 # if  building_type = 'hotel' -> mandatory input -> number_rooms
                 # space_heating_type -> mandatory input for basic user - Expert User should introduce temperatures
