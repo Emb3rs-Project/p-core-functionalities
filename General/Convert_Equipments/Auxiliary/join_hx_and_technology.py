@@ -60,7 +60,8 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
         'conversion_efficiency': conversion_efficiency,  # []
         'om_fix': om_fix / max_power_stream,# [€/year.kW]
         'om_var': om_var / max_power_stream,# [€/kWh]
-        'emissions': emissions  # [kg.CO2/kWh]
+        'emissions': emissions,  # [kg.CO2/kWh]
+        'tecnhologies': technologies,
 
     }
 
