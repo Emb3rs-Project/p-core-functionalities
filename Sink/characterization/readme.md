@@ -8,7 +8,7 @@ The function reads user input data and computes the related stream in json forma
 
 ### INPUT
 1. sink_id = sink_id
-1. stream_type = 'inflow'
+1. streams = vector with dictionaries
 1. supply_temperature = stream supply temperature (ºC)
 1. target_temperature = stream target temperature (ºC)
 1. fluid = stream fluid (list)
