@@ -10,7 +10,7 @@
 
 from Sink.characterization.Building.building import building
 from Sink.characterization.Building.greenhouse import greenhouse
-from Sink.characterization.Industry.industry import industry
+from General.Simple_User.simple_user import simple_user
 from KB_General.building_properties import building_properties
 
 class Greenhouse():
@@ -129,7 +129,8 @@ class Industry_Process():
         # Input
         self.sink_id = 2
         self.streams = [{'supply_temperature':10,'target_temperature':55,'fluid':'water','fluid_cp':10,'flowrate':10,'saturday_on':1
-                         ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]},{'supply_temperature':10,'target_temperature':55,'fluid':'water','fluid_cp':10,'flowrate':10,'saturday_on':1
+                         ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]},
+                        {'supply_temperature':10,'target_temperature':55,'fluid':'water','fluid_cp':10,'flowrate':10,'saturday_on':1
                          ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]}]
 
 
@@ -138,7 +139,7 @@ class Industry_Process():
 # Industry
 # user can create multiples industry streams for one industry by running the same code -> same sink id must be used
 industry_data = Industry_Process()
-industry_stream_test = industry(industry_data)
+industry_stream_test = simple_user(industry_data)
 
 print(industry_stream_test.flowrate,industry_stream_test.hourly_generation)
 

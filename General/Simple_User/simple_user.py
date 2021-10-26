@@ -1,11 +1,12 @@
 """
 ##############################
-INFO: Sink Industry streams characterization.
+INFO: Simple User streams characterization.
 
 ##############################
 INPUT: object with:
 
         # sink_id
+        # type_of_object - 'sink' or 'source'
         # streams -> vector with dictionaries
 
         Where in streams:
@@ -39,14 +40,20 @@ from General.Auxiliary_General.stream import Stream
 from General.Auxiliary_General.schedule_hour import schedule_hour
 import json
 
-def industry(in_var):
+def simple_user(in_var):
 
         # INPUT  ------------------------
-        sink_id = in_var.sink_id
+        object_id = in_var.object_id
+        type_of_object = in_var.type_of_object
         streams = in_var.streams
 
         # Defined vars
-        stream_type = 'inflow'
+        if type_of_object == 'sink':
+            stream_type = 'inflow'
+        else:
+            stream_type = 'excess_heat'
+
+
         streams_output = []
 
         # COMPUTE ------------------------
@@ -63,7 +70,7 @@ def industry(in_var):
 
                 capacity = flowrate * fluid_cp * abs((supply_temperature - target_temperature))/3600  # [kW]
                 schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
-                info_stream = Stream(sink_id,stream_type,fluid,supply_temperature,target_temperature,flowrate,capacity,schedule)
+                info_stream = Stream(object_id,stream_type,fluid,supply_temperature,target_temperature,flowrate,capacity,schedule)
                 streams_output.append(info_stream.__dict__)
 
         # OUTPUT ------------------------

@@ -1,5 +1,10 @@
+
+
+
+
+
 import math
-from Source.characterization.Outflow_Simplified.outflow_simplified import Outflow_Simplified
+from General.Simple_User.simple_user import simple_user
 from Source.characterization.Generate_Equipment.generate_boiler import Boiler
 from Source.characterization.Generate_Equipment.generate_chp import Chp
 from Source.characterization.Process.process import Process
@@ -93,53 +98,6 @@ class Outflow():
         self.fluid_cp = 2
 
 
-class Building():
-    def __init__(self):
-        # GATWICK
-        self.latitude = 51.153
-        self.longitude = -0.182
-        self.building_orientation = 'S'
-        self.building_type = 'office'
-        self.number_person = 100  # number of occupants
-        self.number_floor = 3  # number of floors
-        self.width = 32
-        self.length = 16
-        self.area_floor = self.width * self.length  # floor space area [m2]
-        self.space_heating_type = 1  # Space heating system - 0=Conventional, 1=Low temperature
-        self.building_efficiency = 2  # Building efficiency - 1=A to 3=F
-        self.height_floor = 3.5  # floor height [m]
-        self.ratio_wall_N = 0.5  # wall area fraction
-        self.ratio_wall_S = 0.5
-        self.ratio_wall_E = 0.5
-        self.ratio_wall_W = 0.5
-        self.saturday_on = 0
-        self.sunday_on = 0
-        self.shutdown_periods = []
-        self.daily_periods = [[7, 19]]
-
-        # INEGI
-        self.latitude = 41.1045
-        self.longitude = -8.3539
-        self.building_orientation = 'S'
-        self.building_type = 'office'
-        self.number_person = 196  # number of ocupants
-        self.number_floor = 10  # number of floors
-        self.width = math.sqrt(285)
-        self.length = math.sqrt(285)
-        self.area_floor = self.width * self.length  # floor space area [m2]
-        self.space_heating_type = 1  # Space heating system - 0=Conventional, 1=Low temperature
-        self.building_efficiency = 2  # Building efficiency - 1=A to 3=F
-        self.height_floor = 2.8  # floor height [m]
-        self.ratio_wall_N = 0.82  # wall area fraction
-        self.ratio_wall_S = 0.62
-        self.ratio_wall_E = 0.52
-        self.ratio_wall_W = 0.93
-        self.saturday_on = 0
-        self.sunday_on = 0
-        self.shutdown_periods = []
-        self.daily_periods = [[8, 19]]
-
-
 class Info_HX_Recovery():
 
     def __init__(self, delta_T_min, all_objects):
@@ -166,13 +124,13 @@ class Source_simplified():
 # SOURCE Simple ----------------------------------------
 source_simple = []
 biomass = Source_simplified(1, 'flue_gas',2, 200, 3584, 0, 0, [[60, 75], [150, 155], [360, 365]], [[0, 12]])
-source_simple.append(Outflow_Simplified(biomass))
+source_simple.append(simple_user(biomass))
 plastic = Source_simplified(2, 'flue_gas',2, 250, 1624, 0, 1, [[65, 80], [160, 165], [361, 365]], [[0, 5]])
-source_simple.append(Outflow_Simplified(plastic))
+source_simple.append(simple_user(plastic))
 limestone = Source_simplified(3, 'flue_gas',2, 150, 1223, 1, 1, [[59, 74], [152, 172], [362, 365]], [[0, 24]])
-source_simple.append(Outflow_Simplified(limestone))
+source_simple.append(simple_user(limestone))
 iron = Source_simplified(4, 'flue_gas',2, 480, 3028, 0, 1, [[59, 74], [153, 168], [363, 365]], [[0, 24]])
-source_simple.append(Outflow_Simplified(iron))
+source_simple.append(simple_user(iron))
 print(source_simple[2].flowrate, source_simple[2].fluid, )
 
 """
