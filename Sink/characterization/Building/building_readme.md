@@ -51,7 +51,7 @@ It reads the user input data from the platform frontdend namely:
 1. Q_gain_per_floor
 
 
-OUTPUT: json with 2 dictionaries, regarding the building´s heating and cooling needs in a stream with:
+**Function OUTPUT:** json with 2 dictionaries, regarding the building´s heating and cooling needs in a stream with:
 1. id 1. stream id
 1. object_type 1. stream
 1. fluid 1. water
