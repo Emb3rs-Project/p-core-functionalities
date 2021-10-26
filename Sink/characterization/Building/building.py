@@ -1,6 +1,73 @@
-""""
+"""
+##############################
+INFO: Building Simulation. Simulates heat an cooling consumptions over the year, according to building specifications
+    and climate weather data
 
-Info: Compute Building Heating and Cooling demand profiles, according to the user's specifications.
+##############################
+INPUT: object with:
+
+        Mandatory/Basic User inputs:
+            # latitude
+            # longitude
+            # number_floor
+            # width_floor [m]
+            # length_floor [m]
+            # height_floor [m]
+            # ratio_wall_N - value between  0 and 1
+            # ratio_wall_S
+            # ratio_wall_E
+            # ratio_wall_W
+            # saturday_on - 1 (yes)  or 0 (no)
+            # sunday_on - 1 (yes)  or 0 (no)
+            # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
+            # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
+            # building_type - 'office','residential' or ' hotel'
+            # building_orientation - 'N','S','E' or 'W'
+
+            IMPORTANT:
+                # if  building_type = 'residential' -> mandatory input -> number_person_per_floor
+                # if  building_type = 'hotel' -> mandatory input -> number_rooms
+                # space_heating_type -> mandatory input for basic user - Expert User should introduce temperatures
+                    -> 0 = Conventional (target_temperature_heat = 75; supply_temperature_heat = 45)
+                    -> 1 = Low temperature (target_temperature_heat = 50; supply_temperature_heat = 30)
+
+        Optional/Expert User inputs:
+            # number_person_per_floor
+            # supply_temperature_heat [ºC]
+            # target_temperature_heat [ºC]
+            # supply_temperature_cool [ºC]
+            # target_temperature_cool [ºC]
+            # T_cool_on [ºC]
+            # T_heat_on [ºC]
+            # T_off_min [ºC]
+            # T_off_max [ºC]
+            # tau_glass - value between  0 and 1
+            # alpha_wall
+            # alpha_floor
+            # alpha_glass
+            # u_wall [W/m2.K]
+            # u_roof
+            # u_floor
+            # u_glass
+            # cp_roof [J/m2.K]
+            # cp_wall [J/m2.K]
+            # air_change_hour [1/h]
+            # renewal_air_per_person  [m3/s.person]
+            # vol_dhw_set - daily water consumption [m3]
+            # Q_gain_per_floor
+
+
+##############################
+OUTPUT: vector with 2 dictionaries, regarding hot and cooling stream needs with:
+
+        # id - stream id
+        # object_type - stream
+        # fluid - water
+        # stream_type - inflow
+        # monthly_generation - array [kWh]
+        # hourly_generation - array [kWh]
+        # supply_temperature [ºC]
+        # target_temperature [ºC]
 
 
 """
@@ -47,37 +114,77 @@ def building(in_var):
     building_type = in_var.building_type
     building_orientation = in_var.building_orientation
 
-    #####################################################
-    #####################################################
-    #####################################################
-    # User input or defined
-    number_rooms = in_var.number_rooms
-    number_person = in_var.number_person  # number of occupants per floor
-    supply_temperature_heat = in_var.supply_temperature_heat  # Heating
-    target_temperature_heat = in_var.target_temperature_heat
-    supply_temperature_cool = in_var.supply_temperature_cool  # Cooling
-    target_temperature_cool = in_var.target_temperature_cool
-    T_cool_on = in_var.T_cool_on  # cooling start temperature working hours [ºC]
-    T_heat_on = in_var.T_heat_on  # heating start temperature working hours [ºC]
-    T_off_min = in_var.T_off_min  # heating start temperature off peak [ºC]
-    T_off_max = in_var.T_off_max  # cooling start temperature off peak [ºC]
-    tau_glass = in_var.tau_glass  # Glass transmissivity
-    u_wall = in_var.u_wall  # Wall heat transfer coefficient [W/m2.K]
-    u_roof = in_var.u_roof
-    u_glass = in_var.u_glass
-    cp_roof = in_var.cp_roof  # Roof specific heat capacitance [J/m2.K]
-    cp_wall = in_var.cp_wall  # Wall specific heat capacitance [J/m2.K]
-    air_change_hour = in_var.air_change_hour  # air changes per second [1/s]
-    renewal_air = in_var.renewal_air  # [m3/s.person]
-    vol_dhw_set = in_var.vol_dhw_set
-    Q_gain = in_var.Q_gain
+    try:
+        # User input or defined
+        number_person_per_floor = in_var.number_person_per_floor  # number of occupants per floor
+        supply_temperature_heat = in_var.supply_temperature_heat  # Heating
+        target_temperature_heat = in_var.target_temperature_heat
+        supply_temperature_cool = in_var.supply_temperature_cool  # Cooling
+        target_temperature_cool = in_var.target_temperature_cool
+        T_cool_on = in_var.T_cool_on  # cooling start temperature working hours [ºC]
+        T_heat_on = in_var.T_heat_on  # heating start temperature working hours [ºC]
+        T_off_min = in_var.T_off_min  # heating start temperature off peak [ºC]
+        T_off_max = in_var.T_off_max  # cooling start temperature off peak [ºC]
+        tau_glass = in_var.tau_glass  # Glass transmissivity
+        u_wall = in_var.u_wall  # Wall heat transfer coefficient [W/m2.K]
+        u_roof = in_var.u_roof
+        u_glass = in_var.u_glass
+        u_floor = in_var.u_floor
+        alpha_wall = in_var.alpha_wall
+        alpha_floor = in_var.alpha_floor
+        alpha_glass = in_var.alpha_glass
+        cp_floor = in_var.cp_floor  # Roof specific heat capacitance [J/m2.K]
+        cp_roof = in_var.cp_roof  # Roof specific heat capacitance [J/m2.K]
+        cp_wall = in_var.cp_wall  # Wall specific heat capacitance [J/m2.K]
+        air_change_hour = in_var.air_change_hour  # air changes per second [1/h]
+        renewal_air_per_person = in_var.renewal_air_per_person  # [m3/s.person]
+        vol_dhw_set = in_var.vol_dhw_set
+        Q_gain_per_floor = in_var.Q_gain_per_floor
 
-    # or get data
-    u_wall, u_roof, u_glass, u_floor, tau_glass, alpha_wall, alpha_floor, alpha_glass, cp_wall, cp_floor, cp_roof, air_change_hour = building_properties(country, building_type)
+    except:
+        # or get data
+        u_wall, u_roof, u_glass, u_floor, tau_glass, alpha_wall, alpha_floor, alpha_glass, cp_wall, cp_floor, cp_roof, air_change_hour = building_properties(country, building_type)
 
-    #####################################################
-    #####################################################
-    ##########################################################################################3
+        area_floor = width_floor * length_floor
+
+        # building streams
+        if in_var.space_heating_type == 0:
+            target_temperature_heat = 75
+            supply_temperature_heat = 45
+        else:
+            target_temperature_heat = 50
+            supply_temperature_heat = 30
+
+        target_temperature_cool = 7  # Cooling
+        supply_temperature_cool = 12
+
+        # cooling/heating temperatures set points
+        T_cool_on = 24  # cooling start temperature working hours [ºC]
+        T_heat_on = 22  # heating start temperature working hours [ºC]
+        T_off_min = 12  # heating start temperature off peak [ºC]
+        T_off_max = 28  # cooling start temperature off peak [ºC
+
+        if building_type == 'residential':
+            number_person_per_floor = in_var.number_person_per_floor
+            Q_gain_per_floor = 5 * area_floor  # occupancy and appliances heat gains [W]
+            vol_dhw_set = 0.03 * number_person_per_floor  # daily dwelling DHW consumption per floor [m3]
+            renewal_air_per_person = 0  # renewal fresh air [m3/s]
+
+        elif building_type == 'hotel':
+            number_rooms = in_var.number_rooms
+            number_person_per_floor = 2 * number_rooms  # number of rooms per floor
+            vol_dhw_set = 0.03 * number_person_per_floor  # daily dwelling DHW consumption [m3]
+            Q_gain_per_floor = 5 * area_floor  # occupancy and appliances heat gains [W]
+            renewal_air_per_person = 0  # renewal fresh air [m3/s]
+
+        else:
+            number_person_per_floor = round(area_floor / 9)  # number of occupants per floor (9m2 per occupant)
+            vol_dhw_set = 0
+            Q_gain_per_floor = number_person_per_floor * 108 + (15 + 12) * area_floor  # occupancy and appliances heat gains [W]
+            renewal_air_per_person = 10 * 10 ** (-3)  # [m3/s] per person
+
+
+
     # DEFINED VARS ----------------------------------------------------------------------------------
     # Simulation Properties
     interpolation_weight = 0.8
@@ -90,7 +197,8 @@ def building(in_var):
     u_wall = 1/(1/u_wall - 0.13 - 0.04)  # Thermal conductivity between inner/outer walls surface with wall middle [W/m2.K]
     u_wall = u_wall*2   # Thermal conductivity between inner/outer walls surface with wall middle [W/m2.K]
     u_roof = 1/(1/u_roof - 0.13 - 0.04)*2
-    u_floor = u_deck = u_roof
+    u_floor = 1/(1/u_floor - 0.13 - 0.04)*2
+    u_deck = u_roof
     alpha_roof = alpha_wall
 
     # Fluids/Material Properties
@@ -135,35 +243,17 @@ def building(in_var):
     volume_floor = area_floor * height_floor  # indoor air volume per floor [m3]
     air_change_second = air_change_hour * volume_floor / 3600 # air infiltration im SI units [m3/s]
     c_roof = cp_roof * area_floor  # roof heat capacitance [J/K]
-    c_floor = cp_roof * area_floor
-    c_deck = cp_roof * area_floor
+    c_floor = cp_floor * area_floor
+    c_deck = cp_floor * area_floor
     c_N_wall = cp_wall * area_N_wall  # N wall heat capacitance [J/K]
     c_S_wall = cp_wall * area_S_wall
     c_E_wall = cp_wall * area_E_wall
     c_W_wall = cp_wall * area_W_wall
     emissivity_facade = 0.9
 
-    if building_type == 'residential':
-        Q_gain = 5 * area_floor  # occupancy and appliances heat gains [W]
-        vol_dhw_set = 0.03 * number_person  # daily dwelling DHW consumption per floor [m3]
-        renewal_air = 0  # renewal fresh air [m3/s]
-
-    elif building_type == 'hotel':
-        number_person = 2 * number_rooms  # number of rooms per floor
-        vol_dhw_set = 0.03 * number_person  # daily dwelling DHW consumption [m3]
-        Q_gain = 5 * area_floor  # occupancy and appliances heat gains [W]
-        renewal_air = 0  # renewal fresh air [m3/s]
-
-    else:
-        number_person = round(area_floor / 9)  # number of occupants per floor (9m2 per occupant)
-        vol_dhw_set = 0
-        Q_gain = number_person * 108 + (15 + 12) * area_floor  # occupancy and appliances heat gains [W]
-        renewal_air = 10 * 10 ** (-3)  # [m3/s] per person
-
-
     # SIMULATION ----------------------------------------------
     # Initialize vars
-    flowrate_dhw_set = 6 / 60000 * number_person * 0.5  # combined DHW flowrate per floor [m3/s]
+    flowrate_dhw_set = 6 / 60000 * number_person_per_floor * 0.5  # combined DHW flowrate per floor [m3/s]
     profile_hourly_heat = []
     profile_hourly_cool = []
     profile_monthly_heat = []
@@ -292,14 +382,14 @@ def building(in_var):
 
             # Average floor Heat balance before space heating/cooling
             if number_floor == 1:
-                Q_building_floor = (rho_air * cp_air * renewal_air * number_person) * (T_exterior - T_interior) * profile_operating \
+                Q_building_floor = (rho_air * cp_air * renewal_air_per_person * number_person_per_floor) * (T_exterior - T_interior) * profile_operating \
                                    + rho_air * cp_air * air_change_second * (T_exterior - T_interior) \
-                                   + Q_gain * profile_operating \
+                                   + Q_gain_per_floor * profile_operating \
                                    + zero_floor  # [W]
             else:
-                Q_building_floor = (rho_air * cp_air * renewal_air * number_person) * (T_exterior - T_interior) * profile_operating \
+                Q_building_floor = (rho_air * cp_air * renewal_air_per_person * number_person_per_floor) * (T_exterior - T_interior) * profile_operating \
                                     + rho_air * cp_air * air_change_second * (T_exterior - T_interior) \
-                                    + Q_gain * profile_operating \
+                                    + Q_gain_per_floor * profile_operating \
                                     + (top_floor + middle_floor * (number_floor - 2) + bottom_floor) / number_floor
 
 
