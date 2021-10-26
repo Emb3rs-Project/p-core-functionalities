@@ -1,5 +1,6 @@
 The building function generates the building yearly space heating and cooling demand from the user input data.
 It reads the user input data from the platform frontdend namely:
+
 **Mandatory/Basic User inputs:**
 1. latitude
 1. longitude
