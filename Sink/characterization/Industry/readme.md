@@ -27,5 +27,5 @@ The function reads user input data and computes the related stream in json forma
 1. target_temperature (ºC)
 1. flowrate (kg/h)
 1. capacity (kW)
-1. hourly_generation - yearly operating profile (0/1/1/0/...)
+1. hourly_generation - yearly operating profile (kWh/h)
 
