@@ -58,11 +58,6 @@ class Greenhouse():
         # user can introduce f_c that he wants to
         self.f_c = 2.5 * 10 ** (-4) # factor to estimate building infiltrations
 
-
-
-
-
-
 class Building():
 
     def __init__(self):
@@ -129,20 +124,13 @@ class Building():
             self.Q_gain = self.number_person_per_floor * 108 + (15 + 12) * self.area_floor  # occupancy and appliances heat gains [W]
             self.renewal_air_per_person = 10 * 10 ** (-3)  # [m3/s]
 
-
 class Industry_Process():
     def __init__(self):
         # Input
         self.sink_id = 2
-        self.supply_temperature = 10
-        self.target_temperature = 100
-        self.fluid = 'water'
-        self.fluid_cp = 1
-        self.flowrate = 120 # [kg/h]
-        self.saturday_on = 1
-        self.sunday_on = 0
-        self.shutdown_periods = []
-        self.daily_periods = [[10,18]]
+        self.streams = [{'supply_temperature':10,'target_temperature':55,'fluid':'water','fluid_cp':10,'flowrate':10,'saturday_on':1
+                         ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]},{'supply_temperature':10,'target_temperature':55,'fluid':'water','fluid_cp':10,'flowrate':10,'saturday_on':1
+                         ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]}]
 
 
 

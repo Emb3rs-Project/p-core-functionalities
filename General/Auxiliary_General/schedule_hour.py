@@ -76,7 +76,4 @@ def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
         profile_hour[i] = op
 
     # OUTPUT
-    profile = np.asarray(profile_hour)
-
-
-    return profile
+    return profile_hour
