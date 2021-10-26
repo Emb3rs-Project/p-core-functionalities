@@ -9,7 +9,7 @@ This function is used when a user adds a boiler.
 ### INPUT
 1. supply_capacity_nominal = Boiler heat supply capacity [kW]
 1. equipment_sub_type = Boiler type (hot_water_boiler/ steam_boiler/ condensing_boiler)
-1. open_closed_loop = in_var.open_closed_loop  # Open heating circuit? (1-Yes, 0-No)
+1. open_closed_loop = open_closed_loop  # Open heating circuit? (1-Yes, 0-No)
 1. supply_temperature = Boiler supply temperature - ºC (KB has default value)
 1. fuel_type = Boiler fuel type (KB has default value)
 1. global_conversion_efficiency = Boiler efficiency (KB has default value)
@@ -17,7 +17,7 @@ This function is used when a user adds a boiler.
     - saturday_on = saturday operation (1-Yes, 0- No)
     - sunday_on = sunday operation (1-Yes, 0- No)
     - shutdown_periods = yearly shutdown periods (e.g: [[59,74],[152,172],[362,365]])
-    - daily_periods = in_var.daily_periods (e.g: [[8,12],[15,19]])
+    - daily_periods = daily_periods (e.g: [[8,12],[15,19]])
 
 
 ### OUTPUT
@@ -60,7 +60,7 @@ This function generates streams from a user-defined burner equipment.
     - saturday_on = saturday operation (1-Yes, 0- No)
     - sunday_on = sunday operation (1-Yes, 0- No)
     - shutdown_periods = yearly shutdown periods (e.g: [[59,74],[152,172],[362,365]])
-    - daily_periods = in_var.daily_periods (e.g: [[8,12],[15,19]])
+    - daily_periods = daily_periods (e.g: [[8,12],[15,19]])
 
 
 ### OUTPUT
@@ -74,6 +74,86 @@ It outputs a json file containing the following information on the 3 streams gen
     - inflow_flowrate,
     - supply_capacity,
     - schedule
+1. Supply Heat
+    - supply_fluid (water by default)
+    - return_temperature,
+    - supply_temperature,
+    - supply_flowrate,
+    - supply_capacity,
+    - schedule
+1. Excess Heat
+    - excess_heat_fluid (fluegas)
+    - excess_heat_supply_temperature,
+    - excess_heat_return_temperature,
+    - excess_heat_flowrate,
+    - excess_heat_supply_capacity,
+    - schedule
+
+
+## generate_chp function
+
+This function generates streams from a user-defined combined heat and power equipment (a gas engine or a gas turbine).
+
+### INPUT
+1. supply_capacity_nominal = CHP heat supply capacity [kW]
+1. equipment_sub_type = CHP type (gas engine or gas turbine)
+1. open_closed_loop = open_closed_loop  # Open heating circuit? (1-Yes, 0-No)
+1. supply_temperature = CHP supply temperature - ºC (KB has default value)
+1. fuel_type = CHP fuel type (KB has default value)
+1. global_conversion_efficiency = CHP efficiency (KB has default value)
+1. thermal_conversion_efficiency = CHP thermal efficiency (KB has default value)
+1. electrical_conversion_efficiency = CHP electrical efficiency (KB has default value)
+1. equipment schedule:
+    - saturday_on = saturday operation (1-Yes, 0- No)
+    - sunday_on = sunday operation (1-Yes, 0- No)
+    - shutdown_periods = yearly shutdown periods (e.g: [[59,74],[152,172],[362,365]])
+    - daily_periods = daily_periods (e.g: [[8,12],[15,19]])
+
+
+### OUTPUT
+
+It outputs a json file containing the following information on the 3 streams generated:
+
+1. Air Inflow
+    - supply_fluid (air)
+    - inflow_T_initial,
+    - inflow_T_outlet,
+    - inflow_flowrate,
+    - supply_capacity,
+    - schedule
+1. Supply Heat
+    - supply_fluid (water by default)
+    - return_temperature,
+    - supply_temperature,
+    - supply_flowrate,
+    - supply_capacity,
+    - schedule
+1. Excess Heat
+    - excess_heat_fluid (fluegas)
+    - excess_heat_supply_temperature,
+    - excess_heat_return_temperature,
+    - excess_heat_flowrate,
+    - excess_heat_supply_capacity,
+    - schedule
+
+## generate_cooling_equipment
+This function generates streams from a user-defined cooling equipment (a co2_chiller/ cooling_tower/ thermal_chiller/ air_cooled_chiller/ water_cooled_chiller).
+
+### INPUT
+1. supply_capacity_nominal = cooling equipment heat supply capacity [kW]
+1. equipment_sub_type = cooling equipment type (co2_chiller/ cooling_tower/ thermal_chiller/ air_cooled_chiller/ water_cooled_chiller)
+1. supply_temperature = cooling equipment supply temperature - ºC (KB has default value)
+1. global_conversion_efficiency = cooling equipment COP (KB has default value)
+1. equipment schedule:
+    - saturday_on = saturday operation (1-Yes, 0- No)
+    - sunday_on = sunday operation (1-Yes, 0- No)
+    - shutdown_periods = yearly shutdown periods (e.g: [[59,74],[152,172],[362,365]])
+    - daily_periods = daily_periods (e.g: [[8,12],[15,19]])
+
+### OUTPUT
+
+It outputs a json file containing the following information on the 2 streams generated. Excess heat stream is only generated for CO2 chillers.
+
 1. Supply Heat
     - supply_fluid (water by default)
     - return_temperature,
