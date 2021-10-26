@@ -5,7 +5,7 @@ INFO: Simple User streams characterization.
 ##############################
 INPUT: object with:
 
-        # sink_id
+        # id
         # type_of_object - 'sink' or 'source'
         # streams -> vector with dictionaries
 

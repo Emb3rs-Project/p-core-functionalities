@@ -216,6 +216,8 @@ def generate_heat_recovery(in_var):
                                 if save_object.equipment == equipment.id: # find equipment that supplies process
                                     break
 
+                            print('newwww')
+                            print(vars(equipment))
                             data = fuel_properties('Portugal',equipment.fuel_type,'non-household')
                             cost = data['price']
                             CO2_emission_per_kw = data['co2_emissions']

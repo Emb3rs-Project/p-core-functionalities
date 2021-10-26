@@ -86,7 +86,7 @@ def convert_sources(in_var):
     # Grid Characteristics
     grid_fluid = 'water'
     grid_delta_T = sink_group_grid_supply_temperature - sink_group_grid_return_temperature
-    intermediate_fluid = 'oil'
+    intermediate_fluid = 'thermal_oil'
 
     # HX Characteristics
     hx_efficiency = 0.95
