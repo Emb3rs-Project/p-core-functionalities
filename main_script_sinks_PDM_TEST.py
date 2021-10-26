@@ -15,7 +15,8 @@ from KB_General.building_properties import building_properties
 
 class Greenhouse():
     def __init__(self):
-        # Inputs
+        ###################
+        # Mandatory/Basic USER INPUT
         self.latitude = 41.1045
         self.longitude = -8.3539
         self.building_orientation = 'S'
@@ -26,17 +27,19 @@ class Greenhouse():
         self.height_floor = 3  # greenhouse height [m]
         self.shutdown_periods = []
         self.hours_lights_needed = 15  # number of hours plants needed with light
-        self.daily_periods = [[0, 24]]
+        self.daily_periods = [[0, 24]] # heating needed all day
         self.lights_on = 0  # on
         self.T_cool_on = 35  # cooling start temperature working hours [ºC]
         self.T_heat_on = 10  # heating start temperature working hours [ºC]
 
-        # Defined by the KB_General. May be changed by user
-        self.target_temperature_heat = 50
-        self.supply_temperature_heat = 30
+        #show options of greenhouse efficiency - 1=tight sealed greenhouse; 2=medium; 3=loose
+        self.building_efficiency = 1
 
-        self.saturday_on = 1
-        self.sunday_on = 1
+        ###################
+        # Optional/Expert User inputs -  should be shown on the platform as default values        self.target_temperature_heat = 50
+        self.supply_temperature_heat = 30
+        self.saturday_on = 1 # heat on saturdays - assumed greenhouse works everyday
+        self.sunday_on = 1 # heat on sunday - assumed greenhouse works everyday
         self.power_lights = 20  # [W/m2]
         self.u_cover = 6  # [W/m2]
         self.leaf_area_index = 1
@@ -47,12 +50,16 @@ class Greenhouse():
         self.emissivity_cover_long_wave_radiation = 0.2
         self.tau_cover_solar_radiation = 0.75
 
-        if self.building_efficiency == 1:
-            self.f_c = 2.5 * 10 ** (-4) # factor to estimate building infiltrations
-        elif self.building_efficiency == 2:
-            self.f_c = 5 * 10 ** (-4)
-        else:
-            self.f_c = 15 * 10 ** (-4)
+        # value f_c
+        # maybe show equation to the user and link to article regarding infiltrations computation
+        # link: https: // doi.org / 10.1016 / j.compag.2018.04.025
+        # assumeptions: f_t = 0.16;  c_w = 0.22
+        # equation: total_cover_area * f_c * math.sqrt( c_w ** 2 * wind_speed + f_t ** 2 * (abs(T_interior - T_exterior)))  # [m3/s]
+        # user can introduce f_c that he wants to
+        self.f_c = 2.5 * 10 ** (-4) # factor to estimate building infiltrations
+
+
+
 
 
 

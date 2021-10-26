@@ -1,6 +1,59 @@
-""""
+"""
+##############################
+INFO: Greenhouse Simulation. Simulates heat  over the year, according to greenhouse specifications
+    and climate weather data
 
-Info: Compute Greenhouse Heating demand profile, according to the user's specifications.
+##############################
+INPUT: object with:
+
+        Mandatory/Basic User inputs:
+            # latitude
+            # longitude
+            # width_floor
+            # length_floor
+            # height_floor
+            # shutdown_periods
+            # daily_periods
+            # building_orientation
+            # saturday_on
+            # sunday_on
+            # lights_on - 1=with lights system ; 0=no lights system
+            # hours_lights_needed - lighting hours in greenhouse (counting with daily iluminance) [h]
+
+            IMPORTANT - for Mandatory/Basic User:
+                    #  get  building_efficiency to compute f_c
+                        1=tight sealed greenhouse
+                        2=medium
+                        3=loose
+
+        Optional/Expert User inputs:
+            # f_c
+            # T_cool_on = in_var.T_cool_on  [ºC]
+            # T_heat_on = in_var.T_heat_on  [ºC]
+            # supply_temperature_heat [ºC]
+            # target_temperature_heat [ºC]
+            # leaf_area_index - ratio of area_plants/area_floor, 0 to 1
+            # rh_air - controlled interior air RH , 0 to 1
+            # u_cover [W/m2.K]
+            # indoor_air_speed [m/s]
+            # leaf_length - characteristic leaf length [m]
+            # tau_cover_long_wave_radiation - 0 to 1
+            # emissivity_cover_long_wave_radiation - 0 to 1
+            # tau_cover_solar_radiation - 0 to 1
+            # power_lights [W/m2]
+
+
+##############################
+OUTPUT: vector with 2 dictionaries, regarding hot and cooling stream needs with:
+
+        # id - stream id
+        # object_type - stream
+        # fluid - water
+        # stream_type - inflow
+        # monthly_generation - array [kWh]
+        # hourly_generation - array [kWh]
+        # supply_temperature [ºC]
+        # target_temperature [ºC]
 
 
 """
@@ -20,8 +73,6 @@ from Sink.characterization.Building.Auxiliary.info_time_step_climate_data import
 
 def greenhouse(in_var):
 
-    building_type = in_var.building_type
-
     # INPUT ----------------------------------------------
     latitude = in_var.latitude
     longitude = in_var.longitude
@@ -33,28 +84,46 @@ def greenhouse(in_var):
     building_orientation = in_var.building_orientation
     saturday_on = in_var.saturday_on
     sunday_on = in_var.sunday_on
-
-    #####################################################
-    #####################################################
-    #####################################################
-    # User input or defined
-
-    f_c = in_var.f_c  # Building efficiency - 1=A to 3=F
-    T_cool_on = in_var.T_cool_on  # cooling start temperature working hours [ºC]
-    T_heat_on = in_var.T_heat_on  # heating start temperature working hours [ºC]
-    supply_temperature_heat = in_var.supply_temperature_heat
-    target_temperature_heat = in_var.target_temperature_heat
-    leaf_area_index = in_var.leaf_area_index  # ratio of area_plants/area_floor
-    rh_air = in_var.rh_air  # controlled interior air RH
-    u_cover = in_var.u_cover  # heat transfer coefficient cover [W/m2.K]
-    indoor_air_speed = in_var.indoor_air_speed  # indoor_air_speed [m/s]
-    leaf_length = in_var.leaf_length  # characteristic leaf length [m]
-    tau_cover_long_wave_radiation = in_var.tau_cover_long_wave_radiation  # cover transmissivity long wave radiation
-    emissivity_cover_long_wave_radiation = in_var.emissivity_cover_long_wave_radiation  # emissivity long wave radiation
-    tau_cover_solar_radiation = in_var.tau_cover_solar_radiation  # cover transmissivity solar radiation
     lights_on = in_var.lights_on  # 1- with lights system ; 0 - no lights system
     hours_lights_needed = in_var.hours_lights_needed  # lighting hours in greenhouse (counting with daily iluminance) [h]
-    power_lights = in_var.power_lights  # lighting power per square meter [W/m2]
+
+    # User input or defined
+    try:
+        f_c = in_var.f_c  # Building efficiency - 1=A to 3=F
+        T_cool_on = in_var.T_cool_on  # cooling start temperature working hours [ºC]
+        T_heat_on = in_var.T_heat_on  # heating start temperature working hours [ºC]
+        supply_temperature_heat = in_var.supply_temperature_heat
+        target_temperature_heat = in_var.target_temperature_heat
+        leaf_area_index = in_var.leaf_area_index  # ratio of area_plants/area_floor
+        rh_air = in_var.rh_air  # controlled interior air RH
+        u_cover = in_var.u_cover  # heat transfer coefficient cover [W/m2.K]
+        indoor_air_speed = in_var.indoor_air_speed  # indoor_air_speed [m/s]
+        leaf_length = in_var.leaf_length  # characteristic leaf length [m]
+        tau_cover_long_wave_radiation = in_var.tau_cover_long_wave_radiation  # cover transmissivity long wave radiation
+        emissivity_cover_long_wave_radiation = in_var.emissivity_cover_long_wave_radiation  # emissivity long wave radiation
+        tau_cover_solar_radiation = in_var.tau_cover_solar_radiation  # cover transmissivity solar radiation
+        power_lights = in_var.power_lights  # lighting power per square meter [W/m2]
+    except:
+        T_cool_on = 35  # cooling start temperature working hours [ºC]
+        T_heat_on = 10  # heating start temperature working hours [ºC]
+        target_temperature_heat = 50
+        supply_temperature_heat = 30
+        power_lights = 20  # [W/m2]
+        u_cover = 6  # [W/m2]
+        leaf_area_index = 1
+        rh_air = 0.70  # relative humidity
+        indoor_air_speed = 0.1  # [m/s]
+        leaf_length = 0.027  # [m]
+        tau_cover_long_wave_radiation = 0.3
+        emissivity_cover_long_wave_radiation = 0.2
+        tau_cover_solar_radiation = 0.75
+
+        if in_var.building_efficiency == 1:
+            f_c = 2.5 * 10 ** (-4) # factor to estimate building infiltrations
+        elif in_var.building_efficiency == 2:
+            f_c = 5 * 10 ** (-4)
+        else:
+            f_c = 15 * 10 ** (-4)
 
 
     # DEFINED VARS ----------------------------------------------------------------------------------
@@ -170,11 +239,11 @@ def greenhouse(in_var):
             # Solar radiation greenhouse
             Q_sun_greenhouse = (Q_sun_N_facade * area_N_wall + Q_sun_S_facade * area_S_wall + Q_sun_E_facade * area_E_wall + Q_sun_W_facade * area_W_wall + Q_sun_roof * area_floor) * tau_cover_solar_radiation  # [W]
 
-            # Infiltrations/ACH - https://doi.org/10.1016/j.compag.2018.04.025
+            # Infiltrations/air_change_per_second - https://doi.org/10.1016/j.compag.2018.04.025
             f_t = 0.16
             c_w = 0.22
             area_infiltration = total_cover_area * f_c
-            ACH = area_infiltration * math.sqrt(c_w ** 2 * wind_speed + f_t**2*(abs(T_interior-T_exterior)))  # [m3/s]
+            air_change_per_second = area_infiltration * math.sqrt(c_w ** 2 * wind_speed + f_t**2*(abs(T_interior-T_exterior)))  # [m3/s]
 
             # Evapotranspiration - ref:https://doi.org/10.1016/j.inpa.2017.12.003
             vapour_pressure_plants = (math.exp(20.386 - 5132 / (T_interior + 273.1))) * 0.13  # [kPa]
@@ -216,7 +285,7 @@ def greenhouse(in_var):
             Q_conv_total = Q_top + 2 * (Q_vertical_wall_small + Q_vertical_wall_big)
 
             # Infiltration
-            Q_infiltrations = rho_air * cp_air * ACH * (T_exterior - T_interior)
+            Q_infiltrations = rho_air * cp_air * air_change_per_second * (T_exterior - T_interior)
 
             # Lights
             if df_climate.loc[profile_index, 'turn_on_lights'] == 1:
@@ -294,6 +363,7 @@ def greenhouse(in_var):
         'id': 7777,
         'object_type': 'stream',
         'fluid': 'water',
+        'stream_type': 'inflow',
         "monthly_generation": profile_monthly_heat,  # [kWh]
         "hourly_generation": profile_hourly_heat,  # [kWh]
         "supply_temperature": supply_temperature_heat,  # [ºC]
