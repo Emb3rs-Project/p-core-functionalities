@@ -207,9 +207,9 @@ This function will generate the streams related to a process, according to the u
 ### OUTPUT
 
 It outputs a json file containing the following information on the n streams generated (startup, maintenance, inflows, outflows), having for each stream
-    - supply_fluid (water by default)
-    - return_temperature,
-    - supply_temperature,
-    - supply_flowrate,
-    - supply_capacity,
-    - hourly_generation
+- supply_fluid (water by default)
+- return_temperature,
+- supply_temperature,
+- supply_flowrate,
+- supply_capacity,
+- hourly_generation
