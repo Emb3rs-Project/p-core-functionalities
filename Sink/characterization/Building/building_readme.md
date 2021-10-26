@@ -17,14 +17,12 @@ It reads the user input data from the platform frontdend namely:
     1. daily_periods 1. array with hour arrays; e.g. [[8,12],[15,19]]
     1. building_type 1. 'office','residential' or ' hotel'
     1. building_orientation 1. 'N','S','E' or 'W'
-
 1.**IMPORTANT inputs:**
     1. if  building_type = 'residential' -> mandatory input -> number_person_per_floor
     1. if  building_type = 'hotel' -> mandatory input -> number_rooms
     1. space_heating_type -> mandatory input for basic user 1. Expert User should introduce temperatures
         - 0 = Conventional (target_temperature_heat = 75; supply_temperature_heat = 45)
         - 1 = Low temperature (target_temperature_heat = 50; supply_temperature_heat = 30)
-
 1.**Optional/Expert User inputs:**
     1. number_person_per_floor
     1. supply_temperature_heat [ºC]
