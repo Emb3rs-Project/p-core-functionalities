@@ -7,7 +7,7 @@ In this submodule there are 2 main functions to characterize buildings, the buii
 The building function generates the building yearly space heating and cooling demand from the user input data. It has 3 main types of buildings (residential, hotel and office).
 It reads the user input data from the platform frontdend namely:
 
-######**Mandatory/Basic User inputs:**
+### **Mandatory/Basic User inputs:**
 1. latitude
 1. longitude
 1. number_floor
@@ -25,14 +25,14 @@ It reads the user input data from the platform frontdend namely:
 1. building_type 1. 'office','residential' or ' hotel'
 1. building_orientation 1. 'N','S','E' or 'W'
 
-**IMPORTANT inputs:**
+### **IMPORTANT inputs:**
 1. if  building_type = 'residential' -> mandatory input -> number_person_per_floor
 1. if  building_type = 'hotel' -> mandatory input -> number_rooms
 1. space_heating_type -> mandatory input for basic user 1. Expert User should introduce temperatures
     - 0 = Conventional (target_temperature_heat = 75; supply_temperature_heat = 45)
     - 1 = Low temperature (target_temperature_heat = 50; supply_temperature_heat = 30)
 
-**Optional/Expert User inputs:**
+### **Optional/Expert User inputs:**
 1. number_person_per_floor
 1. supply_temperature_heat [ºC]
 1. target_temperature_heat [ºC]
@@ -58,7 +58,7 @@ It reads the user input data from the platform frontdend namely:
 1. Q_gain_per_floor
 
 
-**Function OUTPUT:** json with 2 dictionaries, regarding the building´s heating and cooling needs in a stream with:
+### **Function OUTPUT:** json with 2 dictionaries, regarding the building´s heating and cooling needs in a stream with:
 1. id 1. stream id
 1. object_type 1. stream
 1. fluid 1. water
