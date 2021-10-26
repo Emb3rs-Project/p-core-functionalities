@@ -112,17 +112,18 @@ class Source_simplified():
         # Input
         self.object_id = 5
         self.type_of_object = 'source'
-        self.streams = [{'supply_temperature':500,'target_temperature':55,'fluid':'flue_gas','fluid_cp':10,'flowrate':10,'saturday_on':1
+        self.streams = [{'supply_temperature':900,'target_temperature':500,'fluid':'flue_gas','fluid_cp':1.3,'flowrate':16864,'saturday_on':1
                          ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]},
-                        {'supply_temperature':150,'target_temperature':100,'fluid':'water','fluid_cp':10,'flowrate':10,'saturday_on':1
-                         ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]}]
+                        {'supply_temperature': 900, 'target_temperature': 500, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
+                            'flowrate': 10, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[10, 18]]}]
 
 
 
 # SOURCE Simple ----------------------------------------
 source = Source_simplified()
 industry_stream_test = simple_user(source)
-
+print(industry_stream_test)
+# industry_stream_test 'capacity' = 2435
 
 # SOURCE Detailed ----------------------------------------
 # create chp
@@ -182,6 +183,20 @@ df_hx_processes = generate_heat_recovery(
     data_recovery)  # Heat Recovery module - input process and equipment  or only equipment
 
 print(df_hx_processes)
+
+"""
+print(df_hx_processes)
+
+Expected: [[      Power Hot_Stream  ... Total_Turnkey_Cost Recovered_Energy
+0  12.50000          2  ...        1937.046150          50.0000
+1   8.00000          1  ...        1792.159088          32.0000
+2   7.00000          1  ...        1634.073549          28.0000
+0  17.50000          2  ...        1967.501505          70.0000
+1   6.49515          1  ...        1489.999469          25.9806
+
+[5 rows x 15 columns], []]]
+
+"""
 
 ### OPTION 2 - pinch analysis with processes - INPUT:processes, equipments
 # Get all process and equipment from User

@@ -177,6 +177,9 @@ def generate_heat_recovery(in_var):
     output = []
 
     if objects != []:
+        print('##########################################')
+        print('newwwwwwwwwww')
+
         for df_hx in vector_df_hx:
             df_economic = pd.DataFrame(columns=['Equipment_ID',
                                                 'Recovered_Energy',
@@ -211,23 +214,40 @@ def generate_heat_recovery(in_var):
                                                           'Total_Turnkey_Cost': row['Total_Turnkey_Cost'], }
                                                          , ignore_index=True)
 
-                    else:  # object.type = 'process'
-                            for equipment in all_objects:
-                                if save_object.equipment == equipment.id: # find equipment that supplies process
-                                    break
+                    elif save_object.object_type == 'process':  # object.type = 'process'
 
-                            print('newwww')
-                            print(vars(equipment))
-                            data = fuel_properties('Portugal',equipment.fuel_type,'non-household')
-                            cost = data['price']
-                            CO2_emission_per_kw = data['co2_emissions']
+                        for equipment in all_objects:
+                            if save_object.equipment == equipment.id:  # find equipment that supplies process
+                                break
+                            else:
+                                equipment = 'not found'
 
-                            df_economic = df_economic.append({'Equipment_ID': save_object.equipment,
-                                                              'CO2_Savings_Year': row['Recovered_Energy'] * CO2_emission_per_kw,
-                                                              'Recovered_Energy': row['Recovered_Energy'],
-                                                              'Savings_Year':  row['Recovered_Energy'] * cost,
-                                                              'Total_Turnkey_Cost': row['Total_Turnkey_Cost'], }
-                                                             , ignore_index=True)
+                        data = fuel_properties('Portugal', equipment.fuel_type, 'non-household')
+                        cost = data['price']
+                        CO2_emission_per_kw = data['co2_emissions']
+
+                        df_economic = df_economic.append({
+                                                             'Equipment_ID':save_object.equipment,
+                                                             'CO2_Savings_Year':row[
+                                                                                    'Recovered_Energy'] * CO2_emission_per_kw,
+                                                             'Recovered_Energy':row['Recovered_Energy'],
+                                                             'Savings_Year':row['Recovered_Energy'] * cost,
+                                                             'Total_Turnkey_Cost':row['Total_Turnkey_Cost'], }
+                                                         , ignore_index=True)
+
+                    else: # object.type = 'isolated_stream'
+                        #################
+                        #manuly flow
+                        df_economic = df_economic.append({
+                            'Equipment_ID':'isolated_stream',
+                            'CO2_Savings_Year':row['Recovered_Energy'] * CO2_emission_per_kw,
+                            'Recovered_Energy':row['Recovered_Energy'],
+                            'Savings_Year':row['Recovered_Energy'] * cost,
+                            'Total_Turnkey_Cost':row['Total_Turnkey_Cost'], }
+                            , ignore_index=True)
+
+
+
 
                 # Agreggate same Equipment ID savings in df_economic_final
                 equipment_id = df_economic['Equipment_ID'].values
@@ -242,7 +262,6 @@ def generate_heat_recovery(in_var):
                     for equipment in all_objects:
                         if id == equipment.id:  # find equipment that supplies process
                             break
-
                     df_economic_final = df_economic_final.append({'Equipment_ID': id,
                                                                   'CO2_Savings_Year': row['Recovered_Energy'] * CO2_emission_per_kw,
                                                                   'Recovered_Energy': total_recovered_heat,
@@ -250,8 +269,8 @@ def generate_heat_recovery(in_var):
                                                                   'Total_Turnkey_Cost': total_turnkey, }
                                                                  , ignore_index=True)
 
-            output.append([df_hx,
-                           df_economic_final])
+            print(df_hx)
+            output.append([df_hx,df_economic_final])
 
     else:
         output.append([df_hx_bulk,[]])
