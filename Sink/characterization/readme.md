@@ -1,4 +1,4 @@
-#Sink characterization submodule
+# Sink characterization submodule
 
 This submodule comprises the sink characterization of the the EMB3RS platform.
 
