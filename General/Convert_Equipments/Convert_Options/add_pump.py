@@ -47,12 +47,12 @@ class Add_Pump():
             'conversion_efficiency': 1,  # []
             'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] ),  # [€/year.kW]
             'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity'] ),  # [€/kWh]
-            'emissions': self.fuel_properties['CO2_emission'] / self.global_conversion_efficiency  # [kg.CO2/kWh]
+            'emissions': self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh]
             }
 
     def design_equipment(self, power_fraction):
         # Fluid and Fuel cost
-        fluid_rho = fluid_material_rho(self.fluid)
+        fluid_rho = fluid_material_rho(self.fluid,(self.supply_temperature+self.return_temperature)/2)
 
         # Flowrate
         supply_capacity = self.supply_capacity * power_fraction  # thermal power needed [kWh]

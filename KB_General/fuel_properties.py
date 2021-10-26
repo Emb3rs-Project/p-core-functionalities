@@ -21,7 +21,7 @@ def fuel_properties(country,fuel_type,consumer_type):
     abs_file_path = os.path.join(script_dir, "Json_files","eu_country_acronym.json" )
 
 
-    with abs_file_path as f:
+    with open(abs_file_path) as f:
         data_eu_countries = json.load(f)
 
     try:
@@ -31,16 +31,16 @@ def fuel_properties(country,fuel_type,consumer_type):
 
 
     script_dir = os.path.dirname(__file__)
-    abs_file_path = os.path.join(script_dir, "Json_files","electricity_ghg_and_fuel_cost_per_country.json" )
+    abs_file_path = os.path.join(script_dir, "Json_files","electricity_ghg_fuel_costs_per_country.json" )
 
-    with abs_file_path as f:
+    with open(abs_file_path) as f:
         data_electricity_ghg_and_fuel_cost_per_country = json.load(f)
 
 
     script_dir = os.path.dirname(__file__)
     abs_file_path = os.path.join(script_dir, "Json_files","fuel_properties.json" )
 
-    with abs_file_path as f:
+    with open(abs_file_path) as f:
         data_fuel_properties = json.load(f)
 
     ######
@@ -76,7 +76,7 @@ def fuel_properties(country,fuel_type,consumer_type):
     # get properties
     if fuel_type == 'natural_gas' or fuel_type == 'biomass' or fuel_type == 'fuel_oil':
         density = float(data_fuel_properties[fuel_type]['density'])
-        lhv_fuel = float(data_fuel_properties[fuel_type]['lhv_fuel'])  # [kWh/kg]
+        lhv_fuel = float(data_fuel_properties[fuel_type]['lhv'])  # [kWh/kg]
         excess_air_fuel = (float(data_fuel_properties[fuel_type]['excess_air_ratio_min']) + float(data_fuel_properties[fuel_type]['excess_air_ratio_max']))/2  # average
         air_to_fuel_ratio = float(data_fuel_properties[fuel_type]['air_to_fuel_ratio'])
         co2_emissions = float(data_fuel_properties[fuel_type]['co2_emissions'])  # [kg/kWh]

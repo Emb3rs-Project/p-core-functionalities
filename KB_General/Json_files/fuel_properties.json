@@ -8,7 +8,7 @@
     "excess_air_ratio_min": "ratio",
     "excess_air_ratio_max": "ratio"
   },
-  "natural gas": {
+  "natural_gas": {
     "parameter": "natural gas",
     "density": "0.712",
     "lhv": "9.3272",
@@ -17,7 +17,7 @@
     "excess_air_ratio_min": "1.05",
     "excess_air_ratio_max": "1.1"
   },
-  "fuel oil": {
+  "fuel_oil": {
     "parameter": "fuel oil",
     "density": "850",
     "lhv": "10055.5",

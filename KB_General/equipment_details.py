@@ -9,10 +9,11 @@ def equipment_details(equipment,equipment_char):
     turnkey = 1
 
     script_dir = os.path.dirname(__file__)
-    abs_file_path = os.path.join(script_dir, "Json_files","equipment_details.json" )
+    abs_file_path = os.path.join(script_dir, "Json_files","equipment_details.json")
 
-    with abs_file_path as f:
+    with open(abs_file_path) as f:
         data = json.load(f)
+
 
     try:
         om_fix = float(data[equipment]['fixed_om_c']) * equipment_char ** float(data[equipment]['fixed_om_n'])

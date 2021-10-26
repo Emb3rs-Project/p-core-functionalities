@@ -6,7 +6,7 @@ def building_properties(country,building_type):
     script_dir = os.path.dirname(__file__)
     abs_file_path = os.path.join(script_dir, "Json_files","building_properties.json" )
 
-    with abs_file_path as f:
+    with open(abs_file_path) as f:
         data = json.load(f)
 
     try:
