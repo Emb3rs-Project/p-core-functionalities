@@ -9,11 +9,12 @@ INPUT:  group_of_sources = [source_1,source_2,...] each source with dictionary {
         sink_group_grid_return_temperature
         grid_losses -> vector with vectors with grid losses for each stream of source  [[source_1_stream_1_loss, source_1_stream_2_loss],...]
 
-      Where:
-         # source_id
-         # source_location = [country,latitude,longitude]
-         # consumer_type - 'household' or 'non-household'
-         # streams -> vector with dictionaries with {stream_id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation}
+        Where in each source of group_of_sources :
+            # source_id
+            # source_location = [country,latitude,longitude]
+            # consumer_type - 'household' or 'non-household'
+            # streams -> vector with dictionaries with {stream_id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation}
+
 
 ##############################
 OUTPUT: vector with multiple dictionaries [{'source_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies'},..]
@@ -28,21 +29,23 @@ OUTPUT: vector with multiple dictionaries [{'source_id', 'stream_id', 'hourly_st
              # hourly_stream_capacity [kWh]
              # conversion_technologies - multiple dictionaries with technologies possible to implement
 
-              Important:
-                 # conversion_technologies = {
-                 #         'equipment'
-                 #         'max_capacity'  [kW]
-                 #         'turnkey_a' [€/kW]
-                 #         'turnkey_b' [€]
-                 #         'conversion_efficiency'  []
-                 #         'om_fix'   [€/year.kW]
-                 #         'om_var'  [€/kWh]
-                 #         'emissions'  [kg.CO2/kWh]
-                 #     }
+              Where in conversion_technologies:
+                # conversion_technologies = {
+                #         'equipment'
+                #         'max_capacity'  [kW]
+                #         'turnkey_a' [€/kW]
+                #         'turnkey_b' [€]
+                #         'conversion_efficiency'  []
+                #         'om_fix'   [€/year.kW]
+                #         'om_var'  [€/kWh]
+                #         'emissions'  [kg.CO2/kWh]
+                #         'tecnhologies' - technologies info in details,
+                #     }
+
+
 
 
 """
-
 
 from General.Convert_Equipments.Auxiliary.source_get_hx_temperatures import source_get_hx_temperatures
 from General.Convert_Equipments.Convert_Options.add_boiler import Add_Boiler
@@ -90,7 +93,7 @@ def convert_sources(in_var):
     # ORC Cascaded Characteristics
     orc_intermediate_fluid = 'water'
     orc_T_evap = 140  # defined var [ºC]
-    orc_T_cond_out = 85  # defined var [ºC]
+    orc_T_cond_out = 90  # defined var [ºC]
     orc_T_cond_in = 60  # defined var [ºC]
 
     # Convert_Options Characteristics
@@ -353,14 +356,6 @@ stream_1 = {'stream_id':1,
             'target_temperature':120,
             'hourly_generation':[1000,1000,1000]}
 
-stream_2 = {'stream_id':10,
-            'object_type':'stream',
-            'stream_type':'excess_heat',
-            'fluid':'water',
-            'capacity':1000,
-            'supply_temperature': 200,
-            'target_temperature':45,
-            'hourly_generation':[1000,1000,1000]}
 
 invar.group_of_sources = [ {'id':1,
                             'consumer_type': 'non-household',

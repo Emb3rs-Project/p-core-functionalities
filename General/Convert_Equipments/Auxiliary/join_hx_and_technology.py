@@ -51,7 +51,6 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
    #     max_power_stream /= conversion_efficiency
 
 
-
     data_teo = {
         'equipment': conversion_efficiency_technology_name,
         'max_capacity': max_power_stream,  # [kW]

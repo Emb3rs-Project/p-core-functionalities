@@ -5,6 +5,7 @@ Info: Fuel data
 import urllib3
 from bs4 import BeautifulSoup
 import json
+import os
 
 def fuel_properties(country,fuel_type,consumer_type):
 
@@ -16,8 +17,11 @@ def fuel_properties(country,fuel_type,consumer_type):
     air_to_fuel_ratio = 'none'
     co2_emissions = 'none'  # [kg/kWh]
 
+    script_dir = os.path.dirname(__file__)
+    abs_file_path = os.path.join(script_dir, "Json_files","eu_country_acronym.json" )
 
-    with open('Json_files/eu_country_acronym.json') as f:
+
+    with abs_file_path as f:
         data_eu_countries = json.load(f)
 
     try:
@@ -26,10 +30,17 @@ def fuel_properties(country,fuel_type,consumer_type):
         country_acronyms = data_eu_countries['Portugal']
 
 
-    with open('Json_files/electricity_ghg_and_fuel_cost_per_country.json') as f:
+    script_dir = os.path.dirname(__file__)
+    abs_file_path = os.path.join(script_dir, "Json_files","electricity_ghg_and_fuel_cost_per_country.json" )
+
+    with abs_file_path as f:
         data_electricity_ghg_and_fuel_cost_per_country = json.load(f)
 
-    with open('Json_files/fuel_properties.json') as f:
+
+    script_dir = os.path.dirname(__file__)
+    abs_file_path = os.path.join(script_dir, "Json_files","fuel_properties.json" )
+
+    with abs_file_path as f:
         data_fuel_properties = json.load(f)
 
     ######

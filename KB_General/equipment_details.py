@@ -1,4 +1,5 @@
 import json
+import os
 
 def equipment_details(equipment,equipment_char):
 
@@ -7,7 +8,10 @@ def equipment_details(equipment,equipment_char):
     om_fix = 1
     turnkey = 1
 
-    with open('Json_files/equipment_details.json') as f:
+    script_dir = os.path.dirname(__file__)
+    abs_file_path = os.path.join(script_dir, "Json_files","equipment_details.json" )
+
+    with abs_file_path as f:
         data = json.load(f)
 
     try:

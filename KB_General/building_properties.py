@@ -1,8 +1,12 @@
 import json
+import os
 
 def building_properties(country,building_type):
 
-    with open('Json_files/building_properties.json') as f:
+    script_dir = os.path.dirname(__file__)
+    abs_file_path = os.path.join(script_dir, "Json_files","building_properties.json" )
+
+    with abs_file_path as f:
         data = json.load(f)
 
     try:

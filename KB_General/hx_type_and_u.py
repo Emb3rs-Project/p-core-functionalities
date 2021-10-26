@@ -7,11 +7,15 @@ Return: [hx_type,hx_u_value]
 """
 
 import json
+import os
 
 
 def hx_type_and_u(fluid_1,fluid_2):
 
-    with open('./Json_files/medium_list.json') as f:
+    script_dir = os.path.dirname(__file__)
+    abs_file_path = os.path.join(script_dir, "Json_files","medium_list.json" )
+
+    with open(abs_file_path) as f:
         data = json.load(f)
 
     try:
@@ -44,4 +48,5 @@ def hx_type_and_u(fluid_1,fluid_2):
         hx_u_value = 800
 
     return hx_type,hx_u_value
+
 

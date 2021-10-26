@@ -5,10 +5,14 @@ Info: Fluids and materials properties
 
 """
 import json
+import os
 
 def fluid_material_cp(fluid_name,temperature):
 
-    with open('Json_files/medium_list.json') as f:
+    script_dir = os.path.dirname(__file__)
+    abs_file_path = os.path.join(script_dir, "Json_files","medium_list.json" )
+
+    with abs_file_path as f:
         data = json.load(f)
 
     try:
@@ -26,7 +30,10 @@ def fluid_material_cp(fluid_name,temperature):
 
 def fluid_material_rho(fluid_name,temperature):
 
-    with open('Json_files/medium_list.json') as f:
+    script_dir = os.path.dirname(__file__)
+    abs_file_path = os.path.join(script_dir, "Json_files","medium_list.json" )
+
+    with abs_file_path as f:
         data = json.load(f)
 
     try:
@@ -43,7 +50,10 @@ def fluid_material_rho(fluid_name,temperature):
 
 def fluid_material_state(fluid_name):
 
-    with open('Json_files/medium_list.json') as f:
+    script_dir = os.path.dirname(__file__)
+    abs_file_path = os.path.join(script_dir, "Json_files","medium_list.json" )
+
+    with abs_file_path as f:
         data = json.load(f)
 
     try:
