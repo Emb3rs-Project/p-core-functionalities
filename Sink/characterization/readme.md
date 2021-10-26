@@ -4,9 +4,9 @@ This submodule comprises the sink characterization of the the EMB3RS platform.
 
 ## Characterization of user-defined sinks (industrial)
 
-There is one function to characterize industrial sinks or user-defined streams, the industry function.
+There is one function to characterize industrial sinks or user-defined streams, the simplified_user function.
 
-### Industry function
+### simplified_user function
 
 The function reads user input data and computes the related stream in json format.
 
