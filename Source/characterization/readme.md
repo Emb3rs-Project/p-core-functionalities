@@ -168,3 +168,48 @@ It outputs a json file containing the following information on the 2 streams gen
     - excess_heat_flowrate,
     - excess_heat_supply_capacity,
     - schedule
+
+## generate_process
+
+This function will generate the streams related to a process, according to the user specifications.
+
+### INPUT
+1. equipment = equipment that supplies heat/cold to the process [kW]
+1. operation_temperature = process operation temperature (ºC)
+1. startup_op = process startup (1-yes, 0-no)
+    - startup_fluid (list)
+    - startup_T_initial (ºC)
+    - startup_mass (kg)
+    - startup_fluid_cp (kJ/kg.K - default values from KB)
+1. maintenance_op = process maintenance (1-yes, 0-no)
+    - maintenance_capacity (kW)
+1. n_inflows = process number of inflows (0 - 10)
+    - inflow_fluid (list)
+    - inflow_supply_temperature (ºC)
+    - inflow_target_temperature (ºC)
+    - inflow_flowrate (kg/h)
+    - inflow_fluid_cp (kJ/kg.K - default values from KB)
+1. n_outflows = process number of outflows (0 - 10)
+    - outflow_fluid (list)
+    - outflow_supply_temperature (ºC)
+    - outflow_target_temperature (ºC)
+    - outflow_flowrate (kg/h)
+    - outflow_fluid_cp (kJ/kg.K - default values from KB)
+1. process schedule:
+    - saturday_on = saturday operation (1-Yes, 0- No)
+    - sunday_on = sunday operation (1-Yes, 0- No)
+    - shutdown_periods = yearly shutdown periods (e.g: [[59,74],[152,172],[362,365]])
+    - daily_periods = daily_periods (e.g: [[8,12],[15,19]])
+    - schedule_type = process type (0-continuous, 1-batch)
+    - cycle_time_percentage = time percentage for startup and ouflows (0-1)
+
+
+### OUTPUT
+
+It outputs a json file containing the following information on the n streams generated (startup, maintenance, inflows, outflows), having for each stream
+- supply_fluid (water by default)
+- return_temperature (ºC),
+- supply_temperature (ºC),
+- supply_flowrate (kg/h),
+- supply_capacity (kW),
+- hourly_generation (kWh/h),
