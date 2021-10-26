@@ -21,7 +21,7 @@ INPUT: group_of_sources = [source_1,source_2,...] each source with dictionary {s
   - target_temperature
   - hourly_generation
 
-OUTPUT: vector with multiple dictionaries ('source_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies',..)
+OUTPUT: json with multiple dictionaries ('source_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies',..)
 Where:
 - source_id
 - source_grid_supply_temperature
@@ -56,7 +56,7 @@ Where:
   - streams -> vector with dictionaries with {id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation}
   - hourly_generation for streams (profile 1 and 0), hourly_generation for building  (kWh profile)
 
-OUTPUT: vector with multiple dictionaries {'sink_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies'}
+OUTPUT: json with multiple dictionaries {'sink_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies'}
 Where in sinks:
 - sink_id
 - streams
