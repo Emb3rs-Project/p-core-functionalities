@@ -1,7 +1,12 @@
 The Core Functionalities module will allow a full characterization of the main objects of the EMB3Rs platform and prepare the data for the simulation process by the analysis modules.
 
 For sources, the CF module is divided into 2 submodules: characterization and simulation.
-The CF source characterization submodule receives the input data from the user and calculates available excess heat. It has 6 main functions (outflow_simplified, generate_process, generate_boiler, generate_burner generate_cooling_equipment and generate_chp), and 5 auxiliary functions (schedule_hour; T_flue_gas; combustion_mass_flows; compute_flow_rate and stream). These are the main functionalities to analyse user data input for sources.
+
+The CF source characterization submodule receives input data from the user and generates streams for each source available (inflows, excess heat and supply heat). It has 6 main functions (outflow_simplified, generate_process, generate_boiler, generate_burner generate_cooling_equipment and generate_chp), and 5 auxiliary functions (schedule_hour; T_flue_gas; combustion_mass_flows; compute_flow_rate and stream). These are the main functionalities to analyse user data input for sources.
+
+More information can be found here:
+
+Source/characterization/readme.md
 
 Whenever a user performs a simulation on the platform, the CF source simulation submodule will retrieve the required data from the platform and calculate the end use. The submodule has 2 main functions (convert_sources and generate_heat_recovery), and 17 auxiliary functions. 
 
