@@ -7,7 +7,7 @@ Whenever a user performs a simulation on the platform, the CF source simulation 
 
 The convert_source funcion will get the group of sources to be converted from the platform.
 
-INPUT: group_of_sources = [source_1,source_2,...] each sink with dictionary {source_id,source_location,consumer_type,source_streams}
+INPUT: group_of_sources = [source_1,source_2,...] each source with dictionary {source_id,source_location,consumer_type,source_streams}
 - source_id
 - source_location = (country,latitude,longitude)
 - consumer_type - 'household' or 'non-household'
@@ -41,7 +41,7 @@ Where in streams_converted:
   - 'om_var'  [€/kWh]
   - 'emissions'  [kg.CO2/kWh]
 
-The sink submodule has the same 2 main subgroups, charaterization and simulation.
+For sinks, the CF module is also divided into 2 submodules, charaterization and simulation.
 
 To characterize sinks, the CF has 3 main functions and 16 auxiliary functions. There is the industry function for simplified users that wish to manually add a heat/cold demand.
 The building and greenhouse functions is for users that intend to add a climate dependent heating/cooling demand. The functions will then generate an hourly heating/cooling demand profile for a full year based on climate data and indoor temperature requirements.
