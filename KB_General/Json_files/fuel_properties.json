@@ -1,0 +1,38 @@
+{
+  "units": {
+    "parameter": "units",
+    "density": "kg/m3",
+    "lhv": "kWh/m3",
+    "co2_emissions": "kg CO2/kWh",
+    "air_to_fuel_ratio": "ratio",
+    "excess_air_ratio_min": "ratio",
+    "excess_air_ratio_max": "ratio"
+  },
+  "natural gas": {
+    "parameter": "natural gas",
+    "density": "0.712",
+    "lhv": "9.3272",
+    "co2_emissions": "0.209923664",
+    "air_to_fuel_ratio": "17.2",
+    "excess_air_ratio_min": "1.05",
+    "excess_air_ratio_max": "1.1"
+  },
+  "fuel oil": {
+    "parameter": "fuel oil",
+    "density": "850",
+    "lhv": "10055.5",
+    "co2_emissions": "0.266272189",
+    "air_to_fuel_ratio": "14.6",
+    "excess_air_ratio_min": "1.1",
+    "excess_air_ratio_max": "1.2"
+  },
+  "biomass": {
+    "parameter": "biomass",
+    "density": "700",
+    "lhv": "3500",
+    "co2_emissions": "0.366",
+    "air_to_fuel_ratio": "10.76",
+    "excess_air_ratio_min": "1.4",
+    "excess_air_ratio_max": "2"
+  }
+}
