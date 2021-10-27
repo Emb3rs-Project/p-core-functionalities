@@ -11,11 +11,10 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
     om_var = 0
     emissions = 0
     max_supply_capacity = 0
-    conversion_efficiency_technology_name = ''
-
+    conversion_efficiency_technology_name = []
 
     for technology in technologies:
-        conversion_efficiency_technology_name += '+' + technology['equipment']
+        conversion_efficiency_technology_name.append(technology['equipment'])
 
         if technology['equipment'] == 'fresnel' or technology['equipment'] == 'evacuated_tube' or technology['equipment'] == 'flat_plate':
             max_supply_capacity_val = technology['max_average_supply_capacity']
@@ -35,7 +34,7 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
         else:
             max_supply_capacity_val = technology['max_supply_capacity']
 
-        emissions += technology['emissions'] * (max_supply_capacity_val)
+        emissions += technology['emissions']
 
     emissions = emissions / max_power_stream
     power_fraction_supply_capacity = max_power_stream*power_fraction
@@ -43,12 +42,6 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
 
     turnkey_a,turnkey_b = linearize_values(turnkey_max_power, turnkey_power_fraction, max_power_stream, power_fraction_supply_capacity)
 
-    conversion_efficiency_technology_name = conversion_efficiency_technology_name[1:]
-
-    #if object_type == 'sink':
-   #     max_power_stream /= conversion_efficiency
-   # else:
-   #     max_power_stream /= conversion_efficiency
 
 
     data_teo = {

@@ -6,7 +6,7 @@ INFO: GET SINK CONVERTION TECHNOLOGIES TO SEND TEO
 INPUT: group_of_sinks = [sink_1,sink_2,...] each sink with dictionary {sink_id,sink_location,streams}
       Where:
          # id
-         # location = [country, consumer_type,latitude,longitude]
+         # location = [country,latitude,longitude]
          # consumer_type - 'household' or 'non-household'
          # streams -> array with dictionaries with {id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation}
 
@@ -59,6 +59,7 @@ import json
 
 def convert_sinks(in_var):
 
+    # INPUT -------
     group_of_sinks = in_var.group_of_sinks  # e.g. building, greenhouse, stream inflow
 
     # Initialize array
