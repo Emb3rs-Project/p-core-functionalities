@@ -6,7 +6,6 @@ INFO: Create Boiler Object and characterize its streams.
 INPUT: object with:
 
         # id - equipment id
-        # equipment  - heat/cooling equipment id associated to
         # supply_temperature [ºC]
         # open_closed_loop - 1 (yes)  or 0 (no)
             # if open_closed_loop = 1 -> user must input -> return_temperature [ºC]
@@ -16,7 +15,6 @@ INPUT: object with:
         # sunday_on - 1 (yes)  or 0 (no)
         # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
         # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
-        # schedule_type  - 0=Continuous, 1=Batch
 
         IMPORTANT
         To compute excess heat characteristics the equipment supply capacity must be known.
