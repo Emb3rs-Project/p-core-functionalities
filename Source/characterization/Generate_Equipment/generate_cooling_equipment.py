@@ -126,7 +126,7 @@ class Cooling_Equipment():
             excess_heat_flowrate = 0
 
         # electrical consumption [kW]
-        self.fuel_consumption = self.supply_capacity/self.global_conversion_efficiency
+        fuel_consumption = self.supply_capacity/self.global_conversion_efficiency
 
         # equipment streams
         # supply heat

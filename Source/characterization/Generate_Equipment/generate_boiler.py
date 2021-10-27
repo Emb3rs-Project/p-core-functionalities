@@ -25,8 +25,6 @@ INPUT: object with:
                 Where, e.g, in process_1:
                     # process_1 = {'streams':[{stream_1_info},{stream_2_info},..]
 
-
-
 ##############################
 OUTPUT: object Boiler.
 
@@ -39,6 +37,7 @@ from General.Auxiliary_General.schedule_hour import schedule_hour
 from General.Auxiliary_General.combustion import T_flue_gas, combustion_mass_flows
 from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from General.Auxiliary_General.stream import Stream
+from KB_General.fluid_material import fluid_material_cp
 
 
 class Boiler():
@@ -51,6 +50,7 @@ class Boiler():
         excess_heat_fluid = 'flue_gas'  # Excess heat fluid type
         inflow_supply_temperature = 20  # Ambient Temperature
         excess_heat_target_temperature = 120  # flue_gas is usually cooled until 120ºC  due to the formation of condensates
+        inflow_fluid = 'air'
 
         # INPUT
         self.id = in_var.id  # Create ID for each boiler
@@ -98,12 +98,9 @@ class Boiler():
                 self.supply_capacity = 0
 
         # fuel consumption [kg/h]
-        self.fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(self.supply_capacity,
+        fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(self.supply_capacity,
                                                                          self.global_conversion_efficiency,
                                                                          self.fuel_type)
-        # Inflow
-        # flowrate [kg/h]
-        inflow_flowrate = m_air
 
         # Supply Heat
         # flowrate [kg/h]
@@ -120,7 +117,7 @@ class Boiler():
         # supply temperature [ºC]
         excess_heat_supply_temperature, inflow_target_temperature = T_flue_gas(self.supply_capacity,
                                                                                self.fuel_type,
-                                                                               self.fuel_consumption,
+                                                                               fuel_consumption,
                                                                                m_flue_gas)
 
         # flowrate [kg/h]
@@ -129,15 +126,22 @@ class Boiler():
                                                  excess_heat_supply_temperature,
                                                  excess_heat_target_temperature)
 
+
+        # Inflow
+        inflow_flowrate = m_air
+        inflow_fluid_cp = fluid_material_cp(inflow_fluid,(inflow_supply_temperature+inflow_target_temperature)/2)
+        inflow_capacity = inflow_flowrate * (inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp/3600  # [kW]
+
+
         # equipment streams
         # Air Inflow
         self.streams.append(Stream(self.id,
                                    'inflow',
-                                   'air',
+                                   inflow_fluid,
                                    inflow_supply_temperature,
                                    inflow_target_temperature,
                                    inflow_flowrate,
-                                   self.supply_capacity,
+                                   inflow_capacity,
                                    schedule))
 
         # Supply Heat
