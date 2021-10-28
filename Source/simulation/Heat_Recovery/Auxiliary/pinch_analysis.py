@@ -14,7 +14,6 @@ Return: DF with HX
 
 
 
-
 import pandas as pd
 from Source.simulation.Heat_Recovery.Auxiliary.table_heat_cascade import table_heat_cascade
 from Source.simulation.Heat_Recovery.Auxiliary.pinch_point import pinch_point
@@ -51,7 +50,7 @@ def pinch_analysis(df_operating,df_profile,delta_T_min):
                                   'Hot_Stream',
                                   'Cold_Stream',
                                   'Type',
-                                  'Turnkey_Cost',
+                                  'HX_Turnkey_Cost',
                                   'OM_Fix_Cost',
                                   'Hot_Stream_T_Hot',
                                   'Hot_Stream_T_Cold',

@@ -1,29 +1,46 @@
 """
-@author: jmcunha/alisboa
 
+##############################
 Info: Main function of Heat Recovery Module. Compute and plot GCC, find pinch point, pinch analysis above/below pinch
 point and HX design for maximum energy recovery
 
-Return: Vector with pairs of DFs (DF HX and DF ECONOMIC).
-        DF HX - All characteristics of HX design between processes
-        DF ECONOMIC - Energy/Emissions/Cost info of DF HX - related to the equipment supplying the processes
+##############################
+INPUT: object with:
 
-DF HX -['Power' [kW], 'Hot_Stream' [ID], 'Cold_Stream' [index], 'Type'  [hx type], 'Turnkey_Cost'  [€],
-        'OM_Fix_Cost'  [€/year], 'Hot_Stream_T_Hot'  [ºC], 'Hot_Stream_T_Cold'  [ºC],
-        'Original_Hot_Stream' [ID], 'Original_Cold_Stream ' [ID], 'Storage'  [m3],
-        'Storage_Satisfies' [%], 'Storage_Turnkey_Cost'  [€],
-        'Total_Turnkey_Cost'  [€], 'Recovered_Energy'  [kWh]]
+        # id   # process id
+        # equipment  # heat/cooling equipment id associated to
+        # operation_temperature  # process operation_temperature [ºC]
 
-DF ECONOMIC - ['Equipment_ID' [ID], 'CO2_Savings_Year' [kg] ,'Recovered_Energy'  [kWh],
-               'Savings_Year'  [€] :  ,'Total_Turnkey_Cost'  [€]]
+
+##############################
+Return: dictionary with 3 keys:
+
+            # co2_optimization - vector with 3 dictionaries for the 3 best max co2 emissions saving
+            # energy_recovered_optimization - vector with 3 dictionaries for the 3 best max energy recovered
+            # energy_investment_optimization - vector with 3 dictionaries for the 3 best max energy_recovered/turnkey
+
+            Where in each one:
+                # total_turnkey [€]
+                # total_co2_savings [kg CO2]
+                # total_energy_recovered [kWh]
+                # pinch_hx_data
+                # equipment_detailed_savings
+
+                Where in pinch_hx_data - a DF turned in a dictionary with:
+                    DF  -['Power' [kW], 'Hot_Stream' [ID], 'Cold_Stream' [ID], 'Type' [hx type], 'HX_Turnkey_Cost' [€], 'OM_Fix_Cost'  [€/year], 'Hot_Stream_T_Hot'  [ºC], 'Hot_Stream_T_Cold'  [ºC],'Original_Hot_Stream' [ID], 'Original_Cold_Stream ' [ID], 'Storage'  [m3], 'Storage_Satisfies' [%], 'Storage_Turnkey_Cost'  [€],'Total_Turnkey_Cost'  [€], 'Recovered_Energy'  [kWh]]
+
+                Where in equipment_detailed_savings - a DF turned in a dictionary with:
+                    DF - ['Equipment_ID' [ID], 'CO2_Savings_Year' [kg] ,'Recovered_Energy'  [kWh],'Savings_Year'  [€] :  ,'Total_Turnkey_Cost'  [€]]
 
 """
+
 from KB_General.fluid_material import fluid_material_cp
-from Source.simulation.Heat_Recovery.pinch_analysis import pinch_analysis
+from Source.simulation.Heat_Recovery.Auxiliary.pinch_analysis import pinch_analysis
 from Source.simulation.Heat_Recovery.Auxiliary.table_heat_cascade import table_heat_cascade
 from Source.simulation.Heat_Recovery.Auxiliary.pinch_point import pinch_point
 import pandas as pd
 from KB_General.fuel_properties import fuel_properties
+from Source.simulation.Heat_Recovery.Auxiliary.get_best_3_outputs import get_best_3_outputs
 
 
 def generate_heat_recovery(in_var):
@@ -168,19 +185,15 @@ def generate_heat_recovery(in_var):
                     if df_hx.empty == False:
                         vector_df_hx.append(df_hx)
 
-
     # Hourly percentage recovered heat
     for df_hx in vector_df_hx:
             recovered_heat = sum(df_hx['Power'].values)
 
 
-
     # Create economic DF's (e.g total_investment, energy and money saved yearly - and in which equipment)
-    output = []
+    all_df = []
 
     if objects != []:
-        print('##########################################')
-        print('newwwwwwwwwww')
 
         for df_hx in vector_df_hx:
             df_economic = pd.DataFrame(columns=['Equipment_ID',
@@ -272,57 +285,64 @@ def generate_heat_recovery(in_var):
                                                                   'Total_Turnkey_Cost': total_turnkey, }
                                                                  , ignore_index=True)
 
-            output.append([df_hx,df_equipment_economic])
+            all_df.append([df_hx,df_equipment_economic])
 
 
     else:
         individual_equipment_optimization = True
-        output.append([df_hx_bulk,[]])
-
-
+        all_df.append([df_hx_bulk,[]])
 
 
 
 
     if individual_equipment_optimization is False:
-
-        co2_saving = []
-        energy_saving = []
-        energy_investment = []
-
         new_df = pd.DataFrame(columns=['index',
                                        'co2_savings',
                                        'energy_saving',
                                        'energy_investment',
+                                       'turnkey'
                                        ])
 
-        print(output)
-        for index,info in enumerate(output):
-
+        for index,info in enumerate(all_df):
             pinch_data, economic_data = info
             new_df = new_df.append({'index':index,
-                               'co2_savings':economic_data['CO2_Savings_Year'].sum(),
-                               'energy_saving':economic_data['Recovered_Energy'].sum(),
-                               'energy_investment':economic_data['Recovered_Energy'].sum() / economic_data['Total_Turnkey_Cost'].sum()}
-                               ,ignore_index=True)
+                                   'co2_savings':economic_data['CO2_Savings_Year'].sum(),
+                                   'energy_recovered':economic_data['Recovered_Energy'].sum(),
+                                   'energy_investment':economic_data['Recovered_Energy'].sum() / economic_data['Total_Turnkey_Cost'].sum(),
+                                   'turnkey':economic_data['Total_Turnkey_Cost'].sum() }
+                                   ,ignore_index=True)
 
-        new_df = new_df.drop_duplicates(subset=['co2_savings', 'energy_saving', 'energy_investment'])
+        new_df = new_df.drop_duplicates(subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
 
+        # get best 3 options that save maximum amount of co2
         co2_savings = new_df.sort_values('co2_savings').head(3)
-        energy_saving = new_df.sort_values('energy_saving').head(3)
+        co2_savings_options = get_best_3_outputs(all_df, co2_savings)
+
+        # get best 3 options that recover maximum energy
+        energy_recovered = new_df.sort_values('energy_recovered').head(3)
+        energy_recovered_options = get_best_3_outputs(all_df, energy_recovered)
+
+        # get best 3 options that give best energy_recovery/turnkey ratio
         energy_investment = new_df.sort_values('energy_investment').head(3)
+        energy_investment_options = get_best_3_outputs(all_df, energy_investment)
 
+        output = {
+            'co2_optimization':co2_savings_options,
+            'energy_recovered_optimization':energy_recovered_options,
+            'energy_investment_optimization':energy_investment_options
+            }
 
-
-        output = {'co2_savings_options': {'total': {'turnkey':,'co2_savings':, ''}
-
+    #############################################################################
+    # only recovering equipments excess heat in its inflow - STILL DEVELOPING
+    else:
+        output = {'co2_optimization': {'total': {'turnkey':0,
+                                                 'co2_savings':0,
+                                                 'energy_recovered':0},
+                                       'equipment_detailed_savings':[],
+                                       'pinch_hx_data': all_df[0].__dict__
                                           },
-
-
-                 'energy_saving_options': energy_saving,
-
-
-                 'energy_investment_options': energy_investment
+                 'energy_saving_options': [],
+                 'energy_investment_options': []
         }
 
 
