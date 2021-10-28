@@ -66,10 +66,11 @@ def fuel_properties(country,fuel_type,consumer_type):
         price = info['value'][consumer_type]/277.78  # [€/kWh]
 
     else:
+        fuel_type_cost = fuel_type + '_cost'
         try:
-            price = float(data_electricity_ghg_and_fuel_cost_per_country[country][fuel_type])  # [€/kWh]
+            price = float(data_electricity_ghg_and_fuel_cost_per_country[country][fuel_type_cost])  # [€/kWh]
         except:
-            price = float(data_electricity_ghg_and_fuel_cost_per_country['Portugal'][fuel_type])  # [€/kWh]
+            price = float(data_electricity_ghg_and_fuel_cost_per_country['Portugal'][fuel_type_cost])  # [€/kWh]
             print('country or fuel does not exist in db')
 
     ######

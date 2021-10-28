@@ -8,13 +8,14 @@ from General.Auxiliary_General.linearize_values import linearize_values
 
 class Add_ORC_Cascaded():
 
-    def __init__(self,equipment_sub_type,overall_thermal_capacity,electrical_generation,power_fraction):
+    def __init__(self,orc_cond_temperature_supply,equipment_sub_type,overall_thermal_capacity,electrical_generation,power_fraction):
 
         # Defined Vars ----
         hx_efficiency = 0.95
         self.object_type = 'equipment'
-        self.supply_temperature = 85  # defined var - max water temperature
         self.equipment_sub_type = equipment_sub_type  # orc/rc
+
+        self.supply_temperature = orc_cond_temperature_supply  # max water temperature
         self.overall_thermal_capacity = overall_thermal_capacity
         self.electrical_generation = electrical_generation  # electrical supply capacity [kW]
         self.supply_capacity = (overall_thermal_capacity - electrical_generation) * hx_efficiency

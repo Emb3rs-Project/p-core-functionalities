@@ -15,8 +15,8 @@ class Add_Electric_Chiller():
 
         # Defined Vars ----
         self.object_type = 'equipment'
-        self.fuel_type = 'electricity'
         self.equipment_sub_type = 'electric_chiller'
+        self.fuel_type = 'electricity'
         self.fuel_properties = fuel_properties(country,self.fuel_type,consumer_type)
 
         # COMPUTE -----

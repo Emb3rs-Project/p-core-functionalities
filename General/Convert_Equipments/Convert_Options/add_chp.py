@@ -10,7 +10,7 @@ from General.Auxiliary_General.linearize_values import linearize_values
 
 class Add_CHP():
 
-    def __init__(self,country,consumer_type,supply_capacity,power_fraction,supply_temperature,return_temperature):
+    def __init__(self, fuel_type, country,consumer_type,supply_capacity,power_fraction,supply_temperature,return_temperature):
 
         # Defined Vars ----
         self.object_type = 'equipment'
@@ -20,7 +20,7 @@ class Add_CHP():
         else:
             self.equipment_sub_type = 'chp_gas_turbine'
 
-        self.fuel_type = 'natural_gas'
+        self.fuel_type = fuel_type
         self.fuel_properties = fuel_properties(country,self.fuel_type,consumer_type)
 
 

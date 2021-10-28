@@ -13,33 +13,32 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
     max_supply_capacity = 0
     conversion_efficiency_technology_name = []
 
-    for technology in technologies:
-        conversion_efficiency_technology_name.append(technology['equipment'])
+    technologies_dict = []
 
-        if technology['equipment'] == 'fresnel' or technology['equipment'] == 'evacuated_tube' or technology['equipment'] == 'flat_plate':
-            max_supply_capacity_val = technology['max_average_supply_capacity']
+
+    for technology in technologies:
+
+        technologies_dict.append(technology.__dict__)
+
+        conversion_efficiency_technology_name.append(technology.data_teo['equipment'])
+
+        if technology.data_teo['equipment'] == 'fresnel' or technology.data_teo['equipment'] == 'evacuated_tube' or technology.data_teo['equipment'] == 'flat_plate':
+            max_supply_capacity_val = technology.data_teo['max_average_supply_capacity']
         else:
-            max_supply_capacity_val = technology['max_supply_capacity']
+            max_supply_capacity_val = technology.data_teo['max_supply_capacity']
 
         max_supply_capacity += max_supply_capacity_val
-        turnkey_max_power += max_supply_capacity_val * technology['turnkey_a'] + technology['turnkey_b']
-        turnkey_power_fraction +=  max_supply_capacity_val*power_fraction * technology['turnkey_a'] + technology['turnkey_b']
+        turnkey_max_power += max_supply_capacity_val * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
+        turnkey_power_fraction +=  max_supply_capacity_val* power_fraction * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
 
-        om_fix += technology['om_fix'] * max_supply_capacity_val
-        om_var += technology['om_var'] * max_supply_capacity_val
+        om_fix += technology.data_teo['om_fix'] * max_supply_capacity_val
+        om_var += technology.data_teo['om_var'] * max_supply_capacity_val
+        emissions += technology.data_teo['emissions']
 
-    for technology in technologies:
-        if technology['equipment'] == 'fresnel' or technology['equipment'] == 'evacuated_tube' or technology['equipment'] == 'flat_plate':
-            max_supply_capacity_val = technology['max_average_supply_capacity']
-        else:
-            max_supply_capacity_val = technology['max_supply_capacity']
 
-        emissions += technology['emissions']
 
-    emissions = emissions / max_power_stream
     power_fraction_supply_capacity = max_power_stream*power_fraction
     conversion_efficiency = max_power_grid/max_power_stream
-
     turnkey_a,turnkey_b = linearize_values(turnkey_max_power, turnkey_power_fraction, max_power_stream, power_fraction_supply_capacity)
 
 
@@ -53,7 +52,7 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
         'om_fix': om_fix / max_power_stream,# [€/year.kW]
         'om_var': om_var / max_power_stream,# [€/kWh]
         'emissions': emissions,  # [kg.CO2/kWh]
-        'tecnhologies': technologies,
+        'tecnhologies': technologies_dict,
 
     }
 

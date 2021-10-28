@@ -15,8 +15,8 @@ class Add_Heat_Pump():
 
         # Defined Vars ----
         self.object_type = 'equipment'
-        self.fuel_type = 'electricity'
         self.equipment_sub_type = 'heat_pump'
+        self.fuel_type = 'electricity'
         self.fuel_properties = fuel_properties(country,self.fuel_type,consumer_type)
 
         # COMPUTE -----

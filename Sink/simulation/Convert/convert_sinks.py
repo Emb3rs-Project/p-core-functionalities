@@ -39,11 +39,12 @@ OUTPUT: vector with multiple dictionaries {'sink_id', 'stream_id', 'hourly_strea
                  #         'om_fix'   [€/year.kW]
                  #         'om_var'  [€/kWh]
                  #         'emissions'  [kg.CO2/kWh]
-                 #         'tecnhologies' - technologies info in details,
+                 #         'tecnhologies' - technologies info in detail,
                  #     }
 
 
 """
+
 from General.Convert_Equipments.Auxiliary.sink_get_hx_temperatures import sink_get_hx_temperatures
 from General.Convert_Equipments.Convert_Options.add_boiler import Add_Boiler
 from General.Convert_Equipments.Convert_Options.add_hx import Add_HX
@@ -69,6 +70,8 @@ def convert_sinks(in_var):
     vector_sink_max_target_temperature = []
     vector_sink_max_supply_temperature = []
     output_converted = []
+    boiler_fuel_type =['electricity','natural_gas','fuel_oil','biomass']  # types of fuel
+    chp_fuel_type = ['natural_gas','fuel_oil','biomass']
 
     # Defined vars -----------------------
     # Grid Characteristics
@@ -162,30 +165,33 @@ def convert_sinks(in_var):
 
 
                     if stream['target_temperature'] == hx_sink_target_temperature:
-                        info = join_hx_and_technology([info_pump_grid.data_teo,info_hx_grid.data_teo],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
+                        info = join_hx_and_technology([info_pump_grid,info_hx_grid],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
                         conversion_technologies.append(info)
 
                     elif stream['target_temperature'] > hx_sink_target_temperature:
+
                         # add boiler
-                        info_technology = Add_Boiler(country, consumer_type, needed_supply_capacity, power_fraction, stream['target_temperature'],hx_sink_target_temperature)
-                        info = join_hx_and_technology([info_pump_grid.data_teo,info_hx_grid.data_teo,info_technology.data_teo],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
-                        conversion_technologies.append(info)
+                        for fuel in boiler_fuel_type:
+                            info_technology = Add_Boiler(fuel, country, consumer_type, needed_supply_capacity, power_fraction, stream['target_temperature'],hx_sink_target_temperature)
+                            info = join_hx_and_technology([info_pump_grid,info_hx_grid,info_technology],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
+                            conversion_technologies.append(info)
 
                         # add solar thermal
                         info_technology = Add_Solar_Thermal(country, consumer_type, latitude, longitude, needed_yearly_capacity, power_fraction,stream['target_temperature'], hx_sink_target_temperature)
-                        info = join_hx_and_technology([info_pump_grid.data_teo,info_hx_grid.data_teo,info_technology.data_teo],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
-                        info['hourly_supply_capacity_normalize'] = info_technology.data_teo['hourly_supply_capacity_normalize']  # add solar thermal profile
+                        info = join_hx_and_technology([info_pump_grid,info_hx_grid,info_technology],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
+                        info['hourly_supply_capacity_normalize'] = info_technology['hourly_supply_capacity_normalize']  # add solar thermal profile
                         conversion_technologies.append(info)
 
                         # add heat pump
                         info_technology = Add_Heat_Pump(country, consumer_type, needed_supply_capacity, power_fraction, stream['target_temperature'],hx_sink_target_temperature)
-                        info = join_hx_and_technology([info_pump_grid.data_teo,info_hx_grid.data_teo,info_technology.data_teo],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
+                        info = join_hx_and_technology([info_pump_grid,info_hx_grid,info_technology],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
                         conversion_technologies.append(info)
 
                         # add chp
-                        info_technology = Add_CHP(country, consumer_type, needed_supply_capacity, power_fraction, stream['target_temperature'], hx_sink_target_temperature)
-                        info = join_hx_and_technology([info_pump_grid.data_teo,info_hx_grid.data_teo,info_technology.data_teo],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
-                        conversion_technologies.append(info)
+                        for fuel in chp_fuel_type:
+                            info_technology = Add_CHP(fuel, country, consumer_type, needed_supply_capacity, power_fraction, stream['target_temperature'], hx_sink_target_temperature)
+                            info = join_hx_and_technology([info_pump_grid,info_hx_grid,info_technology],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
+                            conversion_technologies.append(info)
 
 
                 # get cooling technologies
@@ -223,21 +229,27 @@ def convert_sinks(in_var):
                     # grid may not supply enough heat to the sink
                     needed_supply_capacity = stream_nominal_capacity/after_hx_global_conversion_efficiency - hx_power_supply  # [kW]
 
-                    # add boiler - absorption chiller evaporation temperature not reached
-                    if hx_sink_target_temperature < thermal_chiller_evap_T_hot:
-                        info_boiler = Add_Boiler(country, consumer_type, needed_supply_capacity, power_fraction, thermal_chiller_evap_T_hot,hx_sink_target_temperature)
-                    else:
-                        info_boiler = []
-
                     # add absorption chiller
                     info_technology = Add_Absorption_Chiller(country, consumer_type, thermal_chiller_supply_capacity, power_fraction)
 
-                    if info_boiler == [] and info_electric_chiller == []:
-                        info = join_hx_and_technology([info_pump_grid.data_teo,info_hx_grid.data_teo,  info_technology.data_teo], power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
-                    elif info_electric_chiller == []:
-                        info = join_hx_and_technology([info_pump_grid.data_teo,info_hx_grid.data_teo, info_boiler.data_teo, info_technology.data_teo], power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
+                    # absorption chiller evaporation temperature not reached
+                    if hx_sink_target_temperature < thermal_chiller_evap_T_hot:
+                        # add boiler
+                        for fuel in boiler_fuel_type:
+                            info_boiler = Add_Boiler(fuel,country, consumer_type, needed_supply_capacity, power_fraction, thermal_chiller_evap_T_hot,hx_sink_target_temperature)
+                            info = join_hx_and_technology([info_pump_grid, info_hx_grid, info_boiler,info_technology], power_fraction, info_pump_grid.supply_capacity,stream_nominal_capacity, 'sink')
+                            conversion_technologies.append(info)
+
+                        # add heat pump
+                        info_heat_pump = Add_Heat_Pump(country, consumer_type, needed_supply_capacity, power_fraction,thermal_chiller_evap_T_hot, hx_sink_target_temperature)
+                        info = join_hx_and_technology([info_pump_grid, info_hx_grid, info_heat_pump,info_technology], power_fraction, info_pump_grid.supply_capacity,stream_nominal_capacity, 'sink')
+                        conversion_technologies.append(info)
+
                     else:
-                        info = join_hx_and_technology([info_pump_grid.data_teo,info_hx_grid.data_teo,info_electric_chiller.data_teo,  info_technology.data_teo], power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
+                        if info_electric_chiller == []:
+                            info = join_hx_and_technology([info_pump_grid,info_hx_grid,  info_technology], power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
+                        else:
+                            info = join_hx_and_technology([info_pump_grid,info_hx_grid,info_electric_chiller,  info_technology], power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
 
                     conversion_technologies.append(info)
 

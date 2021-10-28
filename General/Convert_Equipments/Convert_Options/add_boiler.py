@@ -9,11 +9,17 @@ from General.Auxiliary_General.linearize_values import linearize_values
 
 class Add_Boiler():
 
-    def __init__(self, country, consumer_type, supply_capacity, power_fraction, supply_temperature, return_temperature):
+    def __init__(self, fuel_type, country, consumer_type, supply_capacity, power_fraction, supply_temperature, return_temperature):
 
         # Defined Vars ----
         self.object_type = 'equipment'
-        self.fuel_type = 'natural_gas'
+
+        if supply_temperature > 100:
+            self.equipment_sub_type = 'steam_boiler'
+        else:
+            self.equipment_sub_type = 'hot_water_boiler'
+
+        self.fuel_type = fuel_type
         self.fuel_properties = fuel_properties(country, self.fuel_type, consumer_type)
 
         # INPUT ----
@@ -21,14 +27,14 @@ class Add_Boiler():
         self.supply_temperature = supply_temperature  # equipment directly supplies grid
         self.return_temperature = return_temperature
 
-        if supply_temperature > 100:
-            self.equipment_sub_type = 'steam_boiler'
-        else:
-            self.equipment_sub_type = 'hot_water_boiler'
 
         # Equipment Supply Capacity
         self.supply_capacity = supply_capacity
-        self.global_conversion_efficiency, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type,
+
+        if fuel_type == 'electricity':
+            self.global_conversion_efficiency = 0.99
+        else:
+            self.global_conversion_efficiency, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type,
                                                                                            self.supply_capacity)
 
         # COMPUTE
