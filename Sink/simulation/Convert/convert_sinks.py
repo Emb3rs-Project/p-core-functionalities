@@ -28,7 +28,7 @@ OUTPUT: vector with multiple dictionaries {'sink_id', 'stream_id', 'hourly_strea
                       #  {
                       #         'equipment',
                       #         'fuel_type',
-                      #         'max_capacity'  [kW]
+                      #         'max_input_capacity'  [kW]
                       #         'turnkey_a' [€/kW]
                       #         'turnkey_b' [€]
                       #         'conversion_efficiency' []
