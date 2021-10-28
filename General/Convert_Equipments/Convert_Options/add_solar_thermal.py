@@ -80,7 +80,7 @@ class Add_Solar_Thermal():
             'conversion_efficiency': hx_efficiency,  # []
             'om_fix': info_max_power['om_fix'] / info_max_power['average_supply_capacity'],  # [€/year.kW]
             'om_var': info_max_power['om_var'] / info_max_power['average_supply_capacity'],  # [€/kWh]
-            'emissions': self.fuel_properties['CO2_emission'] / info_max_power['average_supply_capacity'] # [kg.CO2/kWh]
+            'emissions': self.fuel_properties['CO2_emission']  # [kg.CO2/kWh]
 
         }
 

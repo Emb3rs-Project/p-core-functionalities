@@ -25,11 +25,11 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
         if technology.data_teo['equipment'] == 'fresnel' or technology.data_teo['equipment'] == 'evacuated_tube' or technology.data_teo['equipment'] == 'flat_plate':
             max_supply_capacity_val = technology.data_teo['max_average_supply_capacity']
         else:
-            max_supply_capacity_val = technology.data_teo['max_supply_capacity']
+            max_supply_capacity_val = technology.data_teo['max_input_capacity']
 
         max_supply_capacity += max_supply_capacity_val
         turnkey_max_power += max_supply_capacity_val * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
-        turnkey_power_fraction +=  max_supply_capacity_val* power_fraction * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
+        turnkey_power_fraction += max_supply_capacity_val* power_fraction * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
 
         om_fix += technology.data_teo['om_fix'] * max_supply_capacity_val
         om_var += technology.data_teo['om_var'] * max_supply_capacity_val

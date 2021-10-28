@@ -16,9 +16,27 @@ INPUT: group_of_sinks = [sink_1,sink_2,...] each sink with dictionary {sink_id,s
 ##############################
 OUTPUT: vector with multiple dictionaries {'sink_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies'}
       Where:
-         # sink_group_grid_supply_temperature
-         # sink_group_grid_return_temperature
-         # sinks
+         # sink_group_grid_supply_temperature [ºC]
+         # sink_group_grid_return_temperature [ºC]
+         # grid_specific -  dictionary with 'heating' and 'cooling'
+         # sinks - dictionary
+
+         Where in grid_specific:
+            # heating - vector with dictionaries of the technologies
+            # cooling
+                In each technology dictionary:
+                      #  {
+                      #         'equipment',
+                      #         'fuel_type',
+                      #         'max_capacity'  [kW]
+                      #         'turnkey_a' [€/kW]
+                      #         'turnkey_b' [€]
+                      #         'conversion_efficiency' []
+                      #         'om_fix' [€/year.kW]
+                      #         'om_var' [€/kWh]
+                      #         'emissions' [kg.CO2/kWh]
+                      #         },
+
 
         Where in sinks:
          # sink_id
@@ -317,8 +335,7 @@ def convert_sinks(in_var):
     output.append({
         'sink_group_grid_supply_temperature': grid_supply_temperature,
         'sink_group_grid_return_temperature': grid_return_temperature,
-        'grid_specific_heating': grid_specific_heating,
-        'grid_specific_cooling': grid_specific_cooling,
+        'grid_specific': {'heating':grid_specific_heating,'cooling':grid_specific_cooling},
         'sinks': output_sink
         })
 

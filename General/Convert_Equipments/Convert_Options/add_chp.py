@@ -47,11 +47,12 @@ class Add_CHP():
         self.data_teo = {
             'equipment': self.equipment_sub_type,
             'fuel_type':self.fuel_type,
-            'max_supply_capacity': info_max_power['supply_capacity'] / self.thermal_conversion_efficiency,  # [kW]
+            'max_capacity': info_max_power['supply_capacity'] / self.thermal_conversion_efficiency,  # [kW]
             'electrical_generation': info_max_power['electrical_generation'],
             'turnkey_a': turnkey_a,  # [€/kW]
             'turnkey_b': turnkey_b,  # [€]
             'conversion_efficiency': self.thermal_conversion_efficiency,  # []
+            'electrical_conversion_efficiency': self.electrical_conversion_efficiency,
             'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] / self.thermal_conversion_efficiency),  # [€/year.kW]
             'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity'] / self.thermal_conversion_efficiency),  # [€/kWh]
             'emissions': self.fuel_properties['CO2_emission'] / self.thermal_conversion_efficiency  # [kg.CO2/kWh]
