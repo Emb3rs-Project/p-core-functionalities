@@ -36,7 +36,7 @@ OUTPUT: vector with dictionaries:
 
 """
 
-from General.Auxiliary_General.stream import Stream
+from General.Auxiliary_General.stream_industry import stream_industry
 from General.Auxiliary_General.schedule_hour import schedule_hour
 import json
 
@@ -70,8 +70,8 @@ def simple_user(in_var):
 
                 capacity = flowrate * fluid_cp * abs((supply_temperature - target_temperature))/3600  # [kW]
                 schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
-                info_stream = Stream(object_id,stream_type,fluid,supply_temperature,target_temperature,flowrate,capacity,schedule)
-                streams_output.append(info_stream.__dict__)
+                info_stream = stream_industry(object_id,stream_type,fluid,supply_temperature,target_temperature,flowrate,capacity,schedule)
+                streams_output.append(info_stream)
 
         # OUTPUT ------------------------
         output = json.dumps(streams_output, indent=2)

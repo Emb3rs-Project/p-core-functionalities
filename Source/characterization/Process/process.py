@@ -47,7 +47,7 @@ OUTPUT: object Process
 
 """
 
-from General.Auxiliary_General.stream import Stream
+from General.Auxiliary_General.stream_industry import stream_industry
 import datetime
 
 class Process:
@@ -105,7 +105,7 @@ class Process:
             schedule = self.schedule('startup')
             capacity = startup['mass']/self.cycle_time_percentage * startup['fluid_cp'] * (self.operation_temperature - startup['initial_temperature'])  # [kW]
 
-            self.streams.append(Stream(self.id,
+            self.streams.append(stream_industry(self.id,
                                        'startup',
                                        startup['fluid'],
                                        startup['initial_temperature'],
@@ -122,7 +122,7 @@ class Process:
 
             schedule = self.schedule('maintenance')
 
-            self.streams.append(Stream(self.id,
+            self.streams.append(stream_industry(self.id,
                                        'maintenance',
                                        'none',
                                        0,
@@ -138,7 +138,7 @@ class Process:
 
         for inflow in data:
             capacity = inflow['flowrate'] * inflow['fluid_cp'] * (self.operation_temperature - inflow['supply_temperature'])/3600  # [kW]
-            self.streams.append(Stream(self.id,
+            self.streams.append(stream_industry(self.id,
                                        'inflow',
                                        inflow['fluid'],
                                        inflow['supply_temperature'],
@@ -155,7 +155,7 @@ class Process:
         for outflow in outflow_data:
             capacity = outflow['flowrate'] * outflow['fluid_cp'] * (self.operation_temperature - outflow['target_temperature'])/3600  # [kW]
 
-            self.streams.append(Stream(self.id,'outflow',
+            self.streams.append(stream_industry(self.id,'outflow',
                                        outflow['fluid'],
                                        self.operation_temperature,
                                        outflow['target_temperature'],

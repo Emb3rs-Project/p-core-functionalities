@@ -37,20 +37,22 @@ def generate_heat_recovery(in_var):
     vector_df_hx =[]
     objects = []
     streams = []
+    individual_equipment_optimization = False
 
     delta_T_min = (delta_T_min)/2 # HX Minimum DT
     new_id=1
     # Computation
     # Analyse processes, and build streams list
     for object in all_objects:
-        if object.object_type == 'process':
+        print(object)
+        if object['object_type'] == 'process':
             perform_hourly = 1
             objects.append(object)
-            for stream in object.streams:
+            for stream in object['streams']:
                 streams.append(stream)
-        elif object.object_type == 'stream': # isolated stream
+        elif object['object_type'] == 'stream': # isolated stream
             perform_hourly = 1
-            object.id = new_id
+            object['id'] = new_id
             streams.append(object)
             new_id += 1
 
@@ -58,13 +60,13 @@ def generate_heat_recovery(in_var):
    # If 'objects' is empty, it means analyse equipment internal heat recovery
     if objects == [] and streams == []:
         object = all_objects[0]
-        if object.object_type == 'equipment':
+        if object['object_type'] == 'equipment':
             objects.append(object)
-            for stream in object.streams:
-                if stream.stream_type == 'excess_heat':
+            for stream in object['streams']:
+                if stream['stream_type'] == 'excess_heat' or stream['stream_type'] == 'inflow' or stream['stream_type'] == 'startup':
                     streams.append(stream)
-                if stream.stream_type == 'inflow':
-                    streams.append(stream)
+
+
 
 
     # Create DF's of streams (df_char) and profiles (df_profile)
@@ -72,14 +74,14 @@ def generate_heat_recovery(in_var):
     df_profile_data = []
 
     for stream in streams:
-        if stream.stream_type != 'supply_heat':
-            df_char = df_char.append({'ID':stream.id,
-                                      'Fluid': stream.fluid,
-                                      'Flowrate': stream.flowrate,
-                                      'Supply_Temperature': stream.supply_temperature,
-                                      'Target_Temperature': stream.target_temperature}, ignore_index=True)
+        if stream['stream_type'] != 'supply_heat':
+            df_char = df_char.append({'ID':stream['id'],
+                                      'Fluid': stream['fluid'],
+                                      'Flowrate': stream['flowrate'],
+                                      'Supply_Temperature': stream['supply_temperature'],
+                                      'Target_Temperature': stream['target_temperature']}, ignore_index=True)
 
-            df_profile_data.append(stream.schedule)  # create vector with streams profiles
+            df_profile_data.append(stream['schedule'])  # create vector with streams profiles
 
     df_profile = pd.DataFrame(data=df_profile_data) # create df
     df_profile.set_index(df_char['ID'],inplace=True)
@@ -190,8 +192,8 @@ def generate_heat_recovery(in_var):
                 find = True
                 while find == True:
                     for object in objects: #processes/equipment
-                        for stream in object.streams:
-                            if stream.id == row['Original_Cold_Stream']:
+                        for stream in object['streams']:
+                            if stream['id'] == row['Original_Cold_Stream']:
                                 save_object = object
                                 find = False
                                 break
@@ -202,32 +204,33 @@ def generate_heat_recovery(in_var):
                 if find == True:  # no match found - may happen with isolated streams
                     pass
                 else:
-                    if save_object.object_type == 'equipment':
+                    if save_object['object_type'] == 'equipment':
                         data = fuel_properties('Portugal',save_object.fuel_type,'non-household')
 
                         CO2_emission_per_kw = float(data['CO2_emission'])
                         cost = data['price']
-                        df_economic = df_economic.append({'Equipment_ID': save_object.id,
+                        df_economic = df_economic.append({'Equipment_ID': save_object['id'],
                                                           'CO2_Savings_Year': row['Recovered_Energy'] * CO2_emission_per_kw,
                                                           'Recovered_Energy':  row['Recovered_Energy'],
                                                           'Savings_Year': row['Recovered_Energy'] * cost,
                                                           'Total_Turnkey_Cost': row['Total_Turnkey_Cost'], }
                                                          , ignore_index=True)
 
-                    elif save_object.object_type == 'process':  # object.type = 'process'
+                    elif save_object['object_type'] == 'process':  # object.type = 'process'
 
                         for equipment in all_objects:
-                            if save_object.equipment == equipment.id:  # find equipment that supplies process
+                            if save_object['equipment'] == equipment['id']:  # find equipment that supplies process
                                 break
                             else:
                                 equipment = 'not found'
 
-                        data = fuel_properties('Portugal', equipment.fuel_type, 'non-household')
+
+                        data = fuel_properties('Portugal', equipment['fuel_type'], 'non-household')
                         cost = data['price']
                         CO2_emission_per_kw = data['co2_emissions']
 
                         df_economic = df_economic.append({
-                                                             'Equipment_ID':save_object.equipment,
+                                                             'Equipment_ID':save_object['equipment'],
                                                              'CO2_Savings_Year':row[
                                                                                     'Recovered_Energy'] * CO2_emission_per_kw,
                                                              'Recovered_Energy':row['Recovered_Energy'],
@@ -249,32 +252,78 @@ def generate_heat_recovery(in_var):
 
 
 
-                # Agreggate same Equipment ID savings in df_economic_final
+                # Agreggate same Equipment ID savings in df_equipment_economic
                 equipment_id = df_economic['Equipment_ID'].values
 
                 for id in equipment_id:
-                    df_economic_final = pd.DataFrame(columns=['Equipment_ID', 'Recovered_Energy', 'CO2_Savings_Year','Savings_Year','Total_Turnkey_Cost'])
+                    df_equipment_economic = pd.DataFrame(columns=['Equipment_ID', 'Recovered_Energy', 'CO2_Savings_Year','Savings_Year','Total_Turnkey_Cost'])
                     df_equipment_id = df_economic[df_economic['Equipment_ID'] == id]
                     total_recovered_heat = df_equipment_id['Recovered_Energy'].sum()
                     total_savings_year = df_equipment_id['Savings_Year'].sum()
                     total_turnkey = df_equipment_id['Total_Turnkey_Cost'].sum()
 
                     for equipment in all_objects:
-                        if id == equipment.id:  # find equipment that supplies process
+                        if id == equipment['id']:  # find equipment that supplies process
                             break
-                    df_economic_final = df_economic_final.append({'Equipment_ID': id,
+                    df_equipment_economic = df_equipment_economic.append({'Equipment_ID': id,
                                                                   'CO2_Savings_Year': row['Recovered_Energy'] * CO2_emission_per_kw,
                                                                   'Recovered_Energy': total_recovered_heat,
                                                                   'Savings_Year': total_savings_year,
                                                                   'Total_Turnkey_Cost': total_turnkey, }
                                                                  , ignore_index=True)
 
-            print(df_hx)
-            output.append([df_hx,df_economic_final])
+            output.append([df_hx,df_equipment_economic])
+
 
     else:
+        individual_equipment_optimization = True
         output.append([df_hx_bulk,[]])
 
+
+
+
+
+
+    if individual_equipment_optimization is False:
+
+        co2_saving = []
+        energy_saving = []
+        energy_investment = []
+
+        new_df = pd.DataFrame(columns=['index',
+                                       'co2_savings',
+                                       'energy_saving',
+                                       'energy_investment',
+                                       ])
+
+        print(output)
+        for index,info in enumerate(output):
+
+            pinch_data, economic_data = info
+            new_df = new_df.append({'index':index,
+                               'co2_savings':economic_data['CO2_Savings_Year'].sum(),
+                               'energy_saving':economic_data['Recovered_Energy'].sum(),
+                               'energy_investment':economic_data['Recovered_Energy'].sum() / economic_data['Total_Turnkey_Cost'].sum()}
+                               ,ignore_index=True)
+
+        new_df = new_df.drop_duplicates(subset=['co2_savings', 'energy_saving', 'energy_investment'])
+
+        co2_savings = new_df.sort_values('co2_savings').head(3)
+        energy_saving = new_df.sort_values('energy_saving').head(3)
+        energy_investment = new_df.sort_values('energy_investment').head(3)
+
+
+
+        output = {'co2_savings_options': {'total': {'turnkey':,'co2_savings':, ''}
+
+                                          },
+
+
+                 'energy_saving_options': energy_saving,
+
+
+                 'energy_investment_options': energy_investment
+        }
 
 
     return output

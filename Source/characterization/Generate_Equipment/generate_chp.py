@@ -40,7 +40,7 @@ OUTPUT: object CHP.
 from General.Auxiliary_General.schedule_hour import schedule_hour
 from General.Auxiliary_General.combustion import T_flue_gas,combustion_mass_flows
 from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from General.Auxiliary_General.stream import Stream
+from General.Auxiliary_General.stream_industry import stream_industry
 from KB_General.fluid_material import fluid_material_cp
 
 
@@ -88,33 +88,35 @@ class Chp():
             self.electrical_conversion_efficiency = in_var.electrical_conversion_efficiency
             self.electrical_conversion_efficiency = self.global_conversion_efficiency - self.electrical_conversion_efficiency
 
-        try:
-            self.supply_capacity = in_var.supply_capacity  # heat [kW]
-            self.electrical_generation = self.supply_capacity/self.thermal_conversion_efficiency*self.electrical_conversion_efficiency # [kW]
-        except:
-            self.electrical_generation = in_var.electrical_generation  # electrical [kW]
-            self.supply_capacity = self.electrical_generation/self.electrical_conversion_efficiency*self.thermal_conversion_efficiency # [kW]
-
-        # schedule
+       # schedule
         schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
 
-        # get supply capacity to compute excees heat characteristics
         try:
-            supply_capacity = in_var.supply_capacity
-            self.supply_capacity = supply_capacity
+            try:
+                self.supply_capacity = in_var.supply_capacity  # heat [kW]
+                self.electrical_generation = self.supply_capacity/self.thermal_conversion_efficiency*self.electrical_conversion_efficiency # [kW]
+            except:
+                self.electrical_generation = in_var.electrical_generation  # electrical [kW]
+                self.supply_capacity = self.electrical_generation/self.electrical_conversion_efficiency*self.thermal_conversion_efficiency # [kW]
+
         except:
-            processes = in_var.processes
-            total_yearly_supply_capacity = 0
+            # get supply capacity to compute excees heat characteristics
+            try:
+                supply_capacity = in_var.supply_capacity
+                self.supply_capacity = supply_capacity
+            except:
+                processes = in_var.processes
+                total_yearly_supply_capacity = 0
 
-            if processes != []:
-                for process in processes:
-                    for stream in process['streams']:
-                        if stream['stream_type'] != 'outflow':
-                           total_yearly_supply_capacity += stream.capacity * sum(stream.schedule)
+                if processes != []:
+                    for process in processes:
+                        for stream in process['streams']:
+                            if stream['stream_type'] != 'outflow':
+                               total_yearly_supply_capacity += stream.capacity * sum(stream.schedule)
 
-                self.supply_capacity = total_yearly_supply_capacity / (sum(schedule))
-            else:
-                self.supply_capacity = 0
+                    self.supply_capacity = total_yearly_supply_capacity / (sum(schedule))
+                else:
+                    self.supply_capacity = 0
 
         # fuel consumption [kg/h]
         fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(self.supply_capacity,
@@ -152,7 +154,7 @@ class Chp():
                                             return_temperature)
 
         # inflow defined
-        self.streams.append(Stream(self.id,
+        self.streams.append(stream_industry(self.id,
                                    'inflow',
                                    inflow_fluid,
                                    inflow_supply_temperature,
@@ -161,7 +163,7 @@ class Chp():
                                    inflow_capacity,
                                    schedule))
 
-        self.streams.append(Stream(self.id,
+        self.streams.append(stream_industry(self.id,
                                    'supply_heat',
                                    supply_fluid,
                                    return_temperature,
@@ -170,7 +172,7 @@ class Chp():
                                    self.supply_capacity,
                                    schedule))
 
-        self.streams.append(Stream(self.id,
+        self.streams.append(stream_industry(self.id,
                                    'excess_heat',
                                    excess_heat_fluid,
                                    excess_heat_supply_temperature,
