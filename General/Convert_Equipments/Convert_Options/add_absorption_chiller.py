@@ -44,6 +44,7 @@ class Add_Absorption_Chiller():
         self.data_teo = \
             {
             'equipment': self.equipment_sub_type,
+            'fuel_type': self.fuel_type,
             'max_supply_capacity': info_max_power['supply_capacity'] / self.global_conversion_efficiency,  # [kW]
             'electrical_generation': info_max_power['electrical_generation'],
             'turnkey_a': turnkey_a,  # [€/kW]

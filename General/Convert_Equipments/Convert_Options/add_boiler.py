@@ -53,6 +53,7 @@ class Add_Boiler():
 
         self.data_teo = {
             'equipment': self.equipment_sub_type,
+            'fuel_type':self.fuel_type,
             'max_supply_capacity': info_max_power['supply_capacity'] / self.global_conversion_efficiency,  # [kW]
             'turnkey_a': turnkey_a,  # [€/kW]
             'turnkey_b': turnkey_b,  # [€]

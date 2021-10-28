@@ -56,6 +56,8 @@ from General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
 from General.Convert_Equipments.Convert_Options.add_electric_chiller import Add_Electric_Chiller
 import json
+from General.Auxiliary_General.get_country import get_country
+
 
 
 def convert_sinks(in_var):
@@ -70,6 +72,8 @@ def convert_sinks(in_var):
     vector_sink_max_target_temperature = []
     vector_sink_max_supply_temperature = []
     output_converted = []
+    grid_specific_heating = []
+    grid_specific_cooling = []
     boiler_fuel_type =['electricity','natural_gas','fuel_oil','biomass']  # types of fuel
     chp_fuel_type = ['natural_gas','fuel_oil','biomass']
 
@@ -108,9 +112,10 @@ def convert_sinks(in_var):
             if grid_supply_temperature - grid_return_temperature < delta_T:
                 grid_supply_temperature = grid_return_temperature + delta_T
 
+
         ###################################################################################################
         ###################################################################################################
-        # Defined temperatures - if not desired, must be deleted
+        # FIXED TEMPERATURES - IF NOT DESIRED, IT MUST BE DELETED
         grid_supply_temperature = fix_grid_supply_temperature
         grid_return_temperature = fix_grid_return_temperature
         ###################################################################################################
@@ -120,15 +125,60 @@ def convert_sinks(in_var):
     ###################################################################################################
     # create backup for sink group
     # for sink in group_of_sinks:
-    #  CREATE BACKUP FOR INDIVIDUAL STREAMS OR SOURCE
-    ###################################################################################################
+    group_of_sinks_grid_specific_power_heating = 0
+    group_of_sinks_grid_specific_power_cooling = 0
+    group_latitude = 0
+    group_longitude = 0
+    group_of_sinks_grid_specific_minimum_supply_temperature = []
 
+    for sink in group_of_sinks:
+        latitude, longitude = sink['location']
+        group_latitude += latitude
+        group_longitude += longitude
+
+        for stream in sink['streams']:
+            if stream['target_temperature'] > stream['supply_temperature']:
+                group_of_sinks_grid_specific_power_heating += stream['capacity']
+                group_of_sinks_grid_yearly_specific_power_heating = stream['hourly_generation']
+            else:
+                group_of_sinks_grid_specific_power_cooling += stream['capacity']
+                group_of_sinks_grid_specific_minimum_supply_temperature.append(stream['target_temperature'])
+
+    group_latitude /= len(group_of_sinks)
+    group_longitude /= len(group_of_sinks)
+    country = get_country(group_latitude, group_longitude)
+
+    try:
+        # add boiler
+        for fuel in boiler_fuel_type:
+            info_technology_group = Add_Boiler(fuel, country, 'non_household', group_of_sinks_grid_specific_power_heating, power_fraction,grid_supply_temperature, grid_return_temperature)
+            grid_specific_heating.append(info_technology_group.data_teo)
+
+        # add solar thermal
+        info_technology_group = Add_Solar_Thermal(country,'non_household',group_latitude, group_longitude, group_of_sinks_grid_yearly_specific_power_heating, power_fraction, grid_supply_temperature, grid_return_temperature)
+        grid_specific_heating.append(info_technology_group.data_teo)
+
+        # add heat pump
+        info_technology_group = Add_Heat_Pump(country, 'non_household', group_of_sinks_grid_specific_power_heating, power_fraction,grid_supply_temperature, grid_return_temperature)
+        grid_specific_heating.append(info_technology_group.data_teo)
+    except:
+        pass
+
+    try:
+        info_technology_group = Add_Electric_Chiller(country, 'non_household',group_of_sinks_grid_specific_power_cooling, power_fraction,min(group_of_sinks_grid_specific_minimum_supply_temperature),min(group_of_sinks_grid_specific_minimum_supply_temperature)+5)
+        grid_specific_cooling.append(info_technology_group.data_teo)
+    except:
+        pass
+
+
+    ###################################################################################################
 
 
     # convert each stream
     for sink in group_of_sinks:
 
-        country, latitude, longitude = sink['location']
+        latitude, longitude = sink['location']
+        country = get_country(latitude, longitude)
         consumer_type = sink['consumer_type']
 
         # get conversion technologies for each stream
@@ -267,6 +317,8 @@ def convert_sinks(in_var):
     output.append({
         'sink_group_grid_supply_temperature': grid_supply_temperature,
         'sink_group_grid_return_temperature': grid_return_temperature,
+        'grid_specific_heating': grid_specific_heating,
+        'grid_specific_cooling': grid_specific_cooling,
         'sinks': output_sink
         })
 
@@ -298,7 +350,7 @@ stream_1 = {'id':2,
 
 invar.group_of_sinks = [ {'id':1,
                         'consumer_type': 'non-household',
-                        'location':['Portugal',10,10],
+                        'location':[10,10],
                         'streams':[stream_1]
                                 }]
 

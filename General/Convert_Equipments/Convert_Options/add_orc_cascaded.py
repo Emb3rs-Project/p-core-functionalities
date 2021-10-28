@@ -13,6 +13,7 @@ class Add_ORC_Cascaded():
         # Defined Vars ----
         hx_efficiency = 0.95
         self.object_type = 'equipment'
+        self.fuel_type = 'electricity'
         self.equipment_sub_type = equipment_sub_type  # orc/rc
 
         self.supply_temperature = orc_cond_temperature_supply  # max water temperature
@@ -35,6 +36,7 @@ class Add_ORC_Cascaded():
                                                 )
         self.data_teo = {
              'equipment': self.equipment_sub_type,
+             'fuel_type': self.fuel_type,
              'max_eletrical_generation': info_max_power['electrical_generation'],  # [kW]
              'max_supply_capacity': info_max_power['supply_capacity']/info_max_power['conversion_efficiency'] ,  # [kW]
              'turnkey_a': turnkey_a,  # [€/kW]

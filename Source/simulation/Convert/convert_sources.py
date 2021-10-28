@@ -58,9 +58,8 @@ from General.Convert_Equipments.Convert_Options.add_orc_cascaded import Add_ORC_
 from General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
 from Source.simulation.Auxiliary.design_orc import design_orc
 from copy import copy
-import urllib3
-from bs4 import BeautifulSoup
 import json
+from General.Auxiliary_General.get_country import get_country
 
 
 def convert_sources(in_var):
@@ -107,17 +106,7 @@ def convert_sources(in_var):
     for source_index,source in enumerate(group_of_sources):
 
         latitude, longitude = source['location']
-
-        try:
-            urlcountr = 'https://nominatim.openstreetmap.org/reverse.php?format=json&3153965&accept-language=en'
-            urlcountry = urlcountr + '&lat=' + str(latitude) + '&lon=' + str(longitude)
-            urlcountry = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', urlcountry).data, "html.parser").text)
-            country = urlcountry['address']['country']
-
-        except:
-            country = 'Portugal'
-
-
+        country = get_country(latitude, longitude)
         consumer_type = source['consumer_type']
 
         # get conversion technologies for each stream

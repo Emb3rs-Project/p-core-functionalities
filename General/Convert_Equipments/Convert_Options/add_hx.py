@@ -47,6 +47,7 @@ class Add_HX():
                                                 )
         self.data_teo = {
             'equipment': self.equipment_sub_type,
+            'fuel_type': 'non',
             'max_supply_capacity': info_max_power['supply_capacity'] ,  # [kW]
             'turnkey_a': turnkey_a,  # [€/kW]
             'turnkey_b': turnkey_b,  # [€]

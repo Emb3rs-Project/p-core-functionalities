@@ -71,6 +71,7 @@ class Add_Solar_Thermal():
 
         self.data_teo = {
             'equipment': self.equipment_sub_type,
+            'fuel_tyoe':self.fuel_type,
             'max_area': info_max_power['area'],  # [m2]
             'max_average_supply_capacity': info_max_power['average_supply_capacity'],  # [kW]
             'hourly_supply_capacity_normalize': info_max_power['hourly_supply_capacity_normalize'],  # [kWh]
