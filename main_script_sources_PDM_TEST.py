@@ -184,7 +184,9 @@ data_recovery = Info_HX_Recovery(delta_T_min, info_data)
 df_hx_processes = generate_heat_recovery(
     data_recovery)  # Heat Recovery module - input process and equipment  or only equipment
 
-print(df_hx_processes)
+b = df_hx_processes['co2_optimization']['pinch_hx_data']
+print(b)
+print(df_hx_processes['co2_optimization']['pinch_hx_data']['Original_Hot_Stream'])
 
 """
 print(df_hx_processes)

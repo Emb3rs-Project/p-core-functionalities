@@ -41,7 +41,7 @@ from Source.simulation.Heat_Recovery.Auxiliary.pinch_point import pinch_point
 import pandas as pd
 from KB_General.fuel_properties import fuel_properties
 from Source.simulation.Heat_Recovery.Auxiliary.get_best_3_outputs import get_best_3_outputs
-
+from collections import OrderedDict, defaultdict
 
 def generate_heat_recovery(in_var):
 
@@ -73,7 +73,7 @@ def generate_heat_recovery(in_var):
             streams.append(object)
             new_id += 1
 
-
+    print(streams)
    # If 'objects' is empty, it means analyse equipment internal heat recovery
     if objects == [] and streams == []:
         object = all_objects[0]
@@ -339,7 +339,7 @@ def generate_heat_recovery(in_var):
                                                  'co2_savings':0,
                                                  'energy_recovered':0},
                                        'equipment_detailed_savings':[],
-                                       'pinch_hx_data': all_df[0].__dict__
+                                       'pinch_hx_data': all_df[0][0].to_dict(into=OrderedDict)
                                           },
                  'energy_saving_options': [],
                  'energy_investment_options': []
