@@ -43,7 +43,7 @@ OUTPUT: object Cooling Equipment.
 
 from General.Auxiliary_General.schedule_hour import schedule_hour
 from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from General.Auxiliary_General.stream import Stream
+from General.Auxiliary_General.stream_industry import stream_industry
 
 class Cooling_Equipment():
 
@@ -64,15 +64,11 @@ class Cooling_Equipment():
         daily_periods = in_var.daily_periods
 
         if self.equipment_sub_type == 'co2_chiller':
-            self.global_conversion_efficiency = in_var.global_conversion_efficiency  # COP
             supply_fluid = 'R744'
-            excess_heat_fluid = 'R744' # excess heat fluid type
-            try:
-                excess_heat_supply_temperature = in_var.excess_heat_supply_temperature
-                excess_heat_target_temperature = in_var.excess_heat_target_temperature
-            except:
-                excess_heat_supply_temperature = 135  # discharge temperature [ºC]
-                excess_heat_target_temperature = 100  # gas cooler entry temperature [ºC]
+            self.global_conversion_efficiency = in_var.global_conversion_efficiency  # COP
+            excess_heat_fluid = 'water' # excess heat fluid type
+            excess_heat_supply_temperature = 90  # discharge temperature [ºC]
+            excess_heat_target_temperature = 60  # gas cooler entry temperature [ºC]
 
         else:
             self.global_conversion_efficiency = in_var.global_conversion_efficiency  # COP
@@ -130,7 +126,7 @@ class Cooling_Equipment():
 
         # equipment streams
         # supply heat
-        self.streams.append(Stream(self.id,
+        self.streams.append(stream_industry(self.id,
                                    'supply_heat',
                                    supply_fluid,
                                    return_temperature,
@@ -141,7 +137,7 @@ class Cooling_Equipment():
 
         # excess heat
         if self.equipment_sub_type == 'co2_chiller':
-            self.streams.append(Stream(self.id,
+            self.streams.append(stream_industry(self.id,
                                        'excess_heat',
                                        excess_heat_fluid,
                                        excess_heat_supply_temperature,

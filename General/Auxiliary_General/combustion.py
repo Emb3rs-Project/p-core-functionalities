@@ -23,7 +23,6 @@ def combustion_mass_flows (P_equip,eff_equip, fuel_type):
 
 
 def T_flue_gas (P_equip,fuel_type, m_fuel,m_flue_gas):
-
     fluid_type = "flue_gas"
 
     data = fuel_properties('Portugal', fuel_type, 'non-household')

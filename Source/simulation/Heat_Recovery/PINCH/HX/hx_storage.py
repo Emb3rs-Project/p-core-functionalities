@@ -157,7 +157,7 @@ def hx_storage(df_profile, df_hx):
         df_hx['Storage'] = vector_storage_volume  # update storage for each HX [m3]
         df_hx['Storage_Satisfies'] = vector_storage_satisfies  # update recovery satisfaction by using storage for each HX [%]
         df_hx['Storage_Turnkey_Cost'] = vector_storage_turn_key  # update storage for each HX [€]
-        df_hx['Total_Turnkey_Cost'] = df_hx['Turnkey_Cost'] + df_hx['Storage_Turnkey_Cost']  # update total turnkey (hx+storage)  [€]
+        df_hx['Total_Turnkey_Cost'] = df_hx['HX_Turnkey_Cost'] + df_hx['Storage_Turnkey_Cost']  # update total turnkey (hx+storage)  [€]
         df_hx['Recovered_Energy'] = vector_energy_year  # yearly total recoverd energy [kWh]
 
     return df_hx

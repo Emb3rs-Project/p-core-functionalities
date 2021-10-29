@@ -36,7 +36,7 @@ OUTPUT: object Boiler.
 from General.Auxiliary_General.schedule_hour import schedule_hour
 from General.Auxiliary_General.combustion import T_flue_gas, combustion_mass_flows
 from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from General.Auxiliary_General.stream import Stream
+from General.Auxiliary_General.stream_industry import stream_industry
 from KB_General.fluid_material import fluid_material_cp
 
 
@@ -86,12 +86,11 @@ class Boiler():
         except:
             processes = in_var.processes
             self.total_yearly_supply_capacity = 0
-
             if processes != []:
                 for process in processes:
                     for stream in process['streams']:
                         if stream['stream_type'] != 'outflow':
-                            self.total_yearly_supply_capacity += stream.capacity * sum(stream.schedule)
+                            self.total_yearly_supply_capacity += stream['capacity'] * sum(stream['schedule'])
 
                 self.supply_capacity = self.total_yearly_supply_capacity / (sum(schedule))
             else:
@@ -135,7 +134,7 @@ class Boiler():
 
         # equipment streams
         # Air Inflow
-        self.streams.append(Stream(self.id,
+        self.streams.append(stream_industry(self.id,
                                    'inflow',
                                    inflow_fluid,
                                    inflow_supply_temperature,
@@ -145,7 +144,7 @@ class Boiler():
                                    schedule))
 
         # Supply Heat
-        self.streams.append(Stream(self.id,
+        self.streams.append(stream_industry(self.id,
                                    'supply_heat',
                                    supply_fluid,
                                    return_temperature,
@@ -155,7 +154,7 @@ class Boiler():
                                    schedule))
 
         # Excess Heat
-        self.streams.append(Stream(self.id,
+        self.streams.append(stream_industry(self.id,
                                    'excess_heat',
                                    excess_heat_fluid,
                                    excess_heat_supply_temperature,

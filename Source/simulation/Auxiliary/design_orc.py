@@ -6,32 +6,53 @@ Info: Design ORC
 """
 
 
-def design_orc(stream_capacity,stream_fluid,stream_supply_temperature,stream_target_temperature,hx_delta_T,orc_T_cond,orc_T_evap, hx_efficiency):
+def design_orc(stream_capacity,stream_fluid,stream_supply_temperature,stream_target_temperature,hx_delta_T,orc_T_cond,orc_T_evap, hx_efficiency,aggregate_streams):
 
-
+    orc_delta_T = 30
     flue_gas_T_minimum = 120  # minimum temperature flue_gas can be cooled [ºC]
     design_temperature = 350  # above this temperature 'rc', below 'orc'[ºC]
 
-    if stream_supply_temperature < design_temperature:
-        orc_type = 'orc'
-        intermediate_T_cold = orc_T_evap + hx_delta_T
-        if stream_fluid == 'flue_gas':
-            stream_target_temperature_corrected_min = flue_gas_T_minimum # Design Constraint - lower flue_gas temperatures mean condensation
-        else:
-            stream_target_temperature_corrected_min = orc_T_evap + hx_delta_T
-
-        stream_target_temperature_corrected = orc_T_evap + 2*hx_delta_T
-
+    # if streams are aggregated, a intermediate circuit is implemented
+    if aggregate_streams == True:
         intermediate_circuit_exist = True
-    else:
-        orc_type = 'rc' # WASTE HEAT BOILER
-        intermediate_T_cold = 0  # just to run
+        intermediate_T_hot = orc_T_evap + hx_delta_T
+        intermediate_T_cold = intermediate_T_hot - orc_delta_T
+        orc_type = 'orc'
+
         if stream_fluid == 'flue_gas':
-            stream_target_temperature_corrected_min = flue_gas_T_minimum
+            stream_target_temperature_corrected_min = flue_gas_T_minimum  # Design Constraint - lower flue_gas temperatures mean condensation
         else:
-            stream_target_temperature_corrected_min = orc_T_evap + hx_delta_T
-        stream_target_temperature_corrected = orc_T_evap + hx_delta_T
-        intermediate_circuit_exist = False
+            stream_target_temperature_corrected_min = intermediate_T_cold + hx_delta_T
+
+        stream_target_temperature_corrected = intermediate_T_cold + hx_delta_T
+
+    if aggregate_streams == False:
+        if stream_supply_temperature < design_temperature:
+            orc_type = 'orc'
+            intermediate_T_cold = orc_T_evap + hx_delta_T
+            if stream_fluid == 'flue_gas':
+                stream_target_temperature_corrected_min = flue_gas_T_minimum # Design Constraint - lower flue_gas temperatures mean condensation
+            else:
+                stream_target_temperature_corrected_min = orc_T_evap + hx_delta_T
+
+            stream_target_temperature_corrected = orc_T_evap + 2*hx_delta_T
+
+            if stream_fluid != 'water':
+                intermediate_circuit_exist = True
+            else:
+                intermediate_circuit_exist = False
+
+
+        else:
+            orc_type = 'rc' # WASTE HEAT BOILER
+            intermediate_T_cold = 0  # just to run
+            if stream_fluid == 'flue_gas':
+                stream_target_temperature_corrected_min = flue_gas_T_minimum
+            else:
+                stream_target_temperature_corrected_min = orc_T_evap + hx_delta_T
+            stream_target_temperature_corrected = orc_T_evap + hx_delta_T
+            intermediate_circuit_exist = False
+
 
     if stream_target_temperature_corrected <= stream_target_temperature_corrected_min:
         stream_target_temperature_corrected = stream_target_temperature_corrected_min

@@ -1,15 +1,9 @@
-
-
-
-
-
-import math
 from General.Simple_User.simple_user import simple_user
 from Source.characterization.Generate_Equipment.generate_boiler import Boiler
 from Source.characterization.Generate_Equipment.generate_chp import Chp
 from Source.characterization.Process.process import Process
-from Source.simulation.Heat_Recovery.generate_heat_recovery import generate_heat_recovery
-from General.Auxiliary_General.stream import Stream
+from Source.simulation.Heat_Recovery.PINCH.generate_heat_recovery import generate_heat_recovery
+from General.Auxiliary_General.stream_industry import stream_industry
 
 
 class Boiler_data():
@@ -49,6 +43,7 @@ class Chp_data():
         # Generate_Equipment Characteristics FROM USER
         self.equipment_sub_type = 'gas_engine'
         self.electrical_generation = 500
+
         self.supply_temperature = 180
         self.open_closed_loop = 0  # Open heating circuit? (1-Yes, 0-No)
         self.fuel_type = 'natural_gas'  # Fuel type  (Natural gas, Fuel oil, Biomass)
@@ -75,8 +70,9 @@ class Process_data():
 
         self.startup_data = []
         self.maintenance_data = []
-        self.inflow_data = [Inflow()]
-        self.outflow_data = [Outflow()]
+
+        self.inflow_data = [Inflow().__dict__]
+        self.outflow_data = [Outflow().__dict__]
 
 
 class Inflow():
@@ -91,7 +87,6 @@ class Inflow():
 class Outflow():
     def __init__(self):
         self.id = 9000
-        self.daily_periods = [[3, 5], [21, 24]]
         self.target_temperature = 30
         self.fluid = 'oil'
         self.flowrate = 23
@@ -131,33 +126,34 @@ chp_data = Chp_data()
 chp = Chp(chp_data)
 chp.id = 58
 # user that wants to put average supply capacity directly - chp.update_supply_capacity(10000)
-chp.update_supply_capacity(3000)
 
 create_stream_id = 200
 for stream in chp.streams:  # Give a stream ID
-    stream.id = create_stream_id
+    stream['id'] = create_stream_id
     create_stream_id += 1
 
-
-# create boiler
-boiler_data = Boiler_data()
-boiler = Boiler(boiler_data)
-for stream in boiler.streams:
-    stream.id = create_stream_id
-    create_stream_id += 1
 
 
 # create process
 process_data = Process_data()
 process = Process(process_data)
 for stream in process.streams:
-    stream.id = create_stream_id
+    stream['id'] = create_stream_id
+    create_stream_id += 1
+
+
+# create boiler
+boiler_data = Boiler_data()
+boiler_data.processes = [process.__dict__]
+
+boiler = Boiler(boiler_data)
+for stream in boiler.streams:
+    stream['id'] = create_stream_id
     create_stream_id += 1
 
 
 # update equipments linked to processes
 # user that wants to put average supply capacity directly - boiler.update_supply_capacity(10000)
-boiler.update_processes([process])
 
 
 ###########################
@@ -167,14 +163,14 @@ delta_T_min = int(input('Introduce delta_T:'))
 delta_T_min = 10
 
 ### OPTION 1 - just pinch analysis - INPUT: isolated streams
-print('Introduce Stream? (no excess heat from equipments supplying process):')
+print('Introduce stream? (no excess heat from equipments supplying process):')
 prompt = int(input('Yes?'))
 prompt = 1
 if prompt == 1:
-    info_data = [Stream(1, 'outflow', 'oil', 250, 40, 0.15 * 3600, 1, [1, 1, 1, 1]),
-                 Stream(1, 'outflow', 'oil', 200, 80, 0.25 * 3600, 1, [1, 1, 1, 1]),
-                 Stream(1, 'outflow', 'oil', 20, 180, 0.2 * 3600, 1, [1, 1, 1, 1]),
-                 Stream(1, 'outflow', 'oil', 140, 230, 0.3 * 3600, 1, [1, 1, 1, 1])]  # Stream(source,stream_type,fluid,supply_temperature,target_temperature,mass_flowrate,capacity,hourly_generation)
+    info_data = [stream_industry(1, 'outflow', 'oil', 250, 40, 0.15 * 3600, 1, [1, 1, 1, 1]),
+                 stream_industry(1, 'outflow', 'oil', 200, 80, 0.25 * 3600, 1, [1, 1, 1, 1]),
+                 stream_industry(1, 'outflow', 'oil', 20, 180, 0.2 * 3600, 1, [1, 1, 1, 1]),
+                 stream_industry(1, 'outflow', 'oil', 140, 230, 0.3 * 3600, 1, [1, 1, 1, 1])]
 
 # in_var
 data_recovery = Info_HX_Recovery(delta_T_min, info_data)
@@ -182,12 +178,14 @@ data_recovery = Info_HX_Recovery(delta_T_min, info_data)
 df_hx_processes = generate_heat_recovery(
     data_recovery)  # Heat Recovery module - input process and equipment  or only equipment
 
-print(df_hx_processes)
+b = df_hx_processes['co2_optimization']['pinch_hx_data']
+print(b)
+print(df_hx_processes['co2_optimization']['pinch_hx_data']['Original_Hot_Stream'])
 
 """
 print(df_hx_processes)
 
-Expected: [[      Power Hot_Stream  ... Total_Turnkey_Cost Recovered_Energy
+Expected: [[      Power Hot_stream  ... Total_Turnkey_Cost Recovered_Energy
 0  12.50000          2  ...        1937.046150          50.0000
 1   8.00000          1  ...        1792.159088          32.0000
 2   7.00000          1  ...        1634.073549          28.0000
@@ -197,18 +195,19 @@ Expected: [[      Power Hot_Stream  ... Total_Turnkey_Cost Recovered_Energy
 [5 rows x 15 columns], []]]
 
 """
-
+prompt = int(input('Yes?'))
 ### OPTION 2 - pinch analysis with processes - INPUT:processes, equipments
 # Get all process and equipment from User
-info_data = [process, boiler]  # all streams
+info_data = [process.__dict__, boiler.__dict__]  # all streams
 # in_var
 data_recovery = Info_HX_Recovery(delta_T_min, info_data)
 # recovery full pinch
 df_hx_processes = generate_heat_recovery(data_recovery)  # Heat Recovery module - input process and equipment  or only equipment
+prompt = int(input('Yes?'))
 
 ### OPTION 3 - pinch analysis with processes and isolated streams - INPUT:processes, equipments and isolated streams
 # Get all process, equipment and random stream from User
-info_data = [process, boiler, Stream(1, 'outflow', 'thermal_oil', 2, 200, 0.15 * 3600, 2, [1, 1, 1, 0])]  # all streams
+info_data = [process, boiler, stream_industry(1, 'outflow', 'thermal_oil', 2, 200, 0.15 * 3600, 2, [1, 1, 1, 0])]  # all streams
 # in_var
 data_recovery = Info_HX_Recovery(delta_T_min, info_data)
 # recovery full pinch
