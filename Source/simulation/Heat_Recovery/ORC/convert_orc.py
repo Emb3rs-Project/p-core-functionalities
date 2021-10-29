@@ -85,6 +85,8 @@ def convert_orc(in_var):
 
         streams_info.append([info_individual,info_aggregate])
 
+    ###################################################################
+    ###################################################################
 
     # Test all combinations possible
     for combination in combinations:
@@ -121,10 +123,15 @@ def convert_orc(in_var):
         else:
             global_conversion_efficiency_equipment, om_fix_orc, turnkey_orc = equipment_details(orc_type,electrical_generation_nominal_total)
 
-
+    
         om_var_total = 1
         om_fix_total = 1
         total_turnkey = turnkey_orc
+
+        ###################################################################
+        ###################################################################
+        ###################################################################
+
 
         convert_info.append({
             'streams': combination_streams_id,
