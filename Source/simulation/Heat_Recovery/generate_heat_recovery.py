@@ -27,12 +27,14 @@ Return: dictionary with 3 keys:
                 # equipment_detailed_savings
 
                 Where in pinch_hx_data - a DF turned in a dictionary with:
-                    DF  -['Power' [kW], 'Hot_Stream' [ID], 'Cold_Stream' [ID], 'Type' [hx type], 'HX_Turnkey_Cost' [€], 'OM_Fix_Cost'  [€/year], 'Hot_Stream_T_Hot'  [ºC],
-                     'Hot_Stream_T_Cold'  [ºC],'Original_Hot_Stream' [ID], 'Original_Cold_Stream ' [ID], 'Storage'  [m3], 'Storage_Satisfies' [%], 'Storage_Turnkey_Cost'  [€],
+                    DF  -['Power' [kW], 'Hot_Stream' [ID], 'Cold_Stream' [ID], 'Type' [hx type], 'HX_Turnkey_Cost' [€], 'OM_Fix_Cost'  [€/year],
+                    'Hot_Stream_T_Hot'  [ºC],'Hot_Stream_T_Cold'  [ºC],'Original_Hot_Stream' [ID], 'Original_Cold_Stream ' [ID], 'Storage'  [m3],
+                     'Storage_Satisfies' [%], 'Storage_Turnkey_Cost'  [€],
                      'Total_Turnkey_Cost'  [€], 'Recovered_Energy'  [kWh]]
 
                 Where in equipment_detailed_savings - a DF turned in a dictionary with:
-                    DF - ['Equipment_ID' [ID], 'CO2_Savings_Year' [kg] ,'Recovered_Energy'  [kWh],'Savings_Year'  [€] :  ,'Total_Turnkey_Cost'  [€]]
+                    DF - ['Equipment_ID' [ID], 'CO2_Savings_Year' [kg] ,'Recovered_Energy'  [kWh],'Savings_Year'  [€] :  ,
+                    'Total_Turnkey_Cost'  [€]]
 
 """
 
