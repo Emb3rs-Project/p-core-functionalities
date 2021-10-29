@@ -36,7 +36,7 @@ OUTPUT: object Burner.
 from General.Auxiliary_General.schedule_hour import schedule_hour
 from General.Auxiliary_General.combustion import T_flue_gas,combustion_mass_flows
 from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from General.Auxiliary_General.stream_industry import Stream
+from General.Auxiliary_General.stream_industry import stream_industry
 from KB_General.fluid_material import fluid_material_cp
 
 class Burner():
@@ -113,7 +113,7 @@ class Burner():
 
         # equipment streams
         # Air Inflow
-        self.streams.append(Stream(self.id,
+        self.streams.append(stream_industry(self.id,
                                    'inflow',
                                    supply_fluid,
                                    inflow_supply_temperature,
@@ -124,7 +124,7 @@ class Burner():
 
 
         # Excess Heat
-        self.streams.append(Stream(self.id,
+        self.streams.append(stream_industry(self.id,
                                    'excess_heat',
                                    excess_heat_fluid,
                                    excess_heat_supply_temperature,

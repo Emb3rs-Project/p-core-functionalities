@@ -43,7 +43,7 @@ OUTPUT: object Cooling Equipment.
 
 from General.Auxiliary_General.schedule_hour import schedule_hour
 from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from General.Auxiliary_General.stream_industry import Stream
+from General.Auxiliary_General.stream_industry import stream_industry
 
 class Cooling_Equipment():
 
@@ -126,7 +126,7 @@ class Cooling_Equipment():
 
         # equipment streams
         # supply heat
-        self.streams.append(Stream(self.id,
+        self.streams.append(stream_industry(self.id,
                                    'supply_heat',
                                    supply_fluid,
                                    return_temperature,
@@ -137,7 +137,7 @@ class Cooling_Equipment():
 
         # excess heat
         if self.equipment_sub_type == 'co2_chiller':
-            self.streams.append(Stream(self.id,
+            self.streams.append(stream_industry(self.id,
                                        'excess_heat',
                                        excess_heat_fluid,
                                        excess_heat_supply_temperature,
