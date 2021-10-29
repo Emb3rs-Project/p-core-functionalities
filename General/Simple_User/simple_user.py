@@ -74,9 +74,9 @@ def simple_user(in_var):
                 streams_output.append(info_stream)
 
         # OUTPUT ------------------------
-        output = json.dumps(streams_output, indent=2)
+        #output = json.dumps(streams_output, indent=2)
 
-        return output
+        return streams_output
 
 
 

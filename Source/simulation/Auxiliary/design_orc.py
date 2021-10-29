@@ -44,7 +44,7 @@ def design_orc(stream_capacity,stream_fluid,stream_supply_temperature,stream_tar
 
 
         else:
-            orc_type = 'rc' # WASTE HEAT BOILER
+            orc_type = 'orc' # WASTE HEAT BOILER
             intermediate_T_cold = 0  # just to run
             if stream_fluid == 'flue_gas':
                 stream_target_temperature_corrected_min = flue_gas_T_minimum
@@ -62,7 +62,7 @@ def design_orc(stream_capacity,stream_fluid,stream_supply_temperature,stream_tar
 
     intermediate_T_hot = stream_supply_temperature - hx_delta_T
     stream_thermal_capacity_max_power = stream_capacity * ((stream_supply_temperature - stream_target_temperature_corrected) / (stream_supply_temperature - stream_target_temperature))
-    eff_carnot = 1 - (orc_T_cond + 274.15) / (orc_T_evap + 274.15)
+    eff_carnot = 1 - (orc_T_cond + 273.15) / (orc_T_evap + 273.15)
 
     if intermediate_circuit_exist == True:
         overall_thermal_capacity = stream_thermal_capacity_max_power * hx_efficiency**2

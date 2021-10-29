@@ -197,8 +197,8 @@
     "pumping_power_c": "0",
     "pumping_power_n": "0"
   },
-  "orc_cascaded": {
-    "equipment": "orc_cascaded",
+  "orc": {
+    "equipment": "orc",
     "unit": "kW",
     "turnkey_cost_S": "0",
     "turnkey_cost_c": "132.047",

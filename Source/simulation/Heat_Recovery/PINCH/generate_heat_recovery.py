@@ -299,7 +299,6 @@ def generate_heat_recovery(in_var):
 
 
 
-
     if individual_equipment_optimization is False:
         new_df = pd.DataFrame(columns=['index',
                                        'co2_savings',
@@ -320,11 +319,11 @@ def generate_heat_recovery(in_var):
         new_df = new_df.drop_duplicates(subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
 
         # get best 3 options that save maximum amount of co2
-        co2_savings = new_df.sort_values('co2_savings').head(3)
+        co2_savings = new_df.sort_values('co2_savings', ascending=False).head(3)
         co2_savings_options = get_best_3_outputs(all_df, co2_savings)
 
         # get best 3 options that recover maximum energy
-        energy_recovered = new_df.sort_values('energy_recovered').head(3)
+        energy_recovered = new_df.sort_values('energy_recovered', ascending=False).head(3)
         energy_recovered_options = get_best_3_outputs(all_df, energy_recovered)
 
         # get best 3 options that give best energy_recovery/turnkey ratio
@@ -344,7 +343,7 @@ def generate_heat_recovery(in_var):
                                                  'co2_savings':0,
                                                  'energy_recovered':0},
                                        'equipment_detailed_savings':[],
-                                       'pinch_hx_data': all_df[0][0].to_dict(into=OrderedDict)
+                                       'pinch_hx_data': all_df[0][0].to_dict(orient='records')
                                           },
                  'energy_saving_options': [],
                  'energy_investment_options': []
