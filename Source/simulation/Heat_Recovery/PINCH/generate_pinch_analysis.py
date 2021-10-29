@@ -7,7 +7,7 @@ Return: HX Design between streams
 
 """
 from KB_General.fluid_material import fluid_material_cp
-from Source.simulation.Heat_Recovery.Auxiliary.pinch_analysis import pinch_analysis
+from Source.simulation.Heat_Recovery.PINCH.Auxiliary.pinch_analysis import pinch_analysis
 import pandas as pd
 
 

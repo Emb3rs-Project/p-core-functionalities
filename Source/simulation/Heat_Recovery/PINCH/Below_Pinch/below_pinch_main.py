@@ -7,9 +7,9 @@ split before matching  and Streams In are only split in 1st match.
 
 """
 
-from Source.simulation.Heat_Recovery.Auxiliary.check_streams_number import check_streams_number
-from Source.simulation.Heat_Recovery.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
-from Source.simulation.Heat_Recovery.Below_Pinch.below_pinch_first_match import below_pinch_first_match
+from Source.simulation.Heat_Recovery.PINCH.Auxiliary.check_streams_number import check_streams_number
+from Source.simulation.Heat_Recovery.PINCH.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
+from Source.simulation.Heat_Recovery.PINCH.Below_Pinch.below_pinch_first_match import below_pinch_first_match
 
 def below_pinch_main(df_streams, delta_T_min, pinch_T,df_hx):
     # Init Arrays

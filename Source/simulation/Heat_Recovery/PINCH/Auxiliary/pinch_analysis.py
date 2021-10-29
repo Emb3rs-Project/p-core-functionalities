@@ -15,13 +15,13 @@ Return: DF with HX
 
 
 import pandas as pd
-from Source.simulation.Heat_Recovery.Auxiliary.table_heat_cascade import table_heat_cascade
-from Source.simulation.Heat_Recovery.Auxiliary.pinch_point import pinch_point
-from Source.simulation.Heat_Recovery.Auxiliary.plot_gcc import plot_gcc
-from Source.simulation.Heat_Recovery.Above_Pinch.above_pinch_main import above_pinch_main
-from Source.simulation.Heat_Recovery.Below_Pinch.below_pinch_main import below_pinch_main
+from Source.simulation.Heat_Recovery.PINCH.Auxiliary.table_heat_cascade import table_heat_cascade
+from Source.simulation.Heat_Recovery.PINCH.Auxiliary.pinch_point import pinch_point
+from Source.simulation.Heat_Recovery.PINCH.Auxiliary.plot_gcc import plot_gcc
+from Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_main import above_pinch_main
+from Source.simulation.Heat_Recovery.PINCH.Below_Pinch.below_pinch_main import below_pinch_main
 import numpy as np
-from Source.simulation.Heat_Recovery.HX.hx_storage import hx_storage
+from Source.simulation.Heat_Recovery.PINCH.HX.hx_storage import hx_storage
 
 def pinch_analysis(df_operating,df_profile,delta_T_min):
 
