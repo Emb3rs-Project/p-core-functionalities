@@ -64,15 +64,11 @@ class Cooling_Equipment():
         daily_periods = in_var.daily_periods
 
         if self.equipment_sub_type == 'co2_chiller':
-            self.global_conversion_efficiency = in_var.global_conversion_efficiency  # COP
             supply_fluid = 'R744'
-            excess_heat_fluid = 'R744' # excess heat fluid type
-            try:
-                excess_heat_supply_temperature = in_var.excess_heat_supply_temperature
-                excess_heat_target_temperature = in_var.excess_heat_target_temperature
-            except:
-                excess_heat_supply_temperature = 135  # discharge temperature [ºC]
-                excess_heat_target_temperature = 100  # gas cooler entry temperature [ºC]
+            self.global_conversion_efficiency = in_var.global_conversion_efficiency  # COP
+            excess_heat_fluid = 'water' # excess heat fluid type
+            excess_heat_supply_temperature = 90  # discharge temperature [ºC]
+            excess_heat_target_temperature = 60  # gas cooler entry temperature [ºC]
 
         else:
             self.global_conversion_efficiency = in_var.global_conversion_efficiency  # COP
