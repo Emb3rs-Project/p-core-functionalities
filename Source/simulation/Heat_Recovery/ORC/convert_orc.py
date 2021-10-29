@@ -12,11 +12,9 @@ OUTPUT:
 """
 
 from KB_General.fuel_properties import fuel_properties
-from KB_General.equipment_details import equipment_details
-from Source.simulation.Auxiliary.design_orc import design_orc
-from General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
-from General.Convert_Equipments.Convert_Options.add_hx import Add_HX
-from General.Auxiliary_General.flowrate_to_power import flowrate_to_power
+from Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_aux import convert_aux
+import itertools
+
 
 def convert_orc(in_var):
 
@@ -38,105 +36,55 @@ def convert_orc(in_var):
     # ORC Characteristics
     orc_T_evap = 110  # [ºC]
     orc_T_cond = 30   # [ºC]
+    hx_orc_supply_temperature = orc_T_evap + hx_delta_T
+    hx_orc_return_temperature = hx_orc_supply_temperature - pumping_delta_T
 
     # Intermediate Circuit Characteristics
-    intermediate_fluid = 'oil'
+    intermediate_fluid = 'water'
 
     # Convert_Options Characteristics
     fuel_data = fuel_properties(country, 'electricity', consumer_type)
 
 
     # Generate Electricity Available Profile
-
-    # Individual Stream
+    streams_able = []
     for stream in streams:
-
-        if stream['target_temperature'] > (orc_T_evap + hx_delta_T):
-
-            if stream['supply_temperature'] > (orc_T_evap + hx_delta_T):
-
-                orc_type, stream_thermal_capacity_max_power, orc_electrical_generation, overall_thermal_capacity, stream_target_temperature_corrected, intermediate_circuit, hx_intermediate_supply_temperature, hx_intermediate_return_temperature = design_orc(
-                    stream['capacity'], stream['fluid'], stream['supply_temperature'], stream['target_temperature'],
-                    hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency)
-
-                global_conversion_efficiency_equipment, om_fix_total, turnkey_total = equipment_details(orc_type,
-                                                                                                        orc_electrical_generation)
-
-                # INTERMEDIATE CIRCUIT
-                if intermediate_circuit == True:
-                    # add HX intermediate
-                    hx_stream_supply_temperature = stream['supply_temperature']
-                    hx_stream_target_temperature = stream_target_temperature_corrected
-                    hx_power = stream_thermal_capacity_max_power
-                    info_hx_intermediate = Add_HX(hx_stream_supply_temperature, hx_stream_target_temperature,
-                                                  stream['fluid'], hx_intermediate_supply_temperature,
-                                                  hx_intermediate_return_temperature, intermediate_fluid, hx_power,
-                                                  power_fraction)
-
-                    # add intermediation circulation pumping
-                    info_pump_intermediate = Add_Pump(country, consumer_type, intermediate_fluid,
-                                                      info_hx_intermediate.available_power, power_fraction,
-                                                      hx_intermediate_supply_temperature,
-                                                      hx_intermediate_return_temperature)
-
-                else:
-                    hx_intermediate_turnkey = 0
-                    hx_intermediate_om_fix = 0
-                    pumping_intermediate_turnkey = 0
-                    pumping_intermediate_om_fix = 0
-                    pumping_intermediate_flowrate = 0
-
-                # TOTAL DESIGN/COST
-                total_turnkey_max_power = turnkey_total + hx_intermediate_turnkey + pumping_intermediate_turnkey
-                total_om_fix_max_power = om_fix_total + hx_intermediate_om_fix + pumping_intermediate_om_fix
-                total_om_var_max_power = flowrate_to_power(pumping_intermediate_flowrate) * fuel_properties[
-                    'price']  # [kW]*[€/kWh] = [€/h]
+        if stream['target_temperature'] > (hx_orc_return_temperature):
+            if stream['supply_temperature'] > (hx_orc_supply_temperature):
+                streams_able.append(stream)
 
 
-    # Aggregate streams
-    for stream in streams:
+    combinations =[]
+    for L in range(0, len(streams_able) + 1):
+        for subset in itertools.combinations(streams_able, L):
+            if list(subset) != []:
+                combinations.append(list(subset))
 
-        if stream['target_temperature'] > (orc_T_evap + hx_delta_T + pumping_delta_T):
+    # Test all combinations possible
+    for combination in combinations:
+        electrical_generation_yearly = 0
+        electrical_generation_nominal = 0
+        total_turnkey = 0
+        electrical_generation_over_turnkey = 0
 
-            if stream['supply_temperature'] > (orc_T_evap + hx_delta_T):
+        for stream in combination:
+            if stream['target_temperature'] > (hx_orc_return_temperature):
+                if stream['supply_temperature'] > (hx_orc_supply_temperature):
 
-                orc_type, stream_thermal_capacity_max_power, orc_electrical_generation, overall_thermal_capacity, stream_target_temperature_corrected, intermediate_circuit, hx_intermediate_supply_temperature, hx_intermediate_return_temperature = design_orc(
-                    stream['capacity'], stream['fluid'], stream['supply_temperature'], stream['target_temperature'], hx_delta_T,orc_T_cond, orc_T_evap, hx_efficiency)
+                    # Individual Stream
+                    if len(combination) == 1:
+                        orc_electrical_generation,intermediate_turnkey_max_power,intermediate_om_fix_max_power,intermediate_om_var_max_power = convert_aux(stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency, power_fraction,intermediate_fluid, country, consumer_type,aggregate_streams=False)
 
-                global_conversion_efficiency_equipment, om_fix_total, turnkey_total = equipment_details(orc_type, orc_electrical_generation)
+                    # Aggregate streams
+                    else:
+                        orc_electrical_generation, intermediate_turnkey_max_power, intermediate_om_fix_max_power, intermediate_om_var_max_power = convert_aux(stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency, power_fraction,intermediate_fluid, country, consumer_type, aggregate_streams=True)
 
-                # INTERMEDIATE CIRCUIT
-                if intermediate_circuit == True:
-                    # add HX intermediate
-                    hx_stream_supply_temperature = stream['supply_temperature']
-                    hx_stream_target_temperature = stream_target_temperature_corrected
-                    hx_power = stream_thermal_capacity_max_power
-                    info_hx_intermediate = Add_HX(hx_stream_supply_temperature, hx_stream_target_temperature,
-                                                  stream['fluid'], hx_intermediate_supply_temperature,
-                                                  hx_intermediate_return_temperature, intermediate_fluid, hx_power,
-                                                  power_fraction)
+                electrical_generation_nominal += electrical_generation_nominal
+                electrical_generation_yearly += electrical_generation_yearly
+                total_turnkey += total_turnkey
+                electrical_generation_over_turnkey += electrical_generation_over_turnkey
 
-                    # add intermediation circulation pumping
-                    info_pump_intermediate = Add_Pump(country, consumer_type, intermediate_fluid,
-                                                      info_hx_intermediate.available_power, power_fraction,
-                                                      hx_intermediate_supply_temperature,
-                                                      hx_intermediate_return_temperature)
-
-                else:
-                    hx_intermediate_turnkey = 0
-                    hx_intermediate_om_fix = 0
-                    pumping_intermediate_turnkey = 0
-                    pumping_intermediate_om_fix = 0
-                    pumping_intermediate_flowrate = 0
-
-                # TOTAL DESIGN/COST
-                total_turnkey_max_power = turnkey_total + hx_intermediate_turnkey + pumping_intermediate_turnkey
-                total_om_fix_max_power = om_fix_total + hx_intermediate_om_fix + pumping_intermediate_om_fix
-                total_om_var_max_power = flowrate_to_power(pumping_intermediate_flowrate) * fuel_properties['price']  # [kW]*[€/kWh] = [€/h]
-
-
-
-
+        global_conversion_efficiency_equipment, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type,electrical_generation)
 
     # OUTPUT (INFO MAX POWER)
     output = {
