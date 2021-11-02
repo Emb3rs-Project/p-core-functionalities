@@ -4,12 +4,16 @@ import sys
 from colorama import init
 from colorama.ansi import Back, Fore, Style
 
-from Tests.Sinks.Industry import testIndustry
+from Tests.Sinks.characterization.Industry import testIndustry
+from Tests.Sinks.characterization.Building import testBuilding
+from Tests.Sinks.characterization.Greenhouse import testGreenhouse
 
 
 functions = {
-    "testIndustry": testIndustry
-}
+    "testIndustry": testIndustry,
+    "testBuilding": testBuilding,
+    "testGreenhouse":testGreenhouse
+    }
 
 def initTests():
     init()

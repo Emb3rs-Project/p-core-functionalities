@@ -50,7 +50,7 @@ class Building():
 
         self.target_temperature_cool = 7  # Cooling
         self.supply_temperature_cool = 12
-        self.u_wall, self.u_roof, self.u_glass, self.u_floor,self.tau_glass, self.alpha_wall, self.alpha_floor, self.alpha_glass, self.cp_wall, self.cp_floor, self.cp_roof,  self.air_change_hour = building_properties(self.country,self.building_type)
+        # self.u_wall, self.u_roof, self.u_glass, self.u_floor,self.tau_glass, self.alpha_wall, self.alpha_floor, self.alpha_glass, self.cp_wall, self.cp_floor, self.cp_roof,  self.air_change_hour = building_properties(self.country,self.building_type)
 
         if self.building_type == 'residential':
             self.Q_gain = 5 * self.area_floor  # occupancy and appliances heat gains [W]
@@ -69,8 +69,18 @@ class Building():
             self.Q_gain = self.number_person_per_floor * 108 + (15 + 12) * self.area_floor  # occupancy and appliances heat gains [W]
             self.renewal_air_per_person = 10 * 10 ** (-3)  # [m3/s]
 
-def testBuilding():    
+
+def testBuilding():
+
     # Office/Hotel/Residential Building
-    building_data = Building()
-    building_test = building(building_data)
-    print(building_test)
+    data = Building()
+    test = building(data)
+    print(test['streams'][0]['monthly_generation'])
+
+    """
+    print(test['streams'][0]['monthly_generation'])
+
+    Expected:
+    [11588.205345261358, 7386.5061589027255, 5597.359096704344, 1933.5649260986288, 71.08217388706045, 7.606453299671028, 1.82517429973742, 10.809158370953018, 82.90969631901801, 877.3154347663569, 4532.200310144091, 8439.652024257577]
+    """
+

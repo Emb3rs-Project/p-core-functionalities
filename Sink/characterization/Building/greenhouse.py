@@ -360,17 +360,19 @@ def greenhouse(in_var):
 
     # OUTPUT -------------
     output = {
-        'id': 7777,
-        'object_type': 'stream',
-        'fluid': 'water',
-        'stream_type': 'inflow',
-        "monthly_generation": profile_monthly_heat,  # [kWh]
-        "hourly_generation": profile_hourly_heat,  # [kWh]
-        "supply_temperature": supply_temperature_heat,  # [ºC]
-        "target_temperature": target_temperature_heat,  # [ºC]
-    }
+        'streams':{
+            'id':7777,
+            'object_type':'stream',
+            'fluid':'water',
+            'stream_type':'inflow',
+            "monthly_generation":profile_monthly_heat,  # [kWh]
+            "hourly_generation":profile_hourly_heat,  # [kWh]
+            "supply_temperature":supply_temperature_heat,  # [ºC]
+            "target_temperature":target_temperature_heat,  # [ºC]
+            }
+        }
 
-    output = json.dumps(output, indent=2)
+    #output = json.dumps(output, indent=2)
 
     return output
 

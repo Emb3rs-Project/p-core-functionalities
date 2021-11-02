@@ -57,25 +57,17 @@ def simple_user(in_var):
 
         # COMPUTE ------------------------
         for stream in streams:
-                supply_temperature = stream['supply_temperature']
-                target_temperature = stream['target_temperature']
-                fluid = stream['fluid']
-                fluid_cp = stream['fluid_cp']
-                flowrate = stream['flowrate']
-                saturday_on = stream['saturday_on']
-                sunday_on = stream['sunday_on']
-                shutdown_periods = stream['shutdown_periods']
-                daily_periods = stream['daily_periods']
-
-                capacity = flowrate * fluid_cp * abs((supply_temperature - target_temperature))/3600  # [kW]
-                schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
-                info_stream = stream_industry(object_id,stream_type,fluid,supply_temperature,target_temperature,flowrate,capacity,schedule)
+                capacity = stream['flowrate'] * stream['fluid_cp'] * abs(( stream['supply_temperature'] - stream['target_temperature']))/3600  # [kW]
+                schedule = schedule_hour(stream['saturday_on'], stream['sunday_on'], stream['shutdown_periods'], stream['daily_periods'])
+                info_stream = stream_industry(object_id,stream_type,stream['fluid'],stream['supply_temperature'],stream['target_temperature'],stream['flowrate'],capacity,schedule)
                 streams_output.append(info_stream)
 
         # OUTPUT ------------------------
-        #output = json.dumps(streams_output, indent=2)
+        output = {'streams':streams}
 
-        return streams_output
+        #output = json.dumps(output, indent=2)
+
+        return output
 
 
 

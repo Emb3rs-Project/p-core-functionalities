@@ -571,32 +571,34 @@ def building(in_var):
     profile_hourly_cool = [i * number_floor for i in profile_hourly_cool]
 
     # OUTPUT -------
-    output = [{
-        'id':9999999,
-        'object_type': 'stream',
-        'fluid': 'water',
-        'stream_type': 'inflow',
-        "monthly_generation": profile_monthly_heat,  # [kWh]
-        "hourly_generation": profile_hourly_heat,  # [kWh]
-        "supply_temperature": supply_temperature_heat,  # [ºC]
-        "target_temperature": target_temperature_heat,  # [ºC]
-        },
-
-        {
+    output = {
+        'streams':[{
+            'id':9999999,
+            'object_type':'stream',
+            'fluid':'water',
+            'stream_type':'inflow',
+            "monthly_generation":profile_monthly_heat,  # [kWh]
+            "hourly_generation":profile_hourly_heat,  # [kWh]
+            "supply_temperature":supply_temperature_heat,  # [ºC]
+            "target_temperature":target_temperature_heat,  # [ºC]
+            },
+            {
             'id':8888888,
-            'object_type': 'stream',
-            'fluid': 'water',
-            'stream_type': 'inflow',
-            "monthly_generation": profile_monthly_cool,  # [kWh]
-            "hourly_generation": profile_hourly_cool,  # [kWh]
-            "supply_temperature": supply_temperature_cool,  # [ºC]
-            "target_temperature": target_temperature_cool  # [ºC]
-        },
+            'object_type':'stream',
+            'fluid':'water',
+            'stream_type':'inflow',
+            "monthly_generation":profile_monthly_cool,  # [kWh]
+            "hourly_generation":profile_hourly_cool,  # [kWh]
+            "supply_temperature":supply_temperature_cool,  # [ºC]
+            "target_temperature":target_temperature_cool  # [ºC]
+                }]
 
-    ]
+        }
 
 
-    output = json.dumps(output, indent=2)
+    #output = json.dumps(output, indent=2)
 
     return output
+
+
 
