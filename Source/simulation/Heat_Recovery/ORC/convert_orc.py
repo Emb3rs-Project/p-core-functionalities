@@ -14,20 +14,31 @@ OUTPUT:
 
 """
 
-import matplotlib.pyplot as plt
 from Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_aux import convert_aux
 import itertools
 from KB_General.equipment_details import equipment_details
 import pandas as pd
 from General.Simple_User.simple_user import simple_user
+from General.Auxiliary_General.get_country import get_country
+from Source.simulation.Heat_Recovery.ORC.Auxiliary.economic_data import economic_data
 
 def convert_orc(in_var):
 
     # INPUT ----
     streams = in_var.streams
     consumer_type = in_var.consumer_type
-    country = in_var.country
     get_best_number = in_var.get_best_number
+    location = in_var.location
+
+    try:
+        price_sell_electricity = in_var.price_sell_electricity/10**3   # [€/MWh] to [€/kWh]
+    except:
+        price_sell_electricity = 35/10**3  # [€/MWh] to [€/kWh]
+
+    try:
+        orc_years_working = in_var.orc_years_working
+    except:
+        orc_years_working = 25
 
     # Initialize Arrays
     output = []
@@ -50,6 +61,10 @@ def convert_orc(in_var):
     intermediate_fluid = 'water'
 
     # COMPUTE ------
+    # get country
+    latitude, longitude = location
+    country = get_country(latitude, longitude)
+
     # check if streams temperature enough to be converted
     df_streams = pd.DataFrame.from_dict(streams)
     df_streams = df_streams.drop(df_streams[df_streams['target_temperature'] < hx_orc_return_temperature].index)
@@ -132,29 +147,29 @@ def convert_orc(in_var):
 
         # all convert options
         convert_info.append({
-            'streams': combination_streams_id[0],
+            'streams_id': combination_streams_id[0],
             'electrical_generation_nominal': electrical_generation_nominal_total,  # [kW]
             'electrical_generation_yearly':electrical_generation_yearly,  # [kWh]
             'excess_heat_supply_capacity': stream_thermal_capacity_total,  # [kW]
             'conversion_efficiency': electrical_generation_nominal / stream_thermal_capacity_total,  # [%]
             'turnkey': total_turnkey,  # [€]
             'om_fix': om_fix_total,  # [€/year]
-            'om_var': om_var_total , # [€/h]
-            'electrical_generation_yearly_turnkey':electrical_generation_yearly/total_turnkey
+            'om_var': om_var_total , # [€]
+            'electrical_generation_yearly_turnkey':total_turnkey/electrical_generation_yearly
             })
 
-    new_df = pd.DataFrame()
+    df_data = pd.DataFrame()
     for dict in convert_info:
-        new_df = new_df.append(dict,ignore_index=True)
+        df_data = df_data.append(dict,ignore_index=True)
+
+    # get economic data
+    df_data = economic_data(orc_years_working, country, consumer_type, df_data)
 
     # get best
-    electricity_generation_max = new_df.sort_values('electrical_generation_yearly', ascending=False).head(n=get_best_number).to_dict(orient='records')
-    electricity_generation_investment = new_df.sort_values('electrical_generation_yearly_turnkey', ascending=False).head(n=get_best_number).to_dict(orient='records')
 
-    output = {
-            'electricity_generation_max': electricity_generation_max,
-            'electricity_generation_investment': electricity_generation_investment
-        }
+    electricity_generation_investment = df_data.sort_values('electrical_generation_yearly_turnkey', ascending=True).head(n=get_best_number).to_dict(orient='records')
+
+    output = {'electricity_generation_investment':electricity_generation_investment}
 
     return output
 
@@ -208,20 +223,11 @@ class INVAR:
 
         self.streams = streams
         self.consumer_type = 'non_household'
-        self.country = 'Portugal'
+        self.location = [41,-8]
+        self.get_best_number = 3
 
 in_var = INVAR(industry_stream_test)
 
 a = convert_orc(in_var)
 
-for out in a.keys():
-    print('NEWWWWWWWWWWWWWWWWW')
-    for i in a[out]:
-        print(i)
-        plt.bar(str(i['streams']),i['electrical_generation_yearly'])
-
-    plt.xlabel('Streams Index')
-    plt.ylabel(out)
-    plt.xticks(rotation=90)
-    plt.show()
 

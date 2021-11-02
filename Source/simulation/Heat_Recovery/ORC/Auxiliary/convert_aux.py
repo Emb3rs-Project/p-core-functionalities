@@ -28,9 +28,9 @@ def convert_aux (stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency,power
 
     # cost intermediate circuit
     try:
-        intermediate_turnkey_max_power = hx_intermediate_turnkey + pumping_intermediate_turnkey
-        intermediate_om_fix_max_power = hx_intermediate_om_fix + pumping_intermediate_om_fix
-        intermediate_om_var_max_power = pumping_intermediate_om_var
+        intermediate_turnkey_max_power = hx_intermediate_turnkey + pumping_intermediate_turnkey  # [€]
+        intermediate_om_fix_max_power = hx_intermediate_om_fix + pumping_intermediate_om_fix  # [€/year]
+        intermediate_om_var_max_power = pumping_intermediate_om_var * sum(stream['schedule'])  # [€]
     except:
         intermediate_turnkey_max_power = 0
         intermediate_om_fix_max_power = 0
