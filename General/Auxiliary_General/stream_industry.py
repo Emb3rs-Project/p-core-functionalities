@@ -1,4 +1,33 @@
+"""
+##############################
+INFO: 'Template' to create stream.
 
+##############################
+INPUT:  object_id - Object ID associated; e.g. process or equipment ID
+        stream_type - e.g. inflow, supply_heat, excess_heat
+        fluid - fluid
+        supply_temperature [ºC]
+        target_temperature [ºC]
+        mass_flowrate [kg/h]
+        capacity  [kW]
+        schedule - vector with 1 and 0
+
+##############################
+OUTPUT:  stream dictionary with:
+            # id
+            # object_type - stream
+            # object_id - Object ID associated; e.g. process or equipment ID
+            # stream_type - e.g. inflow, supply_heat, excess_heat
+            # supply_temperature  [ºC]
+            # target_temperature  [ºC]
+            # fluid - fluid,
+            # flowrate  [kg/h]
+            # schedule - vector with 1 and 0
+            # hourly_generation  [kWh]
+            # capacity  [kW]
+
+
+"""
 
 def stream_industry(object_id,stream_type,fluid,supply_temperature,target_temperature,mass_flowrate,capacity,schedule):
         stream_data = {

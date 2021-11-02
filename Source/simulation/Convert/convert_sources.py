@@ -10,8 +10,8 @@ INPUT:  group_of_sources = [source_1,source_2,...] each source with dictionary {
         grid_losses -> vector with vectors with grid losses for each stream of source  [[source_1_stream_1_loss, source_1_stream_2_loss],...]
 
         Where in each source of group_of_sources :
-            # source_id
-            # source_location = [country,latitude,longitude]
+            # id
+            # location = [latitude,longitude]
             # consumer_type - 'household' or 'non-household'
             # streams -> vector with dictionaries with {stream_id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation}
 

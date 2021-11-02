@@ -53,7 +53,6 @@ def simple_user(in_var):
         else:
             stream_type = 'excess_heat'
 
-
         streams_output = []
 
         # COMPUTE ------------------------

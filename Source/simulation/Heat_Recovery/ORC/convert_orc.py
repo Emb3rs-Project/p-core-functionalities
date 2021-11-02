@@ -2,14 +2,30 @@
 ##############################
 INFO: Convert_Options Raw Data to ORC/RC, for maximum electrical generation.
 
-##############################
-INPUT:  streams =
-        consumer_type =
-        country =
-        get_best_number =
 
 ##############################
-OUTPUT:
+INPUT:  consumer_type - 'household' or 'non-household'
+        location = [latitude,longitude]
+        get_best_number - number of best convertion cases, 3 by default
+        streams -> vector with dictionaries with {id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation, schedule}
+
+
+##############################
+OUTPUT: vector with multiple dictionaries with:
+
+            # streams_id - vector with streams ID
+            # electrical_generation_nominal [kW]
+            # electrical_generation_yearly [kWh]
+            # excess_heat_supply_capacity [kW]
+            # conversion_efficiency []
+            # turnkey - intermediate + orc turnkey [€]
+            # om_fix - om fix intermediate + orc turnkey [€/year]
+            # om_var  - om var intermediate + orc turnkey [€]
+            # electrical_generation_yearly_turnkey
+            # npv_5 - NPV 5 years
+            # npv_15 - NPV 15 years
+            # npv_25 - NPV 25 years
+            # payback - number of years to reach NPV = 0
 
 
 """
@@ -27,13 +43,12 @@ def convert_orc(in_var):
     # INPUT ----
     streams = in_var.streams
     consumer_type = in_var.consumer_type
-    get_best_number = in_var.get_best_number
     location = in_var.location
 
     try:
-        price_sell_electricity = in_var.price_sell_electricity/10**3   # [€/MWh] to [€/kWh]
+        get_best_number = in_var.get_best_number
     except:
-        price_sell_electricity = 35/10**3  # [€/MWh] to [€/kWh]
+        get_best_number = 3
 
     try:
         orc_years_working = in_var.orc_years_working
@@ -166,10 +181,7 @@ def convert_orc(in_var):
     df_data = economic_data(orc_years_working, country, consumer_type, df_data)
 
     # get best
-
-    electricity_generation_investment = df_data.sort_values('electrical_generation_yearly_turnkey', ascending=True).head(n=get_best_number).to_dict(orient='records')
-
-    output = {'electricity_generation_investment':electricity_generation_investment}
+    output = df_data.sort_values('electrical_generation_yearly_turnkey', ascending=True).head(n=get_best_number).to_dict(orient='records')
 
     return output
 
@@ -182,26 +194,12 @@ class Source_simplified():
         # Input
         self.object_id = 5
         self.type_of_object = 'source'
-        self.streams = [{'supply_temperature':300,'target_temperature':500,'fluid':'flue_gas','fluid_cp':1.3,'flowrate':16864,'saturday_on':1
-                         ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[10,18]]},
-                        {'supply_temperature': 2, 'target_temperature': 500, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
-                            'flowrate': 1000, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[10, 20]]},
-                        {'supply_temperature': 200, 'target_temperature': 500, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
-                            'flowrate': 234530, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[10, 21]]},
-                        {'supply_temperature': 450, 'target_temperature': 500, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
-                            'flowrate': 4240, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[10, 24]]},
-                        {'supply_temperature': 500, 'target_temperature': 500, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
-                            'flowrate': 5035340, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[10, 18]]},
-                        {'supply_temperature': 900, 'target_temperature': 500, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
-                            'flowrate': 228550, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[10, 18]]},
-                        {'supply_temperature': 800, 'target_temperature': 100, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
-                            'flowrate': 1224240, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[10, 14]]},
-                        {'supply_temperature': 900, 'target_temperature': 365, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
-                            'flowrate': 32540, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[10, 15]]},
-                        {'supply_temperature': 900, 'target_temperature': 500, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
-                            'flowrate': 224230, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[10, 18]]},
-                        {'supply_temperature': 900, 'target_temperature': 500, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
-                            'flowrate': 3245, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[10, 11]]}]
+
+
+        self.streams = [{'supply_temperature':400,'target_temperature':250,'fluid':'flue_gas','fluid_cp':1.3,'flowrate':321230,'saturday_on':1
+                         ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[1,24]]},
+                        {'supply_temperature': 360, 'target_temperature': 90, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
+                            'flowrate': 155897, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[1, 24]]}]
 
 
 source = Source_simplified()
@@ -209,14 +207,7 @@ industry_stream_test = simple_user(source)
 
 industry_stream_test[0]['id'] = 1
 industry_stream_test[1]['id'] = 2
-industry_stream_test[2]['id'] = 3
-industry_stream_test[3]['id'] = 4
-industry_stream_test[4]['id'] = 5
-industry_stream_test[5]['id'] = 6
-industry_stream_test[6]['id'] = 7
-industry_stream_test[7]['id'] = 8
-industry_stream_test[8]['id'] = 9
-industry_stream_test[9]['id'] = 10
+
 
 class INVAR:
     def __init__(self,streams):
@@ -230,4 +221,4 @@ in_var = INVAR(industry_stream_test)
 
 a = convert_orc(in_var)
 
-
+print(a)
