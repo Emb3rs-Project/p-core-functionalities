@@ -1,5 +1,3 @@
-from KB_General.fuel_properties import fuel_properties
-from KB_General.equipment_details import equipment_details
 from Source.simulation.Auxiliary.design_orc import design_orc
 from General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from General.Convert_Equipments.Convert_Options.add_hx import Add_HX
