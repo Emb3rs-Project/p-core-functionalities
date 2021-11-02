@@ -30,13 +30,13 @@ OUTPUT: vector with multiple dictionaries with:
 
 """
 
-from Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_aux import convert_aux
+from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_aux import convert_aux
 import itertools
-from KB_General.equipment_details import equipment_details
+from .....KB_General.equipment_details import equipment_details
 import pandas as pd
-from General.Simple_User.simple_user import simple_user
-from General.Auxiliary_General.get_country import get_country
-from Source.simulation.Heat_Recovery.ORC.Auxiliary.economic_data import economic_data
+from .....General.Simple_User.simple_user import simple_user
+from .....General.Auxiliary_General.get_country import get_country
+from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.economic_data import economic_data
 
 def convert_orc(in_var):
 

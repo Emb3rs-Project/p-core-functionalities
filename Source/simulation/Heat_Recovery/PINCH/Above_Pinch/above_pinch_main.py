@@ -8,9 +8,9 @@ Streams Out are only split before any match.
 
 """
 
-from Source.simulation.Heat_Recovery.PINCH.Auxiliary.check_streams_number import check_streams_number
-from Source.simulation.Heat_Recovery.PINCH.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
-from Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_first_match import above_pinch_first_match
+from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.check_streams_number import check_streams_number
+from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
+from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_first_match import above_pinch_first_match
 
 
 def above_pinch_main(df_streams,delta_T_min,T_pinch,df_hx):

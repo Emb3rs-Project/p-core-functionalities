@@ -47,19 +47,19 @@ OUTPUT: vector with multiple dictionaries [{'source_id', 'stream_id', 'hourly_st
 
 """
 
-from General.Convert_Equipments.Auxiliary.source_get_hx_temperatures import source_get_hx_temperatures
-from General.Convert_Equipments.Convert_Options.add_boiler import Add_Boiler
-from General.Convert_Equipments.Convert_Options.add_hx import Add_HX
-from General.Convert_Equipments.Convert_Options.add_solar_thermal import Add_Solar_Thermal
-from General.Convert_Equipments.Convert_Options.add_heat_pump import Add_Heat_Pump
-from General.Convert_Equipments.Convert_Options.add_chp import Add_CHP
-from General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
-from General.Convert_Equipments.Convert_Options.add_orc_cascaded import Add_ORC_Cascaded
-from General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
-from Source.simulation.Auxiliary.design_orc import design_orc
+from ....General.Convert_Equipments.Auxiliary.source_get_hx_temperatures import source_get_hx_temperatures
+from ....General.Convert_Equipments.Convert_Options.add_boiler import Add_Boiler
+from ....General.Convert_Equipments.Convert_Options.add_hx import Add_HX
+from ....General.Convert_Equipments.Convert_Options.add_solar_thermal import Add_Solar_Thermal
+from ....General.Convert_Equipments.Convert_Options.add_heat_pump import Add_Heat_Pump
+from ....General.Convert_Equipments.Convert_Options.add_chp import Add_CHP
+from ....General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
+from ....General.Convert_Equipments.Convert_Options.add_orc_cascaded import Add_ORC_Cascaded
+from ....General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
+from ....Source.simulation.Auxiliary.design_orc import design_orc
 from copy import copy
 import json
-from General.Auxiliary_General.get_country import get_country
+from ....General.Auxiliary_General.get_country import get_country
 
 
 def convert_sources(in_var):

@@ -8,10 +8,10 @@
 
 
 
-from Sink.characterization.Building.building import building
-from Sink.characterization.Building.greenhouse import greenhouse
-from General.Simple_User.simple_user import simple_user
-from KB_General.building_properties import building_properties
+from .Sink.characterization.Building.building import building
+from .Sink.characterization.Building.greenhouse import greenhouse
+from .General.Simple_User.simple_user import simple_user
+from .KB_General.building_properties import building_properties
 
 class Greenhouse():
     def __init__(self):

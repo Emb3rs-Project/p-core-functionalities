@@ -1,7 +1,7 @@
 
 
 
-from Sink.characterization.Building.building import building
+from ...Sink.characterization.Building.building import building
 
 
 class Building():

@@ -1,6 +1,6 @@
-from Source.simulation.Auxiliary.design_orc import design_orc
-from General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
-from General.Convert_Equipments.Convert_Options.add_hx import Add_HX
+from ......Source.simulation.Auxiliary.design_orc import design_orc
+from ......General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
+from ......General.Convert_Equipments.Convert_Options.add_hx import Add_HX
 
 def convert_aux (stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency,power_fraction,intermediate_fluid, country,consumer_type,aggregate_streams):
 

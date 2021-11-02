@@ -3,9 +3,9 @@
 
 """
 
-from KB_General.equipment_details import equipment_details
-from KB_General.fuel_properties import fuel_properties
-from General.Auxiliary_General.linearize_values import linearize_values
+from ....KB_General.equipment_details import equipment_details
+from ....KB_General.fuel_properties import fuel_properties
+from ....General.Auxiliary_General.linearize_values import linearize_values
 
 
 class Add_CHP():

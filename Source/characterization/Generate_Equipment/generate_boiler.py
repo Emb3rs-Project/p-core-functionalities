@@ -33,11 +33,11 @@ OUTPUT: object Boiler.
 
 """
 
-from General.Auxiliary_General.schedule_hour import schedule_hour
-from General.Auxiliary_General.combustion import T_flue_gas, combustion_mass_flows
-from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from General.Auxiliary_General.stream_industry import stream_industry
-from KB_General.fluid_material import fluid_material_cp
+from ....General.Auxiliary_General.schedule_hour import schedule_hour
+from ....General.Auxiliary_General.combustion import T_flue_gas, combustion_mass_flows
+from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
+from ....General.Auxiliary_General.stream_industry import stream_industry
+from ....KB_General.fluid_material import fluid_material_cp
 
 
 class Boiler():

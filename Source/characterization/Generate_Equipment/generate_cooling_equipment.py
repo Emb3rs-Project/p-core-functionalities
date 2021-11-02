@@ -41,9 +41,9 @@ OUTPUT: object Cooling Equipment.
 """
 
 
-from General.Auxiliary_General.schedule_hour import schedule_hour
-from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from General.Auxiliary_General.stream_industry import stream_industry
+from ....General.Auxiliary_General.schedule_hour import schedule_hour
+from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
+from ....General.Auxiliary_General.stream_industry import stream_industry
 
 class Cooling_Equipment():
 

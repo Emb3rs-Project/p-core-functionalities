@@ -60,15 +60,15 @@ OUTPUT: vector with 2 dictionaries, regarding hot and cooling stream needs with:
 
 import json
 import math
-from Sink.characterization.Building.Auxiliary.building_climate_api import building_climate_api
-from Sink.characterization.Building.Auxiliary.wall_area import wall_area
-from General.Auxiliary_General.schedule_hour import schedule_hour
+from ....Sink.characterization.Building.Auxiliary.building_climate_api import building_climate_api
+from ....Sink.characterization.Building.Auxiliary.wall_area import wall_area
+from ....General.Auxiliary_General.schedule_hour import schedule_hour
 import copy
-from General.Auxiliary_General.month_last_hour import month_last_hour
-from Sink.characterization.Building.Auxiliary.h_convection_horizontal import h_convection_horizontal
-from Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
-from Sink.characterization.Building.Auxiliary.ht_radiation_equation import ht_radiation_equation
-from Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
+from ....General.Auxiliary_General.month_last_hour import month_last_hour
+from ....Sink.characterization.Building.Auxiliary.h_convection_horizontal import h_convection_horizontal
+from ....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
+from ....Sink.characterization.Building.Auxiliary.ht_radiation_equation import ht_radiation_equation
+from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
 
 
 def greenhouse(in_var):

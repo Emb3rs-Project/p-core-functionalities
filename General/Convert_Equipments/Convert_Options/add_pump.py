@@ -3,12 +3,12 @@
 
 """
 
-from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from KB_General.equipment_details import equipment_details
-from KB_General.fuel_properties import fuel_properties
-from General.Auxiliary_General.flowrate_to_power import flowrate_to_power
-from General.Auxiliary_General.linearize_values import linearize_values
-from KB_General.fluid_material import fluid_material_rho
+from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
+from ....KB_General.equipment_details import equipment_details
+from ....KB_General.fuel_properties import fuel_properties
+from ....General.Auxiliary_General.flowrate_to_power import flowrate_to_power
+from ....General.Auxiliary_General.linearize_values import linearize_values
+from ....KB_General.fluid_material import fluid_material_rho
 
 class Add_Pump():
 
