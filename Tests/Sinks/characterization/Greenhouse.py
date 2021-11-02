@@ -42,7 +42,7 @@ class Greenhouse():
         # value f_c
         # maybe show equation to the user and link to article regarding infiltrations computation
         # link: https: // doi.org / 10.1016 / j.compag.2018.04.025
-        # assumeptions: f_t = 0.16;  c_w = 0.22
+        # assumptions: f_t = 0.16;  c_w = 0.22
         # equation: total_cover_area * f_c * math.sqrt( c_w ** 2 * wind_speed + f_t ** 2 * (abs(T_interior - T_exterior)))  # [m3/s]
         # user can introduce f_c that he wants to
         self.f_c = 2.5 * 10 ** (-4) # factor to estimate building infiltrations

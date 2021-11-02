@@ -20,7 +20,7 @@ INPUT: object with:
             # excess_heat_supply_temperature
             # excess_heat_target_temperature
 
-        2) Mandatory input - chillers (except co2_chiller) :
+        2) Optional input - chillers (except co2_chiller) :
             # supply_fluid
 
         3) Mandatory input - To compute excess heat characteristics the equipment supply capacity must be known.

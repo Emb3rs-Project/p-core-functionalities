@@ -38,6 +38,7 @@ from General.Auxiliary_General.combustion import T_flue_gas, combustion_mass_flo
 from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from General.Auxiliary_General.stream_industry import stream_industry
 from KB_General.fluid_material import fluid_material_cp
+from KB_General.equipment_details import equipment_details
 
 
 class Boiler():
@@ -54,7 +55,6 @@ class Boiler():
 
         # INPUT
         self.id = in_var.id  # Create ID for each boiler
-        self.global_conversion_efficiency = in_var.global_conversion_efficiency
         self.fuel_type = in_var.fuel_type  # Fuel type  (Natural gas, Fuel oil, Biomass)
         supply_temperature = in_var.supply_temperature
         open_closed_loop = in_var.open_closed_loop  # Open heating circuit? (1-Yes, 0-No)
@@ -96,7 +96,14 @@ class Boiler():
             else:
                 self.supply_capacity = 0
 
+        try:
+            self.global_conversion_efficiency = in_var.global_conversion_efficiency
+        except:
+            self.global_conversion_efficiency, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type,
+                                                                                               self.supply_capacity)
+
         # fuel consumption [kg/h]
+
         fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(self.supply_capacity,
                                                                          self.global_conversion_efficiency,
                                                                          self.fuel_type)

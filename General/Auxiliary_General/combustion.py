@@ -39,7 +39,6 @@ def T_flue_gas (P_equip,fuel_type, m_fuel,m_flue_gas):
         iteration = False
         cp_flue_gas = fluid_material_cp(fluid_type, (T_it[i] + T_initial) / 2)  # [kJ/kg.K]
 
-
         while iteration == False:
             T_chamber_new = (lhv_fuel * m_fuel)/(m_flue_gas/3600 * cp_flue_gas) + T_initial # [K]
             cp_flue_gas_new = fluid_material_cp(fluid_type, (T_chamber_new+T_initial)/2)  # [kJ/kg.K]

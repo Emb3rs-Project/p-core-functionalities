@@ -63,7 +63,7 @@ def simple_user(in_var):
                 streams_output.append(info_stream)
 
         # OUTPUT ------------------------
-        output = {'streams':streams}
+        output = {'streams':streams_output}
 
         #output = json.dumps(output, indent=2)
 

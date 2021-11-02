@@ -180,7 +180,7 @@ df_hx_processes = generate_heat_recovery(
 
 b = df_hx_processes['co2_optimization']['pinch_hx_data']
 print(b)
-print(df_hx_processes['co2_optimization']['pinch_hx_data']['Original_Hot_Stream'])
+print(df_hx_processes['co2_optimization']['pinch_hx_data'][0]['Original_Hot_Stream'])
 
 """
 print(df_hx_processes)

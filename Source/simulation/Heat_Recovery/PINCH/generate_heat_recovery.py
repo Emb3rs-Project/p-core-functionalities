@@ -45,7 +45,6 @@ from Source.simulation.Heat_Recovery.PINCH.Auxiliary.pinch_point import pinch_po
 import pandas as pd
 from KB_General.fuel_properties import fuel_properties
 from Source.simulation.Heat_Recovery.PINCH.Auxiliary.get_best_3_outputs import get_best_3_outputs
-from collections import OrderedDict
 
 
 def generate_heat_recovery(in_var):

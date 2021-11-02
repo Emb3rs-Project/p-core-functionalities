@@ -14,7 +14,7 @@ INPUT: group_of_sinks = [sink_1,sink_2,...] each sink with dictionary {sink_id,s
          # hourly_generation for streams (profile 1 and 0), hourly_generation for building  (kWh profile)
 
 ##############################
-OUTPUT: vector with multiple dictionaries {'sink_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies'}
+OUTPUT: dictionary with multiple dictionaries {'sink_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies'}
       Where:
          # sink_group_grid_supply_temperature [ºC]
          # sink_group_grid_return_temperature [ºC]
@@ -84,7 +84,6 @@ def convert_sinks(in_var):
     group_of_sinks = in_var.group_of_sinks  # e.g. building, greenhouse, stream inflow
 
     # Initialize array
-    output = []
     output_sink = []
     conversion_technologies = []
     vector_sink_max_target_temperature = []
@@ -332,42 +331,17 @@ def convert_sinks(in_var):
             'streams': output_converted
             })
 
-    output.append({
+    output ={
         'sink_group_grid_supply_temperature': grid_supply_temperature,
         'sink_group_grid_return_temperature': grid_return_temperature,
         'grid_specific': {'heating':grid_specific_heating,'cooling':grid_specific_cooling},
         'sinks': output_sink
-        })
+        }
 
 
 
-    output = json.dumps(output, indent=2)
+    #output = json.dumps(output, indent=2)
 
     return output
 
 
-
-class VAR():
-    def __init__(self):
-        self.a = 1
-
-invar = VAR()
-
-stream_1 = {'id':2,
-            'object_type':'stream',
-            'stream_type':'inflow',
-            'fluid':'water',
-            'capacity':263,
-            'supply_temperature': 10,
-            'target_temperature':80,
-            'hourly_generation':[1000,1000,1000]}
-
-
-invar.group_of_sinks = [ {'id':1,
-                        'consumer_type': 'non-household',
-                        'location':[10,10],
-                        'streams':[stream_1]
-                                }]
-
-out = convert_sinks(invar)
-print(out)

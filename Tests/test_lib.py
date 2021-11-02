@@ -7,12 +7,19 @@ from colorama.ansi import Back, Fore, Style
 from Tests.Sinks.characterization.Industry import testIndustry
 from Tests.Sinks.characterization.Building import testBuilding
 from Tests.Sinks.characterization.Greenhouse import testGreenhouse
-
+from Tests.Sinks.simulation.ConvertSink import testConvertSink
+from Tests.Sources.characterization.GenerateBoiler import testGenerateBoiler
+from Tests.Sources.characterization.GenerateChp import testGenerateChp
+from Tests.Sources.characterization.OutflowSimplified import testOutflowSimplified
 
 functions = {
     "testIndustry": testIndustry,
     "testBuilding": testBuilding,
-    "testGreenhouse":testGreenhouse
+    "testGreenhouse":testGreenhouse,
+    "testConvertSink":testConvertSink,
+    'testGenerateBoiler':testGenerateBoiler,
+    'testGenerateChp':testGenerateChp,
+    'testOutflowSimplified':testOutflowSimplified
     }
 
 def initTests():
