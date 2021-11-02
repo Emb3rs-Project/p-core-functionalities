@@ -345,8 +345,6 @@ def convert_sinks(in_var):
 
     return output
 
-import os
-
 
 
 class VAR():

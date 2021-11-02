@@ -25,7 +25,7 @@ def building_climate_api(latitude,longitude):
     solar_collector_inclination = latitude - 15
 
     # Get Climate Data from API
-    raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30)
+    raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30, map_variables=False)
     climate_df = raw_df[0]
     data = np.zeros((8760,832))
 

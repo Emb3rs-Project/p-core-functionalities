@@ -4,13 +4,6 @@ import sys
 from colorama import init
 from colorama.ansi import Back, Fore, Style
 
-from ..Tests.Sinks.Industry import testIndustry
-
-
-functions = {
-    "testIndustry": testIndustry
-}
-
 def initTests():
     init()
 
