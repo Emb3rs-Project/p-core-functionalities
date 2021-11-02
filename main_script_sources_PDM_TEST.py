@@ -1,9 +1,9 @@
-from General.Simple_User.simple_user import simple_user
-from Source.characterization.Generate_Equipment.generate_boiler import Boiler
-from Source.characterization.Generate_Equipment.generate_chp import Chp
-from Source.characterization.Process.process import Process
-from Source.simulation.Heat_Recovery.PINCH.generate_heat_recovery import generate_heat_recovery
-from General.Auxiliary_General.stream_industry import stream_industry
+from .General.Simple_User.simple_user import simple_user
+from .Source.characterization.Generate_Equipment.generate_boiler import Boiler
+from .Source.characterization.Generate_Equipment.generate_chp import Chp
+from .Source.characterization.Process.process import Process
+from .Source.simulation.Heat_Recovery.PINCH.generate_heat_recovery import generate_heat_recovery
+from .General.Auxiliary_General.stream_industry import stream_industry
 
 
 class Boiler_data():

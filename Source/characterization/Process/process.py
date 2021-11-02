@@ -47,7 +47,7 @@ OUTPUT: object Process
 
 """
 
-from General.Auxiliary_General.stream_industry import stream_industry
+from ....General.Auxiliary_General.stream_industry import stream_industry
 import datetime
 
 class Process:

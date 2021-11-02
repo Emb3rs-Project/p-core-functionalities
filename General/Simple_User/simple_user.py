@@ -36,8 +36,8 @@ OUTPUT: vector with dictionaries:
 
 """
 
-from General.Auxiliary_General.stream_industry import stream_industry
-from General.Auxiliary_General.schedule_hour import schedule_hour
+from ...General.Auxiliary_General.stream_industry import stream_industry
+from ...General.Auxiliary_General.schedule_hour import schedule_hour
 import json
 
 def simple_user(in_var):

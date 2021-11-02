@@ -74,23 +74,23 @@ OUTPUT: vector with 2 dictionaries, regarding hot and cooling stream needs with:
 
 import json
 import math
-from KB_General.building_properties import building_properties
-from Sink.characterization.Building.Auxiliary.building_climate_api import building_climate_api
-from Sink.characterization.Building.Auxiliary.wall_area import wall_area
-from General.Auxiliary_General.schedule_hour import schedule_hour
+from ....KB_General.building_properties import building_properties
+from ....Sink.characterization.Building.Auxiliary.building_climate_api import building_climate_api
+from ....Sink.characterization.Building.Auxiliary.wall_area import wall_area
+from ....General.Auxiliary_General.schedule_hour import schedule_hour
 import copy
-from Sink.characterization.Building.Auxiliary.building_sky_heat_loss import building_sky_heat_loss
-from Sink.characterization.Building.Auxiliary.ht_indoor_air import ht_indoor_air
-from Sink.characterization.Building.Auxiliary.building_dhw import building_dhw
-from General.Auxiliary_General.month_last_hour import month_last_hour
-from Sink.characterization.Building.Auxiliary.h_convection_horizontal import h_convection_horizontal
-from Sink.characterization.Building.Auxiliary.explicit_computation_component_temperature import explicit_computation_component_temperature
-from Sink.characterization.Building.Auxiliary.steady_state_vertical_inner_wall import steady_state_vertical_inner_wall
-from Sink.characterization.Building.Auxiliary.steady_state_horizontal_inner_wall import steady_state_horizontal_inner_wall
-from Sink.characterization.Building.Auxiliary.steady_state_exterior_wall import steady_state_exterior_wall
-from Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
-from Sink.characterization.Building.Auxiliary.ht_radiation_vertical_surface import ht_radiation_vertical_surface
-from Sink.characterization.Building.Auxiliary.ht_radiation_horizontal_surface import ht_radiation_horizontal_surface
+from ....Sink.characterization.Building.Auxiliary.building_sky_heat_loss import building_sky_heat_loss
+from ....Sink.characterization.Building.Auxiliary.ht_indoor_air import ht_indoor_air
+from ....Sink.characterization.Building.Auxiliary.building_dhw import building_dhw
+from ....General.Auxiliary_General.month_last_hour import month_last_hour
+from ....Sink.characterization.Building.Auxiliary.h_convection_horizontal import h_convection_horizontal
+from ....Sink.characterization.Building.Auxiliary.explicit_computation_component_temperature import explicit_computation_component_temperature
+from ....Sink.characterization.Building.Auxiliary.steady_state_vertical_inner_wall import steady_state_vertical_inner_wall
+from ....Sink.characterization.Building.Auxiliary.steady_state_horizontal_inner_wall import steady_state_horizontal_inner_wall
+from ....Sink.characterization.Building.Auxiliary.steady_state_exterior_wall import steady_state_exterior_wall
+from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
+from ....Sink.characterization.Building.Auxiliary.ht_radiation_vertical_surface import ht_radiation_vertical_surface
+from ....Sink.characterization.Building.Auxiliary.ht_radiation_horizontal_surface import ht_radiation_horizontal_surface
 
 
 def building(in_var):

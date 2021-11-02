@@ -5,7 +5,7 @@ Compute heat [W] exchanged between vertical surface and remaining ones.
 
 """
 
-from Sink.characterization.Building.Auxiliary.ht_radiation_equation import ht_radiation_equation
+from .....Sink.characterization.Building.Auxiliary.ht_radiation_equation import ht_radiation_equation
 
 
 def ht_radiation_vertical_surface(surface_analysed,surface_1,surface_2,surface_3,surface_4,surface_5,surface_6,surface_7,surface_8):

@@ -1,5 +1,5 @@
 
-from General.Auxiliary_General.linearize_values import linearize_values
+from ....General.Auxiliary_General.linearize_values import linearize_values
 
 
 def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_power_grid,object_type):

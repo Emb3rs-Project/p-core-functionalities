@@ -1,6 +1,6 @@
 
-from KB_General.equipment_details import equipment_details
-from KB_General.fluid_material import fluid_material_cp
+from ......KB_General.equipment_details import equipment_details
+from ......KB_General.fluid_material import fluid_material_cp
 
 def hx_storage(df_profile, df_hx):
 

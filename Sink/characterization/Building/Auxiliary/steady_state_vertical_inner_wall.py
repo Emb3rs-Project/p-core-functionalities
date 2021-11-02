@@ -5,7 +5,7 @@ Info: Heat balance for the interior horizontal surfaces.
 """
 
 
-from Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
+from .....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
 
 
 def steady_state_vertical_inner_wall(T_wall_in,T_wall,T_interior,u_wall,Q_rad_inner_facade,ratio_wall,area_wall,interpolation_weight):
