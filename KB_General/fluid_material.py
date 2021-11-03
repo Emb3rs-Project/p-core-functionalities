@@ -23,7 +23,6 @@ def fluid_material_cp(fluid_name,temperature):
         print('fluid does not exist in db. fluid_cp = 1')
         fluid_cp = 1
 
-
     return fluid_cp
 
 

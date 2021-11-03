@@ -1,6 +1,6 @@
 
-from ......KB_General.equipment_details import equipment_details
-from ......KB_General.fluid_material import fluid_material_cp
+from KB_General.equipment_details import equipment_details
+from KB_General.fluid_material import fluid_material_cp
 
 def hx_storage(df_profile, df_hx):
 
@@ -26,7 +26,7 @@ def hx_storage(df_profile, df_hx):
                 rho_fluid = 1000  # kg/m3
                 cost_fluid = 0.0004 # €/L
             else:
-                fluid = 'oil'
+                fluid = 'thermal_oil'
                 cp_fluid = fluid_material_cp(fluid,150)
                 rho_fluid = 920
                 cost_fluid = 0.5 # €/L

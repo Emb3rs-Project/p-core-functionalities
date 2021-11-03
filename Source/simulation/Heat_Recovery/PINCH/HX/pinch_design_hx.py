@@ -5,8 +5,8 @@ Info: Design and cost HX for Pinch Analysis.
 
 """
 
-from ......General.Convert_Equipments.Auxiliary.design_cost_hx import design_cost_hx
-from ......KB_General.hx_type_and_u import hx_type_and_u
+from General.Convert_Equipments.Auxiliary.design_cost_hx import design_cost_hx
+from KB_General.hx_type_and_u import hx_type_and_u
 
 def pinch_design_hx(hot_stream_index,cold_stream_index,hx_hot_stream_T_hot, hx_hot_stream_T_cold, hot_stream_fluid, hx_cold_stream_T_hot, hx_cold_stream_T_cold, cold_stream_fluid, hx_power,original_hot_stream_index,original_cold_stream_index):
 

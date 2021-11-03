@@ -47,7 +47,7 @@ from KB_General.fuel_properties import fuel_properties
 from Source.simulation.Heat_Recovery.PINCH.Auxiliary.get_best_3_outputs import get_best_3_outputs
 
 
-def generate_heat_recovery(in_var):
+def convert_pinch(in_var):
 
     # Input
     all_objects = in_var.all_objects # equipments/processes
@@ -65,7 +65,6 @@ def generate_heat_recovery(in_var):
     # Computation
     # Analyse processes, and build streams list
     for object in all_objects:
-        print(object)
         if object['object_type'] == 'process':
             perform_hourly = 1
             objects.append(object)
@@ -77,7 +76,6 @@ def generate_heat_recovery(in_var):
             streams.append(object)
             new_id += 1
 
-    print(streams)
    # If 'objects' is empty, it means analyse equipment internal heat recovery
     if objects == [] and streams == []:
         object = all_objects[0]

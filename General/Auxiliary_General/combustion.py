@@ -4,8 +4,8 @@
 Info: Compute combustion properties
 """
 
-from ...KB_General.fuel_properties import fuel_properties
-from ...KB_General.fluid_material import fluid_material_cp
+from KB_General.fuel_properties import fuel_properties
+from KB_General.fluid_material import fluid_material_cp
 
 
 def combustion_mass_flows (P_equip,eff_equip, fuel_type):

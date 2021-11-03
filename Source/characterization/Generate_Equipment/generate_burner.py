@@ -33,11 +33,11 @@ OUTPUT: object Burner.
 """
 
 
-from ....General.Auxiliary_General.schedule_hour import schedule_hour
-from ....General.Auxiliary_General.combustion import T_flue_gas,combustion_mass_flows
-from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from ....General.Auxiliary_General.stream_industry import stream_industry
-from ....KB_General.fluid_material import fluid_material_cp
+from General.Auxiliary_General.schedule_hour import schedule_hour
+from General.Auxiliary_General.combustion import T_flue_gas,combustion_mass_flows
+from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
+from General.Auxiliary_General.stream_industry import stream_industry
+from KB_General.fluid_material import fluid_material_cp
 
 class Burner():
 
@@ -50,13 +50,19 @@ class Burner():
         self.streams = []
         excess_heat_fluid = 'flue_gas'  # Excess heat fluid type
         supply_fluid = 'air'
-        excess_heat_target_temperature = 20  # dilluted flue_gas cooled until 20ºC
+        excess_heat_target_temperature = 20  # dilluted flue_gas cooled until ambient temperature
+        inflow_supply_temperature = 20   # ambient temperature
 
         # INPUT
         self.id = in_var.id  # Create ID for each boiler
-        self.global_conversion_efficiency = in_var.global_conversion_efficiency
+
+        try:
+            self.global_conversion_efficiency = in_var.global_conversion_efficiency
+        except:
+            self.global_conversion_efficiency = 0.9
+
+
         self.fuel_type = in_var.fuel_type  # Fuel type  (Natural gas, Fuel oil, Biomass)
-        inflow_supply_temperature = in_var.inflow_supply_temperature   # Ambient Temperature
         saturday_on = in_var.saturday_on
         sunday_on = in_var.sunday_on
         shutdown_periods = in_var.shutdown_periods  # e.g: [[59,74],[152,172],[362,365]]
@@ -107,7 +113,7 @@ class Burner():
 
         # Inflow
         inflow_flowrate = m_air
-        inflow_fluid_cp = fluid_material_cp(supply_fluid,(inflow_supply_temperature+inflow_target_temperature)/2)
+        inflow_fluid_cp = fluid_material_cp(supply_fluid, (inflow_supply_temperature+inflow_target_temperature)/2)
         inflow_capacity = inflow_flowrate * (inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp/3600  # [kW]
 
 
@@ -119,7 +125,7 @@ class Burner():
                                    inflow_supply_temperature,
                                    inflow_target_temperature,
                                    inflow_flowrate,
-                                   self.supply_capacity,
+                                   inflow_capacity,
                                    schedule))
 
 

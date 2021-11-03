@@ -3,9 +3,9 @@
 
 """
 
-from ....KB_General.equipment_details import equipment_details
-from ....General.Auxiliary_General.linearize_values import linearize_values
-from ....KB_General.hx_type_and_u import hx_type_and_u
+from KB_General.equipment_details import equipment_details
+from General.Auxiliary_General.linearize_values import linearize_values
+from KB_General.hx_type_and_u import hx_type_and_u
 
 
 import numpy as np

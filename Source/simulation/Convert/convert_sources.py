@@ -47,29 +47,34 @@ OUTPUT: vector with multiple dictionaries [{'source_id', 'stream_id', 'hourly_st
 
 """
 
-from ....General.Convert_Equipments.Auxiliary.source_get_hx_temperatures import source_get_hx_temperatures
-from ....General.Convert_Equipments.Convert_Options.add_boiler import Add_Boiler
-from ....General.Convert_Equipments.Convert_Options.add_hx import Add_HX
-from ....General.Convert_Equipments.Convert_Options.add_solar_thermal import Add_Solar_Thermal
-from ....General.Convert_Equipments.Convert_Options.add_heat_pump import Add_Heat_Pump
-from ....General.Convert_Equipments.Convert_Options.add_chp import Add_CHP
-from ....General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
-from ....General.Convert_Equipments.Convert_Options.add_orc_cascaded import Add_ORC_Cascaded
-from ....General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
-from ....Source.simulation.Auxiliary.design_orc import design_orc
+from General.Convert_Equipments.Auxiliary.source_get_hx_temperatures import source_get_hx_temperatures
+from General.Convert_Equipments.Convert_Options.add_boiler import Add_Boiler
+from General.Convert_Equipments.Convert_Options.add_hx import Add_HX
+from General.Convert_Equipments.Convert_Options.add_solar_thermal import Add_Solar_Thermal
+from General.Convert_Equipments.Convert_Options.add_heat_pump import Add_Heat_Pump
+from General.Convert_Equipments.Convert_Options.add_chp import Add_CHP
+from General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
+from General.Convert_Equipments.Convert_Options.add_orc_cascaded import Add_ORC_Cascaded
+from General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
+from Source.simulation.Auxiliary.design_orc import design_orc
 from copy import copy
 import json
-from ....General.Auxiliary_General.get_country import get_country
+from General.Auxiliary_General.get_country import get_country
 
 
 def convert_sources(in_var):
 
     # INPUT --------------
     group_of_sources = in_var.group_of_sources
-    last_iteration_data = in_var.last_iteration_data  # data output from this function from first iteration
     sink_group_grid_supply_temperature = in_var.sink_group_grid_supply_temperature
     sink_group_grid_return_temperature = in_var.sink_group_grid_return_temperature
-    grid_losses = in_var.grid_losses  # vector with losses for each source
+
+    try:
+        grid_losses = in_var.grid_losses  # vector with losses for each source
+        last_iteration_data = in_var.last_iteration_data  # data output from this function from first iteration
+    except:
+        grid_losses = []
+        last_iteration_data = []
 
     # Initialize array
     output = []
@@ -234,7 +239,7 @@ def convert_sources(in_var):
 
 
                                 # add orc cascaded
-                                orc_type,stream_available_capacity,orc_electrical_generation,overall_thermal_capacity,hx_stream_target_temperature,intermediate_circuit,hx_intermediate_supply_temperature,hx_intermediate_return_temperature = design_orc(stream['capacity'],stream['fluid'], stream['supply_temperature'],stream['target_temperature'], hx_delta_T,orc_cond_supply_temperature, orc_T_evap, hx_efficiency)
+                                orc_type,stream_available_capacity,orc_electrical_generation,overall_thermal_capacity,hx_stream_target_temperature,intermediate_circuit,hx_intermediate_supply_temperature,hx_intermediate_return_temperature = design_orc(stream['capacity'],stream['fluid'], stream['supply_temperature'],stream['target_temperature'], hx_delta_T,orc_cond_supply_temperature, orc_T_evap, hx_efficiency,aggregate_streams=False)
                                 if intermediate_circuit == True:
                                     hx_number = 1
                                 else:
@@ -335,7 +340,7 @@ def convert_sources(in_var):
 
 
                             output_converted.append({
-                                            'stream_id': stream['stream_id'],
+                                            'stream_id': stream['id'],
                                             'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
                                             'conversion_technologies': conversion_technologies,  # [€/kW]
                                         })
@@ -353,39 +358,4 @@ def convert_sources(in_var):
     return output
 
 
-class VAR():
-    def __init__(self):
-        self.a = 1
-        self.grid_losses =[]
-        self.last_iteration_data =[]
-        self.sink_group_grid_supply_temperature = 85
-        self.sink_group_grid_return_temperature = 55
 
-
-invar = VAR()
-
-
-stream_1 = {'stream_id':1,
-            'object_type':'stream',
-            'stream_type':'excess_heat',
-            'fluid':'flue_gas',
-            'capacity':434,
-            'supply_temperature': 220,
-            'target_temperature':120,
-            'hourly_generation':[1000,1000,1000]}
-
-
-invar.group_of_sources = [ {'id':1,
-                            'consumer_type': 'non-household',
-                             'location':[10,10],
-                             'streams':[stream_1]
-                                }]
-
-out = convert_sources(invar)
-print(out)
-
-invar.last_iteration_data = out
-invar.grid_losses = [[200],[150]]
-new_out = convert_sources(invar)
-new_out = json.dumps(new_out, indent=2)
-print(new_out)

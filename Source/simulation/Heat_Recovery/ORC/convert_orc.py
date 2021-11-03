@@ -30,13 +30,13 @@ OUTPUT: vector with multiple dictionaries with:
 
 """
 
-from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_aux import convert_aux
+from Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_aux import convert_aux
 import itertools
-from .....KB_General.equipment_details import equipment_details
+from KB_General.equipment_details import equipment_details
 import pandas as pd
-from .....General.Simple_User.simple_user import simple_user
-from .....General.Auxiliary_General.get_country import get_country
-from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.economic_data import economic_data
+from General.Simple_User.simple_user import simple_user
+from General.Auxiliary_General.get_country import get_country
+from Source.simulation.Heat_Recovery.ORC.Auxiliary.economic_data import economic_data
 
 def convert_orc(in_var):
 
@@ -186,39 +186,3 @@ def convert_orc(in_var):
     return output
 
 
-
-
-class Source_simplified():
-    def __init__(self):
-        # Input
-        # Input
-        self.object_id = 5
-        self.type_of_object = 'source'
-
-
-        self.streams = [{'supply_temperature':400,'target_temperature':250,'fluid':'flue_gas','fluid_cp':1.3,'flowrate':321230,'saturday_on':1
-                         ,'sunday_on':1,'shutdown_periods':[],'daily_periods':[[1,24]]},
-                        {'supply_temperature': 360, 'target_temperature': 90, 'fluid': 'flue_gas', 'fluid_cp': 1.3,
-                            'flowrate': 155897, 'saturday_on': 1, 'sunday_on': 1, 'shutdown_periods': [], 'daily_periods': [[1, 24]]}]
-
-
-source = Source_simplified()
-industry_stream_test = simple_user(source)
-
-industry_stream_test[0]['id'] = 1
-industry_stream_test[1]['id'] = 2
-
-
-class INVAR:
-    def __init__(self,streams):
-
-        self.streams = streams
-        self.consumer_type = 'non_household'
-        self.location = [41,-8]
-        self.get_best_number = 3
-
-in_var = INVAR(industry_stream_test)
-
-a = convert_orc(in_var)
-
-print(a)

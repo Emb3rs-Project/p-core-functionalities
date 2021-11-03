@@ -3,8 +3,8 @@
 
 """
 
-from ....KB_General.equipment_details import equipment_details
-from ....General.Auxiliary_General.linearize_values import linearize_values
+from KB_General.equipment_details import equipment_details
+from General.Auxiliary_General.linearize_values import linearize_values
 
 class Add_ORC_Cascaded():
 

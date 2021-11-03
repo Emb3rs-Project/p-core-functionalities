@@ -47,7 +47,7 @@ OUTPUT: object Process
 
 """
 
-from ....General.Auxiliary_General.stream_industry import stream_industry
+from General.Auxiliary_General.stream_industry import stream_industry
 import datetime
 
 class Process:
@@ -67,7 +67,13 @@ class Process:
         self.shutdown_periods = in_var.shutdown_periods
         self.daily_periods = in_var.daily_periods
         self.schedule_type = in_var.schedule_type  # 0-Continuous, 1-Batch
-        self.cycle_time_percentage = in_var.cycle_time_percentage  # Cycle percentage for Startup and Outflow (when in Batch)
+
+        try:
+            self.cycle_time_percentage = in_var.cycle_time_percentage # Cycle percentage for Startup and Outflow (when in Batch)
+            if self.cycle_time_percentage >=1 or self.cycle_time_percentage <= 0:
+                self.cycle_time_percentage = 0.1
+        except:
+            self.cycle_time_percentage = 0.1
 
         # Startup
         try:
@@ -103,12 +109,12 @@ class Process:
         for startup in data:
 
             schedule = self.schedule('startup')
-            capacity = startup['mass']/self.cycle_time_percentage * startup['fluid_cp'] * (self.operation_temperature - startup['initial_temperature'])  # [kW]
+            capacity = startup['mass']/self.cycle_time_percentage * startup['fluid_cp'] * (self.operation_temperature - startup['supply_temperature'])  # [kW]
 
             self.streams.append(stream_industry(self.id,
                                        'startup',
                                        startup['fluid'],
-                                       startup['initial_temperature'],
+                                       startup['supply_temperature'],
                                        self.operation_temperature,
                                        startup['mass']/self.cycle_time_percentage,
                                        capacity,

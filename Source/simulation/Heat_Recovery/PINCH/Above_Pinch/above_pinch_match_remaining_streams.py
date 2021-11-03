@@ -6,10 +6,10 @@ Info: Match remaining streams above pinch. When restriction=True, activated pinc
 
 """
 
-from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_hx_temperatures import above_pinch_hx_temperatures
-from ......Source.simulation.Heat_Recovery.PINCH.HX.pinch_design_hx import pinch_design_hx
-from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_stream_info import above_pinch_stream_info
-from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.match_remaining_streams_above_pinch_temperatures import match_remaining_streams_above_pinch_temperatures
+from Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_hx_temperatures import above_pinch_hx_temperatures
+from Source.simulation.Heat_Recovery.PINCH.HX.pinch_design_hx import pinch_design_hx
+from Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_stream_info import above_pinch_stream_info
+from Source.simulation.Heat_Recovery.PINCH.Auxiliary.match_remaining_streams_above_pinch_temperatures import match_remaining_streams_above_pinch_temperatures
 
 def above_pinch_match_remaining_streams(hot_stream_index, hot_stream, cold_stream_index, cold_stream, df_cold_streams, df_hot_streams,delta_T_min, restriction):
 

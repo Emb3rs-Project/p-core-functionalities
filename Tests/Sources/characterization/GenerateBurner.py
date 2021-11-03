@@ -7,6 +7,10 @@ class GenerateBurner():
 
     def __init__(self):
 
+        # Defined var
+        self.equipment_sub_type = 'burner'
+
+
         ###################
         # INPUT
         self.id = 1000
@@ -19,11 +23,6 @@ class GenerateBurner():
 
         # Generate_Equipment Characteristics FROM USER
         self.supply_temperature = 180
-        self.open_closed_loop = 0  # Open heating circuit? (1-Yes, 0-No)
-        self.fuel_type = 'natural_gas'  # Fuel type  (Natural gas, Fuel oil, Biomass)
-
-        # Generate_Equipment Characteristics FROM KB_General/USER
-        self.return_temperature = 50
 
         ###################################
         # If user does not want to put directly the nominal capacity, the processes fed by this boiler must be input - check in TESTS -> Source -> chracterization -> Process.py
@@ -32,25 +31,23 @@ class GenerateBurner():
 
         ###################
         # Optional/Expert User inputs -  should be shown on the platform as default values
-        self.equipment_sub_type = 'steam_boiler'
-        self.supply_fluid = 'steam'
-        self.global_conversion_efficiency = 0.95
-
+        self.fuel_type = 'natural_gas'  # Fuel type  (Natural gas, Fuel oil, Biomass)
+        self.global_conversion_efficiency = 0.9
 
 
 
 def testGenerateBurner():
 
-    data = GenerateBoiler()
-    test = Boiler(data)
+    data = GenerateBurner()
+    test = Burner(data)
 
 
-    print(test.streams[2]['flowrate'])
+    print(test.streams[1]['flowrate'])
 
     """
-    print(test.streams[2]['flowrate'])
+    print(test.streams[1]['flowrate'])
 
     Expected:
-    54662.071524819985
+    18234.66484501108
     """
 

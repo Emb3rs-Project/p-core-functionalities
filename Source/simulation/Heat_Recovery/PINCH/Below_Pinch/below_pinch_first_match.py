@@ -1,6 +1,6 @@
-from ......Source.simulation.Heat_Recovery.PINCH.Below_Pinch.below_pinch_hx_temperatures import below_pinch_hx_temperatures
-from ......Source.simulation.Heat_Recovery.PINCH.HX.pinch_design_hx import pinch_design_hx
-from ......Source.simulation.Heat_Recovery.PINCH.Below_Pinch.below_pinch_stream_info import below_pinch_stream_info
+from Source.simulation.Heat_Recovery.PINCH.Below_Pinch.below_pinch_hx_temperatures import below_pinch_hx_temperatures
+from Source.simulation.Heat_Recovery.PINCH.HX.pinch_design_hx import pinch_design_hx
+from Source.simulation.Heat_Recovery.PINCH.Below_Pinch.below_pinch_stream_info import below_pinch_stream_info
 
 
 def below_pinch_first_match(df_hot_streams,df_cold_streams,df_hot_streams_dummy,df_cold_streams_dummy,df_hx,delta_T_min):
