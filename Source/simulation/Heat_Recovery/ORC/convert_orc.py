@@ -34,7 +34,6 @@ from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_aux import conve
 import itertools
 from .....KB_General.equipment_details import equipment_details
 import pandas as pd
-from .....General.Simple_User.simple_user import simple_user
 from .....General.Auxiliary_General.get_country import get_country
 from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.economic_data import economic_data
 
