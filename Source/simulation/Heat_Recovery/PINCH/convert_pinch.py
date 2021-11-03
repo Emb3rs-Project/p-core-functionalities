@@ -40,10 +40,11 @@ Return: dictionary with 3 keys:
 
 from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.pinch_analysis import pinch_analysis
 import pandas as pd
-from .Auxiliary.economic_and_env_analysis import economic_and_env_analysis
 from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.get_best_3_outputs import get_best_3_outputs
-from .Auxiliary.streams_detailed_info import streams_detailed_info
+from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.economic_and_env_analysis import economic_and_env_analysis
+from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.streams_detailed_info import streams_detailed_info
 
+  
 def convert_pinch(in_var):
 
     # INPUT -------
