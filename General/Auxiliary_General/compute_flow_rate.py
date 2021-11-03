@@ -5,7 +5,7 @@ Info: Determining the flowrate of the supply and excess supply heat/cold stream 
       Input: capacity [kW]; temperatures [ºC]
 """
 
-from KB_General.fluid_material import fluid_material_cp
+from ...KB_General.fluid_material import fluid_material_cp
 
 def compute_flow_rate(fluid,capacity,supply_temperature,return_temperature):
 

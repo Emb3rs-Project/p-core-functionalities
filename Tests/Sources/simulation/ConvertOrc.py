@@ -1,6 +1,6 @@
 
-from Source.simulation.Heat_Recovery.ORC.convert_orc import convert_orc
-from General.Simple_User.simple_user import simple_user
+from ....Source.simulation.Heat_Recovery.ORC.convert_orc import convert_orc
+from ....General.Simple_User.simple_user import simple_user
 
 
 ###########################################

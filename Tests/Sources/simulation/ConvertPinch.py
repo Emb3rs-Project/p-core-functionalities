@@ -1,5 +1,5 @@
-from Source.simulation.Heat_Recovery.PINCH.convert_pinch import convert_pinch
-from General.Auxiliary_General.stream_industry import stream_industry
+from ....Source.simulation.Heat_Recovery.PINCH.convert_pinch import convert_pinch
+from ....General.Auxiliary_General.stream_industry import stream_industry
 
 
 # IMPORTANT

@@ -1,5 +1,5 @@
 
-from Source.characterization.Process.process import Process
+from ....Source.characterization.Process.process import Process
 
 class Process_data():
     def __init__(self):

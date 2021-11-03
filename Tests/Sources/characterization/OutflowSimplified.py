@@ -1,4 +1,4 @@
-from General.Simple_User.simple_user import simple_user
+from ....General.Simple_User.simple_user import simple_user
 
 
 class Industry():

@@ -1,6 +1,6 @@
 
 
-from Source.simulation.Convert.convert_sources import convert_sources
+from ....Source.simulation.Convert.convert_sources import convert_sources
 
 
 class ConvertSource():

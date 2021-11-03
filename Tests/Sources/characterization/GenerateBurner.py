@@ -1,6 +1,6 @@
 
 
-from Source.characterization.Generate_Equipment.generate_burner import Burner
+from ....Source.characterization.Generate_Equipment.generate_burner import Burner
 
 
 class GenerateBurner():

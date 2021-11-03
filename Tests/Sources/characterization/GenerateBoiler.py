@@ -1,6 +1,6 @@
 
 
-from Source.characterization.Generate_Equipment.generate_boiler import Boiler
+from ....Source.characterization.Generate_Equipment.generate_boiler import Boiler
 
 
 class GenerateBoiler():

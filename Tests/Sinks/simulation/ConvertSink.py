@@ -1,6 +1,6 @@
 
 
-from Sink.simulation.Convert.convert_sinks import convert_sinks
+from ....Sink.simulation.Convert.convert_sinks import convert_sinks
 
 
 class ConvertSink():

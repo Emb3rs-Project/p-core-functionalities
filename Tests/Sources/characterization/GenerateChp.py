@@ -1,6 +1,6 @@
 
 
-from Source.characterization.Generate_Equipment.generate_chp import Chp
+from ....Source.characterization.Generate_Equipment.generate_chp import Chp
 
 
 class GenerateChp():

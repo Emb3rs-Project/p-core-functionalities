@@ -1,7 +1,7 @@
 
 
 
-from Sink.characterization.Building.greenhouse import greenhouse
+from ....Sink.characterization.Building.greenhouse import greenhouse
 
 
 class Greenhouse():

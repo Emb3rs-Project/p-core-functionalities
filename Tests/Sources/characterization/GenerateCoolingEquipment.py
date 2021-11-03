@@ -1,6 +1,6 @@
 
 
-from Source.characterization.Generate_Equipment.generate_cooling_equipment import Cooling_Equipment
+from ....Source.characterization.Generate_Equipment.generate_cooling_equipment import Cooling_Equipment
 
 
 class GenerateCoolingEquipment():

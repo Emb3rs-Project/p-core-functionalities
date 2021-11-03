@@ -10,12 +10,12 @@ from .Tests.Sinks.simulation.ConvertSink import testConvertSink
 from .Tests.Sources.characterization.GenerateBoiler import testGenerateBoiler
 from .Tests.Sources.characterization.GenerateChp import testGenerateChp
 from .Tests.Sources.characterization.OutflowSimplified import testOutflowSimplified
-from Tests.Sources.characterization.GenerateCoolingEquipment import testGenerateCoolingEquipment
-from Tests.Sources.characterization.GenerateBurner import testGenerateBurner
-from Tests.Sources.characterization.Process import testProcess
-from Tests.Sources.simulation.ConvertSources import testConvertSource
-from Tests.Sources.simulation.ConvertOrc import testConvertORC
-from Tests.Sources.simulation.ConvertPinch import testConvertPinch
+from .Tests.Sources.characterization.GenerateCoolingEquipment import testGenerateCoolingEquipment
+from .Tests.Sources.characterization.GenerateBurner import testGenerateBurner
+from .Tests.Sources.characterization.Process import testProcess
+from .Tests.Sources.simulation.ConvertSources import testConvertSource
+from .Tests.Sources.simulation.ConvertOrc import testConvertORC
+from .Tests.Sources.simulation.ConvertPinch import testConvertPinch
 
 
 # Write Here all the available tests you want to run

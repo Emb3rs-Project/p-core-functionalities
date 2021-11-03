@@ -37,8 +37,8 @@ OUTPUT: df with:
 
 """
 
-from KB_General.fuel_properties import fuel_properties
-from KB_General.get_interest_rate import get_interest_rate
+from ......KB_General.fuel_properties import fuel_properties
+from ......KB_General.get_interest_rate import get_interest_rate
 import pandas as pd
 
 def economic_data(orc_years_working, country, consumer_type,df_data):

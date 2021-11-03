@@ -8,9 +8,9 @@ Input: Hot Side and Cold Side Temperatures and fluids, as well as HX Power
 Return: [hx_turnkey_cost,hx_om_fix_cost]
 """
 
-from KB_General.hx_type_and_u import hx_type_and_u
-from KB_General.equipment_details import equipment_details
-from General.Auxiliary_General.compute_delta_T_lmtd import compute_delta_T_lmtd_counter
+from ....KB_General.hx_type_and_u import hx_type_and_u
+from ....KB_General.equipment_details import equipment_details
+from ....General.Auxiliary_General.compute_delta_T_lmtd import compute_delta_T_lmtd_counter
 
 def design_cost_hx (hot_stream_T_hot,hot_stream_T_cold,hot_stream_fluid,cold_stream_T_hot,cold_stream_T_cold,cold_stream_fluid,hx_power):
 

@@ -3,10 +3,10 @@
 
 """
 
-from KB_General.equipment_details import equipment_details
-from KB_General.fuel_properties import fuel_properties
-from General.Auxiliary_General.linearize_values import linearize_values
-from General.Auxiliary_General.compute_cop_err import compute_cop_err
+from ....KB_General.equipment_details import equipment_details
+from ....KB_General.fuel_properties import fuel_properties
+from ....General.Auxiliary_General.linearize_values import linearize_values
+from ....General.Auxiliary_General.compute_cop_err import compute_cop_err
 
 
 class Add_Heat_Pump():

@@ -38,13 +38,13 @@ Return: dictionary with 3 keys:
 
 """
 
-from KB_General.fluid_material import fluid_material_cp
-from Source.simulation.Heat_Recovery.PINCH.Auxiliary.pinch_analysis import pinch_analysis
-from Source.simulation.Heat_Recovery.PINCH.Auxiliary.table_heat_cascade import table_heat_cascade
-from Source.simulation.Heat_Recovery.PINCH.Auxiliary.pinch_point import pinch_point
+from .....KB_General.fluid_material import fluid_material_cp
+from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.pinch_analysis import pinch_analysis
+from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.table_heat_cascade import table_heat_cascade
+from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.pinch_point import pinch_point
 import pandas as pd
-from KB_General.fuel_properties import fuel_properties
-from Source.simulation.Heat_Recovery.PINCH.Auxiliary.get_best_3_outputs import get_best_3_outputs
+from .....KB_General.fuel_properties import fuel_properties
+from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.get_best_3_outputs import get_best_3_outputs
 
 
 def convert_pinch(in_var):

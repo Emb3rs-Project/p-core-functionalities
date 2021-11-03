@@ -3,13 +3,13 @@
 
 """
 
-from General.Convert_Equipments.Auxiliary.solar_collector_climate_api import solar_collector_climate_api
+from ....General.Convert_Equipments.Auxiliary.solar_collector_climate_api import solar_collector_climate_api
 import numpy as np
-from General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from KB_General.equipment_details import equipment_details
-from KB_General.fuel_properties import fuel_properties
-from General.Auxiliary_General.flowrate_to_power import flowrate_to_power
-from General.Auxiliary_General.linearize_values import linearize_values
+from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
+from ....KB_General.equipment_details import equipment_details
+from ....KB_General.fuel_properties import fuel_properties
+from ....General.Auxiliary_General.flowrate_to_power import flowrate_to_power
+from ....General.Auxiliary_General.linearize_values import linearize_values
 
 
 class Add_Solar_Thermal():
