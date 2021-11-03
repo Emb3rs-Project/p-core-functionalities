@@ -188,9 +188,6 @@ def convert_sinks(in_var):
         pass
 
 
-    ###################################################################################################
-
-
     # convert each stream
     for sink in group_of_sinks:
 

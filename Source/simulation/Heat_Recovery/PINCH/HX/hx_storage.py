@@ -127,7 +127,7 @@ def hx_storage(df_profile, df_hx):
                 volume_storage = new_volume_max_storage * 3600 /(cp_fluid * rho_fluid * (T_hot_hot_stream - T_cold_hot_stream)) # [m3]
                 vector_storage_volume.append(volume_storage)
 
-                global_conversion_efficiency,om_fix,storage_turn_key = equipment_details('storage',volume_storage)
+                global_conversion_efficiency,om_fix,storage_turn_key = equipment_details('thermal_storage',volume_storage)
                 storage_fluid_turn_key = volume_storage * cost_fluid
                 storage_total_turn_key = storage_turn_key + storage_fluid_turn_key
 

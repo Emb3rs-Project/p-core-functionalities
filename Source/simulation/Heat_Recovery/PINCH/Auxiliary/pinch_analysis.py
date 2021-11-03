@@ -47,15 +47,15 @@ def pinch_analysis(df_operating,df_profile,delta_T_min):
     # Create DF HX
     df_operating['Original_Stream'] = df_operating.index
     df_hx = pd.DataFrame(columns=['Power',
-                                  'Hot_Stream',
-                                  'Cold_Stream',
-                                  'Type',
-                                  'HX_Turnkey_Cost',
-                                  'OM_Fix_Cost',
-                                  'Hot_Stream_T_Hot',
-                                  'Hot_Stream_T_Cold',
                                   'Original_Hot_Stream',
                                   'Original_Cold_Stream',
+                                  'Hot_Stream_T_Hot',
+                                  'Hot_Stream_T_Cold',
+                                  'Hot_Stream',
+                                  'Cold_Stream',
+                                  'HX_Type',
+                                  'HX_Turnkey_Cost',
+                                  'HX_OM_Fix_Cost',
                                   'Storage'])
 
     # Above Pinch
@@ -77,6 +77,7 @@ def pinch_analysis(df_operating,df_profile,delta_T_min):
                 df_operating['Supply_Temperature'][index] - df_operating['Target_Temperature'][index])
 
 
+    df_hx.drop(['Hot_Stream','Cold_Stream'],axis=1, inplace=True)
 
     return df_hx
 

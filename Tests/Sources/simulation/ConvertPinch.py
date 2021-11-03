@@ -15,8 +15,8 @@ class ConvertPinch:
         # need streams
         self.all_objects = [stream_industry(1, 'outflow', 'thermal_oil', 250, 40, 0.15 * 3600, 1, [1, 1, 1, 1]),
                  stream_industry(1, 'outflow', 'thermal_oil', 200, 80, 0.25 * 3600, 1, [1, 1, 1, 1]),
-                 stream_industry(1, 'outflow', 'thermal_oil', 20, 180, 0.2 * 3600, 1, [1, 1, 1, 1]),
-                 stream_industry(1, 'outflow', 'thermal_oil', 140, 230, 0.3 * 3600, 1, [1, 1, 1, 1])]
+                 stream_industry(1, 'outflow', 'thermal_oil', 20, 180, 0.2 * 3600, 1, [1, 1, 0, 1]),
+                 stream_industry(1, 'outflow', 'thermal_oil', 140, 230, 0.3 * 3600, 1, [1, 1, 1, 0])]
 
         # need minimum delta T for pinch analysis
         self.delta_T_min = 10

@@ -21,9 +21,9 @@ def pinch_design_hx(hot_stream_index,cold_stream_index,hx_hot_stream_T_hot, hx_h
                   'Cold_Stream': cold_stream_index,
                   'Hot_Stream_T_Hot': hx_hot_stream_T_hot,
                   'Hot_Stream_T_Cold': hx_hot_stream_T_cold,
-                  'Type': hx_type,
+                  'HX_Type': hx_type,
                   'HX_Turnkey_Cost': hx_turnkey_cost,
-                  'OM_Fix_Cost': hx_om_fix_cost,
+                  'HX_OM_Fix_Cost': hx_om_fix_cost,
                   'Original_Hot_Stream': original_hot_stream_index,
                   'Original_Cold_Stream': original_cold_stream_index}
 
