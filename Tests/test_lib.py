@@ -4,7 +4,7 @@ import sys
 from colorama import init
 from colorama.ansi import Back, Fore, Style
 
-import Tests.Sources.characterization.Process
+from ..Tests.Sources.characterization.Process import testProcess
 from ..Tests.Sinks.characterization.Industry import testIndustry
 from ..Tests.Sinks.characterization.Building import testBuilding
 from ..Tests.Sinks.characterization.Greenhouse import testGreenhouse

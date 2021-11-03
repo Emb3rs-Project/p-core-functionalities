@@ -1,9 +1,5 @@
 
 
-
-from ...Sink.characterization.Building.building import building
-
-
 class Building():
 
     def __init__(self):
