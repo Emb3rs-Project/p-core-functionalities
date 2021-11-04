@@ -226,16 +226,8 @@ def convert_sinks(in_var):
 
                     # grid may not supply enough heat to the sink
                     needed_supply_capacity = stream_nominal_capacity - hx_power_supply  # [kW]
-
-
-                    ############################################
-                    #######################################
-                    #needed_yearly_capacity = sum([i - hx_power_supply for i in hourly_stream_capacity])  # [kWh]
-
                     needed_yearly_capacity = sum([needed_supply_capacity * i for i in stream['schedule']])  # [kWh]
 
-                    ############################################
-                    #######################################
 
                     if stream['target_temperature'] == hx_sink_target_temperature:
                         info = join_hx_and_technology([info_pump_grid,info_hx_grid],power_fraction,info_pump_grid.supply_capacity,stream_nominal_capacity,'sink')
@@ -343,7 +335,6 @@ def convert_sinks(in_var):
         'grid_specific': {'heating':grid_specific_heating,'cooling':grid_specific_cooling},
         'sinks': output_sink
         }
-
 
 
     #output = json.dumps(output, indent=2)
