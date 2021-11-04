@@ -27,7 +27,6 @@ def above_pinch_main(df_streams,delta_T_min,T_pinch,df_hx):
     df_cold_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Cold') & (df_streams["Target_Temperature"] > T_pinch_cold)]  # df cold streams
     df_hot_streams['Match'] = False # Assign this value in order to match FIRST all available hot streams
 
-
     if df_hot_streams.empty == False :
 
         # Get Streams Closest Temperature to Pinch Point

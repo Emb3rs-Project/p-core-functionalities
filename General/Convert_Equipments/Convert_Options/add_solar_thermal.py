@@ -16,9 +16,10 @@ class Add_Solar_Thermal():
 
     def __init__(self,country,consumer_type,latitude,longitude,yearly_capacity,power_fraction,supply_temperature,return_temperature):
 
+
         # Defined Vars ----------
         self.object_type = 'equipment'
-        self.supply_fluid = 'oil'
+        self.supply_fluid = 'thermal_oil'
         self.fuel_type = 'electricity'
         self.fuel_properties = fuel_properties(country,self.fuel_type,consumer_type)
         hx_delta_T = 5
@@ -80,7 +81,7 @@ class Add_Solar_Thermal():
             'conversion_efficiency': hx_efficiency,  # []
             'om_fix': info_max_power['om_fix'] / info_max_power['average_supply_capacity'],  # [€/year.kW]
             'om_var': info_max_power['om_var'] / info_max_power['average_supply_capacity'],  # [€/kWh]
-            'emissions': self.fuel_properties['CO2_emission']  # [kg.CO2/kWh]
+            'emissions': self.fuel_properties['co2_emissions']  # [kg.CO2/kWh]
 
         }
 
@@ -94,7 +95,7 @@ class Add_Solar_Thermal():
 
         # Defined vars --------
         grid_fluid = 'water'
-        solar_collector_fluid = 'oil'
+        solar_collector_fluid = 'thermal_oil'
         solar_collector_fluid_rho = 800  # [kg/m3]
         hx_efficiency = 0.95
         hx_delta_T = 5

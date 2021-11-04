@@ -5,8 +5,11 @@ INFO: Linearize values for TEO.
 
 def linearize_values(y2,y1,x2,x1):
 
-    a = (y2 - y1) / (x2-x1)
-
-    b = y2 - a*x2
+    if x2-x1 != 0:
+        a = (y2 - y1) / (x2-x1)
+        b = y2 - a*x2
+    else:
+        a = 0
+        b = 0
 
     return a,b

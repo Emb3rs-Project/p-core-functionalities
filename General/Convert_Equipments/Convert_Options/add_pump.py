@@ -40,16 +40,17 @@ class Add_Pump():
                                                 )
 
         self.data_teo = {
-            'equipment': self.equipment_sub_type,
-            'fuel_type': self.fuel_type,
-            'max_input_capacity': info_max_power['supply_capacity']/ self.global_conversion_efficiency ,  # [kW]
-            'turnkey_a': turnkey_a,  # [€/kW]
-            'turnkey_b': turnkey_b,  # [€]
-            'conversion_efficiency': 1,  # []
-            'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] ),  # [€/year.kW]
-            'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity'] ),  # [€/kWh]
-            'emissions': self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh]
+            'equipment':self.equipment_sub_type,
+            'fuel_type':self.fuel_type,
+            'max_input_capacity':info_max_power['supply_capacity'] / self.global_conversion_efficiency,  # [kW]
+            'turnkey_a':turnkey_a,  # [€/kW]
+            'turnkey_b':turnkey_b,  # [€]
+            'conversion_efficiency':1,  # []
+            'om_fix':info_max_power['om_fix'] / (info_max_power['supply_capacity']),  # [€/year.kW]
+            'om_var':info_max_power['om_var'] / (info_max_power['supply_capacity']),  # [€/kWh]
+            'emissions':self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh]
             }
+
 
     def design_equipment(self, power_fraction):
         # Fluid and Fuel cost

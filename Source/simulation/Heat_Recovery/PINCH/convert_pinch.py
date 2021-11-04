@@ -40,10 +40,11 @@ Return: dictionary with 3 keys:
 
 from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.pinch_analysis import pinch_analysis
 import pandas as pd
-from .Auxiliary.economic_and_env_analysis import economic_and_env_analysis
 from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.get_best_3_outputs import get_best_3_outputs
-from .Auxiliary.streams_detailed_info import streams_detailed_info
+from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.eco_env_analysis import eco_env_analysis
+from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.streams_detailed_info import streams_detailed_info
 
+  
 def convert_pinch(in_var):
 
     # INPUT -------
@@ -161,7 +162,7 @@ def convert_pinch(in_var):
     # economic DF's (e.g total_investment, energy and money saved yearly - and in which equipment)
     all_df = []
     if objects != []:
-        all_df = economic_and_env_analysis(vector_df_hx,objects,all_objects,all_df)
+        all_df = eco_env_analysis(vector_df_hx,objects,all_objects,all_df)
 
     else:
         individual_equipment_optimization = True

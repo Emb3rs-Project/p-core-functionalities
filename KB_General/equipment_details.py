@@ -14,6 +14,7 @@ def equipment_details(equipment,equipment_char):
     with open(abs_file_path) as f:
         data = json.load(f)
 
+
     try:
         turnkey = float(data[equipment]['turnkey_cost_S']) + float(data[equipment]['turnkey_cost_c']) * equipment_char ** float(data[equipment]['turnkey_cost_n'])
         om_fix = float(data[equipment]['fixed_om_c']) * turnkey ** float(data[equipment]['fixed_om_n'])
