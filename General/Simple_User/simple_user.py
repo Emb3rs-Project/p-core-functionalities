@@ -40,34 +40,52 @@ from ...General.Auxiliary_General.stream_industry import stream_industry
 from ...General.Auxiliary_General.schedule_hour import schedule_hour
 import json
 
+
 def simple_user(in_var):
 
-        # INPUT  ------------------------
-        object_id = in_var.object_id
-        type_of_object = in_var.type_of_object
-        streams = in_var.streams
+    # INPUT  ------------------------
+    object_id = in_var.object_id
+    type_of_object = in_var.type_of_object
+    streams = in_var.streams
 
-        # Defined vars
-        if type_of_object == 'sink':
-            stream_type = 'inflow'
-        else:
-            stream_type = 'excess_heat'
+    # Defined vars
+    if type_of_object == "sink":
+        stream_type = "inflow"
+    else:
+        stream_type = "excess_heat"
 
-        streams_output = []
+    streams_output = []
 
-        # COMPUTE ------------------------
-        for stream in streams:
-                capacity = stream['flowrate'] * stream['fluid_cp'] * abs(( stream['supply_temperature'] - stream['target_temperature']))/3600  # [kW]
-                schedule = schedule_hour(stream['saturday_on'], stream['sunday_on'], stream['shutdown_periods'], stream['daily_periods'])
-                info_stream = stream_industry(object_id,stream_type,stream['fluid'],stream['supply_temperature'],stream['target_temperature'],stream['flowrate'],capacity,schedule)
-                streams_output.append(info_stream)
+    # COMPUTE ------------------------
+    for stream in streams:
+        capacity = (
+            stream["flowrate"]
+            * stream["fluid_cp"]
+            * abs((stream["supply_temperature"] - stream["target_temperature"]))
+            / 3600
+        )  # [kW]
+        schedule = schedule_hour(
+            stream["saturday_on"],
+            stream["sunday_on"],
+            stream["shutdown_periods"],
+            stream["daily_periods"],
+        )
+        info_stream = stream_industry(
+            object_id,
+            stream_type,
+            stream["fluid"],
+            stream["supply_temperature"],
+            stream["target_temperature"],
+            stream["flowrate"],
+            capacity,
+            schedule,
+        )
+        streams_output.append(info_stream)
 
-        # OUTPUT ------------------------
-        output = {'streams':streams_output}
+    # OUTPUT ------------------------
+    output = {"streams": streams_output}
 
-        #output = json.dumps(output, indent=2)
+    # output = json.dumps(output, indent=2)
 
-        return output
-
-
+    return output
 
