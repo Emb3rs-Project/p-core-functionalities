@@ -70,6 +70,8 @@ class Add_Pump():
         # OM VAR Cost -----
         om_var_total = flowrate_to_power(flowrate/ fluid_rho) * self.fuel_properties['price']  # [kW]*[€/kWh] = [€/h]
 
+        print(flowrate_to_power(flowrate/ fluid_rho))
+
         # Create data for TEO ---
         info = {
             'supply_capacity': supply_capacity,  # [kW]

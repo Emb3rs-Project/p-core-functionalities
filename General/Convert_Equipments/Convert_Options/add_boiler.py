@@ -11,6 +11,7 @@ class Add_Boiler():
 
     def __init__(self, fuel_type, country, consumer_type, supply_capacity, power_fraction, supply_temperature, return_temperature):
 
+        print('boiler',fuel_type)
         # Defined Vars ----
         self.object_type = 'equipment'
 
