@@ -49,13 +49,13 @@ class Add_HX():
         self.data_teo = {
             'equipment':self.equipment_sub_type,
             'fuel_type':'non',
-            'max_input_capacity':info_max_power['supply_capacity'] / self.global_conversion_efficiency,  # [kW]
+            'max_input_capacity':info_max_power['supply_capacity'],  # [kW]
             'turnkey_a':turnkey_a,  # [€/kW]
             'turnkey_b':turnkey_b,  # [€]
             'conversion_efficiency':self.global_conversion_efficiency,  # []
-            'om_fix':info_max_power['om_fix'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),
+            'om_fix':info_max_power['om_fix'] / (info_max_power['supply_capacity'] ),
             # [€/year.kW]
-            'om_var':info_max_power['om_var'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),
+            'om_var':info_max_power['om_var'] / (info_max_power['supply_capacity'] ),
             # [€/kWh]
             'emissions':0  # [kg.CO2/kWh]
             }

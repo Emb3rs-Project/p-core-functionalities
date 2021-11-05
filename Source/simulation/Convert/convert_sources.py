@@ -217,6 +217,7 @@ def convert_sources(in_var):
                                     hx_intermediate_supply_temperature, hx_intermediate_return_temperature,hx_stream_supply_temperature, hx_stream_target_temperature = source_get_hx_temperatures(hx_intermediate_supply_temperature, hx_intermediate_return_temperature,stream['supply_temperature'], stream['target_temperature'], hx_delta_T)
                                     hx_power = stream_nominal_capacity * (abs(hx_stream_supply_temperature - hx_stream_target_temperature) / abs(stream['supply_temperature'] - stream['target_temperature']))
                                     stream_available_capacity = copy(hx_power)
+
                                     info_hx_intermediate = Add_HX(hx_stream_supply_temperature, hx_stream_target_temperature, stream['fluid'], hx_intermediate_supply_temperature, hx_intermediate_return_temperature,intermediate_fluid,  hx_power,power_fraction)
 
                                     # add intermediation circulation pumping

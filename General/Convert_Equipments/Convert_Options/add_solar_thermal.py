@@ -55,14 +55,14 @@ class Add_Solar_Thermal():
         self.yearly_supply_capacity = yearly_capacity/hx_efficiency
 
         # Get Climate Data
-        self.climate_data() # Get climate data for the location
+        climate = solar_collector_climate_api(self.latitude, self.longitude) # Get climate data for the location
 
         # Design Equipment
         # 100% Power
-        info_max_power = self.design_equipment(power_fraction=1)
+        info_max_power = self.design_equipment(climate,power_fraction=1)
 
         # Power Fraction
-        info_power_fraction = self.design_equipment(power_fraction)
+        info_power_fraction = self.design_equipment(climate,power_fraction)
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
@@ -86,12 +86,10 @@ class Add_Solar_Thermal():
         }
 
 
-    def climate_data(self):
-
-        self.climate = solar_collector_climate_api(self.latitude, self.longitude)
 
 
-    def design_equipment(self,power_fraction):
+
+    def design_equipment(self,climate,power_fraction):
 
         # Defined vars --------
         grid_fluid = 'water'
@@ -109,7 +107,7 @@ class Add_Solar_Thermal():
 
         # COMPUTE --------
         # Get minimum flowrate allowed - 10% of max Power (day with largest solar radiation)
-        matrix = np.array(self.climate)
+        matrix = np.array(climate)
         if self.equipment_sub_type == 'flat_plate' or self.equipment_sub_type == "evacuated_tube":
             P_max = max(matrix[:, 2] + matrix[:, 3])  # Q_beam + Q_dif for these equipment [W/m2]
         else:
@@ -122,7 +120,7 @@ class Add_Solar_Thermal():
                                                              self.return_temperature)   # [kg/h.m2]
 
         # Compute solar thermal power [kW/m2] and flowrate [kg/h.m2], and grid flowrate [kg/h.m2] every hour
-        for index, row in (self.climate).iterrows():
+        for index, row in (climate).iterrows():
             T_amb = row['T_exterior']  # [ºC]
             Q_beam = row['Q_beam_solar_collector']  # [W/m2]
             Q_dif = row['Q_dif_solar_collector']  # [W/m2]
