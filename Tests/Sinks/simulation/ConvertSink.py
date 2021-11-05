@@ -14,6 +14,7 @@ class ConvertSink():
             'capacity':263,
             'supply_temperature':10,
             'target_temperature':80,
+            'schedule': [1,1,1],
             'hourly_generation':[1000, 1000, 1000]}
 
         self.group_of_sinks = [{
@@ -34,6 +35,11 @@ def testConvertSink():
 
     data = ConvertSink()
     test = convert_sinks(data)
+
+    print(test['sink_group_grid_supply_temperature'])
+    print(test['grid_specific']['heating'])
+    print(test['grid_specific']['cooling'])
+    print(test['sinks'][0])
 
     """
     print(test['sink_group_grid_supply_temperature'])
