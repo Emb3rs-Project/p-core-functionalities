@@ -43,7 +43,7 @@ class Add_Pump():
         self.data_teo = {
             'equipment':self.equipment_sub_type,
             'fuel_type':self.fuel_type,
-            'max_input_capacity':info_max_power['supply_capacity'] ,  # [kW]
+            'max_input_capacity':info_max_power['supply_capacity'],  # [kW]
             'turnkey_a':turnkey_a,  # [€/kW]
             'turnkey_b':turnkey_b,  # [€]
             'conversion_efficiency': self.global_conversion_efficiency,  # []

@@ -10,8 +10,9 @@
   "Finland": "FI",
   "France": "FR",
   "Germany": "DE",
-  "Greece": "GR",
+  "Greece": "EL",
   "Hungary": "HU",
+  "Iceland": "IS",
   "Ireland": "IE",
   "Italy": "IT",
   "Latvia": "LV",
@@ -19,6 +20,7 @@
   "Luxembourg": "LU",
   "Malta": "MT",
   "Netherlands": "NL",
+  "Norway": "NO",
   "Poland": "PL",
   "Portugal": "PT",
   "Romania": "RO",
@@ -26,5 +28,6 @@
   "Slovenia": "SI",
   "Switzerland": "CH",
   "Spain": "ES",
-  "Sweden": "SE"
+  "Sweden": "SE",
+  "United Kingdom": "UK"
 }

@@ -37,8 +37,8 @@ class Add_Absorption_Chiller():
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
-                                                info_max_power['supply_capacity'],
-                                                info_power_fraction['supply_capacity']
+                                                info_max_power['supply_capacity']/ self.global_conversion_efficiency,
+                                                info_power_fraction['supply_capacity']/ self.global_conversion_efficiency
                                                 )
 
         self.data_teo = \
@@ -49,10 +49,9 @@ class Add_Absorption_Chiller():
             'turnkey_a': turnkey_a,  # [€/kW]
             'turnkey_b': turnkey_b,  # [€]
             'conversion_efficiency': self.global_conversion_efficiency,  # []
-            'om_fix': info_max_power['om_fix'] / (
-                        info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/year.kW]
+            'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/year.kW]
             'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency), # [€/kWh]
-            'emissions': self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh]
+            'emissions': self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh thermal]
 
             }
 

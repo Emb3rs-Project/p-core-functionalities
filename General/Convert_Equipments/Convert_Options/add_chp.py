@@ -55,7 +55,7 @@ class Add_CHP():
             'electrical_conversion_efficiency': self.electrical_conversion_efficiency,
             'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] / self.thermal_conversion_efficiency),  # [€/year.kW]
             'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity'] / self.thermal_conversion_efficiency),  # [€/kWh]
-            'emissions': self.fuel_properties['co2_emissions'] / self.thermal_conversion_efficiency  # [kg.CO2/kWh]
+            'emissions': self.fuel_properties['co2_emissions'] / self.thermal_conversion_efficiency  # [kg.CO2/kWh thermal]
 
         }
 

@@ -1,17 +1,18 @@
-import urllib3
-from bs4 import BeautifulSoup
-import json
+from geopy.geocoders import Nominatim
 
 def get_country(latitude,longitude):
 
     try:
-        urlcountr = 'https://nominatim.openstreetmap.org/reverse.php?format=json&3153965&accept-language=en'
-        urlcountry = urlcountr + '&lat=' + str(latitude) + '&lon=' + str(longitude)
-        urlcountry = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', urlcountry).data, "html.parser").text)
-        country = urlcountry['address']['country']
+        geolocator = Nominatim(user_agent="geoapiExercises")
+        location = geolocator.reverse(str(latitude) + "," + str(longitude), language='en')
+        address = location.raw['address']
+        country = str(address.get('country'))
+
 
     except:
         country = 'Portugal'
+
+
 
     return country
 

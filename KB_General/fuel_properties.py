@@ -9,6 +9,7 @@ import os
 
 def fuel_properties(country,fuel_type,consumer_type):
 
+
     # init arrays
     price = 'none'
     density = 'none'

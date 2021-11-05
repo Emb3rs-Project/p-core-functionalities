@@ -60,7 +60,7 @@ class Add_Boiler():
             'conversion_efficiency': self.global_conversion_efficiency,  # []
             'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/year.kW]
             'om_var': info_max_power['om_var'] / ( info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/kWh]
-            'emissions': self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh]
+            'emissions': self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh thermal]
 
             }
 
