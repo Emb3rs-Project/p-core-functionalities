@@ -40,8 +40,8 @@ class Add_CHP():
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
-                                                info_max_power['supply_capacity'],
-                                                info_power_fraction['supply_capacity']
+                                                info_max_power['supply_capacity'] / self.thermal_conversion_efficiency,
+                                                info_power_fraction['supply_capacity'] / self.thermal_conversion_efficiency
                                                 )
 
         self.data_teo = {
@@ -63,7 +63,7 @@ class Add_CHP():
     def design_equipment(self,power_fraction):
 
         # COMPUTE ----
-        supply_capacity = self.supply_capacity * (power_fraction)  # thermal power needed [kWh]
+        supply_capacity = self.supply_capacity * (power_fraction)  # thermal power needed [kW]
         electrical_generation = supply_capacity/(self.thermal_conversion_efficiency)*(self.electrical_conversion_efficiency)  # [kW]
 
         # Cost -----

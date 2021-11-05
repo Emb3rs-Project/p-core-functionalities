@@ -6,7 +6,7 @@
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....KB_General.equipment_details import equipment_details
 from ....KB_General.fuel_properties import fuel_properties
-from ....General.Auxiliary_General.flowrate_to_power import flowrate_to_power
+from module.KB_General.flowrate_to_power import flowrate_to_power
 from ....General.Auxiliary_General.linearize_values import linearize_values
 from ....KB_General.fluid_material import fluid_material_rho
 
@@ -39,16 +39,17 @@ class Add_Pump():
                                                 info_power_fraction['supply_capacity']
                                                 )
 
+
         self.data_teo = {
             'equipment':self.equipment_sub_type,
             'fuel_type':self.fuel_type,
-            'max_input_capacity':info_max_power['supply_capacity'] / self.global_conversion_efficiency,  # [kW]
+            'max_input_capacity':info_max_power['supply_capacity'] ,  # [kW]
             'turnkey_a':turnkey_a,  # [€/kW]
             'turnkey_b':turnkey_b,  # [€]
-            'conversion_efficiency':1,  # []
+            'conversion_efficiency': self.global_conversion_efficiency,  # []
             'om_fix':info_max_power['om_fix'] / (info_max_power['supply_capacity']),  # [€/year.kW]
             'om_var':info_max_power['om_var'] / (info_max_power['supply_capacity']),  # [€/kWh]
-            'emissions':self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh]
+            'emissions': self.fuel_properties['co2_emissions'] * (info_max_power['om_var']/self.fuel_properties['price']) / (info_max_power['supply_capacity'])  # [kg.CO2/kWh]
             }
 
 
@@ -67,7 +68,7 @@ class Add_Pump():
         self.global_conversion_efficiency, om_fix_equipment, turnkey_equipment = equipment_details('circulation_pumping', flowrate / fluid_rho)
 
         # OM VAR Cost -----
-        om_var_total = flowrate_to_power(flowrate) * self.fuel_properties['price']  # [kW]*[€/kWh] = [€/h]
+        om_var_total = flowrate_to_power(flowrate/ fluid_rho) * self.fuel_properties['price']  # [kW]*[€/kWh] = [€/h]
 
         # Create data for TEO ---
         info = {

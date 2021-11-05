@@ -8,7 +8,7 @@ import numpy as np
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....KB_General.equipment_details import equipment_details
 from ....KB_General.fuel_properties import fuel_properties
-from ....General.Auxiliary_General.flowrate_to_power import flowrate_to_power
+from module.KB_General.flowrate_to_power import flowrate_to_power
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
 

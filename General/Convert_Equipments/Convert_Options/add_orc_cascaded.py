@@ -31,8 +31,8 @@ class Add_ORC_Cascaded():
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
-                                                info_max_power['supply_capacity'],
-                                                info_power_fraction['supply_capacity']
+                                                info_max_power['supply_capacity']/info_max_power['conversion_efficiency'],
+                                                info_power_fraction['supply_capacity']/info_power_fraction['conversion_efficiency']
                                                 )
         self.data_teo = {
              'equipment': self.equipment_sub_type,

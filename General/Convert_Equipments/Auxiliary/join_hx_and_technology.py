@@ -33,7 +33,7 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
 
         om_fix += technology.data_teo['om_fix'] * max_supply_capacity_val
         om_var += technology.data_teo['om_var'] * max_supply_capacity_val
-        emissions += technology.data_teo['emissions']
+        emissions += technology.data_teo['emissions'] * max_supply_capacity_val
 
 
 
@@ -51,7 +51,7 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
         'conversion_efficiency': conversion_efficiency,  # []
         'om_fix': om_fix / max_power_stream,# [€/year.kW]
         'om_var': om_var / max_power_stream,# [€/kWh]
-        'emissions': emissions,  # [kg.CO2/kWh]
+        'emissions': emissions/ max_power_stream,  # [kg.CO2/kWh]
         'technologies': technologies_dict,
 
     }

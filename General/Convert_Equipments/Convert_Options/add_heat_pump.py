@@ -33,8 +33,8 @@ class Add_Heat_Pump():
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
-                                                info_max_power['supply_capacity'],
-                                                info_power_fraction['supply_capacity']
+                                                info_max_power['supply_capacity']/ self.global_conversion_efficiency,
+                                                info_power_fraction['supply_capacity']/ self.global_conversion_efficiency
                                                 )
 
         self.data_teo = {

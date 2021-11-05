@@ -59,12 +59,8 @@ def pinch_analysis(df_operating,df_profile,delta_T_min):
                                   'Storage'])
 
     # Above Pinch
-    print('pinch_point',pinch_point_T)
-    print('delta_t',delta_T_min)
-    print('ABOVEEEEEEEEEEEEEEEEEE')
     df_hx_above_pinch = above_pinch_main(df_operating, delta_T_min, pinch_point_T, df_hx)  # get df with HX
     df_hx_above_pinch = hx_storage(df_profile, df_hx_above_pinch)  # update df with HX storage
-    print('BELOWWWWWWWWWWWWWWWWWWWWW')
     # Below Pinch
     df_hx_below_pinch = below_pinch_main(df_operating, delta_T_min, pinch_point_T, df_hx)
     df_hx_below_pinch = hx_storage(df_profile, df_hx_below_pinch)
