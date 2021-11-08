@@ -1,3 +1,30 @@
+"""
+##############################
+INFO: Aggregate conversion technologies and compute data for TEO
+
+##############################
+INPUT:  technologies - vector with technologies objects
+        power_fraction - minimum power fraction technologies are designed for  []
+        max_power_stream - maximum power stream can provide (sources - heat from excess heat stream; sinks - heat from grid stream) [kW]
+        max_power_grid - maximum power supplied with conversion (sources - heat to grid; sinks - heat to sinks needs) [kW]
+
+##############################
+OUTPUT: dictionary with:
+
+                # equipment - all conversion equipments - vector with technologies names
+                # max_capacity - stream power (sources- excess heat; sinks - grid heat)  [kW]
+                # turnkey_a' - aggregated turnkey [€/kW]
+                # turnkey_b' - aggregated om_var[€]
+                # conversion_efficiency' - aggregated conversion_efficiency []
+                # om_fix' - aggregated om_fix  [€/year.kW]
+                # om_var' - aggregated om_var  [€/kWh]
+                # emissions - aggregated emissions  [kg.CO2/kWh]
+                # tecnhologies' - technologies info in details
+
+
+"""
+
+
 
 from ....General.Auxiliary_General.linearize_values import linearize_values
 

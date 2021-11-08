@@ -1,3 +1,31 @@
+"""
+##############################
+INFO: Get building properties according to location and building type for simulation
+
+##############################
+INPUT:  country - country of the location
+        building_type -  type of building residential ('residential) or non residential ( 'office' or 'hotel')
+
+
+##############################
+OUTPUT: all building properties ofr simulation
+      Where:
+         # u_wall [W/m2.K]
+         # u_roof
+         # u_glass
+         # u_floor
+         # tau_glass []
+         # alpha_wall
+         # alpha_floor
+         # alpha_glass
+         # capacitance_wall [J/m2.K]
+         # capacitance_floor
+         # capacitance_roof
+         # air_change_hour [1/h]
+
+"""
+
+
 import json
 import os
 
