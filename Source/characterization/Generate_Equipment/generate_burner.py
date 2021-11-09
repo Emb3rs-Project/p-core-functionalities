@@ -52,7 +52,7 @@ class Burner():
         self.streams = []
         supply_fluid = 'flue_gas'  # Excess heat fluid type
         inflow_fluid = 'air'
-        excess_heat_target_temperature = 20  # dilluted flue_gas cooled until ambient temperature
+        supply_target_temperature = 20  # dilluted flue_gas cooled until ambient temperature
         inflow_supply_temperature = 20   # ambient temperature
 
         # INPUT
@@ -99,19 +99,19 @@ class Burner():
         # Excess Heat
         # supply capacity [kW]
         thermal_capacity = self.supply_capacity / self.global_conversion_efficiency
-        excess_heat_supply_capacity = thermal_capacity - self.supply_capacity
+        supply_supply_capacity = thermal_capacity - self.supply_capacity
 
         # supply temperature [ºC]
-        excess_heat_supply_temperature, inflow_target_temperature = T_flue_gas(self.supply_capacity,
+        supply_supply_temperature, inflow_target_temperature = T_flue_gas(self.supply_capacity,
                                                                                self.fuel_type,
                                                                                fuel_consumption,
                                                                                m_flue_gas)
 
         # flowrate [kg/h]
-        excess_heat_flowrate = compute_flow_rate(supply_fluid,
-                                                 excess_heat_supply_capacity,
-                                                 excess_heat_supply_temperature,
-                                                 excess_heat_target_temperature)
+        supply_flowrate = compute_flow_rate(supply_fluid,
+                                                 supply_supply_capacity,
+                                                 supply_supply_temperature,
+                                                 supply_target_temperature)
 
         # Inflow
         inflow_flowrate = m_air
@@ -135,8 +135,8 @@ class Burner():
         self.streams.append(stream_industry(self.id,
                                    'supply',
                                    supply_fluid,
-                                   excess_heat_supply_temperature,
-                                   excess_heat_target_temperature,
-                                   excess_heat_flowrate,
-                                   excess_heat_supply_capacity,
+                                   supply_supply_temperature,
+                                   supply_target_temperature,
+                                   supply_flowrate,
+                                   supply_supply_capacity,
                                    schedule))
