@@ -31,7 +31,7 @@ def below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx):
 
 
         # Check N_streams COLD < N_streams HOT
-        df_cold_streams, df_hot_streams = check_streams_number(df_cold_streams, df_hot_streams, above_pinch)
+        all_cases = check_streams_number(df_cold_streams, df_hot_streams, above_pinch,delta_T_min) # array with arrays with [df_cold, df_hot]
 
 
         # 1ST MATCH - Streams Reaching Pinch ----------------------------------------------------------
