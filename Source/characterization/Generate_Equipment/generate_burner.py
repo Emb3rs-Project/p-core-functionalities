@@ -50,8 +50,8 @@ class Burner():
         self.object_type = 'equipment'
         self.equipment_sub_type = 'burner'  # burner
         self.streams = []
-        excess_heat_fluid = 'flue_gas'  # Excess heat fluid type
-        supply_fluid = 'air'
+        supply_fluid = 'flue_gas'  # Excess heat fluid type
+        inflow_fluid = 'air'
         excess_heat_target_temperature = 20  # dilluted flue_gas cooled until ambient temperature
         inflow_supply_temperature = 20   # ambient temperature
 
@@ -108,14 +108,14 @@ class Burner():
                                                                                m_flue_gas)
 
         # flowrate [kg/h]
-        excess_heat_flowrate = compute_flow_rate(excess_heat_fluid,
+        excess_heat_flowrate = compute_flow_rate(supply_fluid,
                                                  excess_heat_supply_capacity,
                                                  excess_heat_supply_temperature,
                                                  excess_heat_target_temperature)
 
         # Inflow
         inflow_flowrate = m_air
-        inflow_fluid_cp = fluid_material_cp(supply_fluid, (inflow_supply_temperature+inflow_target_temperature)/2)
+        inflow_fluid_cp = fluid_material_cp(inflow_fluid, (inflow_supply_temperature+inflow_target_temperature)/2)
         inflow_capacity = inflow_flowrate * (inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp/3600  # [kW]
 
 
@@ -123,7 +123,7 @@ class Burner():
         # Air Inflow
         self.streams.append(stream_industry(self.id,
                                    'inflow',
-                                   supply_fluid,
+                                   inflow_fluid,
                                    inflow_supply_temperature,
                                    inflow_target_temperature,
                                    inflow_flowrate,
@@ -131,10 +131,10 @@ class Burner():
                                    schedule))
 
 
-        # Excess Heat
+        # Supply Heat
         self.streams.append(stream_industry(self.id,
-                                   'excess_heat',
-                                   excess_heat_fluid,
+                                   'supply',
+                                   supply_fluid,
                                    excess_heat_supply_temperature,
                                    excess_heat_target_temperature,
                                    excess_heat_flowrate,
