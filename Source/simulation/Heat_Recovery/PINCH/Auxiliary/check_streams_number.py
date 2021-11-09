@@ -6,7 +6,7 @@ Info: Check if Streams In < Streams Out at pinch point. If not, split largest St
 
 """
 
-from module.Source.simulation.Heat_Recovery.PINCH.Auxiliary.make_pairs import make_pairs
+from .make_pairs import make_pairs
 
 def check_streams_number(df_cold_streams,df_hot_streams,above_pinch,delta_T_min):
 
