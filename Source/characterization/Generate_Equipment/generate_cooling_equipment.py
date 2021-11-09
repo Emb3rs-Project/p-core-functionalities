@@ -1,4 +1,6 @@
 """
+alisboa/jmcunha
+
 ##############################
 INFO: Create Cooling Equipment Object and characterize its streams.
 

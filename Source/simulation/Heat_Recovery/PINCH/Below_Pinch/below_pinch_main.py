@@ -11,7 +11,8 @@ from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.check_streams_number 
 from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
 from ......Source.simulation.Heat_Recovery.PINCH.Below_Pinch.below_pinch_first_match import below_pinch_first_match
 
-def below_pinch_main(df_streams, delta_T_min, pinch_T,df_hx):
+def below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx):
+
     # Init Arrays
     above_pinch = False
 
@@ -22,8 +23,6 @@ def below_pinch_main(df_streams, delta_T_min, pinch_T,df_hx):
     # Separate Streams Info
     df_hot_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Hot') & (df_streams["Target_Temperature"] < pinch_T_hot)]
     df_cold_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Cold') & (df_streams["Supply_Temperature"] < pinch_T_cold)]
-    df_cold_streams['Match'] = False # Assign this value in order to match FIRST all available cold streams
-
 
     if df_cold_streams.empty == False:
         # Get Streams Closest Temperature to Pinch Point

@@ -23,20 +23,6 @@ def check_streams_number(df_cold_streams, df_hot_streams, above_pinch):
 
     if df_streams_out.shape[0] < df_streams_in.shape[0]:
 
-        surplus_of_streams = df_streams_in.shape[0] - df_streams_out.shape[0]
-        all_index = []
-
-        # do all possible combinations between the streams
-        for index_stream_out in df_streams_out.index.values:
-            a = [index_stream_out]
-            combo = np.append(index_stream_out, df_streams_in.index.values)
-            all_index.append([list(tup) for tup in itertools.combinations(combo, 2)])
-
-
-        ####################### UPDATING
-        a = [ 1]
-        #################
-
         # Init Vars
         no_repeat_df_streams_in_index = []  # vector to append id not to be repeated
         no_repeat_df_streams_out_index = []

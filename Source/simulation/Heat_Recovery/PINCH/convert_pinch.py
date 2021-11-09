@@ -1,8 +1,9 @@
 """
+alisboa/jmcunha
 
 ##############################
-Info: Main function of Heat Recovery Module. Compute and plot GCC, find pinch point, pinch analysis above/below pinch
-point and HX design for maximum energy recovery
+INFO: Main function of Heat Recovery Module. Compute GCC (Grand Composite Curve), find pinch point, pinch analysis above/below pinch
+point and HX design for maximum energy recovery and co2 minimization
 
 ##############################
 INPUT: object with:
@@ -13,7 +14,7 @@ INPUT: object with:
 
 
 ##############################
-Return: dictionary with 3 keys:
+RETURN: dictionary with 3 keys:
 
             # co2_optimization - vector with 3 dictionaries for the 3 best max co2 emissions saving
             # energy_recovered_optimization - vector with 3 dictionaries for the 3 best max energy recovered
@@ -43,6 +44,7 @@ import pandas as pd
 from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.get_best_3_outputs import get_best_3_outputs
 from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.eco_env_analysis import eco_env_analysis
 from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.streams_detailed_info import streams_detailed_info
+import itertools
 
   
 def convert_pinch(in_var):
@@ -57,20 +59,21 @@ def convert_pinch(in_var):
     objects = []
     streams = []
     individual_equipment_optimization = False
-
     new_id = 1
 
-    # COMPUTE ------
+    ############################################################################################################
+    # DATA PRE-TREATMENT
+
     pinch_delta_T_min = (delta_T_min)/2  # HX minimum DT
 
     # analyse processes and isolated streams to build the streams list
     for object in all_objects:
-        if object['object_type'] == 'process':
+        if object['object_type'] == 'process':  # from processes
             perform_hourly_analysis = True
             objects.append(object)
             for stream in object['streams']:
                 streams.append(stream)
-        elif object['object_type'] == 'stream': # isolated stream
+        elif object['object_type'] == 'stream':  # isolated stream
             perform_hourly_analysis = True
             object['id'] = new_id
             streams.append(object)
@@ -79,23 +82,20 @@ def convert_pinch(in_var):
    # if 'objects' is empty, it means analyse equipment internal heat recovery
     if objects == [] and streams == []:
         object = all_objects[0]
-
         if object['object_type'] == 'equipment':
             objects.append(object)
-
+            # get equipment excess heat and inflow to perform energy recovery
             for stream in object['streams']:
                 if stream['stream_type'] == 'excess_heat' or stream['stream_type'] == 'inflow':
                     streams.append(stream)
 
 
-
-    # create DF's of streams (df_char) and only streams profiles (df_profile)
-    df_char = pd.DataFrame(columns=['ID','Fluid', 'Flowrate', 'Supply_Temperature', 'Target_Temperature'])
+    # create DF with streams characteristics (df_char) and  DF with only streams profiles (df_profile)
+    df_char = pd.DataFrame(columns=['ID', 'Fluid', 'Flowrate', 'Supply_Temperature', 'Target_Temperature'])
     df_profile_data = []
 
     for stream in streams:
         if stream['stream_type'] != 'supply_heat':
-            # append to DF the stream info
             df_char = df_char.append({'ID':stream['id'],
                                       'Fluid': stream['fluid'],
                                       'Flowrate': stream['flowrate'],
@@ -109,55 +109,75 @@ def convert_pinch(in_var):
     df_profile.set_index(df_char['ID'],inplace=True)
     df_char.set_index('ID',inplace=True)
 
-
-    # DF Profile - compute hour ID's
-    total = df_profile.sum(axis=0)
-    total.name = 'Total'
-    num_rows = df_profile.shape[0]
-    factor = []
-
-    for i in range(num_rows):  # necessary to create hour id
-        factor.append(10 ** i)
-
-    df_profile = df_profile.mul(factor, axis=0)
-    hour_id = df_profile.iloc[0:].sum()
-    df_profile = df_profile.div(factor, axis=0)
-    hour_id.name = 'Hour_ID'
-    df_profile = df_profile.append(total.transpose())
-    df_profile = df_profile.append(hour_id.transpose())
-
     # get all streams info necessary for pinch analysis
     df_char = streams_detailed_info(df_char, pinch_delta_T_min)
 
+
+    ############################################################################################################
+    # PINCH ANALYSIS
+
     # Bulk Pinch Analysis  --------------------------------------------------------
     # pinch analysis for all streams
-    df_operating = (df_char.copy())
+    df_operating = df_char.copy()  # provide streams to be analyzed
     df_hx_bulk = pinch_analysis(df_operating, df_profile, pinch_delta_T_min)
     vector_df_hx.append(df_hx_bulk)
 
-    # Hourly Pinch Analysis  --------------------------------------------------------
-    # pinch analysis for streams working in coincident hours ID
+    # pinch analysis for all stream combination
     if perform_hourly_analysis is True:
-            # get sorted vector with Unique Hour_ID
-            unique_hour_id = df_profile.iloc[-1].unique()
-            all_streams_working_hour_id = sum([10**(i) for i in range(len(str(int(unique_hour_id[0]))))])
-            if unique_hour_id[0] == all_streams_working_hour_id:
-                unique_hour_id = unique_hour_id[1:]
-
-            for hour_id in unique_hour_id:
-                index_df = []
-                if hour_id != 0:
-                    reverse_hour_id = str(int(hour_id))[::-1]
-                    for i in range(len(reverse_hour_id)):
-                        if reverse_hour_id[i] == '1':
-                            index_df.append(int(i))  # list with equipments/processes ID operating
-
-                    df_operating = (df_char.copy()).iloc[index_df]
-                    df_hx_hourly = pinch_analysis(df_operating,df_profile,pinch_delta_T_min)
+        # do all possible combinations between the streams
+        for L in range(0, len(range(df_char.shape[0]))):
+            for subset in itertools.combinations(range(df_char.shape[0]), L):
+                if list(subset) != [] and len(list(subset)) > 1:
+                    df_operating = (df_char.copy()).iloc[list(subset)]
+                    df_hx_hourly = pinch_analysis(df_operating, df_profile, pinch_delta_T_min)
                     if df_hx_hourly.empty == False:
                         vector_df_hx.append(df_hx_hourly)
 
 
+
+    hour = 0
+    if hour == 1 :
+        # Hourly Pinch Analysis  --------------------------------------------------------
+        # DF Profile - compute hour ID's
+        total = df_profile.sum(axis=0)
+        total.name = 'Total'
+        num_rows = df_profile.shape[0]
+        factor = []
+
+        for i in range(num_rows):  # necessary to create hour id
+            factor.append(10 ** i)
+
+        df_profile = df_profile.mul(factor, axis=0)
+        hour_id = df_profile.iloc[0:].sum()
+        df_profile = df_profile.div(factor, axis=0)
+        hour_id.name = 'Hour_ID'
+        df_profile = df_profile.append(total.transpose())
+        df_profile = df_profile.append(hour_id.transpose())
+
+        # pinch analysis for streams working in coincident hours ID
+        if perform_hourly_analysis is True:
+                # get sorted vector with Unique Hour_ID
+                unique_hour_id = df_profile.iloc[-1].unique()
+                all_streams_working_hour_id = sum([10**(i) for i in range(len(str(int(unique_hour_id[0]))))])
+                if unique_hour_id[0] == all_streams_working_hour_id:
+                    unique_hour_id = unique_hour_id[1:]
+
+                for hour_id in unique_hour_id:
+                    index_df = []
+                    if hour_id != 0:
+                        reverse_hour_id = str(int(hour_id))[::-1]
+                        for i in range(len(reverse_hour_id)):
+                            if reverse_hour_id[i] == '1':
+                                index_df.append(int(i))  # list with equipments/processes ID operating
+
+                        df_operating = (df_char.copy()).iloc[index_df]
+                        df_hx_hourly = pinch_analysis(df_operating,df_profile,pinch_delta_T_min)
+                        if df_hx_hourly.empty == False:
+                            vector_df_hx.append(df_hx_hourly)
+
+
+    ############################################################################################################
+    # ECONOMIC/CO2 EMISSIONS ANALYSIS
 
     # economic DF's (e.g total_investment, energy and money saved yearly - and in which equipment)
     all_df = []

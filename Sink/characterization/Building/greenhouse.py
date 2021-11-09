@@ -1,4 +1,6 @@
 """
+alisboa/jmcunha
+
 ##############################
 INFO: Greenhouse Simulation. Simulates heat  over the year, according to greenhouse specifications
     and climate weather data

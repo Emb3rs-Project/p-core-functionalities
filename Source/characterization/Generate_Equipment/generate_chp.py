@@ -1,4 +1,6 @@
 """
+alisboa/jmcunha
+
 ##############################
 INFO: Create CHP Object and characterize its streams.
 

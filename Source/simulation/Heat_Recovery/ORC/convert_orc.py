@@ -1,4 +1,6 @@
 """
+alisboa/jmcunha
+
 ##############################
 INFO: Convert_Options Raw Data to ORC/RC, for maximum electrical generation.
 

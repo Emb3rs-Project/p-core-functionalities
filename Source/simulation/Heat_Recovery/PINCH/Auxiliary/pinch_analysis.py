@@ -1,14 +1,48 @@
 """
+alisboa/jmcunha
 
-INFO: Perform Pinch Analysis
+##############################
+INFO: Perform Pinch Analysis.
+      1) get heat cascade
+      2) get pinch point
+      3) separate streams into above and below pinch point
+      4) perform pinch analysis and design storage (above and below pinch point)
 
-Return: DF with HX
-        ['Power' [kW], 'Hot_Stream' [index], 'Cold_Stream' [index], 'Type'  [hx type], 'Turnkey_Cost'  [€],
-        'OM_Fix_Cost'  [€/year], 'Hot_Stream_T_Hot'  [ºC], 'Hot_Stream_T_Cold'  [ºC],
-        'Original_Hot_Stream' [index], 'Original_Cold_Stream ' [index], 'Storage'  [m3],
-        'Storage_Satisfies' [%], 'Storage_Turnkey_Cost'  [€],
-        'Total_Turnkey_Cost'  [€], 'Recovered_Energy'  [kWh]]
 
+##############################
+INPUT:
+        # df_operating - DF with stream operating and its characteristics
+             DF keys:
+                # 'Fluid' - fluid type
+                # 'Flowrate'  [kg/h]]
+                # 'Supply_Temperature'  [ºC]
+                # 'Target_Temperature'  [ºC]
+                # 'Cp'  [kJ/kg.K]
+                # 'mcp'  [kJ/K]
+                # 'Stream_Type' - hot or cold
+                # 'Supply_Shift'  [ºC]
+                # 'Target_Shift'  [ºC]
+
+        # df_profile - DF with all streams schedules (hourly schedule with 1 and 0)
+        # delta_T_min - heat exchangers minimum delta T [ºC]
+
+
+##############################
+RETURN: DF with HX designed:
+            DF keys:
+                # 'Power' [kW]
+                # 'Type'  [hx type]
+                # 'Turnkey_Cost'  [€]
+                # 'OM_Fix_Cost'  [€/year]
+                # 'Hot_Stream_T_Hot'  [ºC]
+                # 'Hot_Stream_T_Cold'  [ºC]
+                # 'Original_Hot_Stream'  [index]
+                # 'Original_Cold_Stream'  [index]
+                # 'Storage'  [m3]
+                # 'Storage_Satisfies' [%]
+                # 'Storage_Turnkey_Cost'  [€]
+                # 'Total_Turnkey_Cost'  [€]
+                # 'Recovered_Energy'  [kWh]
 
 """
 
@@ -25,27 +59,16 @@ from ......Source.simulation.Heat_Recovery.PINCH.HX.hx_storage import hx_storage
 
 def pinch_analysis(df_operating,df_profile,delta_T_min):
 
-    # Eliminate Solid Flows
-    index_eliminate = df_operating[df_operating['Fluid'] == 'solid']
-    df_operating.drop(index_eliminate.index, inplace=True)
-
     # HEAT CASCADE
     df_heat_cascade = table_heat_cascade(df_operating)
 
     # PINCH POINT
-    pinch_point_T, net_heat_flow = pinch_point(df_heat_cascade)
-
-    # PLOT GCC
-    temperature_vector = np.unique(np.append(df_operating["Supply_Shift"].values, df_operating["Target_Shift"].values))[
-                         ::-1]  # vector wih unique temperatures sorted
-    plot_gcc(net_heat_flow, temperature_vector)
+    pinch_point_temperature = pinch_point(df_heat_cascade,df_operating)
 
     # PINCH ANALYSIS -------------------------------------------
-    pinch_point_T = temperature_vector[net_heat_flow == 0]
-    pinch_point_T = pinch_point_T[0]
-
-    # Create DF HX
+    # create DF HX
     df_operating['Original_Stream'] = df_operating.index
+    df_operating['Match'] = False  # Assign this value in order to match FIRST all available hot streams
     df_hx = pd.DataFrame(columns=['Power',
                                   'Original_Hot_Stream',
                                   'Original_Cold_Stream',
@@ -59,16 +82,15 @@ def pinch_analysis(df_operating,df_profile,delta_T_min):
                                   'Storage'])
 
     # Above Pinch
-    df_hx_above_pinch = above_pinch_main(df_operating, delta_T_min, pinch_point_T, df_hx)  # get df with HX
+    df_hx_above_pinch = above_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx)  # get df with HX
     df_hx_above_pinch = hx_storage(df_profile, df_hx_above_pinch)  # update df with HX storage
     # Below Pinch
-    df_hx_below_pinch = below_pinch_main(df_operating, delta_T_min, pinch_point_T, df_hx)
+    df_hx_below_pinch = below_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx)
     df_hx_below_pinch = hx_storage(df_profile, df_hx_below_pinch)
 
 
     # OUTPUT
     df_hx = pd.concat([df_hx_above_pinch, df_hx_below_pinch])
-
 
     if df_hx.empty == False:
         total_heat = 0

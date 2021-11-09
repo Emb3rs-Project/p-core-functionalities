@@ -1,7 +1,28 @@
 """"
-jmcunha/alisboa
+alisboa/jmcunha
 
-Info: Compute heat cascade.
+##############################
+INFO: Compute heat cascade.
+
+##############################
+INPUT:
+        # df_operating - DF with stream operating and its characteristics
+             DF keys:
+                # 'Fluid' - fluid type
+                # 'Flowrate'  [kg/h]]
+                # 'Supply_Temperature'  [ºC]
+                # 'Target_Temperature'  [ºC]
+                # 'Cp'  [kJ/kg.K]
+                # 'mcp'  [kJ/K]
+                # 'Stream_Type' - hot or cold
+                # 'Supply_Shift'  [ºC]
+                # 'Target_Shift'  [ºC]
+
+##############################
+RETURN:
+        # 'delta_T_cascade' - delta T of temperature intervals
+        # 'mcp_cascade'
+        # 'dH'
 
 """
 
@@ -11,6 +32,7 @@ import numpy as np
 def table_heat_cascade (df_operating):
 
     # Vector wih unique temperatures sorted
+
     temperature_vector = np.unique(np.append(df_operating["Supply_Shift"].values,
                                              df_operating["Target_Shift"].values)
                                    )

@@ -1,10 +1,27 @@
 """"
-jmcunha/alisboa
+alisboa/jmcunha
 
-Info: Above Pinch Point Analysis. Divided in 3 steps: 1st match - streams reaching pinch, 2nd match - streams not yet matched, 3rd match - remaining streams with
-pinch analysis rules (concerning mcp_in<mcp_out), 4th match - remaining streams without restrictions (concerning mcp_in<mcp_out).
-Streams In are only split in 1st match.
-Streams Out are only split before any match.
+##############################
+INFO: Above Pinch Point - Pinch Analysis.
+      Divided in 3 steps:
+        1) 1st match - streams reaching pinch
+        2) 2nd match - streams not yet matched
+        3) 3rd match - remaining streams with  pinch analysis rules (concerning mcp_in<mcp_out),
+        4) 4th match - remaining streams without restrictions (concerning mcp_in<mcp_out).
+
+    Streams In are only split in the 1st match.
+    Streams Out are only split before any match.
+
+##############################
+INPUT:
+        # df_streams
+        # delta_T_min
+        # pinch_T
+        # df_hx
+
+##############################
+RETURN:
+        # df_hx
 
 """
 
@@ -13,37 +30,36 @@ from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.match_remaining_strea
 from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_first_match import above_pinch_first_match
 
 
-def above_pinch_main(df_streams,delta_T_min,T_pinch,df_hx):
+def above_pinch_main(df_streams,delta_T_min,pinch_T,df_hx):
+
     # Init Arrays
     above_pinch = True
 
     # Pinch Point Temperatures
-    T_pinch_cold = T_pinch - delta_T_min
-    T_pinch_hot = T_pinch + delta_T_min
-
+    pinch_T_cold = pinch_T - delta_T_min
+    pinch_T_hot = pinch_T + delta_T_min
 
     # Separate Streams Info
-    df_hot_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Hot') & (df_streams["Supply_Temperature"] > T_pinch_hot)] # df hot streams
-    df_cold_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Cold') & (df_streams["Target_Temperature"] > T_pinch_cold)]  # df cold streams
-    df_hot_streams['Match'] = False # Assign this value in order to match FIRST all available hot streams
+    df_hot_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Hot') & (df_streams["Supply_Temperature"] > pinch_T_hot)] # df hot streams
+    df_cold_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Cold') & (df_streams["Target_Temperature"] > pinch_T_cold)]  # df cold streams
 
     if df_hot_streams.empty == False :
 
         # Get Streams Closest Temperature to Pinch Point
-        df_hot_streams['Closest_Pinch_Temperature'] = df_hot_streams.apply(lambda x: T_pinch_hot if x['Target_Temperature'] < T_pinch_hot else x['Target_Temperature'], axis=1)
-        df_cold_streams['Closest_Pinch_Temperature'] = df_cold_streams.apply(lambda x: T_pinch_cold if x['Supply_Temperature'] < T_pinch_cold else x['Supply_Temperature'], axis=1)
+        df_hot_streams['Closest_Pinch_Temperature'] = df_hot_streams.apply(lambda x: pinch_T_hot if x['Target_Temperature'] < pinch_T_hot else x['Target_Temperature'], axis=1)
+        df_cold_streams['Closest_Pinch_Temperature'] = df_cold_streams.apply(lambda x: pinch_T_cold if x['Supply_Temperature'] < pinch_T_cold else x['Supply_Temperature'], axis=1)
 
 
         # Check N_streams HOT < N_streams COLD
         df_cold_streams, df_hot_streams = check_streams_number(df_cold_streams, df_hot_streams,above_pinch)
 
         # 1ST MATCH - Streams Reaching Pinch ----------------------------------------------------------
-        df_hot_streams_dummy = df_hot_streams[df_hot_streams['Closest_Pinch_Temperature'] == T_pinch_hot].copy()
-        df_cold_streams_dummy = df_cold_streams[df_cold_streams['Closest_Pinch_Temperature'] == T_pinch_cold].copy()
+        df_hot_streams_dummy = df_hot_streams[df_hot_streams['Closest_Pinch_Temperature'] == pinch_T_hot].copy()
+        df_cold_streams_dummy = df_cold_streams[df_cold_streams['Closest_Pinch_Temperature'] == pinch_T_cold].copy()
         df_hot_streams,df_cold_streams,df_hx = above_pinch_first_match(df_hot_streams, df_cold_streams, df_hot_streams_dummy, df_cold_streams_dummy, df_hx, delta_T_min)
 
 
-        # REMAINING 1ST MATCH - Attention to temperatures  ----------------------------------------------------------
+        # REMAINING 1ST MATCH  ----------------------------------------------------------
         df_hot_streams_dummy = df_hot_streams[df_hot_streams['Match'] == False].copy()
 
         while df_hot_streams_dummy.shape[0] > 0:
@@ -57,7 +73,6 @@ def above_pinch_main(df_streams,delta_T_min,T_pinch,df_hx):
             df_hot_streams, df_cold_streams,df_hx = above_pinch_first_match(df_hot_streams, df_cold_streams, df_hot_streams_dummy,df_cold_streams_dummy, df_hx, delta_T_min)
 
             df_hot_streams_dummy = df_hot_streams[df_hot_streams['Match'] == False].copy()
-
 
 
         # REMAINING STREAMS MATCH - WITH Restrictions  ----------------------------------------------------------

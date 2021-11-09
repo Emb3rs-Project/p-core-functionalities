@@ -1,4 +1,6 @@
 """
+alisboa/jmcunha
+
 ##############################
 INFO: Create Process Object and characterize its streams.
 

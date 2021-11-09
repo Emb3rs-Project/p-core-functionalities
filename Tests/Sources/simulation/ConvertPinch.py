@@ -28,7 +28,6 @@ class ConvertPinch:
 def testConvertPinch():
     data = ConvertPinch()
     test = convert_pinch(data)
-
     for hx in test['co2_optimization']['pinch_hx_data']:
         print(hx)
 
