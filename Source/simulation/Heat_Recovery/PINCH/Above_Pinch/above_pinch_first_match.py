@@ -4,7 +4,9 @@ from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_stream_
 
 def above_pinch_first_match(combinations, df_hot_streams, df_cold_streams, df_hot_streams_dummy, df_cold_streams_dummy, df_hx, delta_T_min):
 
+    combinations = [1]
 
+    for combination in combinations:
 
         while df_hot_streams_dummy.shape[0] > 0:
 
@@ -98,4 +100,4 @@ def above_pinch_first_match(combinations, df_hot_streams, df_cold_streams, df_ho
                     df_cold_streams.drop(index=cold_stream_index, inplace=True)
 
 
-        return df_hot_streams, df_cold_streams, df_hx
+    return df_hot_streams, df_cold_streams, df_hx
