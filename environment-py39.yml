@@ -1,4 +1,4 @@
-name: cf-module
+name: emb3rs-cf-module
 channels:
   - conda-forge
   - defaults
