@@ -28,7 +28,7 @@ RETURN:
 from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.check_streams_number import check_streams_number
 from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
 from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_first_match import above_pinch_first_match
-from testing_above_pinch_make_pair import main_above_pinch_make_pair
+from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.testing_above_pinch_make_pair import main_above_pinch_make_pair
 
 def above_pinch_main(df_streams,delta_T_min,pinch_T,df_hx):
 
@@ -39,8 +39,9 @@ def above_pinch_main(df_streams,delta_T_min,pinch_T,df_hx):
     pinch_T_cold = pinch_T - delta_T_min
     pinch_T_hot = pinch_T + delta_T_min
 
-   # pinch_T_cold =90
-   # pinch_T_hot = 100
+    #pinch_T_cold =90
+    #pinch_T_hot = 100
+    #delta_T_min = 10
 
     # Separate Streams Info
     df_hot_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Hot') & (df_streams["Supply_Temperature"] > pinch_T_hot)] # df hot streams
@@ -60,6 +61,8 @@ def above_pinch_main(df_streams,delta_T_min,pinch_T,df_hx):
         print('############################################')
 
         for case_check_streams in all_cases_check_streams:
+
+
             ### CHECK THIS - VERY IMPORTANT
             df_cold_streams, df_hot_streams = case_check_streams
 
@@ -72,7 +75,24 @@ def above_pinch_main(df_streams,delta_T_min,pinch_T,df_hx):
             combinations = [1]
 
             try:
-                all_cases_first_match = main_above_pinch_make_pair(case_check_streams)
+                all_cases_first_match = main_above_pinch_make_pair(case_check_streams,delta_T_min)
+
+                keep = []
+                if len(all_cases_first_match) > 1:
+                    keep.append(all_cases_first_match[0])
+
+                    for case_all_cases_first_match in all_cases_first_match:
+
+                        for case_keep in keep:
+
+                            df = case_all_cases_first_match[2].merge(case_keep[2], how='inner', indicator=False)
+
+                            if df.shape[0] != case_keep[2].shape[0]:
+                                keep.append(case_all_cases_first_match)
+
+                all_cases_first_match = keep.copy()
+                print('look')
+                print(all_cases_first_match)
             except:
                 pass
 
