@@ -79,7 +79,6 @@ def above_pinch_main(df_streams,delta_T_min,pinch_T,df_hx):
                 all_cases_first_match = main_above_pinch_make_pair(case_check_streams,delta_T_min)
 
 
-                # remove duplicates
                 keep = []
 
                 if len(all_cases_first_match) > 1:
@@ -111,12 +110,6 @@ def above_pinch_main(df_streams,delta_T_min,pinch_T,df_hx):
                 pass
 
 
-            # df_hot_streams_dummy = df_hot_streams[df_hot_streams['Closest_Pinch_Temperature'] == pinch_T_hot].copy()
-           # df_cold_streams_dummy = df_cold_streams[df_cold_streams['Closest_Pinch_Temperature'] == pinch_T_cold].copy()
-            #df_hot_streams, df_cold_streams, df_hx = above_pinch_first_match(combinations,df_hot_streams, df_cold_streams, df_hot_streams_dummy, df_cold_streams_dummy, df_hx, delta_T_min)
-
-
-            #all_cases_first_match = [[df_hot_streams, df_cold_streams, df_hx]]
             ################# UPDATING #################
 
             # REMAINING 1ST MATCH  ----------------------------------------------------------
