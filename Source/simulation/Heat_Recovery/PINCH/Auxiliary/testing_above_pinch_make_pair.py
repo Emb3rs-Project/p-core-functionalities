@@ -145,6 +145,7 @@ def above_pinch_make_pair(combination,all_combinations,delta_T_min):
 
                                     df_hx = df_hx.drop_duplicates(subset=['Original_Hot_Stream','Hot_Split'], keep='last',)
                                     df_hx = df_hx.drop_duplicates(subset=['Original_Cold_Stream','Cold_Split'], keep='last',)
+
                                     df_hx.drop(columns=['Hot_Split','Cold_Split'],inplace=True)
                                     all_combinations.append(deepcopy([df_hot_streams,df_cold_streams,df_hx]))
 

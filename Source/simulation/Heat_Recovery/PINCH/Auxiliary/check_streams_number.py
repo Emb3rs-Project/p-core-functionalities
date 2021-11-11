@@ -26,14 +26,18 @@ def check_streams_number(df_cold_streams,df_hot_streams,above_pinch,delta_T_min)
     # initial combination
     combinations = [[df_streams_out, df_streams_in]]
 
+
     # check if streams split is needed
     if df_streams_out.shape[0] < df_streams_in.shape[0]:
 
         surplus_streams_in = df_streams_in.shape[0] - df_streams_out.shape[0]
+        cycles = [0] * surplus_streams_in
 
         # create all possibilities of stream splitting
-        for cycle in range(surplus_streams_in - 1):
+        for cycle in cycles:
             combinations = make_pairs(combinations, above_pinch,delta_T_min)
+
+
 
     # delete temporary columns
     for combo in combinations:
