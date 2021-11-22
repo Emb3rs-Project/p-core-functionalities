@@ -4,40 +4,6 @@ import sys
 from colorama import init
 from colorama.ansi import Back, Fore, Style
 
-from ..Tests.Sources.characterization.Process import testProcess
-from ..Tests.Sinks.characterization.Industry import testIndustry
-from ..Tests.Sinks.characterization.Building import testBuilding
-from ..Tests.Sinks.characterization.Greenhouse import testGreenhouse
-from ..Tests.Sinks.simulation.ConvertSink import testConvertSink
-from ..Tests.Sources.characterization.GenerateBoiler import testGenerateBoiler
-from ..Tests.Sources.characterization.GenerateChp import testGenerateChp
-from ..Tests.Sources.characterization.OutflowSimplified import testOutflowSimplified
-from ..Tests.Sources.characterization.Process import testProcess
-from ..Tests.Sources.characterization.GenerateCoolingEquipment import (
-    testGenerateCoolingEquipment,
-)
-from ..Tests.Sources.characterization.GenerateBurner import testGenerateBurner
-from ..Tests.Sources.simulation.ConvertSources import testConvertSource
-from ..Tests.Sources.simulation.ConvertOrc import testConvertORC
-from ..Tests.Sources.simulation.ConvertPinch import testConvertPinch
-
-
-functions = {
-    "testIndustry": testIndustry,
-    "testBuilding": testBuilding,
-    "testGreenhouse": testGreenhouse,
-    "testConvertSink": testConvertSink,
-    "testGenerateBoiler": testGenerateBoiler,
-    "testGenerateBurner": testGenerateBurner,
-    "testGenerateChp": testGenerateChp,
-    "testGenerateCoolingEquipment": testGenerateCoolingEquipment,
-    "testOutflowSimplified": testOutflowSimplified,
-    "testProcess": testProcess,
-    "testConvertSource": testConvertSource,
-    "testConvertORC": testConvertORC,
-    "testConvertPinch": testConvertPinch,
-}
-
 
 def initTests():
     init()

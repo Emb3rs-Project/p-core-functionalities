@@ -64,7 +64,7 @@ def convert_pinch(in_var):
     ############################################################################################################
     # DATA PRE-TREATMENT
 
-    pinch_delta_T_min = (delta_T_min)/2  # HX minimum DT
+    pinch_delta_T_min = (delta_T_min)/2
 
     # analyse processes and isolated streams to build the streams list
     for object in all_objects:
@@ -118,6 +118,7 @@ def convert_pinch(in_var):
 
     # Bulk Pinch Analysis  --------------------------------------------------------
     # pinch analysis for all streams
+    #print('BULLKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK')
     df_operating = df_char.copy()  # provide streams to be analyzed
     df_hx_bulk = pinch_analysis(df_operating, df_profile, pinch_delta_T_min)
     vector_df_hx.append(df_hx_bulk)
@@ -127,6 +128,7 @@ def convert_pinch(in_var):
         # do all possible combinations between the streams
         for L in range(0, len(range(df_char.shape[0]))):
             for subset in itertools.combinations(range(df_char.shape[0]), L):
+                #print('HOURLYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY')
                 if list(subset) != [] and len(list(subset)) > 1:
                     df_operating = (df_char.copy()).iloc[list(subset)]
                     df_hx_hourly = pinch_analysis(df_operating, df_profile, pinch_delta_T_min)

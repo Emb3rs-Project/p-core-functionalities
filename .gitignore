@@ -2,3 +2,4 @@
 .idea
 *.pyc
 __main__.py
+/run_scripts/
