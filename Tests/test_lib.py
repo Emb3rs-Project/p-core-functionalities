@@ -13,7 +13,9 @@ from ..Tests.Sources.characterization.GenerateBoiler import testGenerateBoiler
 from ..Tests.Sources.characterization.GenerateChp import testGenerateChp
 from ..Tests.Sources.characterization.OutflowSimplified import testOutflowSimplified
 from ..Tests.Sources.characterization.Process import testProcess
-from ..Tests.Sources.characterization.GenerateCoolingEquipment import testGenerateCoolingEquipment
+from ..Tests.Sources.characterization.GenerateCoolingEquipment import (
+    testGenerateCoolingEquipment,
+)
 from ..Tests.Sources.characterization.GenerateBurner import testGenerateBurner
 from ..Tests.Sources.simulation.ConvertSources import testConvertSource
 from ..Tests.Sources.simulation.ConvertOrc import testConvertORC
@@ -23,58 +25,68 @@ from ..Tests.Sources.simulation.ConvertPinch import testConvertPinch
 functions = {
     "testIndustry": testIndustry,
     "testBuilding": testBuilding,
-    "testGreenhouse":testGreenhouse,
-    "testConvertSink":testConvertSink,
-    'testGenerateBoiler':testGenerateBoiler,
-    'testGenerateBurner':testGenerateBurner,
-    'testGenerateChp':testGenerateChp,
-    'testGenerateCoolingEquipment':testGenerateCoolingEquipment,
-    'testOutflowSimplified':testOutflowSimplified,
-    'testProcess':testProcess,
-    'testConvertSource':testConvertSource,
-    'testConvertORC':testConvertORC,
-    'testConvertPinch':testConvertPinch
+    "testGreenhouse": testGreenhouse,
+    "testConvertSink": testConvertSink,
+    "testGenerateBoiler": testGenerateBoiler,
+    "testGenerateBurner": testGenerateBurner,
+    "testGenerateChp": testGenerateChp,
+    "testGenerateCoolingEquipment": testGenerateCoolingEquipment,
+    "testOutflowSimplified": testOutflowSimplified,
+    "testProcess": testProcess,
+    "testConvertSource": testConvertSource,
+    "testConvertORC": testConvertORC,
+    "testConvertPinch": testConvertPinch,
+}
 
-    }
 
 def initTests():
     init()
 
+
 def blockPrint():
-    sys.stdout = open(os.devnull, 'w')
+    sys.stdout = open(os.devnull, "w")
+
 
 def enablePrint():
     sys.stdout = sys.__stdout__
 
+
 def printToDocument(args, file):
     sys.stdout = open(os.path.join(args.dir, file + ".log"), "w")
+
 
 def processOutputBefore(args, test):
     if not args.show_outputs:
         blockPrint()
     if args.show_outputs and args.dir:
-        printToDocument(args,test)
+        printToDocument(args, test)
+
 
 def processOutputAfter():
-    enablePrint()  
-    
+    enablePrint()
+
 
 def printError(message):
     print(Fore.RED + Back.WHITE + " ERROR " + Style.RESET_ALL + " " + message)
 
+
 def printSuccess(message):
     print(Fore.GREEN + Back.WHITE + " SUCCESS " + Style.RESET_ALL + " " + message)
 
-def defineArguments(availableTests):
-    parser = argparse.ArgumentParser(description='Test CF Functions')
-    parser.add_argument('--show', help='Show test outputs',
-                        dest='show_outputs', action='store_true')
-    parser.add_argument('--all', help='Run All Tests',
-                        dest='run_all', action='store_true')
-    parser.add_argument('--dir', help='Output Directory for Tests')
 
-    parser.add_argument('--test', help='Choose Test to run',
-                        choices=list(availableTests.keys()))
+def defineArguments(availableTests):
+    parser = argparse.ArgumentParser(description="Test CF Functions")
+    parser.add_argument(
+        "--show", help="Show test outputs", dest="show_outputs", action="store_true"
+    )
+    parser.add_argument(
+        "--all", help="Run All Tests", dest="run_all", action="store_true"
+    )
+    parser.add_argument("--dir", help="Output Directory for Tests")
+
+    parser.add_argument(
+        "--test", help="Choose Test to run", choices=list(availableTests.keys())
+    )
 
     parser.set_defaults(show_outputs=False, run_all=False)
 
@@ -100,10 +112,11 @@ def run_all_tests(args, availableTests):
         except Exception:
             processOutputAfter()
             printError(test + " Run with Error")
-            
+
+
 def run_target_test(args, availableTests):
     try:
-        processOutputBefore(args,args.test)
+        processOutputBefore(args, args.test)
         availableTests[args.test]()
         processOutputAfter()
         printSuccess(args.test + " Run Successfully")
