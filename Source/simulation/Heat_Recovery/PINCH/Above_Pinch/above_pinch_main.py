@@ -140,7 +140,7 @@ def above_pinch_main(df_streams,hx_delta_T_min,pinch_T,df_hx):
                 # check again if number_streams_hot < number_streams_cold; and get all streams combinations possible
                 all_cases_check_streams_2 = check_streams_number(df_cold_streams , df_hot_streams , above_pinch ,hx_delta_T_min,reach_pinch=False)  # array with arrays with [df_hot,df_cold]
 
-
+                print(all_cases_check_streams_2)
 
                 for i in all_cases_check_streams_2:
                     i.append(df_hx)

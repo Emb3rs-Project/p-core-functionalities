@@ -1,7 +1,6 @@
 from ....Source.simulation.Heat_Recovery.PINCH.convert_pinch import convert_pinch
 from ....General.Auxiliary_General.stream_industry import stream_industry
 
-
 # IMPORTANT
 ### OPTION 1 - just pinch analysis (no optimization) - INPUT: isolated streams (example below)
 ### OPTION 2 - pinch analysis with processes (co2,energy,cost optmization - 3 best solutions of each) - INPUT:processes, equipments
