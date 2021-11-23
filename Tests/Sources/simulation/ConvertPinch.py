@@ -49,18 +49,46 @@ class ConvertPinch:
             stream_industry(1, 'inflow', 'thermal_oil', 90, 140, 0.4 * 3600 / 2, 0.4 * 3600 * 2 * (140 - 90),
                             [1, 1, 1, 0])]
 
-        # need streams
-        self.all_objects = [
-            stream_industry(1, 'outflow', 'thermal_oil', 250, 40, 0.15 * 3600 / 2, 0.15 * 3600 * 2 * (250 - 40),
-                            [1, 1, 1, 1]),
-            stream_industry(1, 'outflow', 'thermal_oil', 200, 80, 0.25 * 3600 / 2, 0.25 * 3600 * 2 * (200 - 80),
-                            [1, 1, 1, 1]),
-            stream_industry(1, 'inflow', 'thermal_oil', 20, 180, 0.2 * 3600 / 2, 0.2 * 3600 * 2 * (180 - 20),
-                            [1, 1, 0, 1]),
-            stream_industry(1, 'inflow', 'thermal_oil', 140, 230, 0.3 * 3600 / 2, 0.3 * 3600 * 2 * (230 - 140),
-                            [1, 1, 1, 0])]
 
         # need streams
+        # pag.323
+        self.all_objects = [
+            stream_industry(1, 'outflow', 'thermal_oil', 327, 150, 0.1098 * 3600 / 2, 34.1,
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'outflow', 'thermal_oil', 495, 307, 0.134 * 3600 / 2, 16.5,
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'outflow', 'thermal_oil', 220, 150, 0.2062 * 3600 / 2, 5.5,
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'outflow', 'thermal_oil', 222, 150, 0.0739 * 3600 / 2, 5.5,
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'outflow', 'thermal_oil', 140, 327, .1094 * 3600 / 2, 7.2,
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'inflow', 'thermal_oil', 140, 164, 0.698 * 3600 / 2, 19.6,
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'inflow', 'thermal_oil', 140, 500, 0.2 * 3600 / 2, 104.8,
+                            [1, 1, 0, 1]),
+            stream_industry(1, 'inflow', 'thermal_oil', 140, 169, 0.0618 * 3600 / 2, 104.8,
+                            [1, 1, 0, 1]),
+            stream_industry(1, 'inflow', 'thermal_oil', 480, 500, 1.625 * 3600 / 2, 104.8,
+                            [1, 1, 0, 1])
+            ]
+
+        # need streams
+        self.all_objects = [
+            stream_industry(1, 'outflow', 'thermal_oil', 750, 350, 0.045 * 3600 / 2, 0.045 * 3600 * 2 * (750 - 350),
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'outflow', 'thermal_oil', 550, 250, 0.04 * 3600 / 2, 0.04 * 3600 * 2 * (550 - 250),
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'inflow', 'thermal_oil', 300, 900, 0.043 * 3600 / 2, 0.043 * 3600 * 2 * (900 - 300),
+                            [1, 1, 0, 1]),
+            stream_industry(1, 'inflow', 'thermal_oil', 200, 550, 0.02 * 3600 / 2, 0.02 * 3600 * 2 * (550 - 200),
+                            [1, 1, 1, 0])]
+
+        self.delta_T_min = 50
+
+
+        # need streams
+        # pag.323
         self.all_objects = [
             stream_industry(1, 'outflow', 'thermal_oil', 349, 183, 0.178 * 3600 / 2, 34.1,
                             [1, 1, 1, 1]),
@@ -77,13 +105,23 @@ class ConvertPinch:
             ]
 
 
-
-
-
         # need minimum delta T for pinch analysis
         self.delta_T_min = 20
 
 
+        # need streams
+        self.all_objects = [
+            stream_industry(1, 'outflow', 'thermal_oil', 250, 40, 0.15 * 3600 / 2, 0.15 * 3600 * 2 * (250 - 40),
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'outflow', 'thermal_oil', 200, 80, 0.25 * 3600 / 2, 0.25 * 3600 * 2 * (200 - 80),
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'outflow', 'thermal_oil', 20, 180, 0.2 * 3600 / 2, 0.1 * 3600 * 2 * (180 - 20),
+                            [1, 1, 1, 1]),
+            stream_industry(1, 'inflow', 'thermal_oil', 140, 230, 0.3 * 3600 / 2, 0.2 * 3600 * 2 * (230 - 140),
+                            [1, 1, 0, 1]),]
+
+
+        self.delta_T_min = 10
 
 
 def testConvertPinch():

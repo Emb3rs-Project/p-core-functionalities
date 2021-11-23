@@ -7,9 +7,7 @@ import numpy as np
 def main_above_pinch_make_pair(combination,delta_T_min):
 
     all_combinations = []
-
     all_combinations = above_pinch_make_pair(combination,all_combinations,delta_T_min)
-
 
     # eliminate repetitions
 
@@ -59,11 +57,8 @@ def above_pinch_make_pair(combination,all_combinations,delta_T_min):
     df_hot_streams_for_index = df_hot_streams[df_hot_streams['Match'] == False].copy()
     df_cold_streams_for_index = df_cold_streams[df_cold_streams['Match'] == False].copy()
 
-
-
     # get first pair combinations between the streams to increase pinch analysis variability
     for cold_stream_index in df_cold_streams_for_index.index.values:
-
         # save cold stream random value for iterations
         save_index_here = deepcopy(-200)
 
@@ -91,10 +86,10 @@ def above_pinch_make_pair(combination,all_combinations,delta_T_min):
                 df_cold_streams.loc[cold_stream_index, 'Match'] = False
                 df_hot_streams.loc[hot_stream_index, 'Match'] = False
 
-
                 # look for streams_out with larger mcp than streams_in if number_cold_streams = number_hot_streams
-                # and for all streams when number_cold_streams < number_hot_streams
-                if (df_cold_streams.loc[cold_stream_index]['mcp'] >= df_hot_streams.loc[hot_stream_index]['mcp'] and df_cold_streams[df_cold_streams['Reach_Pinch'] == True].shape[0] == df_hot_streams[df_hot_streams['Reach_Pinch'] == True ].shape[0]) or (df_cold_streams.loc[cold_stream_index]['mcp'] <= df_hot_streams.loc[hot_stream_index]['mcp'] and df_cold_streams.shape[0] > df_hot_streams.shape[0]):
+                # and for all streams when number_cold_streams > number_hot_streams
+                if (df_cold_streams.loc[cold_stream_index]['mcp'] >= df_hot_streams.loc[hot_stream_index]['mcp'] and df_cold_streams[df_cold_streams['Reach_Pinch'] == True].shape[0] == df_hot_streams[df_hot_streams['Reach_Pinch'] == True ].shape[0]) or (df_cold_streams.loc[cold_stream_index]['mcp'] <= df_hot_streams.loc[hot_stream_index]['mcp'] and df_cold_streams[df_cold_streams['Reach_Pinch'] == True].shape[0] > df_hot_streams[df_hot_streams['Reach_Pinch'] == True].shape[0]):
+
                     # only relevant to look for streams_out whose temperature can meet streams_in temperature range
                     if (df_cold_streams.loc[cold_stream_index]['Closest_Pinch_Temperature'] + delta_T_min < df_hot_streams.loc[hot_stream_index]['Supply_Temperature'] and above_pinch == True) or ( df_cold_streams.loc[cold_stream_index]['Closest_Pinch_Temperature'] - delta_T_min > df_hot_streams.loc[hot_stream_index]['Supply_Temperature'] and above_pinch is False):
                        # only looking to streams which reach pinch
@@ -173,7 +168,6 @@ def above_pinch_make_pair(combination,all_combinations,delta_T_min):
 
                                 df_hx = df_hx.append(new_hx_row, ignore_index=True)
                                 combination = [df_hot_streams,df_cold_streams,df_hx]
-
 
 
                                 if df_hot_streams[(df_hot_streams['Match'] == False) & (df_hot_streams['Reach_Pinch'] == True)].shape[0] > 0:

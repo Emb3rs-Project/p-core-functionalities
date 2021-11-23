@@ -11,14 +11,21 @@ import pandas as pd
 from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_match_remaining_streams import above_pinch_match_remaining_streams
 from ......Source.simulation.Heat_Recovery.PINCH.Below_Pinch.below_pinch_match_remaining_streams import below_pinch_match_remaining_streams
 
-def match_remaining_streams_main(df_hot_streams,df_cold_streams,df_hx,above_pinch,delta_T_min,restriction):
+def match_remaining_streams_main(df_streams_in,df_streams_out,df_hx,above_pinch,delta_T_min,restriction):
+
 
     # Check if above/below pinch
     if above_pinch == True:
-        # create dummy df to only make changes in original df in the end
-        df_dummy = df_hot_streams.copy()
+        df_hot_streams = df_streams_in
+        df_cold_streams = df_streams_out
     else:
-        df_dummy = df_cold_streams.copy()
+        df_hot_streams = df_streams_out
+        df_cold_streams = df_streams_in
+
+
+    # create dummy df to only make changes in original df in the end
+    df_dummy = df_streams_in.copy()
+
 
     # Get Larger Power Matches
     while df_dummy.shape[0] > 0:
@@ -26,6 +33,7 @@ def match_remaining_streams_main(df_hot_streams,df_cold_streams,df_hx,above_pinc
         # Create dummy DFs
         df_hot_streams_dummy = df_hot_streams.copy()
         df_cold_streams_dummy = df_cold_streams.copy()
+
 
         if (df_hot_streams_dummy.empty == True) or (df_hot_streams_dummy.empty == True):
             break
@@ -45,6 +53,14 @@ def match_remaining_streams_main(df_hot_streams,df_cold_streams,df_hx,above_pinc
                     x, x, new_generated_hx = below_pinch_match_remaining_streams(hot_stream_index, hot_stream, cold_stream_index, cold_stream,
                                                                            df_cold_streams_dummy, df_hot_streams_dummy,
                                                                            delta_T_min, restriction)
+
+                # %%%%%%%%%%%%%%%%%%%%%%
+                # %%%%%%%%%%%%%%%%%%%%%%
+                # check error her supply_temperature
+                # %%%%%%%%%%%%%%%%%%%%%%
+                # %%%%%%%%%%%%%%%%%%%%%%
+
+
                 # Save All Designed HX
                 df_hx_dummy = df_hx_dummy.append(new_generated_hx, ignore_index=True)
 
@@ -79,6 +95,7 @@ def match_remaining_streams_main(df_hot_streams,df_cold_streams,df_hx,above_pinc
                                                                              df_hot_streams_dummy,
                                                                              delta_T_min, restriction)
 
+
             # Update dummy DF
             if above_pinch == True:
                 df_dummy = df_hot_streams.copy()
@@ -86,4 +103,15 @@ def match_remaining_streams_main(df_hot_streams,df_cold_streams,df_hx,above_pinc
                 df_dummy = df_cold_streams.copy()
 
 
-    return df_hot_streams,df_cold_streams,df_hx
+
+    # Check if above/below pinch
+    if above_pinch == True:
+        df_streams_in = df_hot_streams
+        df_streams_out = df_cold_streams
+    else:
+        df_streams_out = df_hot_streams
+        df_streams_in = df_cold_streams
+
+
+
+    return df_streams_in, df_streams_out, df_hx

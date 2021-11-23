@@ -1,6 +1,6 @@
 
 
-def pretreatment(df_hot_streams, df_cold_streams, above_pinch,delta_T_min):
+def special_case(df_hot_streams, df_cold_streams, above_pinch,delta_T_min):
 
     # initial value
     split_needed = False

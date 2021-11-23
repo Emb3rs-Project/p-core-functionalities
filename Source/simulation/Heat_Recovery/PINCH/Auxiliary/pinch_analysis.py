@@ -53,7 +53,7 @@ from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.table_heat_cascade im
 from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.pinch_point import pinch_point
 from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.plot_gcc import plot_gcc
 from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_main import above_pinch_main
-from ......Source.simulation.Heat_Recovery.PINCH.Below_Pinch.below_pinch_main import below_pinch_main
+from ......Source.simulation.Heat_Recovery.PINCH.Below_Pinch.above_and_below_pinch_main import above_and_below_pinch_main
 import numpy as np
 from ......Source.simulation.Heat_Recovery.PINCH.HX.hx_storage import hx_storage
 
@@ -82,12 +82,26 @@ def pinch_analysis(df_operating,df_profile,delta_T_min):
                                   'Storage'])
 
     # Above Pinch
-    df_hx_above_pinch = above_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx)  # get df with HX
-    df_hx_above_pinch = hx_storage(df_profile, df_hx_above_pinch)  # update df with HX storage
-    # Below Pinch
-    df_hx_below_pinch = below_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx)
-    df_hx_below_pinch = hx_storage(df_profile, df_hx_below_pinch)
+    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
 
+    print('ABOVE PINCH')
+
+    df_hx_above_pinch = above_and_below_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx,above_pinch=True)  # get df with HX
+
+   # df_hx_above_pinch = hx_storage(df_profile, df_hx_above_pinch)  # update df with HX storage
+    # Below Pinch
+
+    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+
+    print('BELOW PINCH')
+
+    df_hx_below_pinch = above_and_below_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx,above_pinch=False)  # get df with HX
+
+    print(df_hx_below_pinch)
+
+    df_hx_below_pinch = hx_storage(df_profile, df_hx_below_pinch)
 
     # OUTPUT
     df_hx = pd.concat([df_hx_above_pinch, df_hx_below_pinch])

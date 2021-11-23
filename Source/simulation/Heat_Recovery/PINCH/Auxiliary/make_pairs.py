@@ -5,12 +5,12 @@ def make_pairs(combinations, above_pinch,delta_T_min,perform_special_case):
     combinations_updated = []
     pairs = []
 
-
     if perform_special_case == False:
         for combination in combinations:
             pairs = []
 
             df_streams_out, df_streams_in = combination
+
 
             # get first pair combinations between the streams to increase pinch analysis variability
             for index_stream_out in df_streams_out.index.values:
@@ -82,7 +82,7 @@ def make_pairs(combinations, above_pinch,delta_T_min,perform_special_case):
 
                         new_row['mcp'] -= split_cold_stream_mcp  # correct split mcp
                         new_row['mcp'] = round(new_row['mcp'] + .0, 5)
-                        new_row.name = str(int(cold_stream_index) * 100)  # new ID
+                        new_row.name = int(cold_stream_index) * 100  # new ID
                         new_row['Split_Check'] = False
 
 
@@ -134,7 +134,7 @@ def make_pairs(combinations, above_pinch,delta_T_min,perform_special_case):
 
 
                     if new_row['mcp']  > 0:
-                        combinations_updated.append([df_streams_out_copy, df_streams_in_copy])
+                        combinations_updated.append([df_streams_out_copy,df_streams_in_copy ])
 
             else:
                 combinations_updated.append([df_streams_out, df_streams_in])
@@ -185,7 +185,6 @@ def make_pairs(combinations, above_pinch,delta_T_min,perform_special_case):
                     index_stream_out, index_stream_in = pair
 
                     if above_pinch == True:
-
                         hot_stream_index = index_stream_in
                         cold_stream_index = index_stream_out
 
@@ -223,7 +222,7 @@ def make_pairs(combinations, above_pinch,delta_T_min,perform_special_case):
                             split_cold_stream_mcp = hx_power / (hx_cold_stream_T_hot - hx_cold_stream_T_cold)
 
                         new_row['mcp'] -= split_cold_stream_mcp  # correct split mcp
-                        new_row.name = str(int(cold_stream_index) * 100)  # new ID
+                        new_row.name = int(cold_stream_index) * 100  # new ID
                         new_row['Split_Check'] = False
 
                         # Add Split Stream to DFs
@@ -232,7 +231,7 @@ def make_pairs(combinations, above_pinch,delta_T_min,perform_special_case):
                         # Update DFs
                         df_streams_out_copy.loc[index_stream_out, ['Split_Check']] = True
                         df_streams_out_copy.loc[index_stream_out, ['Match']] = True
-                        df_streams_out_copy.loc[cold_stream_index, ['mcp']] = split_cold_stream_mcp
+                        df_streams_out_copy.loc[index_stream_out, ['mcp']] = split_cold_stream_mcp
                         df_streams_in_copy.loc[index_stream_in, ['Match']] = True
 
 
