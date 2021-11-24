@@ -82,7 +82,7 @@ def convert_pinch(in_var):
                 streams.append(stream)
         elif object['object_type'] == 'stream':  # isolated stream
             perform_hourly_analysis = True
-            object['id'] = object['object_id']
+            object['id'] = object['id']
             streams.append(object)
 
 
@@ -216,11 +216,7 @@ def convert_pinch(in_var):
                   'energy_investment_optimization': energy_investment_options
                   }
 
-    for key in output.keys():
-        print('------------------------------------------------------------------------------------------------------------')
-        print(key)
-        for i in output[key]:
-            print(i)
+
 
     return output
 

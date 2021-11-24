@@ -157,6 +157,7 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
                                         stream_out_T_hot, stream_out_min_T_cold, stream_out_mcp, stream_in_T_hot,
                                         stream_in_min_T_cold, stream_in_mcp)
 
+
                             # SPLIT
                             else:
 
@@ -199,14 +200,15 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
                                     stream_in_T_cold = stream_in_min_T_cold
 
                                     # create split stream
-                                    split_stream_mcp = hx_power / (stream_in_T_hot - stream_in_T_cold)
-                                    split_stream_in_mcp = split_stream_mcp  # update cold stream mcp
+                                    split_stream_in_mcp = hx_power / (stream_in_T_hot - stream_in_T_cold)
+                                    stream_in_mcp = split_stream_in_mcp  # update cold stream mcp
                                     new_row = deepcopy(stream_in.copy())  # split stream has same info as original
                                     new_row['mcp'] -= split_stream_in_mcp  # correct split mcp
                                     new_row.name = str(int(stream_in_index) * 100)  # new ID
 
                                     # add split stream to df
                                     df_streams_in = df_streams_in.append(new_row)
+
 
                                     hx_power, hx_stream_out_T_cold, hx_stream_out_T_hot, hx_stream_in_T_cold, hx_stream_in_T_hot = below_pinch_hx_temperatures(
                                         stream_out_T_hot, stream_out_min_T_cold, stream_out_mcp, stream_in_T_hot,

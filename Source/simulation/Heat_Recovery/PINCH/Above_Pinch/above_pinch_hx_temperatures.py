@@ -16,7 +16,7 @@ def above_pinch_hx_temperatures(hot_stream_T_cold, hot_stream_max_T_hot, hot_str
     # Compute/Check/Correct Temperatures
     hx_hot_stream_T_hot = hx_hot_stream_T_cold + hx_power / hot_stream_mcp
 
-    if hx_hot_stream_T_hot > hot_stream_max_T_hot:
+    if hx_hot_stream_T_hot >= hot_stream_max_T_hot:
         hx_hot_stream_T_hot = hot_stream_max_T_hot
         hx_power = hot_stream_mcp * (hx_hot_stream_T_hot - hx_hot_stream_T_cold)
         hx_cold_stream_T_hot = hx_cold_stream_T_cold + hx_power / cold_stream_mcp

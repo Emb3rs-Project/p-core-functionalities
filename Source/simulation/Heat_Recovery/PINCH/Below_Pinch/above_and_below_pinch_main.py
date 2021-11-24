@@ -55,6 +55,7 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
         df_cold_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Cold') & (df_streams["Supply_Temperature"] < pinch_T_cold)]  # df cold streams
 
 
+
     ################################################################################
     # Pinch
     if df_hot_streams.empty is False and df_cold_streams.empty is False :
@@ -102,6 +103,7 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
 
                 # 1ST MATCH - streams reaching pinch
                 all_cases_first_match = testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df_hx, hx_delta_T_min, above_pinch)
+
 
             # check all_cases_first_match
             for case_first_match in all_cases_first_match:

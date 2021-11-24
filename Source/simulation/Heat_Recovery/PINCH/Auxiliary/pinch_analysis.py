@@ -82,16 +82,10 @@ def pinch_analysis(df_operating,df_profile,delta_T_min):
                                   'Storage'])
 
     # Above Pinch
-    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-    print('ABOVE PINCH')
     df_hx_above_pinch = above_and_below_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx,above_pinch=True)  # get df with HX
     df_hx_above_pinch = hx_storage(df_profile, df_hx_above_pinch)  # update df with HX storage
 
     # Below Pinch
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-    print('BELOW PINCH')
     df_hx_below_pinch = above_and_below_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx,above_pinch=False)  # get df with HX
     df_hx_below_pinch = hx_storage(df_profile, df_hx_below_pinch)
 

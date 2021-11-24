@@ -192,6 +192,8 @@ class ConvertPinch:
             stream_industry(4, 'inflow', 'thermal_oil', 140, 230, 0.3 * 3600 / 2, 0.2 * 3600 * 2 * (230 - 140),
                             [1, 1, 1, 1]),]
 
+        for object in self.all_objects:
+            object['id'] = object['object_id']
 
         self.delta_T_min = 10
 
