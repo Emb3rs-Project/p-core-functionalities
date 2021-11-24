@@ -1,27 +1,18 @@
 
 
-def special_case(df_hot_streams, df_cold_streams, above_pinch,delta_T_min):
+def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
 
     # initial value
     split_needed = False
     pairs = []
     combinations_updated = []
 
-    # check if abvoe or below pinch
-    if above_pinch == True:
-        df_streams_in = df_hot_streams.copy()
-        df_streams_out = df_cold_streams.copy()
-    else:
-        df_streams_in = df_cold_streams.copy()
-        df_streams_out = df_hot_streams.copy()
-
     # only perform this split when both df's have same stream number and there is a streams_in with larger mcp than all streams_out
-    if df_streams_in.shape[0] == df_streams_out.shape[0] :
+    if df_streams_in.shape[0] == df_streams_out.shape[0]:
 
         # check if there is a stream in larger than all streams out
         index_streams_in_to_split = []
         for index,row in df_streams_in.iterrows():
-
 
             if False in df_streams_out.apply(lambda x: True if x['mcp'] < row['mcp'] else False, axis=1).values:
                 pass
@@ -125,10 +116,10 @@ def special_case(df_hot_streams, df_cold_streams, above_pinch,delta_T_min):
             all_combinations = combinations_updated
 
         else:
-            all_combinations = [[df_hot_streams ,df_cold_streams]]
+            all_combinations = [[df_streams_in ,df_streams_out]]
 
 
     else:
-        all_combinations = [[df_hot_streams, df_cold_streams]]
+        all_combinations = [[df_streams_in, df_streams_out]]
 
     return all_combinations

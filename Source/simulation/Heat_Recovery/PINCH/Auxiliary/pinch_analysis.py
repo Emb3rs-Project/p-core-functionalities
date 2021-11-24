@@ -82,40 +82,30 @@ def pinch_analysis(df_operating,df_profile,delta_T_min):
                                   'Storage'])
 
     # Above Pinch
-    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-
+    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
     print('ABOVE PINCH')
-
     df_hx_above_pinch = above_and_below_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx,above_pinch=True)  # get df with HX
+    df_hx_above_pinch = hx_storage(df_profile, df_hx_above_pinch)  # update df with HX storage
 
-   # df_hx_above_pinch = hx_storage(df_profile, df_hx_above_pinch)  # update df with HX storage
     # Below Pinch
-
-    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     print('BELOW PINCH')
-
     df_hx_below_pinch = above_and_below_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx,above_pinch=False)  # get df with HX
-
-    print(df_hx_below_pinch)
-
     df_hx_below_pinch = hx_storage(df_profile, df_hx_below_pinch)
 
     # OUTPUT
-    df_hx = pd.concat([df_hx_above_pinch, df_hx_below_pinch])
+    # make df_hx combinations - above and below
+    vector_df_hx = []
+    for df_hx_above in df_hx_above_pinch:
 
-    if df_hx.empty == False:
-        total_heat = 0
-        for index, row in df_operating.iterrows():
-            total_heat += df_operating['mcp'][index] * abs(
-                df_operating['Supply_Temperature'][index] - df_operating['Target_Temperature'][index])
+        for df_hx_below in df_hx_below_pinch:
+            vector_df_hx.append(pd.concat([df_hx_above, df_hx_below],ignore_index=True))
 
 
-    df_hx.drop(['Hot_Stream','Cold_Stream'],axis=1, inplace=True)
 
-    return df_hx
+    return vector_df_hx
 
 
 

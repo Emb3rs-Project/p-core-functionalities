@@ -118,6 +118,7 @@ def above_pinch_main(df_streams,hx_delta_T_min,pinch_T,df_hx):
                     # get data
                     df_hot_streams, df_cold_streams, df_hx = case_check_streams_2
 
+
                     # REMAINING STREAMS MATCH - WITH Restrictions; match by maximum power HX until all in streams_in are satisfied
                     df_hot_streams, df_cold_streams, df_hx = match_remaining_streams_main(df_hot_streams,
                                                                                           df_cold_streams,

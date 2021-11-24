@@ -36,6 +36,8 @@ def testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df
 
     # get all combinations with recursive function
     combination = [df_streams_in, df_streams_out, df_hx]
+
+
     all_combinations = make_pairs(combination, all_combinations, delta_T_min, above_pinch)
 
     # eliminate df streams repeated
@@ -245,6 +247,7 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
 
                             # continue iteration or reach end and save
                             if df_streams_in[(df_streams_in['Match'] == False) & (df_streams_in['Reach_Pinch'] == True)].shape[0] > 0:
+
                                 all_combinations = make_pairs(deepcopy(combination.copy()), deepcopy(all_combinations), delta_T_min, above_pinch)
 
                                 # when iteration goes a step back, last HX designed must be eliminated
@@ -253,6 +256,11 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
                             else:
                                 df_hx.drop(columns=['Hot_Split', 'Cold_Split'], inplace=True)
                                 all_combinations.append(deepcopy([df_streams_in, df_streams_out, df_hx]))
+
+
+                               # for i in all_combinations:
+                                #    print(i[2])
+
 
     return all_combinations
 

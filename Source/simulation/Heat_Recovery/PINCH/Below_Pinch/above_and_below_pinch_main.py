@@ -45,44 +45,47 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
 
     hx_delta_T_min = 10
 
-    print(pinch_T_cold,pinch_T_hot,hx_delta_T_min)
 
     # Separate Streams Info
     if above_pinch == True:
         df_hot_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Hot') & (df_streams["Supply_Temperature"] > pinch_T_hot)]  # df hot streams
         df_cold_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Cold') & (df_streams["Target_Temperature"] > pinch_T_cold)]  # df cold streams
-        df_hot_streams['Closest_Pinch_Temperature'] = df_hot_streams.apply( lambda x: pinch_T_hot if x['Target_Temperature'] < pinch_T_hot else x['Target_Temperature'], axis=1)
-        df_cold_streams['Closest_Pinch_Temperature'] = df_cold_streams.apply( lambda x: pinch_T_cold if x['Supply_Temperature'] < pinch_T_cold else x['Supply_Temperature'], axis=1)
-        df_hot_streams['Reach_Pinch'] = df_hot_streams.apply( lambda x: True if x['Closest_Pinch_Temperature'] == pinch_T_hot else False, axis=1)
-        df_cold_streams['Reach_Pinch'] = df_cold_streams.apply(lambda x: True if x['Closest_Pinch_Temperature'] == pinch_T_cold else False, axis=1)
-        df_hot_streams['Match'] = False
-        df_cold_streams['Match'] = False
-
     else:
         df_hot_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Hot') & (df_streams["Target_Temperature"] < pinch_T_hot)]  # df hot streams
         df_cold_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Cold') & (df_streams["Supply_Temperature"] < pinch_T_cold)]  # df cold streams
-        df_hot_streams['Closest_Pinch_Temperature'] = df_hot_streams.apply(lambda x: pinch_T_hot if x['Supply_Temperature'] > pinch_T_hot else x['Supply_Temperature'], axis=1)
-        df_cold_streams['Closest_Pinch_Temperature'] = df_cold_streams.apply(lambda x: pinch_T_cold if x['Target_Temperature'] > pinch_T_cold else x['Target_Temperature'], axis=1)
-        df_hot_streams['Reach_Pinch'] = df_hot_streams.apply(lambda x: True if x['Closest_Pinch_Temperature'] == pinch_T_hot else False, axis=1)
-        df_cold_streams['Reach_Pinch'] = df_cold_streams.apply(lambda x: True if x['Closest_Pinch_Temperature'] == pinch_T_cold else False, axis=1)
-        df_hot_streams['Match'] = False
-        df_cold_streams['Match'] = False
-
-    # define streams in and out
-    if above_pinch == True:
-        df_streams_in = df_hot_streams
-        df_streams_out = df_cold_streams
-    else:
-        df_streams_in = df_cold_streams
-        df_streams_out = df_hot_streams
 
 
     ################################################################################
-    # Run Pinch
-    if df_streams_out.empty == False:
+    # Pinch
+    if df_hot_streams.empty is False and df_cold_streams.empty is False :
+        # define streams in and out
+        if above_pinch == True:
+            df_hot_streams['Closest_Pinch_Temperature'] = df_hot_streams.apply( lambda x: pinch_T_hot if x['Target_Temperature'] < pinch_T_hot else x['Target_Temperature'], axis=1)
+            df_cold_streams['Closest_Pinch_Temperature'] = df_cold_streams.apply( lambda x: pinch_T_cold if x['Supply_Temperature'] < pinch_T_cold else x['Supply_Temperature'], axis=1)
+            df_hot_streams['Reach_Pinch'] = df_hot_streams.apply( lambda x: True if x['Closest_Pinch_Temperature'] == pinch_T_hot else False, axis=1)
+            df_cold_streams['Reach_Pinch'] = df_cold_streams.apply(lambda x: True if x['Closest_Pinch_Temperature'] == pinch_T_cold else False, axis=1)
+            df_hot_streams['Match'] = False
+            df_cold_streams['Match'] = False
 
+            df_streams_in = df_hot_streams
+            df_streams_out = df_cold_streams
+        else:
+
+            df_hot_streams['Closest_Pinch_Temperature'] = df_hot_streams.apply(lambda x: pinch_T_hot if x['Supply_Temperature'] > pinch_T_hot else x['Supply_Temperature'], axis=1)
+            df_cold_streams['Closest_Pinch_Temperature'] = df_cold_streams.apply(lambda x: pinch_T_cold if x['Target_Temperature'] > pinch_T_cold else x['Target_Temperature'], axis=1)
+            df_hot_streams['Reach_Pinch'] = df_hot_streams.apply(lambda x: True if x['Closest_Pinch_Temperature'] == pinch_T_hot else False, axis=1)
+            df_cold_streams['Reach_Pinch'] = df_cold_streams.apply(lambda x: True if x['Closest_Pinch_Temperature'] == pinch_T_cold else False, axis=1)
+            df_hot_streams['Match'] = False
+            df_cold_streams['Match'] = False
+
+            df_streams_in = df_cold_streams
+            df_streams_out = df_hot_streams
+
+
+        ########################################################################################################
+        # Run Pinch
         # special case pre-treatment of data - when both dfs have same stream number and there is a streams_in with larger mcp than all streams_out
-        all_cases_pretreatment = special_case(df_streams_in, df_streams_out,above_pinch,hx_delta_T_min)
+        all_cases_pretreatment = special_case(df_streams_in, df_streams_out, above_pinch, hx_delta_T_min)
 
         # check all_cases_pretreatment
         for case_pretreatment in all_cases_pretreatment:
@@ -105,7 +108,6 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
                 # get data
                 df_streams_in, df_streams_out, df_hx = case_first_match
 
-
                 # check again if number_streams_hot < number_streams_cold; and get all streams combinations possible
                 all_cases_check_streams_2 = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch,hx_delta_T_min, reach_pinch=False)
 
@@ -115,13 +117,8 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
 
                 # check all_cases_check_streams
                 for case_check_streams_2 in all_cases_check_streams_2:
-                    print('newwwwwwwwwwwww')
                     # get data
                     df_streams_in, df_streams_out, df_hx = case_check_streams_2
-
-                    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-                    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-                    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
 
                     # REMAINING STREAMS MATCH - WITH Restrictions; match by maximum power HX until all in streams_in are satisfied
                     df_streams_in, df_streams_out, df_hx = match_remaining_streams_main(df_streams_in,
@@ -139,20 +136,20 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
                                                                                           hx_delta_T_min,
                                                                                           restriction=False)
 
-                    # append only unique HX
-                    if df_streams_in.shape[0] > 1:
-                        values_round = df_streams_in['Closest_Pinch_Temperature'].apply(lambda x: int(round(x)))
-                        # get all HX designed for each solution
-                        if False not in (df_streams_in['Supply_Temperature'].values == values_round.values):
-                            all_df_hx.append(df_hx)
+                    # drop streams which are already complete
+                    for hot_stream_index, hot_stream in df_hot_streams.iterrows():
+                        if int(round(hot_stream['Closest_Pinch_Temperature'])) == int(round(hot_stream['Target_Temperature'])):
+                            df_hot_streams.drop(index=hot_stream_index, inplace=True)
 
-                    else:
-                        values_round = int(round(df_streams_in['Closest_Pinch_Temperature']))
-                        # get all HX designed for each solution
-                        if df_streams_in['Supply_Temperature'].values == values_round:
-                            all_df_hx.append(df_hx)
+
+
+                    # append only unique HX
+                    if df_streams_in.empty:
+                        all_df_hx.append(df_hx)
+
 
     # check for repeated HX designed
+
     if all_df_hx != []:
 
         for i in all_df_hx:
@@ -177,14 +174,11 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
 
         else:
             output = all_df_hx
-
     else:
         output = []
 
 
 
-    if len(output) >1:
-        output = output[0]
 
     return output
 

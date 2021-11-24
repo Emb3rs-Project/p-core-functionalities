@@ -18,8 +18,8 @@ def below_pinch_match_remaining_streams(hot_stream_index, hot_stream, cold_strea
         hot_stream, cold_stream)
 
 
-    hx_cold_stream_T_cold = 0 # just to run
-    hx_hot_stream_T_cold = 0 # just to run
+    hx_cold_stream_T_cold = -200 # just to run
+    hx_hot_stream_T_cold = -200 # just to run
 
     if hot_stream_T_hot > cold_stream_min_T_cold:
         if hot_stream_T_hot >= cold_stream_T_hot + delta_T_min:
@@ -56,9 +56,11 @@ def below_pinch_match_remaining_streams(hot_stream_index, hot_stream, cold_strea
     else:
         new_hx_row = []
 
-    # UPDATE DF ORIGINAL
-    df_cold_streams.loc[cold_stream_index, ['Closest_Pinch_Temperature']] = hx_cold_stream_T_cold
-    df_hot_streams.loc[hot_stream_index, ['Closest_Pinch_Temperature']] = hx_hot_stream_T_cold
+
+    if hx_cold_stream_T_cold != -200 and hx_hot_stream_T_cold != -200:
+        # UPDATE DF ORIGINAL
+        df_cold_streams.loc[cold_stream_index, ['Closest_Pinch_Temperature']] = hx_cold_stream_T_cold
+        df_hot_streams.loc[hot_stream_index, ['Closest_Pinch_Temperature']] = hx_hot_stream_T_cold
 
     # DROP DF ORIGINAL
     if df_hot_streams.loc[hot_stream_index, ['Closest_Pinch_Temperature']].values == df_hot_streams.loc[hot_stream_index, ['Target_Temperature']].values:

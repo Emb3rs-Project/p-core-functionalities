@@ -18,13 +18,23 @@ def design_cost_hx (hot_stream_T_hot,hot_stream_T_cold,hot_stream_fluid,cold_str
     hx_type, hx_u_value = hx_type_and_u(hot_stream_fluid, cold_stream_fluid)
     delta_T_lmtd = compute_delta_T_lmtd_counter(hot_stream_T_hot, hot_stream_T_cold, cold_stream_T_hot, cold_stream_T_cold)
 
+
     # HX turnkey/om_fix cost
-    if hx_type == 'hx_gas_cooler':
-        hx_char = abs(hx_power)  # Gas cooler - Power
+    if delta_T_lmtd != 0:
+        try:
+            if hx_type == 'hx_gas_cooler':
+                hx_char = abs(hx_power)  # Gas cooler - Power
+            else:
+                hx_char = abs(hx_power) / (hx_u_value/1000 * delta_T_lmtd)  # Plate/Shell&tubes - Area
+
+            global_conversion_efficiency,hx_om_fix,hx_turnkey = equipment_details(hx_type,hx_char)
+
+        except:
+            hx_turnkey = 0
+            hx_om_fix = 0
     else:
-        hx_char = abs(hx_power) / (hx_u_value/1000 * delta_T_lmtd)  # Plate/Shell&tubes - Area
-
-    global_conversion_efficiency,hx_om_fix,hx_turnkey = equipment_details(hx_type,hx_char)
-
+        print('delta_LMTD ERROR!')
+        hx_turnkey = 100**10
+        hx_om_fix = 100**10
 
     return hx_turnkey,hx_om_fix

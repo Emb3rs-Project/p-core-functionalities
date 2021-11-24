@@ -18,4 +18,6 @@ def compute_delta_T_lmtd_counter(T_source_hot,T_source_cold,T_sink_hot,T_sink_co
     else:
         delta_T_lmtd = (delta_T_in - delta_T_out) / np.log(delta_T_in / delta_T_out)
 
+
+
     return delta_T_lmtd
