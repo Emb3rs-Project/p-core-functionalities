@@ -44,6 +44,8 @@ import pandas as pd
 from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.get_best_3_outputs import get_best_3_outputs
 from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.eco_env_analysis import eco_env_analysis
 from .....Source.simulation.Heat_Recovery.PINCH.Auxiliary.streams_detailed_info import streams_detailed_info
+from .....KB_General.fuel_properties import fuel_properties
+
 import itertools
 
   
@@ -59,9 +61,8 @@ def convert_pinch(in_var):
     objects = []
     streams = []
     individual_equipment_optimization = False
-    new_id = 1
 
-    optmization_row = pd.DataFrame(columns=['index',
+    optimization_row = pd.DataFrame(columns=['index',
                                             'co2_savings',
                                             'energy_saving',
                                             'energy_investment',
@@ -161,25 +162,25 @@ def convert_pinch(in_var):
 
         for index,info in enumerate(all_df):
             pinch_data, economic_data = info
-            optmization_row = optmization_row.append({'index':index,
+            optimization_row = optimization_row.append({'index':index,
                                    'co2_savings':economic_data['CO2_Savings_Year'].sum(),
                                    'energy_recovered':economic_data['Recovered_Energy'].sum(),
                                    'energy_investment':economic_data['Recovered_Energy'].sum() / economic_data['Total_Turnkey_Cost'].sum(),
                                    'turnkey':economic_data['Total_Turnkey_Cost'].sum() }
                                    ,ignore_index=True)
 
-        optmization_row = optmization_row.drop_duplicates(subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
+        optimization_row = optimization_row.drop_duplicates(subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
 
         # get best 3 options that save maximum amount of co2
-        co2_savings = optmization_row.sort_values('co2_savings', ascending=False).head(3)
+        co2_savings = optimization_row.sort_values('co2_savings', ascending=False).head(3)
         co2_savings_options = get_best_3_outputs(all_df, co2_savings)
 
         # get best 3 options that recover maximum energy
-        energy_recovered = optmization_row.sort_values('energy_recovered', ascending=False).head(3)
+        energy_recovered = optimization_row.sort_values('energy_recovered', ascending=False).head(3)
         energy_recovered_options = get_best_3_outputs(all_df, energy_recovered)
 
         # get best 3 options that give best energy_recovery/turnkey ratio
-        energy_investment = optmization_row.sort_values('energy_investment').head(3)
+        energy_investment = optimization_row.sort_values('energy_investment').head(3)
         energy_investment_options = get_best_3_outputs(all_df, energy_investment)
 
         output = {
@@ -195,20 +196,26 @@ def convert_pinch(in_var):
         for index,info in enumerate(all_df):
             pinch_data, economic_data = info
 
-            optmization_row = optmization_row.append({'index':index,
-                                   'co2_savings':0,
-                                   'energy_recovered':pinch_data['Recovered_Energy'].sum(),
-                                   'energy_investment':pinch_data['Recovered_Energy'].sum() / pinch_data['Total_Turnkey_Cost'].sum(),
-                                   'turnkey':pinch_data['Total_Turnkey_Cost'].sum() }
+            if object['object_type'] == 'equipment':
+                data = fuel_properties('Portugal', object['fuel_type'], 'non-household')
+                co2_emission_per_kw = data['co2_emissions']
+            else:
+                co2_emission_per_kw = 0
+
+            optimization_row = optimization_row.append({'index':index,
+                                   'co2_savings': pinch_data['Recovered_Energy'].sum() * co2_emission_per_kw,
+                                   'energy_recovered': pinch_data['Recovered_Energy'].sum(),
+                                   'energy_investment': pinch_data['Recovered_Energy'].sum() / pinch_data['Total_Turnkey_Cost'].sum(),
+                                   'turnkey': pinch_data['Total_Turnkey_Cost'].sum() }
                                    ,ignore_index=True)
 
 
         # get best 3 options that recover maximum energy
-        energy_recovered = optmization_row.sort_values('energy_recovered', ascending=False).head(3)
+        energy_recovered = optimization_row.sort_values('energy_recovered', ascending=False).head(3)
         energy_recovered_options = get_best_3_outputs(all_df, energy_recovered)
 
         # get best 3 options that give best energy_recovery/turnkey ratio
-        energy_investment = optmization_row.sort_values('energy_investment').head(3)
+        energy_investment = optimization_row.sort_values('energy_investment').head(3)
         energy_investment_options = get_best_3_outputs(all_df, energy_investment)
 
         output = {'co2_optimization': [],
