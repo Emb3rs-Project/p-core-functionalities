@@ -58,6 +58,11 @@ import numpy as np
 from ......Source.simulation.Heat_Recovery.PINCH.HX.hx_storage import hx_storage
 
 def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T):
+    print('########################################################################################')
+    print('########################################################################################')
+    print('########################################################################################')
+
+    print('NEW ANALYSIS')
 
 
     # HEAT CASCADE
@@ -83,10 +88,13 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T):
                                   'Storage'])
 
     # Above Pinch
+    print('%%%%%%%%%%%%%%%%%%%%%%%% ABOVE')
     vector_df_hx_above_pinch = above_and_below_pinch_main(df_operating, pinch_delta_T_min, pinch_point_temperature, df_hx,hx_delta_T,above_pinch=True)  # get df with HX
     vector_df_hx_above_pinch = hx_storage(df_profile, vector_df_hx_above_pinch)  # update df with HX storage
 
     # Below Pinch
+    print('%%%%%%%%%%%%%%%%%%%%%%%% BELOW')
+
     vector_df_hx_below_pinch = above_and_below_pinch_main(df_operating, pinch_delta_T_min, pinch_point_temperature, df_hx,hx_delta_T,above_pinch=False)  # get df with HX
     vector_df_hx_below_pinch = hx_storage(df_profile, vector_df_hx_below_pinch)
 

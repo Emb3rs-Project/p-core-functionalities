@@ -93,9 +93,15 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
 
         # when recursive function goes step back, some values must be restored
         df_streams_in, df_streams_out, df_hx = deepcopy(combination_copy.copy())
+
+        # create backup
+        df_streams_in_backup = deepcopy(df_streams_in)
+
+
         df_streams_out.loc[stream_out_index, 'Match'] = False
 
         for stream_in_index in df_streams_in_for_index.index.values:
+
             # when recursive function goes step back, some values must be restored
             if save_index_out != -200:
                 # get back stream out
@@ -104,8 +110,12 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
 
             if save_index_in != -100:
                 # get back stream in
-                df_streams_in.loc[save_index_in] = deepcopy((combination_copy[0].loc[save_index_in]).copy())
-                df_streams_in.loc[save_index_in, 'Match'] = False
+                #df_streams_in.loc[save_index_in] = deepcopy((combination_copy[0].loc[save_index_in]).copy())
+                #df_streams_in.loc[save_index_in, 'Match'] = False
+
+                # restore dfs - needed because when splits are done, the original and the split need to be removed
+                df_streams_in = df_streams_in_backup.copy()
+
 
             # get back initial value
             df_streams_out.loc[stream_out_index, 'Match'] = False
@@ -118,6 +128,7 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
 
             # look for df_streams_out with larger mcp than df_streams_in if number_stream_outs = number_stream_ins
             # and for all streams when number_stream_out > number_stream_in
+
             if (stream_out['mcp'] >= stream_in['mcp'] and
                 df_streams_out[df_streams_out['Reach_Pinch'] == True].shape[0] ==
                 df_streams_in[df_streams_in['Reach_Pinch'] == True].shape[0]) \
@@ -200,10 +211,10 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
                                         stream_out_T_cold = stream_in_min_T_cold + delta_T_min
 
                                     hx_power = stream_out_mcp * (stream_out_T_hot - stream_out_T_cold)
-                                    stream_in_T_cold = stream_in_min_T_cold
+                                    hx_stream_in_T_cold = stream_in_min_T_cold
 
                                     # create split stream
-                                    split_stream_in_mcp = hx_power / (stream_in_T_hot - stream_in_T_cold)
+                                    split_stream_in_mcp = hx_power / (stream_in_T_hot - hx_stream_in_T_cold)
                                     stream_in_mcp = split_stream_in_mcp  # update cold stream mcp
                                     new_row = deepcopy(stream_in.copy())  # split stream has same info as original
                                     new_row['mcp'] -= split_stream_in_mcp  # correct split mcp
@@ -216,6 +227,8 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
                                     hx_power, hx_stream_out_T_cold, hx_stream_out_T_hot, hx_stream_in_T_cold, hx_stream_in_T_hot = below_pinch_hx_temperatures(
                                         stream_out_T_hot, stream_out_min_T_cold, stream_out_mcp, stream_in_T_hot,
                                         stream_in_min_T_cold, stream_in_mcp)
+
+
 
 
                                 # update df_streams_in
@@ -263,8 +276,6 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
                                 all_combinations.append(deepcopy([df_streams_in, df_streams_out, df_hx]))
 
 
-                               # for i in all_combinations:
-                                #    print(i[2])
 
 
     return all_combinations

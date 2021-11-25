@@ -126,8 +126,6 @@ def convert_pinch(in_var):
     for df in df_hx_bulk:
         vector_df_hx.append(df)
 
-    print(vector_df_hx)
-    print('aaaaaaaaaaaaaaa')
 
     # pinch analysis for all stream combination
     if perform_hourly_analysis is True:

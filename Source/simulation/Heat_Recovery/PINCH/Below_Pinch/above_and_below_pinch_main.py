@@ -80,7 +80,13 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
 
         ########################################################################################################
         # Run Pinch
+        print('df_streams_in ----------------------------------------------------')
 
+        print(df_streams_in[['mcp','Closest_Pinch_Temperature','Supply_Temperature']])
+
+        print('df_streams_out ------------------------------------------------------')
+
+        print(df_streams_out[['mcp','Closest_Pinch_Temperature','Target_Temperature']])
 
         # special case pre-treatment of data - when both dfs have same stream number and there is a streams_in with larger mcp than all streams_out
         all_cases_pretreatment = special_case(df_streams_in, df_streams_out, above_pinch, hx_delta_T)
@@ -91,15 +97,29 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
 
             # check number_streams_out < number_streams_in; and get all streams combinations possible
             all_cases_check_streams = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, hx_delta_T, reach_pinch=True)
+            print('all_cases_check_streams',len(all_cases_check_streams))
 
             # check all_cases_check_streams
+            i = 0
             for case_check_streams in all_cases_check_streams:
+                print('------------------------------------------------------------------------------------------------------------')
+                print('------------------------------------------------------------------------------------------------------------')
+
+                print('number',i)
                 # get data
                 df_streams_in, df_streams_out = case_check_streams
+                print('df_streams_in')
+                print(df_streams_in[['mcp','Reach_Pinch']])
+
+                print('df_streams_out')
+                print(df_streams_out[['mcp','Reach_Pinch']])
 
                 # 1ST MATCH - streams reaching pinch
                 all_cases_first_match = testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df_hx, hx_delta_T, above_pinch)
+                i += 1
 
+
+            print('all_cases_first_match',len(all_cases_first_match))
             # check all_cases_first_match
             for case_first_match in all_cases_first_match:
                 # get data

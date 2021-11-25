@@ -78,11 +78,9 @@ def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, del
         keep = [combinations[0]]
         for dfs_combination in combinations:
             append = True
-
             # get df streams out to compare with remaining
             dfs_combination_streams_out = dfs_combination[1].copy()
             dfs_combination_streams_out = dfs_combination_streams_out.sort_values('mcp')
-
             dfs_combination_streams_out.index = np.arange(1, len(dfs_combination_streams_out) + 1)
 
             # get df streams out to compare
@@ -98,7 +96,6 @@ def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, del
 
             if append == True:
                 keep.append(dfs_combination)
-
         combinations = keep
 
     return combinations
