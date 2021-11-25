@@ -58,7 +58,7 @@ def eco_env_analysis(vector_df_hx,objects,all_objects,all_df):
                                                'Recovered_Energy'] * co2_emission_per_kw,
                         'Recovered_Energy':row['Recovered_Energy'],
                         'Savings_Year':row['Recovered_Energy'] * cost,
-                        'Total_Turnkey':row['Total_Turnkey'], }
+                        'Total_Turnkey':row['Total_Turnkey_Cost'], }
                         , ignore_index=True)
 
                 else:  # object.type = 'isolated_stream'
@@ -96,6 +96,5 @@ def eco_env_analysis(vector_df_hx,objects,all_objects,all_df):
                                                                      , ignore_index=True)
 
         all_df.append([df_hx, df_equipment_economic])
-
 
     return all_df

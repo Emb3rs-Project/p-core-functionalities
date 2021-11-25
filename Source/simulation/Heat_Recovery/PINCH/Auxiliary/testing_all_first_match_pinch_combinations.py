@@ -65,6 +65,9 @@ def testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df
 
         all_combinations = keep
 
+    elif len(all_combinations) == 0:
+        all_combinations = [combination]
+
     return all_combinations
 
 

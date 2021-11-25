@@ -24,7 +24,7 @@ INPUT:
                 # 'Target_Shift'  [ºC]
 
         # df_profile - DF with all streams schedules (hourly schedule with 1 and 0)
-        # delta_T_min - heat exchangers minimum delta T [ºC]
+        # pinch_delta_T_min - heat exchangers minimum delta T [ºC]
 
 
 ##############################
@@ -57,7 +57,8 @@ from ......Source.simulation.Heat_Recovery.PINCH.Below_Pinch.above_and_below_pin
 import numpy as np
 from ......Source.simulation.Heat_Recovery.PINCH.HX.hx_storage import hx_storage
 
-def pinch_analysis(df_operating,df_profile,delta_T_min):
+def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T):
+
 
     # HEAT CASCADE
     df_heat_cascade = table_heat_cascade(df_operating)
@@ -82,20 +83,27 @@ def pinch_analysis(df_operating,df_profile,delta_T_min):
                                   'Storage'])
 
     # Above Pinch
-    df_hx_above_pinch = above_and_below_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx,above_pinch=True)  # get df with HX
-    df_hx_above_pinch = hx_storage(df_profile, df_hx_above_pinch)  # update df with HX storage
+    vector_df_hx_above_pinch = above_and_below_pinch_main(df_operating, pinch_delta_T_min, pinch_point_temperature, df_hx,hx_delta_T,above_pinch=True)  # get df with HX
+    vector_df_hx_above_pinch = hx_storage(df_profile, vector_df_hx_above_pinch)  # update df with HX storage
 
     # Below Pinch
-    df_hx_below_pinch = above_and_below_pinch_main(df_operating, delta_T_min, pinch_point_temperature, df_hx,above_pinch=False)  # get df with HX
-    df_hx_below_pinch = hx_storage(df_profile, df_hx_below_pinch)
+    vector_df_hx_below_pinch = above_and_below_pinch_main(df_operating, pinch_delta_T_min, pinch_point_temperature, df_hx,hx_delta_T,above_pinch=False)  # get df with HX
+    vector_df_hx_below_pinch = hx_storage(df_profile, vector_df_hx_below_pinch)
 
     # OUTPUT
     # make df_hx combinations - above and below
     vector_df_hx = []
-    for df_hx_above in df_hx_above_pinch:
 
-        for df_hx_below in df_hx_below_pinch:
-            vector_df_hx.append(pd.concat([df_hx_above, df_hx_below],ignore_index=True))
+    if len(vector_df_hx_above_pinch)>0 and len(vector_df_hx_below_pinch)>0:
+        for df_hx_above in vector_df_hx_above_pinch:
+            for df_hx_below in vector_df_hx_below_pinch:
+                vector_df_hx.append(pd.concat([df_hx_above, df_hx_below],ignore_index=True))
+
+    elif len(vector_df_hx_above_pinch) == 0 and len(vector_df_hx_below_pinch) > 0:
+        vector_df_hx = vector_df_hx_below_pinch
+
+    elif len(vector_df_hx_above_pinch) > 0 and len(vector_df_hx_below_pinch) == 0:
+        vector_df_hx = vector_df_hx_above_pinch
 
 
 

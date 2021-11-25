@@ -13,6 +13,7 @@ from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.match_remaining_strea
 
 def below_pinch_match_remaining_streams(hot_stream_index, hot_stream, cold_stream_index, cold_stream, df_cold_streams, df_hot_streams,delta_T_min, restriction):
 
+
     # Streams Info
     hot_stream_min_T_cold, hot_stream_T_hot, hot_stream_mcp, hot_stream_fluid, cold_stream_min_T_cold, cold_stream_T_hot, cold_stream_mcp, cold_stream_fluid,original_hot_stream_index,original_cold_stream_index = below_pinch_stream_info(
         hot_stream, cold_stream)
@@ -56,11 +57,11 @@ def below_pinch_match_remaining_streams(hot_stream_index, hot_stream, cold_strea
     else:
         new_hx_row = []
 
-
     if hx_cold_stream_T_cold != -200 and hx_hot_stream_T_cold != -200:
         # UPDATE DF ORIGINAL
         df_cold_streams.loc[cold_stream_index, ['Closest_Pinch_Temperature']] = hx_cold_stream_T_cold
         df_hot_streams.loc[hot_stream_index, ['Closest_Pinch_Temperature']] = hx_hot_stream_T_cold
+
 
     # DROP DF ORIGINAL
     if df_hot_streams.loc[hot_stream_index, ['Closest_Pinch_Temperature']].values == df_hot_streams.loc[hot_stream_index, ['Target_Temperature']].values:

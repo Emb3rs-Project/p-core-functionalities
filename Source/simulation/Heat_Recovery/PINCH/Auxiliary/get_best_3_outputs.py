@@ -19,7 +19,6 @@ def get_best_3_outputs(all_df,df_optimization):
             'capex': row['turnkey'],  # turnkey hx + storage
             'lifetime': 20,  # considered lifetime
             'om_fix':row['om_fix'],
-            'om_var': 0,
             'discount_rate': 0.02,
             'co2_savings': row['co2_savings']/row['energy_recovered'],
             'money_savings': row['money_savings'] ,

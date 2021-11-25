@@ -1,5 +1,7 @@
 from ....Source.simulation.Heat_Recovery.PINCH.convert_pinch import convert_pinch
 from ....General.Auxiliary_General.stream_industry import stream_industry
+from ....Source.characterization.Generate_Equipment.generate_boiler import Boiler
+from ....Source.characterization.Process.process import Process
 
 # IMPORTANT
 ### OPTION 1 - just pinch analysis (no optimization) - INPUT: isolated streams (example below)
@@ -112,6 +114,51 @@ class ConvertPinch:
 
 
         # need streams
+        self.all_objects = [
+            stream_industry(1, 'outflow', 'thermal_oil', 750, 350, 0.045 * 3600 / 2, 0.045 * 3600 * 2 * (750 - 350),
+                            [1, 0, 1, 1]),
+            stream_industry(2, 'outflow', 'thermal_oil', 550, 250, 0.04 * 3600 / 2, 0.04 * 3600 * 2 * (550 - 250),
+                            [1, 1, 0, 1]),
+            stream_industry(3, 'inflow', 'thermal_oil', 300, 900, 0.043 * 3600 / 2, 0.043 * 3600 * 2 * (900 - 300),
+                            [1, 1, 0, 1]),
+            stream_industry(4, 'inflow', 'thermal_oil', 200, 550, 0.02 * 3600 / 2, 0.02 * 3600 * 2 * (550 - 200),
+                            [0, 1, 1, 0])]
+
+        self.delta_T_min = 50
+
+
+
+        # need streams
+        self.all_objects = [
+            stream_industry(1, 'outflow', 'thermal_oil', 250, 40, 0.15 * 3600 / 2, 0.15 * 3600 * 2 * (250 - 40),
+                            [1, 1, 1, 1]),
+            stream_industry(2, 'outflow', 'thermal_oil', 200, 80, 0.25 * 3600 / 2, 0.25 * 3600 * 2 * (200 - 80),
+                            [1, 1, 1, 1]),
+            stream_industry(3, 'outflow', 'thermal_oil', 20, 180, 0.2 * 3600 / 2, 0.1 * 3600 * 2 * (180 - 20),
+                            [1, 1, 1, 1]),
+            stream_industry(4, 'inflow', 'thermal_oil', 140, 230, 0.3 * 3600 / 2, 0.2 * 3600 * 2 * (230 - 140),
+                            [1, 1, 1, 1]),]
+
+        self.pinch_delta_T_min = 10
+        self.hx_delta_T = 10
+
+
+        # need streams
+        self.all_objects = [
+            stream_industry(1, 'outflow', 'thermal_oil', 750, 350, 0.045 * 3600 / 2, 0.045 * 3600 * 2 * (750 - 350),
+                            [1, 0, 1, 1]),
+            stream_industry(2, 'outflow', 'thermal_oil', 550, 250, 0.04 * 3600 / 2, 0.04 * 3600 * 2 * (550 - 250),
+                            [1, 1, 0, 1]),
+            stream_industry(3, 'inflow', 'thermal_oil', 300, 900, 0.043 * 3600 / 2, 0.043 * 3600 * 2 * (900 - 300),
+                            [1, 1, 0, 1]),
+            stream_industry(4, 'inflow', 'thermal_oil', 200, 550, 0.02 * 3600 / 2, 0.02 * 3600 * 2 * (550 - 200),
+                            [0, 1, 1, 0])]
+
+        self.delta_T_min = 50
+        self.hx_delta_T = 50
+
+
+        # need streams
         # pag.323
         self.all_objects = [
             stream_industry(1, 'outflow', 'thermal_oil', 349, 183, 0.178 * 3600 / 2, 34.1,
@@ -129,7 +176,9 @@ class ConvertPinch:
         ]
 
         # need minimum delta T for pinch analysis
-        self.delta_T_min = 20
+        self.pinch_delta_T_min = 20
+        self.hx_delta_T = 20
+
 
         # need streams
         # pag.338
@@ -163,51 +212,28 @@ class ConvertPinch:
         ]
 
         # need minimum delta T for pinch analysis
-        self.delta_T_min = 10
+        self.pinch_delta_T_min = 10
+        self.hx_delta_T = 10
 
 
 
-
-        # need streams
-        self.all_objects = [
-            stream_industry(1, 'outflow', 'thermal_oil', 750, 350, 0.045 * 3600 / 2, 0.045 * 3600 * 2 * (750 - 350),
-                            [1, 0, 1, 1]),
-            stream_industry(2, 'outflow', 'thermal_oil', 550, 250, 0.04 * 3600 / 2, 0.04 * 3600 * 2 * (550 - 250),
-                            [1, 1, 0, 1]),
-            stream_industry(3, 'inflow', 'thermal_oil', 300, 900, 0.043 * 3600 / 2, 0.043 * 3600 * 2 * (900 - 300),
-                            [1, 1, 0, 1]),
-            stream_industry(4, 'inflow', 'thermal_oil', 200, 550, 0.02 * 3600 / 2, 0.02 * 3600 * 2 * (550 - 200),
-                            [0, 1, 1, 0])]
-
-        self.delta_T_min = 50
-
-        # need streams
-        self.all_objects = [
-            stream_industry(1, 'outflow', 'thermal_oil', 250, 40, 0.15 * 3600 / 2, 0.15 * 3600 * 2 * (250 - 40),
-                            [1, 1, 1, 1]),
-            stream_industry(2, 'outflow', 'thermal_oil', 200, 80, 0.25 * 3600 / 2, 0.25 * 3600 * 2 * (200 - 80),
-                            [1, 1, 1, 1]),
-            stream_industry(3, 'outflow', 'thermal_oil', 20, 180, 0.2 * 3600 / 2, 0.1 * 3600 * 2 * (180 - 20),
-                            [1, 1, 1, 1]),
-            stream_industry(4, 'inflow', 'thermal_oil', 140, 230, 0.3 * 3600 / 2, 0.2 * 3600 * 2 * (230 - 140),
-                            [1, 1, 1, 1]),]
-
-        for object in self.all_objects:
-            object['id'] = object['object_id']
-
-        self.delta_T_min = 10
 
 
 
 def testConvertPinch():
+
     data = ConvertPinch()
     test = convert_pinch(data)
 
-    for key in test.keys():
-        print('------------------------------------------------------------------------------------------------------------')
-        print(key)
-        for i in test[key]:
-            print(i)
+
+    if test != []:
+        for key in test.keys():
+            print('------------------------------------------------------------------------------------------------------------')
+            print(key)
+            for i in test[key]:
+                print(i)
+    else:
+        print('no HX')
 
     """
     Expected:

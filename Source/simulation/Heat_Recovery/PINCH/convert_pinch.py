@@ -53,7 +53,8 @@ def convert_pinch(in_var):
 
     # INPUT -------
     all_objects = in_var.all_objects  # equipments/processes/isolated streams
-    delta_T_min = in_var.delta_T_min
+    pinch_delta_T_min = in_var.pinch_delta_T_min
+    hx_delta_T = in_var.hx_delta_T
 
     # Defined Vars
     perform_hourly_analysis = False  # only perform hourly analysis for isolated streams and processes
@@ -61,11 +62,12 @@ def convert_pinch(in_var):
     objects = []
     streams = []
     individual_equipment_optimization = False
+    just_isolated_streams = False
 
     ############################################################################################################
     # DATA PRE-TREATMENT
 
-    pinch_delta_T_min = (delta_T_min)/2
+    pinch_delta_T_min = (pinch_delta_T_min)/2
 
     # analyse processes and isolated streams to build the streams list
     for object in all_objects:
@@ -73,7 +75,8 @@ def convert_pinch(in_var):
             perform_hourly_analysis = True
             objects.append(object)
             for stream in object['streams']:
-                streams.append(stream)
+                if stream['stream_type'] != 'maintenance' and stream['stream_type'] != 'startup':
+                    streams.append(stream)
         elif object['object_type'] == 'stream':  # isolated stream
             perform_hourly_analysis = True
             object['id'] = object['id']
@@ -119,10 +122,12 @@ def convert_pinch(in_var):
 
     # pinch analysis for all streams
     df_operating = df_char.copy()  # provide streams to be analyzed
-    df_hx_bulk = pinch_analysis(df_operating, df_profile, pinch_delta_T_min)
+    df_hx_bulk = pinch_analysis(df_operating, df_profile, pinch_delta_T_min,hx_delta_T)
     for df in df_hx_bulk:
         vector_df_hx.append(df)
 
+    print(vector_df_hx)
+    print('aaaaaaaaaaaaaaa')
 
     # pinch analysis for all stream combination
     if perform_hourly_analysis is True:
@@ -131,7 +136,7 @@ def convert_pinch(in_var):
             for subset in itertools.combinations(range(df_char.shape[0]), L):
                 if list(subset) != [] and len(list(subset)) > 1:
                     df_operating = (df_char.copy()).iloc[list(subset)]
-                    df_hx_hourly = pinch_analysis(df_operating, df_profile, pinch_delta_T_min)
+                    df_hx_hourly = pinch_analysis(df_operating, df_profile, pinch_delta_T_min,hx_delta_T)
                     if df_hx_hourly != []:
                         for df in df_hx_hourly:
                             vector_df_hx.append(df)
@@ -153,69 +158,77 @@ def convert_pinch(in_var):
             all_df.append([df,empty_df])
 
 
+
     optimization_row = pd.DataFrame(columns=['index',
                                             'co2_savings',
                                             'energy_saving',
                                             'energy_investment',
                                             'turnkey'
                                             ])
+    try:
+        if individual_equipment_optimization is False:
+            for index,info in enumerate(all_df):
+                pinch_data, economic_data = info
+                optimization_row = optimization_row.append({'index':index,
+                                       'co2_savings':economic_data['CO2_Savings_Year'].sum(),
+                                       'money_savings':economic_data['Savings_Year'].sum(),
+                                       'energy_recovered':economic_data['Recovered_Energy'].sum(),
+                                       'energy_investment':pinch_data['Total_Turnkey_Cost'].sum() /economic_data['Recovered_Energy'].sum() ,
+                                       'turnkey':pinch_data['Total_Turnkey_Cost'].sum(),
+                                       'om_fix':pinch_data['HX_OM_Fix_Cost'].sum()}
+                                       ,ignore_index=True)
 
-    if individual_equipment_optimization is False:
+        #############################################################################
+        # only recovering equipments excess heat in its inflow - STILL DEVELOPING
+        else:
 
-        for index,info in enumerate(all_df):
-            pinch_data, economic_data = info
-            optimization_row = optimization_row.append({'index':index,
-                                   'co2_savings':economic_data['CO2_Savings_Year'].sum(),
-                                   'money_savings':economic_data['Savings_Year'].sum(),
-                                   'energy_recovered':economic_data['Recovered_Energy'].sum(),
-                                   'energy_investment':economic_data['Recovered_Energy'].sum() / economic_data['Total_Turnkey_Cost'].sum(),
-                                   'turnkey':economic_data['Total_Turnkey_Cost'].sum(),
-                                   'om_fix':pinch_data['HX_OM_Fix_Cost'].sum()}
-                                   ,ignore_index=True)
+            for index,info in enumerate(all_df):
+                pinch_data, economic_data = info
 
-    #############################################################################
-    # only recovering equipments excess heat in its inflow - STILL DEVELOPING
-    else:
+                if object['object_type'] == 'equipment':
+                    data = fuel_properties('Portugal', object['fuel_type'], 'non-household')
+                    co2_emission_per_kw = data['co2_emissions']
+                    fuel_cost_kwh = data['price']
+                else:
+                    co2_emission_per_kw = 0
+                    fuel_cost_kwh = 0
+                    just_isolated_streams = True
 
-        for index,info in enumerate(all_df):
-            pinch_data, economic_data = info
-
-            if object['object_type'] == 'equipment':
-                data = fuel_properties('Portugal', object['fuel_type'], 'non-household')
-                co2_emission_per_kw = data['co2_emissions']
-                fuel_cost_kwh = data['price']
-            else:
-                co2_emission_per_kw = 0
-                fuel_cost_kwh = 0
-
-            optimization_row = optimization_row.append({'index':index,
-                                   'co2_savings': pinch_data['Recovered_Energy'].sum() * co2_emission_per_kw,
-                                   'money_savings': pinch_data['Recovered_Energy'].sum() * fuel_cost_kwh,
-                                   'energy_recovered': pinch_data['Recovered_Energy'].sum(),
-                                   'energy_investment': pinch_data['Recovered_Energy'].sum() / pinch_data['Total_Turnkey_Cost'].sum(),
-                                   'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
-                                   'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()}
-                                   ,ignore_index=True)
+                optimization_row = optimization_row.append({'index':index,
+                                       'co2_savings': pinch_data['Recovered_Energy'].sum() * co2_emission_per_kw,
+                                       'money_savings': pinch_data['Recovered_Energy'].sum() * fuel_cost_kwh,
+                                       'energy_recovered': pinch_data['Recovered_Energy'].sum(),
+                                       'energy_investment': pinch_data['Total_Turnkey_Cost'].sum()/pinch_data['Recovered_Energy'].sum() ,
+                                       'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
+                                       'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()}
+                                       ,ignore_index=True)
 
 
-    optimization_row = optimization_row.drop_duplicates(subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
+        optimization_row = optimization_row.drop_duplicates(subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
 
-    # get best 3 options that recover maximum energy
-    energy_recovered = optimization_row.sort_values('energy_recovered', ascending=False).head(3)
-    energy_recovered_options = get_best_3_outputs(all_df, energy_recovered)
+        # get best 3 options that recover maximum energy
+        energy_recovered = optimization_row.sort_values('energy_recovered', ascending=False).head(3)
+        energy_recovered_options = get_best_3_outputs(all_df, energy_recovered)
 
-    # get best 3 options that give best energy_recovery/turnkey ratio
-    energy_investment = optimization_row.sort_values('energy_investment').head(3)
-    energy_investment_options = get_best_3_outputs(all_df, energy_investment)
+        # get best 3 options that give best energy_recovery/turnkey ratio
+        energy_investment = optimization_row.sort_values('energy_investment').head(3)
+        energy_investment_options = get_best_3_outputs(all_df, energy_investment)
 
-    # get best 3 options that save maximum amount of co2
-    co2_savings = optimization_row.sort_values('co2_savings', ascending=False).head(3)
-    co2_savings_options = get_best_3_outputs(all_df, co2_savings)
+        # get best 3 options that save maximum amount of co2
+        co2_savings = optimization_row.sort_values('co2_savings', ascending=False).head(3)
+        co2_savings_options = get_best_3_outputs(all_df, co2_savings)
 
-    output = {'co2_optimization': co2_savings_options,
-              'energy_recovered_optimization': energy_recovered_options,
-              'energy_investment_optimization': energy_investment_options
-              }
+        if just_isolated_streams == True:
+            co2_savings_options = []
+
+        output = {'co2_optimization': co2_savings_options,
+                  'energy_recovered_optimization': energy_recovered_options,
+                  'energy_investment_optimization': energy_investment_options
+                  }
+
+    except:
+        print('Error in convert_pinch. Probably no HX designed')
+        output = []
 
 
     return output

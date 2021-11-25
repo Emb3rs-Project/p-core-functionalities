@@ -15,7 +15,7 @@ INFO: Below Pinch Point - Pinch Analysis.
 ##############################
 INPUT:
         # df_streams
-        # hx_delta_T_min
+        # hx_delta_T
         # pinch_T
         # df_hx
 
@@ -31,7 +31,7 @@ from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.testing_check_streams
 from ......Source.simulation.Heat_Recovery.PINCH.Auxiliary.testing_all_first_match_pinch_combinations import testing_all_first_match_pinch_combinations
 
 
-def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pinch):
+def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_delta_T, above_pinch):
 
     ################################################################################
     # Init Arrays
@@ -40,12 +40,10 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
     output = []
 
     # Pinch Point Temperatures
-    pinch_T_cold = pinch_T - delta_T_min
-    pinch_T_hot = pinch_T + delta_T_min
+    pinch_T_cold = pinch_T - pinch_delta_T_min
+    pinch_T_hot = pinch_T + pinch_delta_T_min
 
-    hx_delta_T_min = 10
-
-
+    print('pinch',pinch_T_cold,pinch_T_hot)
     # Separate Streams Info
     if above_pinch == True:
         df_hot_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Hot') & (df_streams["Supply_Temperature"] > pinch_T_hot)]  # df hot streams
@@ -53,8 +51,6 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
     else:
         df_hot_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Hot') & (df_streams["Target_Temperature"] < pinch_T_hot)]  # df hot streams
         df_cold_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Cold') & (df_streams["Supply_Temperature"] < pinch_T_cold)]  # df cold streams
-
-
 
     ################################################################################
     # Pinch
@@ -82,19 +78,19 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
             df_streams_in = df_cold_streams
             df_streams_out = df_hot_streams
 
-
         ########################################################################################################
         # Run Pinch
-        # special case pre-treatment of data - when both dfs have same stream number and there is a streams_in with larger mcp than all streams_out
-        all_cases_pretreatment = special_case(df_streams_in, df_streams_out, above_pinch, hx_delta_T_min)
 
+
+        # special case pre-treatment of data - when both dfs have same stream number and there is a streams_in with larger mcp than all streams_out
+        all_cases_pretreatment = special_case(df_streams_in, df_streams_out, above_pinch, hx_delta_T)
         # check all_cases_pretreatment
         for case_pretreatment in all_cases_pretreatment:
             # get data
             df_streams_in, df_streams_out = case_pretreatment
 
             # check number_streams_out < number_streams_in; and get all streams combinations possible
-            all_cases_check_streams = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, hx_delta_T_min, reach_pinch=True)
+            all_cases_check_streams = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, hx_delta_T, reach_pinch=True)
 
             # check all_cases_check_streams
             for case_check_streams in all_cases_check_streams:
@@ -102,8 +98,7 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
                 df_streams_in, df_streams_out = case_check_streams
 
                 # 1ST MATCH - streams reaching pinch
-                all_cases_first_match = testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df_hx, hx_delta_T_min, above_pinch)
-
+                all_cases_first_match = testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df_hx, hx_delta_T, above_pinch)
 
             # check all_cases_first_match
             for case_first_match in all_cases_first_match:
@@ -111,7 +106,7 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
                 df_streams_in, df_streams_out, df_hx = case_first_match
 
                 # check again if number_streams_hot < number_streams_cold; and get all streams combinations possible
-                all_cases_check_streams_2 = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch,hx_delta_T_min, reach_pinch=False)
+                all_cases_check_streams_2 = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch,hx_delta_T, reach_pinch=False)
 
                 # append df with HX to all cases
                 for case in all_cases_check_streams_2:
@@ -126,7 +121,7 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
                     df_streams_in, df_streams_out, df_hx = match_remaining_streams_main(df_streams_in,
                                                                                           df_streams_out,
                                                                                           df_hx, above_pinch,
-                                                                                          hx_delta_T_min,
+                                                                                          hx_delta_T,
                                                                                           restriction=True)
 
 
@@ -135,18 +130,12 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
                     df_streams_in, df_streams_out, df_hx = match_remaining_streams_main(df_streams_in,
                                                                                           df_streams_out,
                                                                                           df_hx, above_pinch,
-                                                                                          hx_delta_T_min,
+                                                                                          hx_delta_T,
                                                                                           restriction=False)
-
-                    # drop streams which are already complete
-                    for hot_stream_index, hot_stream in df_hot_streams.iterrows():
-                        if int(round(hot_stream['Closest_Pinch_Temperature'])) == int(round(hot_stream['Target_Temperature'])):
-                            df_hot_streams.drop(index=hot_stream_index, inplace=True)
-
-
 
                     # append only unique HX
                     if df_streams_in.empty:
+
                         all_df_hx.append(df_hx)
 
 
@@ -178,8 +167,6 @@ def above_and_below_pinch_main(df_streams, delta_T_min, pinch_T, df_hx, above_pi
             output = all_df_hx
     else:
         output = []
-
-
 
 
     return output
