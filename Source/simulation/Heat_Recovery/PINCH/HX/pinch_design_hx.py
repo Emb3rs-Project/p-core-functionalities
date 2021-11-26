@@ -33,8 +33,8 @@ def pinch_design_hx(hot_stream_index,cold_stream_index,hx_hot_stream_T_hot, hx_h
                   'HX_Type': hx_type,
                   'HX_Turnkey_Cost': round(hx_turnkey_cost + .0, 1),
                   'HX_OM_Fix_Cost': round(hx_om_fix_cost + .0, 1) ,
-                  'Original_Hot_Stream': original_hot_stream_index,
-                  'Original_Cold_Stream': original_cold_stream_index,
+                  'Original_Stream_In': int(original_hot_stream_index),
+                  'Original_Stream_Out': int(original_cold_stream_index),
                   'Hot_Split': hot_split,
                   'Cold_Split': cold_split}
 

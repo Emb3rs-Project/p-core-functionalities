@@ -21,7 +21,7 @@ RETURN:
 import numpy as np
 from copy import deepcopy
 
-def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, delta_T_min, reach_pinch):
+def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, delta_T_min, reach_pinch,check_time):
 
     ############################################################################################
     # Get info
@@ -37,12 +37,17 @@ def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, del
     df_streams_in_copy_match_info = deepcopy(df_streams_in_copy['Match'])
     df_streams_out_copy_match_info = deepcopy(df_streams_out_copy['Match'])
 
-    # check match, sometimes values are different by millesime
+
+    # change streams_in match meaning - check if complete match done - sometimes values are different by millesime
     df_streams_in_copy['Match'] = df_streams_in_copy.apply(lambda x: x['Match'] == True if x['Supply_Temperature'] == round(x['Closest_Pinch_Temperature']) else False,axis=1)
+    ########## NEW &%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    df_streams_out_copy['Match'] = df_streams_out_copy.apply(lambda x: x['Match'] == True if x['Target_Temperature'] == round(x['Closest_Pinch_Temperature']) else False,axis=1)
 
     ############################################################################################
     # Get combinations
     # check if streams split is needed
+
+
     combinations = [[df_streams_in_copy, df_streams_out_copy]]
     number_streams_out = df_streams_out_copy[df_streams_out_copy['Target_Temperature'] != round(df_streams_out_copy['Closest_Pinch_Temperature'], 1)].shape[0]
     number_streams_in = df_streams_in_copy[ df_streams_in_copy['Supply_Temperature'] != round(df_streams_in_copy['Closest_Pinch_Temperature'], 1)].shape[0]
@@ -56,7 +61,7 @@ def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, del
         # create all possibilities of stream splitting with a recursive function
         cycles = [0] * surplus_streams_in
         for cycle in cycles:
-            combinations = make_pairs(combinations, above_pinch, delta_T_min)
+            combinations = make_pairs(combinations, above_pinch, delta_T_min,check_time)
 
         # data treatment
         for dfs in combinations:
@@ -101,7 +106,7 @@ def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, del
     return combinations
 
 
-def make_pairs(combinations, above_pinch,delta_T_min):
+def make_pairs(combinations, above_pinch,delta_T_min,check_time):
 
     # init arrays
     combinations_updated = []
@@ -204,7 +209,7 @@ def make_pairs(combinations, above_pinch,delta_T_min):
                 # new row data
                 new_row['mcp'] -= split_stream_mcp  # correct split mcp
                 new_row['mcp'] = round(new_row['mcp'] + .0, 5)
-                new_row.name = int(index_stream_out) * 100  # new ID
+                new_row.name = int(index_stream_out) * 100 * check_time  # new ID
                 new_row['Split_Check'] = False
 
                 # add split stream to df

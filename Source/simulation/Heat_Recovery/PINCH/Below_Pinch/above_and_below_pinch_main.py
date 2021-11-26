@@ -43,7 +43,7 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
     pinch_T_cold = pinch_T - pinch_delta_T_min
     pinch_T_hot = pinch_T + pinch_delta_T_min
 
-    print('pinch',pinch_T_cold,pinch_T_hot)
+
     # Separate Streams Info
     if above_pinch == True:
         df_hot_streams = df_streams.copy()[(df_streams["Stream_Type"] == 'Hot') & (df_streams["Supply_Temperature"] > pinch_T_hot)]  # df hot streams
@@ -78,16 +78,9 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
             df_streams_in = df_cold_streams
             df_streams_out = df_hot_streams
 
+
         ########################################################################################################
         # Run Pinch
-        print('df_streams_in ----------------------------------------------------')
-
-        print(df_streams_in[['mcp','Closest_Pinch_Temperature','Supply_Temperature']])
-
-        print('df_streams_out ------------------------------------------------------')
-
-        print(df_streams_out[['mcp','Closest_Pinch_Temperature','Target_Temperature']])
-
         # special case pre-treatment of data - when both dfs have same stream number and there is a streams_in with larger mcp than all streams_out
         all_cases_pretreatment = special_case(df_streams_in, df_streams_out, above_pinch, hx_delta_T)
         # check all_cases_pretreatment
@@ -96,37 +89,25 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
             df_streams_in, df_streams_out = case_pretreatment
 
             # check number_streams_out < number_streams_in; and get all streams combinations possible
-            all_cases_check_streams = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, hx_delta_T, reach_pinch=True)
-            print('all_cases_check_streams',len(all_cases_check_streams))
+            all_cases_check_streams = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, hx_delta_T, reach_pinch=True,check_time=1)
 
             # check all_cases_check_streams
-            i = 0
             for case_check_streams in all_cases_check_streams:
-                print('------------------------------------------------------------------------------------------------------------')
-                print('------------------------------------------------------------------------------------------------------------')
-
-                print('number',i)
                 # get data
                 df_streams_in, df_streams_out = case_check_streams
-                print('df_streams_in')
-                print(df_streams_in[['mcp','Reach_Pinch']])
-
-                print('df_streams_out')
-                print(df_streams_out[['mcp','Reach_Pinch']])
 
                 # 1ST MATCH - streams reaching pinch
                 all_cases_first_match = testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df_hx, hx_delta_T, above_pinch)
-                i += 1
 
 
-            print('all_cases_first_match',len(all_cases_first_match))
             # check all_cases_first_match
             for case_first_match in all_cases_first_match:
                 # get data
                 df_streams_in, df_streams_out, df_hx = case_first_match
 
                 # check again if number_streams_hot < number_streams_cold; and get all streams combinations possible
-                all_cases_check_streams_2 = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch,hx_delta_T, reach_pinch=False)
+
+                all_cases_check_streams_2 = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch,hx_delta_T, reach_pinch=False,check_time=2)
 
                 # append df with HX to all cases
                 for case in all_cases_check_streams_2:
@@ -153,9 +134,8 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
                                                                                           hx_delta_T,
                                                                                           restriction=False)
 
-                    # append only unique HX
+                    # append HX designed if all streams in reach pinch
                     if df_streams_in.empty:
-
                         all_df_hx.append(df_hx)
 
 

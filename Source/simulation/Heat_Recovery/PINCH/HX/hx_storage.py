@@ -2,7 +2,7 @@
 from ......KB_General.equipment_details import equipment_details
 from ......KB_General.fluid_material import fluid_material_cp
 
-def hx_storage(df_profile, vector_df_hx):
+def hx_storage(df_profile, vector_df_hx,above_pinch):
 
     # Init arrays
     storage_delta_T = 5
@@ -34,8 +34,14 @@ def hx_storage(df_profile, vector_df_hx):
 
                     # Get Streams
                     power_hx = row['Power']  # hx power
-                    index_cold_stream = row['Original_Hot_Stream']  # original index stream - to get hourly profile
-                    index_hot_stream = row['Original_Cold_Stream']
+                    if above_pinch == True:
+                        index_cold_stream = row['Original_Stream_Out']  # original index stream - to get hourly profile
+                        index_hot_stream = row['Original_Stream_In']
+                    else:
+                        index_cold_stream = row['Original_Stream_In']  # original index stream - to get hourly profile
+                        index_hot_stream = row['Original_Stream_Out']
+
+
                     profile_cold_stream = df_profile.loc[index_cold_stream]  # hourly profile with 0 and 1
                     profile_hot_stream = df_profile.loc[index_hot_stream]
 

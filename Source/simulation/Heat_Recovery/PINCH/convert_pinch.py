@@ -66,9 +66,7 @@ def convert_pinch(in_var):
 
     ############################################################################################################
     # DATA PRE-TREATMENT
-
     pinch_delta_T_min = (pinch_delta_T_min)/2
-
     # analyse processes and isolated streams to build the streams list
     for object in all_objects:
         if object['object_type'] == 'process':  # from processes
@@ -127,17 +125,35 @@ def convert_pinch(in_var):
         vector_df_hx.append(df)
 
 
+    get_data = []
+    # do all possible combinations between the streams
+    for L in range(0, len(range(df_char.shape[0]))):
+            for subset in itertools.combinations(range(df_char.shape[0]), L):
+                if list(subset) != [] and len(list(subset)) > 1:
+                    get_data.append(subset)
+    #print('lenn',len(get_data))
+
+   # df_operating_powerful = df_char.copy()
+   # df_operating_powerful['mcp_delta_T'] = df_operating_powerful['mcp'] * abs(df_operating_powerful['Supply_Temperature'] - df_operating_powerful['Target_Temperature'])
+   # get_max_powerful_hot = df_operating_powerful[df_operating_powerful['Stream_Type'] == 'Hot']
+    #get_max_powerful_cold
+
     # pinch analysis for all stream combination
+    # (overlap schedule 80% e/ou 30% energy)
+    i = 0
+    perform_hourly_analysis = True
     if perform_hourly_analysis is True:
         # do all possible combinations between the streams
         for L in range(0, len(range(df_char.shape[0]))):
             for subset in itertools.combinations(range(df_char.shape[0]), L):
                 if list(subset) != [] and len(list(subset)) > 1:
                     df_operating = (df_char.copy()).iloc[list(subset)]
-                    df_hx_hourly = pinch_analysis(df_operating, df_profile, pinch_delta_T_min,hx_delta_T)
-                    if df_hx_hourly != []:
-                        for df in df_hx_hourly:
-                            vector_df_hx.append(df)
+                    if df_operating[df_operating['Stream_Type'] == 'Hot'].empty == False and df_operating[df_operating['Stream_Type'] == 'Cold'].empty == False:
+                        df_hx_hourly = pinch_analysis(df_operating, df_profile, pinch_delta_T_min,hx_delta_T)
+                        if df_hx_hourly != []:
+                            for df in df_hx_hourly:
+                                vector_df_hx.append(df)
+                    i += 1
 
 
     ############################################################################################################
