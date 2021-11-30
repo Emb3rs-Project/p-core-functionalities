@@ -2,14 +2,17 @@
 from ......KB_General.equipment_details import equipment_details
 from ......KB_General.fluid_material import fluid_material_cp
 
-def hx_storage(df_profile, vector_df_hx,above_pinch):
+def hx_storage(df_profile, info_df_hx, above_pinch):
 
     # Init arrays
     storage_delta_T = 5
-    new_volume_max_storage = 0
 
-    if len(vector_df_hx) > 0:
-        for df_hx in vector_df_hx:
+    if len(info_df_hx) > 0:
+        for pinch_case in info_df_hx:
+
+            df_hx = pinch_case['df_hx']
+
+            new_volume_max_storage = 0
             vector_storage_volume = []
             vector_storage_satisfies = []
             vector_energy_year = []
@@ -167,4 +170,4 @@ def hx_storage(df_profile, vector_df_hx,above_pinch):
                 df_hx['Total_Turnkey_Cost'] = df_hx['HX_Turnkey_Cost'] + df_hx['Storage_Turnkey_Cost']  # update total turnkey (hx+storage)  [€]
                 df_hx['Recovered_Energy'] = vector_energy_year  # yearly total recoverd energy [kWh]
 
-    return vector_df_hx
+    return info_df_hx

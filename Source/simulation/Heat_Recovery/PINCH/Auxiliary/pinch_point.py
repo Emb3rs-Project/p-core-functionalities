@@ -35,6 +35,7 @@ RETURN:
 import numpy as np
 
 def pinch_point(df_heat_cascade,df_operating):
+    print('NEWWWW')
 
     heat_sum = 0
     minimum = 0
@@ -42,7 +43,7 @@ def pinch_point(df_heat_cascade,df_operating):
 
     for index, temperature_interval in df_heat_cascade[::-1].iterrows():
 
-        heat_sum += temperature_interval["dH"] *10**(-3) #MJ/h
+        heat_sum += temperature_interval["dH"] *10**(-3)  # [MJ/h]
         net_heat_flow.append(heat_sum)
 
         # Get Pinch Point, where heat sum cascade is minimum
@@ -58,4 +59,14 @@ def pinch_point(df_heat_cascade,df_operating):
     pinch_point_T = temperature_vector[net_heat_flow == 0]
     pinch_point_T = pinch_point_T[0]
 
-    return pinch_point_T
+    if net_heat_flow[0] == 0:
+        minimum_hot_utility = net_heat_flow[0] * 1000  # [kJ/h]
+        minimum_cold_utility = net_heat_flow[-1] * 1000  # [kJ/h]
+    elif net_heat_flow[-1] == 0:
+        minimum_hot_utility = net_heat_flow[-1] * 1000  # [kJ/h]
+        minimum_cold_utility = net_heat_flow[0] * 1000  # [kJ/h]
+    else:
+        minimum_hot_utility = net_heat_flow[0] * 1000  # [kJ/h]
+        minimum_cold_utility = net_heat_flow[-1] * 1000  # [kJ/h]
+
+    return pinch_point_T, minimum_hot_utility, minimum_cold_utility

@@ -2,9 +2,13 @@
 import pandas as pd
 from ......KB_General.fuel_properties import fuel_properties
 
-def eco_env_analysis(vector_df_hx,objects,all_objects,all_df):
+def eco_env_analysis(info_pinch,objects,all_objects,all_df):
 
-    for df_hx in vector_df_hx:
+
+    for pinch_case in info_pinch:
+
+        df_hx = pinch_case
+
         df_economic = pd.DataFrame(columns=['Equipment_ID',
                                             'Recovered_Energy',
                                             'CO2_Savings_Year',
@@ -95,6 +99,9 @@ def eco_env_analysis(vector_df_hx,objects,all_objects,all_df):
                                                                          'Total_Turnkey':total_turnkey, }
                                                                      , ignore_index=True)
 
-        all_df.append([df_hx, df_equipment_economic])
 
-    return all_df
+        pinch_case['df_equipment_economic'] = df_equipment_economic
+
+        #all_df.append([df_hx, df_equipment_economic])
+
+    return info_pinch
