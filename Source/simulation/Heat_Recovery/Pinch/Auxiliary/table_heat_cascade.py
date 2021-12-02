@@ -15,7 +15,7 @@ INPUT:
                 # Supply_Temperature  [ºC]
                 # Target_Temperature  [ºC]
                 # Cp  [kJ/kg.K]
-                # mcp  [kJ/K]
+                # mcp  [kW/K]
                 # Stream_Type - hot or cold
                 # Supply_Shift  [ºC]
                 # Target_Shift  [ºC]
@@ -27,8 +27,8 @@ RETURN:
 
             Where in df_heat_cascade, the following keys:
                 # delta_T_cascade - temperature intervals on the heat cascade
-                # mcp_cascade  [kJ/K]
-                # dH - enthalpy computed for each temperature interval  [kJ]
+                # mcp_cascade  [kW/K]
+                # dH - enthalpy computed for each temperature interval  [kW]
 
 """
 

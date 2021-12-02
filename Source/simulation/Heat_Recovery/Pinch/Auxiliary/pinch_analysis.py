@@ -29,15 +29,18 @@ INPUT:
                 # Supply_Temperature  [ºC]
                 # Target_Temperature  [ºC]
                 # Cp  [kJ/kg.K]
-                # mcp  [kJ/K]
+                # mcp  [kW/K]
                 # Stream_Type - hot or cold
                 # Supply_Shift  [ºC]
                 # Target_Shift  [ºC]
 
 
 ##############################
-RETURN: list with the cases designed as dictionaries
+RETURN:
+        # detailed_info_pinch_analysis - list with the cases designed as dictionaries
+        # design_id - last ID for next iteration [ID]
 
+        Where in each array position of detailed_info_pinch_analysis
             Each one provides the following keys:
                 # ID - design ID [ID]
                 # analysis_state - shows message: 'error in performing - probably specific/complex case' or 'performed'
@@ -89,7 +92,8 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
     df_heat_cascade = table_heat_cascade(df_operating)
 
     # get pinch point
-    pinch_point_temperature, minimum_hot_utility, minimum_cold_utility = pinch_point(df_heat_cascade, df_operating)
+    pinch_point_temperature, theo_minimum_hot_utility, theo_minimum_cold_utility = pinch_point(df_heat_cascade,
+                                                                                               df_operating)
 
     # create DF for heat exchangers
     df_hx = pd.DataFrame(columns=['Power',
@@ -153,7 +157,7 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
             df_hx_below = df_hx_below['df_hx']
             vector_df_hx.append({
                 'df_hx': df_hx_below,
-                'hot_utility': minimum_hot_utility,
+                'hot_utility': theo_minimum_hot_utility,
                 'cold_utility': cold_utility})
 
     # cases where is only possible to do above pinch analysis
@@ -165,7 +169,7 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
             vector_df_hx.append({
                 'df_hx': df_hx_above,
                 'hot_utility': hot_utility,
-                'cold_utility': minimum_cold_utility})
+                'cold_utility': theo_minimum_cold_utility})
 
 
     ############################################################################################################
@@ -177,9 +181,9 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
             detailed_info_pinch_analysis.append({'ID': design_id,
                                                  'analysis_state': 'performed',
                                                  'streams': df_operating.index.values,
-                                                 'theo_minimum_hot_utility': minimum_hot_utility,
+                                                 'theo_minimum_hot_utility': theo_minimum_hot_utility,
                                                  'hot_utility': df_hx['hot_utility'],
-                                                 'theo_minimum_cold_utility': minimum_cold_utility,
+                                                 'theo_minimum_cold_utility': theo_minimum_cold_utility,
                                                  'cold_utility': df_hx['cold_utility'],
                                                  'df_hx': df_hx['df_hx'],
                                                  'pinch_temperature': pinch_point_temperature
@@ -192,9 +196,9 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
         detailed_info_pinch_analysis.append({'ID': design_id,
                                              'analysis_state': 'error in performing - probably specific/complex case',
                                              'streams': df_operating.index.values,
-                                             'theo_minimum_hot_utility': minimum_hot_utility,
+                                             'theo_minimum_hot_utility': theo_minimum_hot_utility,
                                              'hot_utility': None,
-                                             'theo_minimum_cold_utility': minimum_cold_utility,
+                                             'theo_minimum_cold_utility': theo_minimum_cold_utility,
                                              'cold_utility': None,
                                              'df_hx': None,
                                              'pinch_temperature': pinch_point_temperature
