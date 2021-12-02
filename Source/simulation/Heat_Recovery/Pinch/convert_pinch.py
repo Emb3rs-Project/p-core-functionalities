@@ -229,8 +229,13 @@ def convert_pinch(in_var):
         info_pinch = eco_env_analysis(info_pinch, objects, input_objects, all_df)
     else:
         # isolated streams
+        only_isolated_streams = True
         for pinch_case in info_pinch:
             pinch_case['df_equipment_economic'] = empty_df
+
+
+    print('only_isolated_streams',only_isolated_streams)
+    print(individual_equipment_optimization)
 
     # DF created to store a template with info needed for all designs
     df_optimization = pd.DataFrame(columns=['index',
@@ -242,7 +247,7 @@ def convert_pinch(in_var):
 
     try:
         # perform full analysis
-        if individual_equipment_optimization is False:
+        if individual_equipment_optimization is False and only_isolated_streams is False:
             for index, info in enumerate(info_pinch):
                 pinch_data = info['df_hx']
                 economic_data = info['df_equipment_economic']

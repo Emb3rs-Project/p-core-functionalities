@@ -2,40 +2,43 @@
 alisboa/jmcunha
 
 ##############################
-INFO: Get pinch point. Find where heat sum is minimum in heat cascade.
+INFO: Get pinch point.
+      Find theoretical minimum heat and cold utilities.
+
 
 ##############################
 INPUT:
-        # df_heat_cascade - DF with heat cascade info
-            DF keys:
-                # 'delta_T_cascade' - delta T of temperature intervals
-                # 'mcp_cascade'
-                # 'dH'
-
+        # df_heat_cascade
         # df_operating - DF with stream operating and its characteristics
-             DF keys:
-                # 'Fluid' - fluid type
-                # 'Flowrate'  [kg/h]]
-                # 'Supply_Temperature'  [ºC]
-                # 'Target_Temperature'  [ºC]
-                # 'Cp'  [kJ/kg.K]
-                # 'mcp'  [kJ/K]
-                # 'Stream_Type' - hot or cold
-                # 'Supply_Shift'  [ºC]
-                # 'Target_Shift'  [ºC]
+
+            Where in df_heat_cascade, the following keys:
+                # delta_T_cascade - temperature intervals on the heat cascade
+                # mcp_cascade  [kJ/K]
+                # dH - enthalpy computed for each temperature interval  [kJ]
+
+            Where in df_operating, the following keys:
+                # Fluid - fluid type
+                # Flowrate  [kg/h]
+                # Supply_Temperature  [ºC]
+                # Target_Temperature  [ºC]
+                # Cp  [kJ/kg.K]
+                # mcp  [kJ/K]
+                # Stream_Type - hot or cold
+                # Supply_Shift  [ºC]
+                # Target_Shift  [ºC]
+
 
 ##############################
 RETURN:
-        # 'delta_T_cascade' - delta T of temperature intervals
-        # 'mcp_cascade'
-        # 'dH'
+        # pinch_point_T  [ºC]
+        # theo_minimum_hot_utility  [kW]
+        # theo_minimum_cold_utility  [kW]
 
 """
 
 import numpy as np
 
 def pinch_point(df_heat_cascade,df_operating):
-    print('NEWWWW')
 
     heat_sum = 0
     minimum = 0
@@ -60,13 +63,13 @@ def pinch_point(df_heat_cascade,df_operating):
     pinch_point_T = pinch_point_T[0]
 
     if net_heat_flow[0] == 0:
-        minimum_hot_utility = net_heat_flow[0] * 1000  # [kJ/h]
-        minimum_cold_utility = net_heat_flow[-1] * 1000  # [kJ/h]
+        theo_minimum_hot_utility = net_heat_flow[0] * 1000  # [kJ/h]
+        theo_minimum_cold_utility = net_heat_flow[-1] * 1000  # [kJ/h]
     elif net_heat_flow[-1] == 0:
-        minimum_hot_utility = net_heat_flow[-1] * 1000  # [kJ/h]
-        minimum_cold_utility = net_heat_flow[0] * 1000  # [kJ/h]
+        theo_minimum_hot_utility = net_heat_flow[-1] * 1000  # [kJ/h]
+        theo_minimum_cold_utility = net_heat_flow[0] * 1000  # [kJ/h]
     else:
-        minimum_hot_utility = net_heat_flow[0] * 1000  # [kJ/h]
-        minimum_cold_utility = net_heat_flow[-1] * 1000  # [kJ/h]
+        theo_minimum_hot_utility = net_heat_flow[0] * 1000  # [kJ/h]
+        theo_minimum_cold_utility = net_heat_flow[-1] * 1000  # [kJ/h]
 
-    return pinch_point_T, minimum_hot_utility, minimum_cold_utility
+    return pinch_point_T, theo_minimum_hot_utility, theo_minimum_cold_utility

@@ -25,7 +25,7 @@ INPUT:
 
              Where in df_operating, the following keys:
                 # Fluid - fluid type
-                # Flowrate  [kg/h]]
+                # Flowrate  [kg/h]
                 # Supply_Temperature  [ºC]
                 # Target_Temperature  [ºC]
                 # Cp  [kJ/kg.K]

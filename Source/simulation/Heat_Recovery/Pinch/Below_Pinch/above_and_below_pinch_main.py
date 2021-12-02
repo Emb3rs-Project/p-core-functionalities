@@ -193,6 +193,5 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
     else:
         output = []
 
-
     return output, pinch_analysis_possible
 
