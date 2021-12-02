@@ -77,8 +77,7 @@ RETURN:
 import pandas as pd
 from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.table_heat_cascade import table_heat_cascade
 from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.pinch_point import pinch_point
-from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.plot_gcc import plot_gcc
-from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.above_and_below_pinch_main import above_and_below_pinch_main
+from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.above_and_below_pinch_main import above_and_below_pinch_main
 from ......Source.simulation.Heat_Recovery.Pinch.HX.hx_storage import hx_storage
 
 def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_id):

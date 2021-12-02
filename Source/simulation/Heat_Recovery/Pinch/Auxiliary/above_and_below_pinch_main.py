@@ -25,10 +25,10 @@ RETURN:
 
 """
 
-from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
-from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.special_case import special_case
-from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.testing_check_streams_number import testing_check_streams_number
-from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.testing_all_first_match_pinch_combinations import testing_all_first_match_pinch_combinations
+from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
+from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.special_case import special_case
+from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.testing_check_streams_number import testing_check_streams_number
+from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.testing_all_first_match_pinch_combinations import testing_all_first_match_pinch_combinations
 from copy import deepcopy
 
 
