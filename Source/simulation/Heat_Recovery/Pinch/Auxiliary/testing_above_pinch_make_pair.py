@@ -1,6 +1,6 @@
-from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_hx_temperatures import above_pinch_hx_temperatures
-from ......Source.simulation.Heat_Recovery.PINCH.HX.pinch_design_hx import pinch_design_hx
-from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_stream_info import above_pinch_stream_info
+from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_hx_temperatures import above_pinch_hx_temperatures
+from ......Source.simulation.Heat_Recovery.Pinch.HX.pinch_design_hx import pinch_design_hx
+from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_stream_info import above_pinch_stream_info
 from copy import deepcopy
 import numpy as np
 

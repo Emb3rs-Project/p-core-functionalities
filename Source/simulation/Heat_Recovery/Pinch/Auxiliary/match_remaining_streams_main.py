@@ -8,8 +8,8 @@ Info: Main function to match remaining streams. Matching is done depending on be
 """
 
 import pandas as pd
-from ......Source.simulation.Heat_Recovery.PINCH.Above_Pinch.above_pinch_match_remaining_streams import above_pinch_match_remaining_streams
-from ......Source.simulation.Heat_Recovery.PINCH.Below_Pinch.below_pinch_match_remaining_streams import below_pinch_match_remaining_streams
+from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_match_remaining_streams import above_pinch_match_remaining_streams
+from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_match_remaining_streams import below_pinch_match_remaining_streams
 
 def match_remaining_streams_main(df_streams_in,df_streams_out,df_hx,above_pinch,delta_T_min,restriction):
 

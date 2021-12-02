@@ -1,4 +1,4 @@
-from ....Source.simulation.Heat_Recovery.PINCH.convert_pinch import convert_pinch
+from ....Source.simulation.Heat_Recovery.Pinch.convert_pinch import convert_pinch
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....Source.characterization.Generate_Equipment.generate_boiler import Boiler
 from ....Source.characterization.Process.process import Process
@@ -303,6 +303,19 @@ class ConvertPinch:
                             [1]),
 
         ]
+
+
+        self.all_objects = [
+            stream_industry(1, 'outflow', 'thermal_oil', 250, 40, 0.15 * 3600 / 2, 0.15 * 3600 * 2 * (250 - 40),
+                            [1, 1, 1, 1]),
+            stream_industry(2, 'outflow', 'thermal_oil', 200, 80, 0.25 * 3600 / 2, 0.25 * 3600 * 2 * (200 - 80),
+                            [1, 1, 1, 1]),
+            stream_industry(3, 'outflow', 'thermal_oil', 20, 180, 0.2 * 3600 / 2, 0.1 * 3600 * 2 * (180 - 20),
+                            [1, 1, 1, 1]),
+            stream_industry(4, 'inflow', 'thermal_oil', 140, 230, 0.3 * 3600 / 2, 0.2 * 3600 * 2 * (230 - 140),
+                            [1, 1, 1, 1]), ]
+
+        self.pinch_delta_T_min = 10
 
         # need minimum delta T for pinch analysis
         self.pinch_delta_T_min = 10
