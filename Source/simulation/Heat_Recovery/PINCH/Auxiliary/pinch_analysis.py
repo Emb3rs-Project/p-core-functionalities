@@ -85,13 +85,12 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
                                   'Storage'])
 
     # Above Pinch
-    info_df_hx_above_pinch = above_and_below_pinch_main(df_operating, pinch_delta_T_min, pinch_point_temperature, df_hx,hx_delta_T,above_pinch=True)  # get df with HX
-
+    info_df_hx_above_pinch, above_pinch_analysis_possible = above_and_below_pinch_main(df_operating, pinch_delta_T_min, pinch_point_temperature, df_hx,hx_delta_T,above_pinch=True)  # get df with HX
     info_df_hx_above_pinch = hx_storage(df_profile, info_df_hx_above_pinch,above_pinch=True)  # update df with HX storage
 
 
     # Below Pinch
-    info_df_hx_below_pinch = above_and_below_pinch_main(df_operating, pinch_delta_T_min, pinch_point_temperature, df_hx,hx_delta_T,above_pinch=False)  # get df with HX
+    info_df_hx_below_pinch, below_pinch_analysis_possible = above_and_below_pinch_main(df_operating, pinch_delta_T_min, pinch_point_temperature, df_hx,hx_delta_T,above_pinch=False)  # get df with HX
     info_df_hx_below_pinch = hx_storage(df_profile, info_df_hx_below_pinch,above_pinch=False)
 
     # OUTPUT
@@ -110,7 +109,7 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
                     'hot_utility': hot_utility,
                     'cold_utility': cold_utility})
 
-    elif len(info_df_hx_above_pinch) == 0 and len(info_df_hx_below_pinch) > 0:
+    elif len(info_df_hx_above_pinch) == 0 and len(info_df_hx_below_pinch) > 0 and above_pinch_analysis_possible == False:
         for df_hx_below in info_df_hx_below_pinch:
             cold_utility = df_hx_below['utility']
             df_hx_below = df_hx_below['df_hx']
@@ -119,7 +118,7 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
                 'hot_utility': minimum_hot_utility,
                 'cold_utility': cold_utility})
 
-    elif len(info_df_hx_above_pinch) > 0 and len(info_df_hx_below_pinch) == 0:
+    elif len(info_df_hx_above_pinch) > 0 and len(info_df_hx_below_pinch) == 0 and below_pinch_analysis_possible == False:
         for df_hx_above in info_df_hx_above_pinch:
             hot_utility = df_hx_above['utility']
             df_hx_above = df_hx_above['df_hx']
@@ -131,18 +130,32 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
 
     detailed_info_pinch_analysis = []
 
-    for df_hx in vector_df_hx:
+    if len(vector_df_hx) > 0:
+        for df_hx in vector_df_hx:
+            detailed_info_pinch_analysis.append({'ID': design_id,
+                                                 'analysis_state': 'performed',
+                                                 'streams': df_operating.index.values,
+                                                 'theo_minimum_hot_utility': minimum_hot_utility,
+                                                 'hot_utility': df_hx['hot_utility'],
+                                                 'theo_minimum_cold_utility': minimum_cold_utility,
+                                                 'cold_utility': df_hx['cold_utility'],
+                                                 'df_hx': df_hx['df_hx'],
+                                                 'pinch_temperature': pinch_point_temperature
+                                            })
 
+            design_id += 1
+
+    else:
         detailed_info_pinch_analysis.append({'ID': design_id,
-                                            'streams': df_operating.index.values,
-                                            'theo_minimum_hot_utility': minimum_hot_utility,
-                                            'hot_utility': df_hx['hot_utility'],
-                                            'theo_minimum_cold_utility': minimum_cold_utility,
-                                            'cold_utility': df_hx['cold_utility'],
-                                            'df_hx': df_hx['df_hx'],
-                                            'pinch_temperature': pinch_point_temperature
-                                        })
-
+                                             'analysis_state': 'error in performing - probably specific/complex case',
+                                             'streams': df_operating.index.values,
+                                             'theo_minimum_hot_utility': minimum_hot_utility,
+                                             'hot_utility': None,
+                                             'theo_minimum_cold_utility': minimum_cold_utility,
+                                             'cold_utility': None,
+                                             'df_hx': None,
+                                             'pinch_temperature': pinch_point_temperature
+                                             })
         design_id += 1
 
 

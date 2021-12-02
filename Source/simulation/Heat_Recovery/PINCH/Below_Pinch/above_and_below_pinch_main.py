@@ -56,6 +56,9 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
     ################################################################################
     # Pinch
     if df_hot_streams.empty is False and df_cold_streams.empty is False :
+
+        pinch_analysis_possible = True
+
         # define streams in and out
         if above_pinch == True:
             df_hot_streams['Closest_Pinch_Temperature'] = df_hot_streams.apply( lambda x: pinch_T_hot if x['Target_Temperature'] < pinch_T_hot else x['Target_Temperature'], axis=1)
@@ -80,8 +83,6 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
             df_streams_out = df_hot_streams
 
 
-        print('NEWWWWWWWWWNEWWWWWWWWWWWWWWWWWWWNEWWWWWWWWWWWWWWWWWWWNEWWWWWWWWWWWWWWWWWWWNEWWWWWWWWWWWWWWWWWWWWWWWWWWWWW')
-
         ########################################################################################################
         # Run Pinch
         # special case pre-treatment of data - when both dfs have same stream number and there is a streams_in with larger mcp than all streams_out
@@ -94,7 +95,6 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
             # check number_streams_out < number_streams_in; and get all streams combinations possible
             all_cases_check_streams = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, hx_delta_T, reach_pinch=True,check_time=1)
 
-            print('lennnnnn_all_cases_check_streams', len(all_cases_check_streams))
 
             # check all_cases_check_streams
             for case_check_streams in all_cases_check_streams:
@@ -144,6 +144,7 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
 
                         # append HX designed if all streams in reach pinch
                         if df_streams_in.empty:
+
                             utility = 0
                             for index, row in df_streams_out.iterrows():
                                 utility += row['mcp'] * abs(row['Closest_Pinch_Temperature'] - row['Target_Temperature'])
@@ -153,7 +154,8 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
 
                             })
 
-
+    else:
+        pinch_analysis_possible = False
 
 
 
@@ -192,5 +194,5 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx,hx_
         output = []
 
 
-    return output
+    return output, pinch_analysis_possible
 

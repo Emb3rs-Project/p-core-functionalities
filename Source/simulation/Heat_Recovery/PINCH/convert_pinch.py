@@ -2,40 +2,66 @@
 alisboa/jmcunha
 
 ##############################
-INFO: Main function of Heat Recovery Module. Compute GCC (Grand Composite Curve), find pinch point, pinch analysis above/below pinch
-point and HX design for maximum energy recovery and co2 minimization
+INFO: Main function of Heat Recovery Module.
+      Includes data pretreatment, pinch analysis, and economic/co2 analysis of the options designed. Economic/CO2
+      analysis done for the designed options. Three analysis are done: minimum CO2,maximize energy recovery, and energy
+      recovery specific cost according to the solution's CAPEX. The best three solutions for each analysis are provided
+      for the user.
+
+      This module runs when isolated streams (streams without equipment associated), equipment and processes or only
+      equipment are provided. Analysing the input options:
+          - When processes and equipments are provided, it is analyzed the heat recovery only between processes. The
+            output,are the three best solutions for the three economic/co2 analysis.
+          - When only an equipment is provided, it is analyzed internal heat recovery (e.g. on a boiler, flue gas on air
+           inflow). The output is one solution only for the three economic/co2 analysis, since it only designs one HX
+           for the equipment internal heat recovery.
+          - When isolated streams are provided, it is analyzed its heat recovery . The output are only solutions for the
+            two economic analysis (co2 not included), since these streams are not associated to any equipment, and thus
+            co2 savings cannot be computed
+
+      Important:
+        - Isolated streams may also be provided when equipment and processes are provided.
+        - So that the best heat recovery options are found, pinch analysis is, by default, done for all streams
+          combination possible.
 
 ##############################
 INPUT: object with:
-
-        # id   # process id
-        # equipment  # heat/cooling equipment id associated to
-        # operation_temperature  # process operation_temperature [ºC]
-
+        # all_objects  - equipments/processes/isolated streams
+        # pinch_delta_T_min - delta temperature for pinch analysis
 
 ##############################
 RETURN: dictionary with 3 keys:
-
             # co2_optimization - vector with 3 dictionaries for the 3 best max co2 emissions saving
             # energy_recovered_optimization - vector with 3 dictionaries for the 3 best max energy recovered
             # energy_investment_optimization - vector with 3 dictionaries for the 3 best max energy_recovered/turnkey
 
-            Where in each one:
+            Each one has the following keys:
                 # total_turnkey [€]
                 # total_co2_savings [kg CO2]
                 # total_energy_recovered [kWh]
                 # pinch_hx_data
                 # equipment_detailed_savings
 
-                Where in pinch_hx_data - a DF turned in a dictionary with:
-                    DF  -['Power' [kW], 'Hot_Stream' [ID], 'Cold_Stream' [ID], 'Type' [hx type], 'HX_Turnkey_Cost' [€], 'OM_Fix_Cost'  [€/year],
-                    'Hot_Stream_T_Hot'  [ºC],'Hot_Stream_T_Cold'  [ºC],'Original_Hot_Stream' [ID], 'Original_Cold_Stream ' [ID], 'Storage'  [m3],
-                     'Storage_Satisfies' [%], 'Storage_Turnkey_Cost'  [€],
-                     'Total_Turnkey_Cost'  [€], 'Recovered_Energy'  [kWh]]
+                Where in *pinch_hx_data*, the following keys:
+                    # Power  [kW]
+                    # Hot_Stream  [ID]
+                    # Cold_Stream  [ID]
+                    # Type  [hx type]
+                    # HX_Turnkey_Cost  [€]
+                    # OM_Fix_Cost  [€/year]
+                    # Hot_Stream_T_Hot  [ºC]
+                    # Hot_Stream_T_Cold  [ºC]
+                    # Original_Hot_Stream  [ID]
+                    # Original_Cold_Stream  [ID]
+                    # Storage  [m3]
+                    # Storage_Satisfies  [%]
+                    # Storage_Turnkey_Cost  [€]
+                    # Total_Turnkey_Cost  [€]
+                    #  Recovered_Energy  [kWh/year]
 
-                Where in equipment_detailed_savings - a DF turned in a dictionary with:
-                    DF - ['Equipment_ID' [ID], 'CO2_Savings_Year' [kg] ,'Recovered_Energy'  [kWh],'Savings_Year'  [€] :  ,
-                    'Total_Turnkey_Cost'  [€]]
+                Where in equipment_detailed_savings, the following keys:
+                    #    DF - ['Equipment_ID' [ID], 'CO2_Savings_Year' [kg] ,'Recovered_Energy'  [kWh],'Savings_Year'  [€] :  ,
+                    #    'Total_Turnkey_Cost'  [€]]
 
 """
 
@@ -237,9 +263,13 @@ def convert_pinch(in_var):
                   }
 
     except:
-        print('Error in convert_pinch. Probably no HX designed')
+        print('Error in convert_pinch. Probably complex case')
         output = []
 
+
+    print('------------------------------------------------------------------------------------------------------')
+    print('oioio')
+    print(output)
 
     return output
 

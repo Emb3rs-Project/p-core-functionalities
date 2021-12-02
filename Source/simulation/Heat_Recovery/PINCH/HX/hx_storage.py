@@ -65,7 +65,7 @@ def hx_storage(df_profile, info_df_hx, above_pinch):
                     if hours_cold == hours_coincident:
                         volume_storage = 0
                         vector_storage_volume.append(volume_storage)
-                        vector_storage_satisfies.append(100)  # % hours storage_satisfies
+                        vector_storage_satisfies.append(0)  # % hours storage_satisfies
                         vector_storage_turn_key.append(0)
 
                     else:

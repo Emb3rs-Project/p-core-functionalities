@@ -151,42 +151,6 @@ class ConvertPinch:
 
 
         # need streams
-        # pag.338
-        self.all_objects = [
-            stream_industry(2, 'outflow', 'thermal_oil', 327, 50, 0.1098 * 3600 / 2, 34.1,
-                            [1, 1, 1, 1]),
-            stream_industry(5, 'outflow', 'thermal_oil', 495, 307, 0.134 * 3600 / 2, 16.5,
-                            [1, 1, 1, 1]),
-            stream_industry(6, 'outflow', 'thermal_oil', 220, 59, 0.2062 * 3600 / 2, 5.5,
-                            [1, 1, 1, 1]),
-            stream_industry(9, 'outflow', 'thermal_oil', 222, 67, 0.0739 * 3600 / 2, 7.2,
-                            [1, 1, 1, 1]),
-            stream_industry(1, 'inflow', 'thermal_oil', 102, 327, 0.1094 * 3600 / 2, 104.8,
-                            [1, 1, 0, 1]),
-
-            stream_industry(3, 'inflow', 'thermal_oil', 35, 164, 0.0698 * 3600 / 2, 104.8,
-                            [1, 1, 0, 1]),
-
-            stream_industry(4, 'inflow', 'thermal_oil', 140, 500, 0.2 * 3600 / 2, 104.8,
-                            [1, 1, 0, 1]),
-
-            stream_industry(7, 'inflow', 'thermal_oil', 80, 123, 0.0767 * 3600 / 2, 104.8,
-                            [1, 1, 0, 1]),
-            stream_industry(8, 'inflow', 'thermal_oil', 59, 169, 0.0618 * 3600 / 2, 104.8,
-                            [1, 1, 0, 1]),
-            stream_industry(10, 'inflow', 'thermal_oil', 85, 125, 0.1025 * 3600 / 2, 104.8,
-                            [1, 1, 0, 1]),
-            stream_industry(11, 'inflow', 'thermal_oil', 480, 500, 1.625 * 3600 / 2, 104.8,
-                            [1, 1, 0, 1]),
-
-        ]
-
-        # need minimum delta T for pinch analysis
-        self.pinch_delta_T_min = 10
-        self.hx_delta_T = 10
-
-
-        # need streams
         self.all_objects = [
             stream_industry(1, 'outflow', 'thermal_oil', 250, 40, 0.15 * 3600 / 2, 0.15 * 3600 * 2 * (250 - 40),
                             [1, 1, 1, 1]),
@@ -308,6 +272,44 @@ class ConvertPinch:
         # need minimum delta T for pinch analysis
         self.pinch_delta_T_min = 20
 
+
+        # need streams
+        # pag.338
+        self.all_objects = [
+            stream_industry(2, 'outflow', 'thermal_oil', 327, 50, 0.1098 * 3600 / 2, 34.1,
+                            [1]),
+            stream_industry(5, 'outflow', 'thermal_oil', 495, 307, 0.134 * 3600 / 2, 16.5,
+                            [1]),
+            stream_industry(6, 'outflow', 'thermal_oil', 220, 59, 0.2062 * 3600 / 2, 5.5,
+                            [1]),
+            stream_industry(9, 'outflow', 'thermal_oil', 222, 67, 0.0739 * 3600 / 2, 7.2,
+                            [1]),
+            stream_industry(1, 'inflow', 'thermal_oil', 102, 327, 0.1094 * 3600 / 2, 104.8,
+                            [1]),
+
+            stream_industry(3, 'inflow', 'thermal_oil', 35, 164, 0.0698 * 3600 / 2, 104.8,
+                            [1]),
+
+            stream_industry(4, 'inflow', 'thermal_oil', 140, 500, 0.2 * 3600 / 2, 104.8,
+                            [1]),
+
+            stream_industry(7, 'inflow', 'thermal_oil', 80, 123, 0.0767 * 3600 / 2, 104.8,
+                            [1]),
+            stream_industry(8, 'inflow', 'thermal_oil', 59, 169, 0.0618 * 3600 / 2, 104.8,
+                            [1]),
+            stream_industry(10, 'inflow', 'thermal_oil', 85, 125, 0.1025 * 3600 / 2, 104.8,
+                            [1]),
+            stream_industry(11, 'inflow', 'thermal_oil', 480, 500, 1.625 * 3600 / 2, 104.8,
+                            [1]),
+
+        ]
+
+        # need minimum delta T for pinch analysis
+        self.pinch_delta_T_min = 10
+        numbers= 1
+        for i in self.all_objects:
+            i['id'] = numbers
+            numbers += 1
 
 
 
