@@ -1,8 +1,19 @@
 """"
 alisboa/jmcunha
 
+
 ##############################
-INFO: ACheck if Streams In < Streams Out at pinch point. If not, split largest Stream Out to match largest mcp Stream In.
+INFO: This function aims to check one of the pinch analysis rule, which is that the number of streams_in <= streams_out.
+      If this does not occur, multiple combinations and stream splits will be made to ensure that the number of
+      streams_in and streams_out is equal.
+
+      It was implemented the parameter reach_pinch, that is used at a first instance as reach_pinch=True to ensure that
+      when all_first_match_pinch_combinations runs, all streams_in can be matched. At a second instance with
+      reach_pinch=False, after all the first matches have been done.
+
+      The function check_streams_number acts as main which runs split_streams as many time as the existent surplus number
+      of streams in.
+
 
 ##############################
 INPUT:
@@ -10,11 +21,12 @@ INPUT:
         # df_streams_out
         # above_pinch
         # delta_T_min
-        # reach_pinch
+        # reach_pinch  [True or False]
+
 
 ##############################
 RETURN:
-        # [[df_streams_in, df_streams_out], ...
+        # all_combinations - array with arrays of [df_streams_in, df_streams_out] updated
 
 """
 
@@ -25,10 +37,9 @@ def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, del
 
     ############################################################################################
     # Get info
-    # copy dfs
+
     df_streams_in_copy = df_streams_in.copy()
     df_streams_out_copy = df_streams_out.copy()
-
     original_df_streams_in = deepcopy(df_streams_in)
     original_df_streams_out = deepcopy(df_streams_out)
 
@@ -42,23 +53,32 @@ def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, del
 
     if reach_pinch == True:
         # change streams_in match meaning - check if complete match done - sometimes values are different by millesime
-        df_streams_in_copy['Match'] = df_streams_in_copy.apply(lambda x: x['Match'] == True if x['Supply_Temperature'] == round(x['Closest_Pinch_Temperature']) else False ,axis=1)
-        df_streams_out_copy['Match'] = df_streams_out_copy.apply(lambda x: x['Match'] == True if x['Target_Temperature'] == round(x['Closest_Pinch_Temperature']) else False  ,axis=1)
+        df_streams_in_copy['Match'] = df_streams_in_copy.apply(
+            lambda x: x['Match'] == True if x['Supply_Temperature'] == round(x['Closest_Pinch_Temperature']) else False,
+            axis=1)
+        df_streams_out_copy['Match'] = df_streams_out_copy.apply(
+            lambda x: x['Match'] == True if x['Target_Temperature'] == round(x['Closest_Pinch_Temperature']) else False,
+            axis=1)
 
     else:
         # change streams_in match meaning - check if complete match done - sometimes values are different by millesime
-        df_streams_in_copy['Match'] = df_streams_in_copy.apply(lambda x: x['Match'] == True if x['Supply_Temperature'] == round(x['Closest_Pinch_Temperature']) else False,axis=1)
-        df_streams_out_copy['Match'] = df_streams_out_copy.apply(lambda x: x['Match'] == True if x['Target_Temperature'] == round(x['Closest_Pinch_Temperature']) else False,axis=1)
+        df_streams_in_copy['Match'] = df_streams_in_copy.apply(
+            lambda x: x['Match'] == True if x['Supply_Temperature'] == round(x['Closest_Pinch_Temperature']) else False,
+            axis=1)
+        df_streams_out_copy['Match'] = df_streams_out_copy.apply(
+            lambda x: x['Match'] == True if x['Target_Temperature'] == round(x['Closest_Pinch_Temperature']) else False,
+            axis=1)
 
     ############################################################################################
     # Get combinations
+
     # check if streams split is needed
+    number_streams_out = df_streams_out_copy[
+        df_streams_out_copy['Target_Temperature'] != round(df_streams_out_copy['Closest_Pinch_Temperature'], 1)].shape[0]
+    number_streams_in = df_streams_in_copy[
+        df_streams_in_copy['Supply_Temperature'] != round(df_streams_in_copy['Closest_Pinch_Temperature'], 1)].shape[0]
 
-    number_streams_out = df_streams_out_copy[df_streams_out_copy['Target_Temperature'] != round(df_streams_out_copy['Closest_Pinch_Temperature'], 1)].shape[0]
-    number_streams_in = df_streams_in_copy[df_streams_in_copy['Supply_Temperature'] != round(df_streams_in_copy['Closest_Pinch_Temperature'], 1)].shape[0]
-
-    combinations = [[df_streams_in_copy, df_streams_out_copy]]
-
+    all_combinations = [[df_streams_in_copy, df_streams_out_copy]]
 
     if number_streams_out < number_streams_in:
         if reach_pinch == True:
@@ -66,14 +86,13 @@ def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, del
         else:
             surplus_streams_in = number_streams_in - number_streams_out
 
-
         # create all possibilities of stream splitting with a recursive function
         cycles = [0] * surplus_streams_in
         for cycle in cycles:
-            combinations = make_pairs(combinations, above_pinch, delta_T_min,check_time)
+            all_combinations = split_streams(all_combinations, above_pinch, delta_T_min,check_time)
 
         # data treatment
-        for dfs in combinations:
+        for dfs in all_combinations:
             df_streams_in_copy, df_streams_out_copy = dfs
             df_streams_out_copy['Match'] = df_streams_out_copy_match_info
             df_streams_out_copy.fillna(False, inplace=True)
@@ -81,17 +100,18 @@ def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, del
             df_streams_in_copy.fillna(False, inplace=True)
 
     # delete temporary columns
-    for combination in combinations:
+    for combination in all_combinations:
         combination[0].drop(columns=['Split_Check'], inplace=True)
         combination[1].drop(columns=['Split_Check'], inplace=True)
 
     ############################################################################################
     # OUTPUT
     # eliminate repeated combinations
-    if len(combinations) > 1:
-        keep = [combinations[0]]
-        for dfs_combination in combinations:
+    if len(all_combinations) > 1:
+        keep = [all_combinations[0]]
+        for dfs_combination in all_combinations:
             append = True
+
             # get df streams out to compare with remaining
             dfs_combination_streams_out = dfs_combination[1].copy()
             dfs_combination_streams_out = dfs_combination_streams_out.sort_values('mcp')
@@ -111,23 +131,23 @@ def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, del
             if append == True:
                 keep.append(dfs_combination)
 
-        combinations = keep
-        combinations.append([original_df_streams_in, original_df_streams_out])
+        all_combinations = keep
+        all_combinations.append([original_df_streams_in, original_df_streams_out])
 
 
-    elif len(combinations) == 1:
-        for combination in combinations:
+    elif len(all_combinations) == 1:
+        for combination in all_combinations:
             df_streams_in, df_streams_out = combination
             df_streams_out['Match'] = df_streams_out_copy_match_info
             df_streams_in['Match'] = df_streams_in_copy_match_info
 
     else:
-        combinations = [[original_df_streams_in, original_df_streams_out]]
+        all_combinations = [[original_df_streams_in, original_df_streams_out]]
 
-    return combinations
+    return all_combinations
 
 
-def make_pairs(combinations, above_pinch,delta_T_min,check_time):
+def split_streams(combinations, above_pinch, delta_T_min, check_time):
 
     # init arrays
     combinations_updated = []
@@ -154,9 +174,15 @@ def make_pairs(combinations, above_pinch,delta_T_min,check_time):
                         if stream_out['mcp'] > stream_in['mcp']:
 
                             # only relevant to look for streams_out whose temperature can meet streams_in temperature range
-                            if (stream_out['Closest_Pinch_Temperature'] + delta_T_min < stream_in['Supply_Temperature'] and above_pinch is True) or (stream_out['Closest_Pinch_Temperature'] - delta_T_min > stream_in['Supply_Temperature'] and above_pinch is False):
+                            if (stream_out['Closest_Pinch_Temperature'] + delta_T_min < stream_in[
+                                'Supply_Temperature'] and above_pinch is True) or (
+                                    stream_out['Closest_Pinch_Temperature'] - delta_T_min > stream_in[
+                                'Supply_Temperature'] and above_pinch is False):
 
-                                if (stream_out['Closest_Pinch_Temperature'] + delta_T_min <= stream_in['Closest_Pinch_Temperature'] and above_pinch is True) or (stream_out['Closest_Pinch_Temperature'] - delta_T_min >= stream_in['Closest_Pinch_Temperature'] and above_pinch is False):
+                                if (stream_out['Closest_Pinch_Temperature'] + delta_T_min <= stream_in[
+                                    'Closest_Pinch_Temperature'] and above_pinch is True) or (
+                                        stream_out['Closest_Pinch_Temperature'] - delta_T_min >= stream_in[
+                                    'Closest_Pinch_Temperature'] and above_pinch is False):
                                     pairs += [[index_stream_out, index_stream_in]]
 
         # match between pairs

@@ -1,22 +1,51 @@
 """
 alisboa/jmcunha
 
+
 ##############################
-INFO: Make all combinations between streams in and out and design respective HX, to ensure maximum pinch variability.
+INFO: The pinch design is always made from the pinch temperature to outwards. Thus, it is important to guarantee that all
+      streams reaching pinch are well matched and that none is left.
+
+      This script works as decision tree, where the function all_first_match_pinch_combinations acts as main which runs
+      the recursive function make_combinations. This recursive function will make all possible match combinations of
+      streams that reach pinch until all streams_in have been matched. This recursive function, maximizes pinch design
+      variability by making all possible combinations between streams_in and streams_out, which may incur in new stream
+      splits, and affect the following match. Even though it can be time consuming when a large number of streams is given,
+      it has an added benefit of proposing more pinch designs.
+
+      In brief when running make_combinations (which acts similarly to a decision tree), step by step:
+        1) ** new state **
+        2) get available streams_in and streams_out
+        3) for cycle - fetch one stream_in
+            4) for cycle - fetch one stream_out
+                5) match and design hx (stream split may occur, adding new stream to respective df_streams_in or df_streams_out)
+                6) update df_streams_in or df_streams_out
+
+                if df_streams in not yet empty (meaning there are still streams_in reaching pinch):
+                    7.a) call make_combinations and provide df_streams_in and df_streams_out updated - go to step 1
+                else:
+                    8.a) append design solution
+
+        9) return to previous state of recursive function
+
+    ** new state used here as the state of which the decision tree is. **
+
 
 ##############################
 INPUT:
-        # combination - df_streams_in, df_streams_out, df_hx
-        # delta_T_min
+        # df_streams_in
+        # df_streams_out
+        # df_hx
+        # hx_delta_T
         # above_pinch
 
 
 ##############################
 RETURN:
-        # all_combinations - [df_streams_in, df_streams_out, df_hx]
+        # all_combinations - array with arrays of [df_streams_in, df_streams_out, df_hx] updated
+
 
 """
-
 
 
 from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_hx_temperatures import above_pinch_hx_temperatures
@@ -24,12 +53,11 @@ from ......Source.simulation.Heat_Recovery.Pinch.HX.pinch_design_hx import pinch
 from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_stream_info import above_pinch_stream_info
 from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_stream_info import below_pinch_stream_info
 from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_hx_temperatures import below_pinch_hx_temperatures
-
 from copy import deepcopy
 import numpy as np
 
 
-def testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df_hx, delta_T_min, above_pinch):
+def testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df_hx, hx_delta_T, above_pinch):
 
     combination_original = deepcopy([df_streams_in, df_streams_out, df_hx])
 
@@ -39,7 +67,7 @@ def testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df
     # get all combinations with recursive function
     combination = deepcopy([df_streams_in, df_streams_out, df_hx])
 
-    all_combinations = make_pairs(combination, all_combinations, delta_T_min, above_pinch)
+    all_combinations = make_combinations(combination, all_combinations, hx_delta_T, above_pinch)
 
     # eliminate df streams repeated
     if len(all_combinations) > 1:
@@ -73,7 +101,7 @@ def testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df
     return all_combinations
 
 
-def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
+def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
 
     # get streams and hx df's
     combination_copy = deepcopy(combination)
@@ -141,9 +169,9 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
                         df_streams_in[df_streams_in['Reach_Pinch'] == True].shape[0]):
 
                 # only relevant to look for stream_out whose temperature can meet stream_in temperature range
-                if (stream_out['Closest_Pinch_Temperature'] + delta_T_min <
+                if (stream_out['Closest_Pinch_Temperature'] + hx_delta_T <
                     stream_in['Supply_Temperature'] and above_pinch == True) or (
-                        stream_out['Closest_Pinch_Temperature'] - delta_T_min >
+                        stream_out['Closest_Pinch_Temperature'] - hx_delta_T >
                         stream_in['Supply_Temperature'] and above_pinch is False):
 
                     # only looking to streams which reach pinch
@@ -182,10 +210,10 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
                                     hx_stream_out_T_cold = stream_out_T_cold
 
                                     # compute HX temperatures
-                                    if stream_in_max_T_hot >= (stream_out_max_T_hot + delta_T_min):
+                                    if stream_in_max_T_hot >= (stream_out_max_T_hot + hx_delta_T):
                                         hx_stream_out_T_hot = stream_out_max_T_hot
                                     else:
-                                        hx_stream_out_T_hot = stream_in_max_T_hot - delta_T_min
+                                        hx_stream_out_T_hot = stream_in_max_T_hot - hx_delta_T
 
                                     hx_power = stream_out_mcp * (hx_stream_out_T_hot - hx_stream_out_T_cold)
                                     hx_stream_in_T_hot = stream_in_max_T_hot
@@ -208,10 +236,10 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
 
                                 else:
                                     # compute/check temperatures
-                                    if stream_in_min_T_cold <= (stream_out_min_T_cold - delta_T_min):
+                                    if stream_in_min_T_cold <= (stream_out_min_T_cold - hx_delta_T):
                                         stream_out_T_cold = stream_out_min_T_cold
                                     else:
-                                        stream_out_T_cold = stream_in_min_T_cold + delta_T_min
+                                        stream_out_T_cold = stream_in_min_T_cold + hx_delta_T
 
                                     hx_power = stream_out_mcp * (stream_out_T_hot - stream_out_T_cold)
                                     hx_stream_in_T_cold = stream_in_min_T_cold
@@ -270,7 +298,7 @@ def make_pairs(combination, all_combinations, delta_T_min, above_pinch):
 
                             # continue iteration or reach end and save
                             if df_streams_in[(df_streams_in['Match'] == False) & (df_streams_in['Reach_Pinch'] == True)].shape[0] > 0:
-                                all_combinations = make_pairs(deepcopy(combination.copy()), deepcopy(all_combinations), delta_T_min, above_pinch)
+                                all_combinations = make_combinations(deepcopy(combination.copy()), deepcopy(all_combinations), hx_delta_T, above_pinch)
                                 # when iteration goes a step back, last HX designed must be eliminated
                                 df_hx.drop(df_hx.tail(1).index, inplace=True)
 
