@@ -13,6 +13,7 @@ INFO: In this function are designed various possible combinations of HX match be
 
       The pinch analysis can be a complex decision/design analysis according to the streams given, thus it was
       implemented a code structure that is thought to best perform in the majority of cases.
+
       Summary of the Pinch analysis chain of thought step by step :
         1) data treatment
         1) check if special cases (** special_case)
@@ -24,19 +25,37 @@ INFO: In this function are designed various possible combinations of HX match be
 
      ** detailed information about each function in its script **
 
+
 ##############################
 INPUT:
         # df_streams
-        # pinch_delta_T_min
-        # pinch_T
-        # df_hx
-        # hx_delta_T
-        # above_pinch
+        # pinch_delta_T_min - delta temperature for pinch analysis  [ºC]
+        # pinch_T  [ºC]
+        # df_hx - empty df
+        # hx_delta_T - heat exchangers minimum delta T  [ºC]
+        # above_pinch  [True or False]
+
+        Where in df_hx, the following keys:
+            # Power  [kW]
+            # HX_Hot_Stream  [ID]
+            # HX_Cold_Stream  [ID]
+            # HX_Original_Hot_Stream  [ID]
+            # HX_Original_Cold_Stream  [ID]
+            # HX_Type  [hx type]
+            # HX_Turnkey_Cost  [€]
+            # HX_OM_Fix_Cost  [€/year]
+            # HX_Hot_Stream_T_Hot  [ºC]
+            # HX_Hot_Stream_T_Cold  [ºC]
+            # HX_Cold_Stream_T_Hot  [ºC]
+            # HX_Cold_Stream_T_Cold  [ºC]
+            # Storage  [m3]
 
 
 ##############################
 RETURN:
-        # df_hx
+        # all_designs - array with different hx design (df_hx)  possibilities
+        # pinch_analysis_possible - check if it was possible to perform pinch analysis above/below pinch [True or False]
+
 
 """
 
@@ -220,12 +239,12 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, df_hx, hx
                 if append == True:
                     keep.append(i)
 
-            output = keep
+            all_designs = keep
 
         else:
-            output = all_df_hx
+            all_designs = all_df_hx
     else:
-        output = []
+        all_designs = []
 
-    return output, pinch_analysis_possible
+    return all_designs, pinch_analysis_possible
 
