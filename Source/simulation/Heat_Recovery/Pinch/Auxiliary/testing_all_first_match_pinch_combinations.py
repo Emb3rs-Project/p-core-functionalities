@@ -6,12 +6,12 @@ alisboa/jmcunha
 INFO: The pinch design is always made from the pinch temperature to outwards. Thus, it is important to guarantee that all
       streams reaching pinch are well matched and that none is left.
 
-      This script works as decision tree, where the function all_first_match_pinch_combinations acts as main which runs
-      the recursive function make_combinations. This recursive function will make all possible match combinations of
-      streams that reach pinch until all streams_in have been matched. This recursive function, maximizes pinch design
-      variability by making all possible combinations between streams_in and streams_out, which may incur in new stream
-      splits, and affect the following match. Even though it can be time consuming when a large number of streams is
-      given, it has an added benefit of proposing more pinch designs.
+      This script works similarly ot decision tree, where the function all_first_match_pinch_combinations acts as main
+      which runs the recursive function make_combinations. This recursive function will make all possible match
+      combinations of streams that reach pinch until all streams_in have been matched. This recursive function,
+      maximizes pinch design variability by making all possible combinations between streams_in and streams_out, which
+      may incur in new stream splits, and affect the following match. Even though it can be time consuming when a large
+      number of streams is given, it has an added benefit of proposing more pinch designs.
 
       In brief when running make_combinations (which acts similarly to a decision tree), step by step:
         1) ** new state **
@@ -26,7 +26,7 @@ INFO: The pinch design is always made from the pinch temperature to outwards. Th
                 else:
                     8) append design solution
 
-        9) when both for cycles reach the end, return to previous state (step 7 and jump to  step 4 or step 3)
+        '9') when both for cycles reach the end, return to previous state (step 7 and jump to  step 4 or step 3)
 
     ** new state used here as the state of which the decision tree is **
 
@@ -59,7 +59,7 @@ import numpy as np
 
 def testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df_hx, hx_delta_T, above_pinch):
 
-    combination_original = deepcopy([df_streams_in, df_streams_out, df_hx])
+    original_combination = deepcopy([df_streams_in, df_streams_out, df_hx])
 
     # Init arrays
     all_combinations = []
@@ -93,7 +93,7 @@ def testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df
                 keep_combinations.append(combination)
 
         all_combinations = keep_combinations
-        all_combinations.append(combination_original)
+        all_combinations.append(original_combination)
 
     elif len(all_combinations) == 0:
         all_combinations = [combination]
@@ -103,10 +103,8 @@ def testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df
 
 def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
 
-    # get streams and hx df's
+    # get streams and hx dfs
     combination_copy = deepcopy(combination)
-
-    # get info to make pair matches
     df_streams_in, df_streams_out, df_hx = deepcopy(combination_copy.copy())
 
     # get streams which were not yet matched
@@ -140,7 +138,7 @@ def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
                 # restore dfs - needed because when splits are done, the original and the split need to be removed
                 df_streams_in = df_streams_in_backup.copy()
 
-            # restore initial value
+            # restore initial Match value
             df_streams_out.loc[stream_out_index, 'Match'] = False
             df_streams_in.loc[stream_in_index, 'Match'] = False
 
@@ -148,15 +146,11 @@ def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
             stream_out = df_streams_out.loc[stream_out_index]
             stream_in = df_streams_in.loc[stream_in_index]
 
-            # look for df_streams_out with larger mcp than df_streams_in if number_stream_outs = number_stream_ins
-            # and for all streams when number_stream_out > number_stream_in
-
-            if (stream_out['mcp'] >= stream_in['mcp'] and
-                df_streams_out[df_streams_out['Reach_Pinch'] == True].shape[0] ==
+            # analyze look for df_streams_out with smaller mcp than df_streams_in if number_stream_outs = number_stream_in
+            # and for all streams_out with larger/equal mcp when number_stream_out >= number_stream_in
+            if (stream_out['mcp'] <= stream_in['mcp'] and
+                df_streams_out[df_streams_out['Reach_Pinch'] == True].shape[0] >
                 df_streams_in[df_streams_in['Reach_Pinch'] == True].shape[0]) \
-                    or (stream_out['mcp'] <= stream_in['mcp'] and
-                        df_streams_out[df_streams_out['Reach_Pinch'] == True].shape[0] >
-                        df_streams_in[df_streams_in['Reach_Pinch'] == True].shape[0]) \
                     or (stream_out['mcp'] >= stream_in['mcp'] and
                         df_streams_out[df_streams_out['Reach_Pinch'] == True].shape[0] >=
                         df_streams_in[df_streams_in['Reach_Pinch'] == True].shape[0]):
@@ -228,7 +222,7 @@ def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
                                     new_row['mcp'] -= split_stream_in_mcp  # correct split mcp
                                     new_row.name = str(int(stream_in_index) * 100)  # new ID
 
-                                    # Add Split Stream to DFs
+                                    # add split stream to df
                                     df_streams_in = df_streams_in.append(new_row)
 
                                     hx_power, hx_stream_in_T_cold, hx_stream_in_T_hot, hx_stream_out_T_cold, hx_stream_out_T_hot\
@@ -258,7 +252,6 @@ def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
 
                                     # add split stream to df
                                     df_streams_in = df_streams_in.append(new_row)
-
 
                                     hx_power, hx_stream_out_T_cold, hx_stream_out_T_hot, hx_stream_in_T_cold, hx_stream_in_T_hot\
                                         = below_pinch_hx_temperatures(stream_out_T_hot,
@@ -303,9 +296,7 @@ def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
                                                          original_stream_out_index)
 
                             df_hx = df_hx.append(new_hx_row, ignore_index=True)
-
                             combination = deepcopy([df_streams_in, df_streams_out, df_hx])
-
 
                             ############################################################################################
                             # New decision tree ramification or append final design

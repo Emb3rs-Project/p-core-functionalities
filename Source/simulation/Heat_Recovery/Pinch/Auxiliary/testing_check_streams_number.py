@@ -33,7 +33,7 @@ RETURN:
 import numpy as np
 from copy import deepcopy
 
-def testing_check_streams_number(df_streams_in, df_streams_out, above_pinch, delta_T_min, reach_pinch,check_time):
+def check_streams_number(df_streams_in, df_streams_out, above_pinch, delta_T_min, reach_pinch,check_time):
 
     ############################################################################################
     # Get info
