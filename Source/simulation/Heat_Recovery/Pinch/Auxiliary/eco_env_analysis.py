@@ -1,9 +1,24 @@
+"""
+alisboa/jmcunha
+
+##############################
+INFO:
+
+##############################
+INPUT:
+
+
+##############################
+RETURN:
+
+
+"""
 
 import pandas as pd
 from ......KB_General.fuel_properties import fuel_properties
 
-def eco_env_analysis(info_pinch,objects,all_objects,all_df):
 
+def eco_env_analysis(info_pinch, objects, all_objects, all_df):
 
     for pinch_case in info_pinch:
 
@@ -36,13 +51,13 @@ def eco_env_analysis(info_pinch,objects,all_objects,all_df):
                     co2_emission_per_kw = float(data['CO2_emission'])
                     cost = data['price']
                     df_economic = df_economic.append({
-                                                         'Equipment_ID':save_object['id'],
-                                                         'CO2_Savings_Year':row[
-                                                                                'Recovered_Energy'] * co2_emission_per_kw,
-                                                         'Recovered_Energy':row['Recovered_Energy'],
-                                                         'Savings_Year':row['Recovered_Energy'] * cost,
-                                                         'Total_Turnkey':row['Total_Turnkey'], }
-                                                     , ignore_index=True)
+                        'Equipment_ID': save_object['id'],
+                        'CO2_Savings_Year': row[
+                                                'Recovered_Energy'] * co2_emission_per_kw,
+                        'Recovered_Energy': row['Recovered_Energy'],
+                        'Savings_Year': row['Recovered_Energy'] * cost,
+                        'Total_Turnkey': row['Total_Turnkey'], }
+                        , ignore_index=True)
 
                 elif save_object['object_type'] == 'process':  # object.type = 'process'
 
@@ -57,23 +72,23 @@ def eco_env_analysis(info_pinch,objects,all_objects,all_df):
                     co2_emission_per_kw = data['co2_emissions']
 
                     df_economic = df_economic.append({
-                        'Equipment_ID':save_object['equipment'],
-                        'CO2_Savings_Year':row[
-                                               'Recovered_Energy'] * co2_emission_per_kw,
-                        'Recovered_Energy':row['Recovered_Energy'],
-                        'Savings_Year':row['Recovered_Energy'] * cost,
-                        'Total_Turnkey':row['Total_Turnkey_Cost'], }
+                        'Equipment_ID': save_object['equipment'],
+                        'CO2_Savings_Year': row[
+                                                'Recovered_Energy'] * co2_emission_per_kw,
+                        'Recovered_Energy': row['Recovered_Energy'],
+                        'Savings_Year': row['Recovered_Energy'] * cost,
+                        'Total_Turnkey': row['Total_Turnkey_Cost'], }
                         , ignore_index=True)
 
                 else:  # object.type = 'isolated_stream'
                     #################
                     # manuly flow
                     df_economic = df_economic.append({
-                        'Equipment_ID':'isolated_stream',
-                        'CO2_Savings_Year':row['Recovered_Energy'] * co2_emission_per_kw,
-                        'Recovered_Energy':row['Recovered_Energy'],
-                        'Savings_Year':row['Recovered_Energy'] * cost,
-                        'Total_Turnkey':row['Total_Turnkey'], }
+                        'Equipment_ID': 'isolated_stream',
+                        'CO2_Savings_Year': row['Recovered_Energy'] * co2_emission_per_kw,
+                        'Recovered_Energy': row['Recovered_Energy'],
+                        'Savings_Year': row['Recovered_Energy'] * cost,
+                        'Total_Turnkey': row['Total_Turnkey'], }
                         , ignore_index=True)
 
             # Agreggate same Equipment ID savings in df_equipment_economic
@@ -92,12 +107,12 @@ def eco_env_analysis(info_pinch,objects,all_objects,all_df):
                     if id == equipment['id']:  # find equipment that supplies process
                         break
                 df_equipment_economic = df_equipment_economic.append({
-                                                                         'Equipment_ID':id,
-                                                                         'CO2_Savings_Year':row['Recovered_Energy'] * co2_emission_per_kw,
-                                                                         'Recovered_Energy':total_recovered_heat,
-                                                                         'Savings_Year':total_savings_year,
-                                                                         'Total_Turnkey':total_turnkey, }
-                                                                     , ignore_index=True)
+                    'Equipment_ID': id,
+                    'CO2_Savings_Year': row['Recovered_Energy'] * co2_emission_per_kw,
+                    'Recovered_Energy': total_recovered_heat,
+                    'Savings_Year': total_savings_year,
+                    'Total_Turnkey': total_turnkey, }
+                    , ignore_index=True)
 
 
         pinch_case['df_equipment_economic'] = df_equipment_economic

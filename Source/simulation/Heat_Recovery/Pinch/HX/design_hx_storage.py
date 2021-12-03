@@ -21,12 +21,10 @@ INPUT:
         # info_df_hx - list with all designed options for above or below the pinch
         # above_pinch - if analysis is above or below pinch  [True/False ]
 
-        Where in info_df_hx, the following keys:
-
 
 ##############################
-RETURN: it are updated the df_hx in info_df_hx
-        # info_df_hx
+RETURN:
+        # info_df_hx - each df_hx is updated
 
         Where the updated keys are:
             # Storage [m3]

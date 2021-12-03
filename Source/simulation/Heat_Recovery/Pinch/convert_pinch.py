@@ -234,9 +234,6 @@ def convert_pinch(in_var):
             pinch_case['df_equipment_economic'] = empty_df
 
 
-    print('only_isolated_streams',only_isolated_streams)
-    print(individual_equipment_optimization)
-
     # DF created to store a template with info needed for all designs
     df_optimization = pd.DataFrame(columns=['index',
                                             'co2_savings',
