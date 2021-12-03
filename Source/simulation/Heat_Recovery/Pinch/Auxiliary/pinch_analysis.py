@@ -17,13 +17,13 @@ INFO: Perform Pinch Analysis.
 
 ##############################
 INPUT:
-        # df_profile - DF with all streams schedules (hourly schedule with 1 and 0)
+        # df_streams_profile - DF with all streams schedules (hourly schedule with 1 and 0)
         # pinch_delta_T_min - delta temperature for pinch analysis divided by 2 [ºC]
         # hx_delta_T - heat exchangers minimum delta T [ºC]
         # design_id  [ID]
-        # df_operating - DF with stream operating and its characteristics
+        # df_streams - DF with stream operating and its characteristics
 
-             Where in df_operating, the following keys:
+            Where in df_streams, the following keys:
                 # Fluid - fluid type
                 # Flowrate  [kg/h]
                 # Supply_Temperature  [ºC]
@@ -80,55 +80,37 @@ from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.pinch_point import pi
 from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.above_and_below_pinch_main import above_and_below_pinch_main
 from ......Source.simulation.Heat_Recovery.Pinch.HX.hx_storage import hx_storage
 
-def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_id):
 
-    # data treatment
-    df_operating['Original_Stream'] = df_operating.index
-    df_operating['Match'] = False
-    df_operating['Split'] = False
+def pinch_analysis(df_streams, df_streams_profile, pinch_delta_T_min, hx_delta_T, design_id):
+
 
     # get heat cascade
-    df_heat_cascade = table_heat_cascade(df_operating)
+    df_heat_cascade = table_heat_cascade(df_streams)
 
     # get pinch point
     pinch_point_temperature, theo_minimum_hot_utility, theo_minimum_cold_utility = pinch_point(df_heat_cascade,
-                                                                                               df_operating)
-
-    # create DF for heat exchangers
-    df_hx = pd.DataFrame(columns=['Power',
-                                  'Original_Stream_In',
-                                  'Original_Stream_Out',
-                                  'Hot_Stream_T_Hot',
-                                  'Hot_Stream_T_Cold',
-                                  'Hot_Stream',
-                                  'Cold_Stream',
-                                  'HX_Type',
-                                  'HX_Turnkey_Cost',
-                                  'HX_OM_Fix_Cost',
-                                  'Storage'])
+                                                                                               df_streams)
 
 
     ############################################################################################################
     # PINCH
     # Above Pinch - get HXs and respective storage
-    info_df_hx_above_pinch, above_pinch_analysis_possible = above_and_below_pinch_main(df_operating,
+    info_df_hx_above_pinch, above_pinch_analysis_possible = above_and_below_pinch_main(df_streams,
                                                                                        pinch_delta_T_min,
                                                                                        pinch_point_temperature,
-                                                                                       df_hx,
                                                                                        hx_delta_T,
                                                                                        above_pinch=True)
-    info_df_hx_above_pinch = hx_storage(df_profile,
+    info_df_hx_above_pinch = hx_storage(df_streams_profile,
                                         info_df_hx_above_pinch,
                                         above_pinch=True)
 
     # Below Pinch - get HXs and respective storage
-    info_df_hx_below_pinch, below_pinch_analysis_possible = above_and_below_pinch_main(df_operating,
+    info_df_hx_below_pinch, below_pinch_analysis_possible = above_and_below_pinch_main(df_streams,
                                                                                        pinch_delta_T_min,
                                                                                        pinch_point_temperature,
-                                                                                       df_hx,
                                                                                        hx_delta_T,
                                                                                        above_pinch=False)
-    info_df_hx_below_pinch = hx_storage(df_profile,
+    info_df_hx_below_pinch = hx_storage(df_streams_profile,
                                         info_df_hx_below_pinch,
                                         above_pinch=False)
 
@@ -179,7 +161,7 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
         for df_hx in vector_df_hx:
             detailed_info_pinch_analysis.append({'ID': design_id,
                                                  'analysis_state': 'performed',
-                                                 'streams': df_operating.index.values,
+                                                 'streams': df_streams.index.values,
                                                  'theo_minimum_hot_utility': theo_minimum_hot_utility,
                                                  'hot_utility': df_hx['hot_utility'],
                                                  'theo_minimum_cold_utility': theo_minimum_cold_utility,
@@ -194,7 +176,7 @@ def pinch_analysis(df_operating,df_profile,pinch_delta_T_min,hx_delta_T,design_i
         # very specific/complex cases may not be solved
         detailed_info_pinch_analysis.append({'ID': design_id,
                                              'analysis_state': 'error in performing - probably specific/complex case',
-                                             'streams': df_operating.index.values,
+                                             'streams': df_streams.index.values,
                                              'theo_minimum_hot_utility': theo_minimum_hot_utility,
                                              'hot_utility': None,
                                              'theo_minimum_cold_utility': theo_minimum_cold_utility,
