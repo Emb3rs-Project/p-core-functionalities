@@ -57,7 +57,7 @@ from copy import deepcopy
 import numpy as np
 
 
-def testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df_hx, hx_delta_T, above_pinch):
+def first_match_reach_pinch(df_streams_in, df_streams_out, df_hx, hx_delta_T, above_pinch):
 
     original_combination = deepcopy([df_streams_in, df_streams_out, df_hx])
 

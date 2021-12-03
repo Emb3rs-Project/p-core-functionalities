@@ -7,8 +7,8 @@ INFO: In this function are designed various possible combinations of HX match be
       below the pinch temperature, respecting the pinch rules. The pinch rules being, number of streams_out at pinch
       equal/larger than streams_in and when matching streams, the mcp of the stream_out has to be equal/larger than
       stream_in mcp (this rule is not only applied at the step 6, see below). To try to solve majority of cases and also
-      give different design solutions, at special_case/testing_check_streams_number/
-      testing_all_first_match_pinch_combinations, all the possible combinations of streams are done. Even though it can
+      give different design solutions, at special_case/check_streams_number/
+      first_match_reach_pinch, all the possible combinations of streams are done. Even though it can
       be time consuming when a large number of streams is given, it has an added benefit of proposing more pinch designs.
 
       The pinch analysis can be a complex decision/design analysis according to the streams given, thus it was
@@ -17,9 +17,9 @@ INFO: In this function are designed various possible combinations of HX match be
       Summary of the Pinch analysis chain of thought step by step :
         1) data treatment
         1) check if special cases (** special_case)
-        2) check number_streams_out < number_streams_in (** testing_check_streams_number)
-        3) perform first match (** testing_all_first_match_pinch_combinations)
-        4) check number_streams_out < number_streams_in (** testing_check_streams_number)
+        2) check number_streams_out < number_streams_in (** check_streams_number)
+        3) perform first match (** first_match_reach_pinch)
+        4) check number_streams_out < number_streams_in (** check_streams_number)
         5) match remaining streams according to power - without split and respecting mcp_in<mcp_out (** match_remaining_streams_main)
         6) match remaining streams according to power - without split (** match_remaining_streams_main)
 
@@ -70,8 +70,8 @@ RETURN:
 
 from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
 from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.special_cases import special_cases
-from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.testing_check_streams_number import testing_check_streams_number
-from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.testing_all_first_match_pinch_combinations import testing_all_first_match_pinch_combinations
+from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.check_streams_number import check_streams_number
+from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.first_match_reach_pinch import first_match_reach_pinch
 from copy import deepcopy
 import pandas as pd
 
@@ -170,7 +170,7 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_
             df_streams_in, df_streams_out = case_pretreatment
 
             # check number_streams_out < number_streams_in
-            all_cases_check_streams = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch,
+            all_cases_check_streams = check_streams_number(df_streams_in, df_streams_out, above_pinch,
                                                                    hx_delta_T, reach_pinch=True, check_time=1)
 
             # check all_cases_check_streams
@@ -179,7 +179,7 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_
                 df_hx = df_hx_original.copy()
 
                 # 1ST MATCH - streams reaching pinch
-                all_cases_first_match = testing_all_first_match_pinch_combinations(df_streams_in, df_streams_out, df_hx,
+                all_cases_first_match = first_match_reach_pinch(df_streams_in, df_streams_out, df_hx,
                                                                                    hx_delta_T, above_pinch)
 
                 # check all_cases_first_match
@@ -187,7 +187,7 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_
                     df_streams_in, df_streams_out, df_hx = case_first_match
 
                     # check if number_streams_hot < number_streams_cold
-                    all_cases_check_streams_2 = testing_check_streams_number(df_streams_in, df_streams_out, above_pinch,
+                    all_cases_check_streams_2 = check_streams_number(df_streams_in, df_streams_out, above_pinch,
                                                                              hx_delta_T, reach_pinch=False,
                                                                              check_time=2)
 
