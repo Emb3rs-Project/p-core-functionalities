@@ -1,4 +1,4 @@
-""""Info : Input must be  hot_stream_T_hot > cold_Stream_T_hot + delta_T
+"""Info : Input must be  hot_stream_T_hot > cold_Stream_T_hot + delta_T
 """
 
 import copy

@@ -2,7 +2,8 @@
 alisboa/jmcunha
 
 ##############################
-INFO: Compute heat cascade.
+INFO: Compute heat cascade. The heat cascade is a net enthalpy heat balance which allow us to compute the minimum
+      hot and cold utility, as well as the pinch point.
 
 
 ##############################
@@ -37,6 +38,7 @@ import numpy as np
 
 
 def table_heat_cascade(df_operating):
+
     # vector wih unique temperatures sorted
     temperature_vector = np.unique(np.append(df_operating["Supply_Shift"].values, df_operating["Target_Shift"].values))
 
