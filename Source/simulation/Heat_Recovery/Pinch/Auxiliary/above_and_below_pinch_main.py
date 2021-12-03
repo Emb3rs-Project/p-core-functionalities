@@ -4,35 +4,34 @@ alisboa/jmcunha
 
 ##############################
 INFO: In this function are designed various possible combinations of HX match between hot and cold streams, above or
-      below the pinch temperature, respecting the pinch rules. Below, in summary the followed pinch analysis procedure.
+      below the pinch temperature, respecting the pinch rules. The pinch rules being, number of streams_out at pinch
+      equal/larger than streams_in and when matching streams, the mcp of the stream_out has to be equal/larger than
+      stream_in mcp (this rule is not only applied at the step 6, see below). To try to solve majority of cases and also
+      give different design solutions, at special_case/testing_check_streams_number/
+      testing_all_first_match_pinch_combinations, all the possible combinations of streams are done. Even though it can
+      be time consuming when a large number of streams is given, it has an added benefit of proposing more pinch designs.
 
-      Step by step :
-        1) check if special cases
-        2) check number_streams_out < number_streams_in
-        3) perform first match
-        4) check number_streams_out < number_streams_in
-        5) match remaining streams according to power - without split and respecting mcp_in<mcp_out
-        6) match remaining streams according to power - without split
+      The pinch analysis can be a complex decision/design analysis according to the streams given, thus it was
+      implemented a code structure that is thought to best perform in the majority of cases.
+      Summary of the Pinch analysis chain of thought step by step :
+        1) data treatment
+        1) check if special cases (** special_case)
+        2) check number_streams_out < number_streams_in (** testing_check_streams_number)
+        3) perform first match (** testing_all_first_match_pinch_combinations)
+        4) check number_streams_out < number_streams_in (** testing_check_streams_number)
+        5) match remaining streams according to power - without split and respecting mcp_in<mcp_out (** match_remaining_streams_main)
+        6) match remaining streams according to power - without split (** match_remaining_streams_main)
 
-     1)
-     2)
-     3)
-     4)
-     5)
-     6)
-
-
-
-
-
-
+     ** detailed information about each function in its script **
 
 ##############################
 INPUT:
         # df_streams
-        # hx_delta_T
+        # pinch_delta_T_min
         # pinch_T
         # df_hx
+        # hx_delta_T
+        # above_pinch
 
 
 ##############################

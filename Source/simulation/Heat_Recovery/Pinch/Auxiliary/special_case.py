@@ -1,3 +1,24 @@
+""""
+alisboa/jmcunha
+
+
+##############################
+INFO: After testing the code, two specific/special cases could occur that would not be solved due to the pinch analysis thought chain.
+      This special cases were:
+        1) when there is the same number of streams_in and streams_out (above or below pinch) and there is one stream_in with larger mcp than all streams_out
+        2) when there is a stream_out with smaller mcp than all streams in
+
+
+
+##############################
+INPUT:
+
+
+
+##############################
+RETURN:
+
+"""
 
 
 def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
