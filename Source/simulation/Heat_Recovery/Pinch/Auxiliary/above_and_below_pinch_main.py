@@ -6,14 +6,16 @@ alisboa/jmcunha
 INFO: In this function are designed various possible combinations of HX match between hot and cold streams, above or
       below the pinch temperature, respecting the pinch rules. The pinch rules being, number of streams_out at pinch
       equal/larger than streams_in and when matching streams, the mcp of the stream_out has to be equal/larger than
-      stream_in mcp (this rule is not only applied at the step 6, see below). To try to solve majority of cases and also
-      give different design solutions, at special_case/check_streams_number/
-      first_match_reach_pinch, all the possible combinations of streams are done. Even though it can
-      be time consuming when a large number of streams is given, it has an added benefit of proposing more pinch designs.
+      stream_in mcp (this rule is not only applied at the step 6, see below). The matches are always done with the
+      purpose of designing away from the pinch, meaning that the HX are designed from closes to the pinch temperature
+      to the stream_in supply temperature.
+
+      To try to solve majority of cases and also give different design solutions, at special_case/check_streams_number/
+      first_match_reach_pinch, all the possible combinations of streams are done. Even though it can be time consuming
+      when a large number of streams is given, it has the benefit of proposing more pinch designs.
 
       The pinch analysis can be a complex decision/design analysis according to the streams given, thus it was
       implemented a code structure that is thought to best perform in the majority of cases.
-
       Summary of the Pinch analysis chain of thought step by step :
         1) data treatment
         1) check if special cases (** special_case)
@@ -23,7 +25,14 @@ INFO: In this function are designed various possible combinations of HX match be
         5) match remaining streams according to power - without split and respecting mcp_in<mcp_out (** match_remaining_streams_main)
         6) match remaining streams according to power - without split (** match_remaining_streams_main)
 
-     ** detailed information about each function in its script **
+      ** detailed information about each function in its script **
+
+
+     !!!!!!!!!!
+     IMPORTANT: More complex cases (many streams or specific cases not thought of) may lead to no pinch design solutions,
+     this because design solutions are only considered if they get all streams_in to theirs 'Supply_Temperature' (remember
+     that the matches are designed from the pinch temperature outwards).
+
 
 
 ##############################

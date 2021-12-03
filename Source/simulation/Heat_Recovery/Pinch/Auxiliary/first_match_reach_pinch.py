@@ -49,7 +49,7 @@ RETURN:
 
 
 from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_hx_temperatures import above_pinch_hx_temperatures
-from ......Source.simulation.Heat_Recovery.Pinch.HX.pinch_design_hx import pinch_design_hx
+from ......Source.simulation.Heat_Recovery.Pinch.HX.design_hx import design_hx
 from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_stream_info import above_pinch_stream_info
 from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_stream_info import below_pinch_stream_info
 from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_hx_temperatures import below_pinch_hx_temperatures
@@ -283,7 +283,7 @@ def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
                                 df_streams_in.loc[stream_in_index, ['Closest_Pinch_Temperature']] = hx_stream_in_T_cold
 
                             # design HX
-                            new_hx_row = pinch_design_hx(stream_in_index,
+                            new_hx_row = design_hx(stream_in_index,
                                                          stream_out_index,
                                                          hx_stream_in_T_hot,
                                                          hx_stream_in_T_cold,

@@ -41,7 +41,7 @@ from ......KB_General.equipment_details import equipment_details
 from ......KB_General.fluid_material import fluid_material_cp
 
 
-def hx_storage(df_profile, info_df_hx, above_pinch, storage_delta_T=5):
+def design_hx_storage(df_profile, info_df_hx, above_pinch, storage_delta_T=5):
 
     # Defined vars
     maximum_water_storage_temperature = 90  # [ºC]
