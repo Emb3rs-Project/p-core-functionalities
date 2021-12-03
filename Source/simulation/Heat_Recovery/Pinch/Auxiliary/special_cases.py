@@ -3,25 +3,45 @@ alisboa/jmcunha
 
 
 ##############################
-INFO: After testing the code, two specific/special cases could occur that would not be solved due to the pinch analysis thought chain.
-      This special cases were:
-        1) when there is the same number of streams_in and streams_out (above or below pinch) and there is one stream_in with larger mcp than all streams_out
-        2) when there is a stream_out with smaller mcp than all streams in
+INFO: After testing the code, two specific/special cases could occur that would not be solved due to the pinch analysis
+      thought chain.
+      These special cases were:
+        Case 1) when there is an equal number of streams_in and streams_out (above or below pinch) and there is one
+        stream_in with larger mcp than all streams_out
+        Case 2) when there is a stream_out with smaller mcp than all streams_in
 
+      Solution:
+      Case 1 - first, make all combinations between streams_in, with larger mcp, and streams_out, which respect the
+      streams temperature intervals. Then, split the stream_in according to the maximum power available to be given to
+      the stream_out.
+      Case 2 - first, similarly to case 1, all combinations between streams_in and streams_out are analyzed ( this time,
+      without mcp restrictions). Then according to mcp of both streams, the stream_out will be split if has larger mcp
+      than stream_in and vice-versa. This option, may make splits on both df_streams_in and df_streams_out, since it was
+      tested that it could give more final design options
+
+      Latly, update the correspondent df_streams_in df_streams_out with the split stream
+
+      Both solutions will create an additional stream, due to the split. Case 1 makes number of streams_in larger than
+      number of streams_out, which will be corrected on the next function on the above_below_pinch_main, named
+      testing_check_streams_number.
 
 
 ##############################
 INPUT:
-
+        # df_streams_in
+        # df_streams_out
+        # above_pinch
+        # hx_delta_T
 
 
 ##############################
 RETURN:
+        # all_combinations - array with arrays of [df_streams_in, df_streams_out] updated
 
 """
 
 
-def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
+def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
 
     # initial value
     split_needed = False
@@ -30,14 +50,10 @@ def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
     pairs = []
     combinations_updated = []
 
-    print('------------------------------------------------------------------------------------------------------------------------------------------------')
-    print('------------------------------------------------------------------------------------------------------------------------------------------------')
-    print('above_pinch',above_pinch)
-    print(df_streams_in[['mcp']])
-    print(df_streams_out[['mcp']])
-
-    # Special Cases that happen when both dfs have same stream number
-    if df_streams_in.shape[0] == df_streams_out.shape[0] or (df_streams_in[df_streams_in['Reach_Pinch'] == True].shape[0] == df_streams_out[df_streams_out['Reach_Pinch'] == True].shape[0]):
+    # special cases that happen when both dfs have same stream number
+    if df_streams_in.shape[0] == df_streams_out.shape[0] or (
+            df_streams_in[df_streams_in['Reach_Pinch'] == True].shape[0] ==
+            df_streams_out[df_streams_out['Reach_Pinch'] == True].shape[0]):
 
         # CASE 1 - check if there is a stream_in with larger mcp than all streams out
         index_streams_in_to_split = []
@@ -70,15 +86,19 @@ def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
             ###########################################################################################################
 
             if special_case_1 == True:
-                print('special_case_1',special_case_1)
 
                 # get first pair combinations between the streams to increase pinch analysis variability
                 for index_stream_out in df_streams_out.index.values:
                     for index_stream_in in index_streams_in_to_split:
-                        # only relevant to look for streams_out with larger mcp than streams_in
+
+                        # only relevant to look for streams_in with larger mcp than streams_out
                         if df_streams_in.loc[index_stream_in]['mcp'] > df_streams_out.loc[index_stream_out]['mcp']:
+
                             # only relevant to look for streams_out whose temperature can meet streams_in temperature range
-                            if (df_streams_out.loc[index_stream_out]['Closest_Pinch_Temperature'] + delta_T_min < df_streams_in.loc[index_stream_in]['Supply_Temperature'] and above_pinch is True) or (  df_streams_out.loc[index_stream_out][ 'Closest_Pinch_Temperature'] - delta_T_min >  df_streams_in.loc[index_stream_in]['Supply_Temperature'] and above_pinch is False):
+                            if (df_streams_out.loc[index_stream_out]['Closest_Pinch_Temperature'] + hx_delta_T <
+                                df_streams_in.loc[index_stream_in]['Supply_Temperature'] and above_pinch is True) or (
+                                    df_streams_out.loc[index_stream_out]['Closest_Pinch_Temperature'] - hx_delta_T >
+                                    df_streams_in.loc[index_stream_in]['Supply_Temperature'] and above_pinch is False):
                                 pairs += [[index_stream_out, index_stream_in]]
 
                 for pair in pairs:
@@ -89,23 +109,19 @@ def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
                     if above_pinch == True:
 
                         hot_stream_index = index_stream_in
-                        cold_stream_index = index_stream_out
-
                         hx_cold_stream_T_cold = df_streams_out_copy.loc[index_stream_out]['Closest_Pinch_Temperature']
                         cold_stream_max_T_hot = df_streams_out_copy.loc[index_stream_out]['Target_Temperature']
                         cold_stream_mcp = df_streams_out_copy.loc[index_stream_out]['mcp']
-                        cold_stream = df_streams_out_copy.loc[index_stream_out]
                         hot_stream = df_streams_in_copy.loc[index_stream_in]
 
                         hot_stream_max_T_hot = df_streams_in_copy.loc[index_stream_in]['Supply_Temperature']
                         hot_stream_T_cold = df_streams_in_copy.loc[index_stream_in]['Closest_Pinch_Temperature']
-                        hot_stream_mcp = df_streams_in_copy.loc[index_stream_in]['mcp']
 
                         # Compute/Check Temperatures
-                        if hot_stream_max_T_hot >= (cold_stream_max_T_hot + delta_T_min):
+                        if hot_stream_max_T_hot >= (cold_stream_max_T_hot + hx_delta_T):
                             hx_cold_stream_T_hot = cold_stream_max_T_hot
                         else:
-                            hx_cold_stream_T_hot = hot_stream_max_T_hot - delta_T_min
+                            hx_cold_stream_T_hot = hot_stream_max_T_hot - hx_delta_T
 
                         # Split Stream in
                         hx_power = cold_stream_mcp * (hx_cold_stream_T_hot - hx_cold_stream_T_cold)
@@ -139,10 +155,10 @@ def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
                         cold_stream_index = index_stream_in
 
                         # Compute/Check Temperatures
-                        if cold_stream_min_T_cold <= (hot_stream_min_T_cold - delta_T_min):
+                        if cold_stream_min_T_cold <= (hot_stream_min_T_cold - hx_delta_T):
                             hot_stream_T_cold = hot_stream_min_T_cold
                         else:
-                            hot_stream_T_cold = cold_stream_min_T_cold + delta_T_min
+                            hot_stream_T_cold = cold_stream_min_T_cold + hx_delta_T
 
                         hx_power = hot_stream_mcp * (hot_stream_T_hot - hot_stream_T_cold)
                         cold_stream_T_cold = cold_stream_min_T_cold
@@ -171,14 +187,15 @@ def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
             ###########################################################################################################
 
             elif special_case_2 == True:
-                print('special_case_2',special_case_2)
+
                 # get first pair combinations between the streams to increase pinch analysis variability
                 for index_stream_out in df_streams_out.index.values:
                     for index_stream_in in index_streams_in_to_split:
+
                         # only relevant to look for streams_out whose temperature can meet streams_in temperature range
-                        if (df_streams_out.loc[index_stream_out]['Closest_Pinch_Temperature'] + delta_T_min <
+                        if (df_streams_out.loc[index_stream_out]['Closest_Pinch_Temperature'] + hx_delta_T <
                             df_streams_in.loc[index_stream_in]['Supply_Temperature'] and above_pinch is True) or (
-                                df_streams_out.loc[index_stream_out]['Closest_Pinch_Temperature'] - delta_T_min >
+                                df_streams_out.loc[index_stream_out]['Closest_Pinch_Temperature'] - hx_delta_T >
                                 df_streams_in.loc[index_stream_in]['Supply_Temperature'] and above_pinch is False):
                             pairs += [[index_stream_out, index_stream_in]]
 
@@ -191,13 +208,11 @@ def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
 
                         hot_stream_index = index_stream_in
                         cold_stream_index = index_stream_out
-
                         hx_cold_stream_T_cold = df_streams_out_copy.loc[index_stream_out]['Closest_Pinch_Temperature']
                         cold_stream_max_T_hot = df_streams_out_copy.loc[index_stream_out]['Target_Temperature']
                         cold_stream_mcp = df_streams_out_copy.loc[index_stream_out]['mcp']
                         cold_stream = df_streams_out_copy.loc[index_stream_out]
                         hot_stream = df_streams_in_copy.loc[index_stream_in]
-
                         hot_stream_max_T_hot = df_streams_in_copy.loc[index_stream_in]['Supply_Temperature']
                         hot_stream_T_cold = df_streams_in_copy.loc[index_stream_in]['Closest_Pinch_Temperature']
                         hot_stream_mcp = df_streams_in_copy.loc[index_stream_in]['mcp']
@@ -206,10 +221,10 @@ def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
                         if df_streams_in_copy.loc[index_stream_in]['mcp'] < df_streams_out_copy.loc[index_stream_out]['mcp']:
 
                             # Compute/Check Temperatures
-                            if hot_stream_max_T_hot >= (cold_stream_max_T_hot + delta_T_min):
+                            if hot_stream_max_T_hot >= (cold_stream_max_T_hot + hx_delta_T):
                                 hx_cold_stream_T_hot = cold_stream_max_T_hot
                             else:
-                                hx_cold_stream_T_hot = hot_stream_max_T_hot - delta_T_min
+                                hx_cold_stream_T_hot = hot_stream_max_T_hot - hx_delta_T
 
                             # Split Stream Out
                             hx_power = hot_stream_mcp * (hx_cold_stream_T_hot - hx_cold_stream_T_cold)
@@ -235,10 +250,10 @@ def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
                         # stream_in larger mcp than stream_out
                         else:
                             # Compute/Check Temperatures
-                            if hot_stream_max_T_hot >= (cold_stream_max_T_hot + delta_T_min):
+                            if hot_stream_max_T_hot >= (cold_stream_max_T_hot + hx_delta_T):
                                 hx_cold_stream_T_hot = cold_stream_max_T_hot
                             else:
-                                hx_cold_stream_T_hot = hot_stream_max_T_hot - delta_T_min
+                                hx_cold_stream_T_hot = hot_stream_max_T_hot - hx_delta_T
 
                             # Split Stream in
                             hx_power = cold_stream_mcp * (hx_cold_stream_T_hot - hx_cold_stream_T_cold)
@@ -277,10 +292,10 @@ def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
                         if df_streams_in_copy.loc[index_stream_in]['mcp'] < df_streams_out_copy.loc[index_stream_out]['mcp']:
 
                             # Compute/Check Temperatures
-                            if cold_stream_min_T_cold <= (hot_stream_min_T_cold - delta_T_min):
+                            if cold_stream_min_T_cold <= (hot_stream_min_T_cold - hx_delta_T):
                                 hot_stream_T_cold = hot_stream_min_T_cold
                             else:
-                                hot_stream_T_cold = cold_stream_min_T_cold + delta_T_min
+                                hot_stream_T_cold = cold_stream_min_T_cold + hx_delta_T
 
                             cold_stream_T_cold = cold_stream_min_T_cold
                             hx_power = cold_stream_mcp * (cold_stream_T_hot - cold_stream_T_cold)
@@ -303,10 +318,10 @@ def special_case(df_streams_in, df_streams_out, above_pinch,delta_T_min):
                         else:
 
                             # Compute/Check Temperatures
-                            if cold_stream_min_T_cold <= (hot_stream_min_T_cold - delta_T_min):
+                            if cold_stream_min_T_cold <= (hot_stream_min_T_cold - hx_delta_T):
                                 hot_stream_T_cold = hot_stream_min_T_cold
                             else:
-                                hot_stream_T_cold = cold_stream_min_T_cold + delta_T_min
+                                hot_stream_T_cold = cold_stream_min_T_cold + hx_delta_T
 
                             hx_power = hot_stream_mcp * (hot_stream_T_hot - hot_stream_T_cold)
                             cold_stream_T_cold = cold_stream_min_T_cold

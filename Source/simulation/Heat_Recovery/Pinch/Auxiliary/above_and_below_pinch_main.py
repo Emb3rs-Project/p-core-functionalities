@@ -69,7 +69,7 @@ RETURN:
 """
 
 from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
-from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.special_case import special_case
+from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.special_cases import special_cases
 from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.testing_check_streams_number import testing_check_streams_number
 from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.testing_all_first_match_pinch_combinations import testing_all_first_match_pinch_combinations
 from copy import deepcopy
@@ -163,7 +163,7 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_
         # 6) match remaining streams according to power - without split
 
         # special case
-        all_cases_pretreatment = special_case(df_streams_in, df_streams_out, above_pinch, hx_delta_T)
+        all_cases_pretreatment = special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T)
 
         # check all_cases_pretreatment
         for case_pretreatment in all_cases_pretreatment:
