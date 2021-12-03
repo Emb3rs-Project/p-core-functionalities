@@ -22,13 +22,13 @@ INFO: The pinch design is always made from the pinch temperature to outwards. Th
                 6) update df_streams_in or df_streams_out
 
                 if df_streams in not yet empty (meaning there are still streams_in reaching pinch):
-                    7.a) call make_combinations and provide df_streams_in and df_streams_out updated - go to step 1
+                    7) call make_combinations and provide df_streams_in and df_streams_out updated - go to step 1
                 else:
-                    8.a) append design solution
+                    8) append design solution
 
-        9) return to previous state of recursive function
+        9) when both for cycles reach the end, return to previous state (step 7 and jump to  step 4 or step 3)
 
-    ** new state used here as the state of which the decision tree is. **
+    ** new state used here as the state of which the decision tree is **
 
 
 ##############################
