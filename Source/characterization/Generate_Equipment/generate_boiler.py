@@ -36,7 +36,7 @@ OUTPUT: object Boiler.
 """
 
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
-from ....General.Auxiliary_General.combustion import T_flue_gas, combustion_mass_flows
+from ....General.Auxiliary_General.combustion import compute_flue_gas_temperature, combustion_mass_flows
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.fluid_material import fluid_material_cp
@@ -123,7 +123,7 @@ class Boiler():
         excess_heat_supply_capacity = thermal_capacity - self.supply_capacity
 
         # supply temperature [ºC]
-        excess_heat_supply_temperature, inflow_target_temperature = T_flue_gas(self.supply_capacity,
+        excess_heat_supply_temperature, inflow_target_temperature = compute_flue_gas_temperature(self.supply_capacity,
                                                                                self.fuel_type,
                                                                                fuel_consumption,
                                                                                m_flue_gas)

@@ -1,12 +1,27 @@
+"""
+alisboa/jmcunha
+
+
+##############################
+INFO: compute delta_T_lmtd for counter flow heat exchangers
+
+
+##############################
+INPUT:
+        # T_source_hot  [ºC]
+        # T_source_cold  [ºC]
+        # T_sink_hot  [ºC]
+        # T_sink_cold  [ºC]
+
+
+##############################
+RETURN:
+        # delta_T_lmtd
+
+
+"""
+
 import numpy as np
-
-def compute_delta_T_lmtd_paralel(T_source_in,T_source_out,T_sink_in,T_sink_out):
-
-    delta_T_in = T_source_in - T_sink_in
-    delta_T_out = T_source_out - T_sink_out
-    delta_T_lmtd = (delta_T_in - delta_T_out) / np.log(delta_T_in / delta_T_out)
-
-    return delta_T_lmtd
 
 def compute_delta_T_lmtd_counter(T_source_hot,T_source_cold,T_sink_hot,T_sink_cold):
 
@@ -17,7 +32,6 @@ def compute_delta_T_lmtd_counter(T_source_hot,T_source_cold,T_sink_hot,T_sink_co
         delta_T_lmtd = delta_T_in
     else:
         delta_T_lmtd = (delta_T_in - delta_T_out) / np.log(delta_T_in / delta_T_out)
-
 
 
     return delta_T_lmtd

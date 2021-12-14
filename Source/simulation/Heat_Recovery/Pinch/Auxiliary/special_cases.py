@@ -19,7 +19,7 @@ INFO: After testing the code, two specific/special cases could occur that would 
       than stream_in and vice-versa. This option, may make splits on both df_streams_in and df_streams_out, since it was
       tested that it could give more final design options
 
-      Latly, update the correspondent df_streams_in df_streams_out with the split stream
+      Lastly, update the correspondent df_streams_in df_streams_out with the split stream
 
       Both solutions will create an additional stream, due to the split. Case 1 makes number of streams_in larger than
       number of streams_out, which will be corrected on the next function on the above_below_pinch_main, named
@@ -168,7 +168,7 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
 
                         new_row = cold_stream.copy()  # split stream has same info
                         new_row['mcp'] -= split_stream_mcp  # correct mcp
-                        new_row.name = (int(cold_stream_index) * 100)  # new ID
+                        new_row.name = (int(cold_stream_index) * 165)  # new ID
                         new_row['Split_Check'] = False
 
                         # Add Split Stream to DFs

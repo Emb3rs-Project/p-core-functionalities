@@ -1,14 +1,28 @@
+""""
+alisboa/jmcunha
+
+
+##############################
+INFO: Get climatic conditions according to the location in a hourly profile.
+
+
+##############################
+INPUT:
+        # latitude  [º]
+        # longitude  [º]
+
+
+##############################
+RETURN: df (year hourly profile) with:
+
+        # T_exterior
+        # T_sky
+        # Q_beam_solar_collector
+        # Q_dif_solar_collector
+
+
 """
-@author: jmcunha/alisboa
 
-Info: Climate API
-      Schedule with 1h time steps.
-
-Input: Location (latitude,longitude)
-
-Return: [['T_exterior','T_sky','Q_beam_solar_collector','Q_dif_solar_collector'],..]
-
-"""
 import numpy as np
 import math
 import pvlib
@@ -19,8 +33,8 @@ import pandas as pd
 def solar_collector_climate_api(latitude,longitude):
 
     # Initialize Arrays ------
-    output = np.zeros((8760,4))
-    solar_collector_inclination = latitude-15
+    solar_collector_inclination = latitude - 15
+
     # Create Output DF
     df_col_names = ['T_exterior','T_sky','Q_beam_solar_collector','Q_dif_solar_collector']
     df_output = pd.DataFrame(columns=df_col_names)

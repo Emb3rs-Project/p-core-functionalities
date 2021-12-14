@@ -1,11 +1,26 @@
 """
-@author: jmcunha/alisboa
+alisboa/jmcunha
 
-Info: Receives user schedule data and returns 1h time step profile  of 1 (operating) and 0 (not operating).
+
+##############################
+INFO: Receives user schedule data and returns 1h time step profile  of 1 (operating) and 0 (not operating).
+
+
+##############################
+INPUT:
+        # saturday_on - 1=yes, 0=no
+        # sunday_on- 1=yes, 0=no
+        # shutdown_periods - array with arrays of shutdown days intervals, e.g, [[2,10],[361-365]]
+        # daily_periods  - array with arrays of daily intervals, e.g. [[9,12],[14,17]]
+
+
+##############################
+RETURN:
+        # profile_hour - array with 1 and 0
+
 
 """
 
-import numpy as np
 import datetime
 
 def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
@@ -45,12 +60,12 @@ def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
     # Generate Profile
     for i in range(year_hours):
 
-        op = 1 #on operation
+        op = 1  # on operation
 
-        day[i] = round((i - 11.9) / 24) + 1 # day starting at 1 - 1st January
-        hday[i] = i - (day[i]-1) * 24 # hour starting at 0 - 00:00
-        week[i] = round((day[i] - 3.51 + weekday[0])/7)
-        weekday[i] = (day[i]-1) - week[i] * 7 + weekday[0]
+        day[i] = round((i - 11.9) / 24) + 1  # day starting at 1 - 1st January
+        hday[i] = i - (day[i] - 1) * 24  # hour starting at 0 - 00:00
+        week[i] = round((day[i] - 3.51 + weekday[0]) / 7)
+        weekday[i] = (day[i] - 1) - week[i] * 7 + weekday[0]
 
         # Check if Shutdown/Holiday Periods
         for j in range(len(shutdown_periods)):

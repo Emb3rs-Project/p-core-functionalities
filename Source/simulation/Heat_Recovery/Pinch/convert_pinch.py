@@ -32,17 +32,25 @@ INPUT: object with:
         # input_objects  - equipments/processes/isolated stream
 
             When an equipment:
-            #
-
+                # id
+                # streams
+                # fuel_type
 
             When a process:
-            #
+                # id
+                # object_type
+                # equipment
+                # streams
 
-
-            When a isolated stream:
-            #
-
-
+            When a isolated stream or streams (from the above objects):
+                # id
+                # fluid
+                # flowrate
+                # supply_temperature
+                # target_temperature
+                # object_id
+                # schedule - vector with 1 and 0
+                # hourly_generation  [kWh]
 
 
 ############################################################
