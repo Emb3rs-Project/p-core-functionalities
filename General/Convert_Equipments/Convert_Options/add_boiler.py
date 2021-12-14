@@ -1,17 +1,60 @@
 """
-@author: jmcunha/alisboa
+alisboa/jmcunha
+
+
+##############################
+INFO: create boiler object with all necessary info when performing sources and sinks conversion to the grid.
+      The most important attribute of the object is data_teo, which contains all the info necessary for TEO module, such
+      as, the equipment turnkey linearized with power, OM fix/variable, emissions, efficiency and others (see below).
+
+
+##############################
+INPUT:
+        # fuel_type
+        # country
+        # consumer_type - e.g. 'household' or 'non-household'
+        # supply_capacity  [kW]
+        # power_fraction - design equipment for max and fraction power; value between 0 and 1
+        # supply_temperature  [ºC]
+        # return_temperature  [ºC]
+
+
+##############################
+RETURN: object with all technology info:
+        # object_type
+        # equipment_sub_type
+        # fuel_type
+        # country
+        # global_conversion_efficiency
+        # fuel_properties
+        # supply_temperature  [ºC]
+        # return_temperature  [ºC]
+        # data_teo - dictionary with equipment data needed by the TEO
+
+            Where in data_teo, the following keys:
+                #  equipment - equipment name
+                #  fuel_type
+                #  max_input_capacity - max power the equipment can convert [kW]
+                #  turnkey_a  [€/kW]
+                #  turnkey_b  [€]
+                #  conversion_efficiency   []
+                #  om_fix  [€/year.kW]
+                #  om_var  [€/kWh]
+                #  emissions   [kg.CO2/kWh thermal]
 
 """
+
 
 from ....KB_General.equipment_details import equipment_details
 from ....KB_General.fuel_properties import fuel_properties
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
+
 class Add_Boiler():
 
     def __init__(self, fuel_type, country, consumer_type, supply_capacity, power_fraction, supply_temperature, return_temperature):
 
-        # Defined Vars ----
+        # Defined Vars
         self.object_type = 'equipment'
 
         if supply_temperature > 100:
@@ -19,30 +62,22 @@ class Add_Boiler():
         else:
             self.equipment_sub_type = 'hot_water_boiler'
 
+        # get equipment characteristics
         self.fuel_type = fuel_type
         self.fuel_properties = fuel_properties(country, self.fuel_type, consumer_type)
-
-        # INPUT ----
-        # Equipment Temperatures
         self.supply_temperature = supply_temperature  # equipment directly supplies grid
         self.return_temperature = return_temperature
-
-
-        # Equipment Supply Capacity
         self.supply_capacity = supply_capacity
 
         if fuel_type == 'electricity':
             self.global_conversion_efficiency = 0.99
         else:
-            self.global_conversion_efficiency, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type,
-                                                                                           self.supply_capacity)
+            self.global_conversion_efficiency, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type, self.supply_capacity)
 
-        # COMPUTE
         # Design Equipment
         # 100% power
         info_max_power = self.design_equipment(power_fraction=1)
-
-        # Power Fraction
+        # power fraction
         info_power_fraction = self.design_equipment(power_fraction)
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
@@ -53,32 +88,26 @@ class Add_Boiler():
 
         self.data_teo = {
             'equipment': self.equipment_sub_type,
-            'fuel_type':self.fuel_type,
+            'fuel_type': self.fuel_type,
             'max_input_capacity': info_max_power['supply_capacity'] / self.global_conversion_efficiency,  # [kW]
             'turnkey_a': turnkey_a,  # [€/kW]
             'turnkey_b': turnkey_b,  # [€]
             'conversion_efficiency': self.global_conversion_efficiency,  # []
             'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/year.kW]
-            'om_var': info_max_power['om_var'] / ( info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/kWh]
+            'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/kWh]
             'emissions': self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh thermal]
+        }
 
-            }
 
     def design_equipment(self, power_fraction):
 
-        # COMPUTE ----
-        # Supply Heat provided by the Boiler
         supply_capacity = self.supply_capacity * power_fraction  # [kW]
+        global_conversion_efficiency_equipment, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type, supply_capacity)
 
-        # Turnkey Cost -----
-        global_conversion_efficiency_equipment, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type,
-                                                                                                supply_capacity)
 
-        # OPEX
-        fuel_power_equipment = supply_capacity / self.global_conversion_efficiency
+        fuel_power_equipment = supply_capacity / self.global_conversion_efficiency  # fuel power to get equipment running
         om_var_total = self.fuel_properties['price'] * fuel_power_equipment
 
-        # Create data for TEO ---
         info = {
             'supply_capacity': supply_capacity,  # [kW]
             'turnkey': turnkey_total,  # [€]
