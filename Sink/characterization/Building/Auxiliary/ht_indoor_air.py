@@ -1,26 +1,45 @@
-""""
+"""
+alisboa/jmcunha
 
-Info: Heat Transfer Convection with indoor air. Compute heat [W] exchanged between surfaces and floor's indoor air .
+
+##############################
+INFO: Compute heat transfer, by convection, between all surfaces and indoor air.
+
+
+##############################
+INPUT:
+        # T_interior  [ºC]
+        # horizontal_surfaces - array with surfaces dict
+        # vertical_surfaces - array with surfaces dict
+
+        Where in each surface of horizontal_surfaces/vertical_surfaces, the following keys:
+            # temperature  [ºC]
+            # area  [m2]
+
+
+##############################
+OUTPUT:
+        # Q_convection  [W]
+
 
 """
 
 from .....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
 from .....Sink.characterization.Building.Auxiliary.h_convection_horizontal import h_convection_horizontal
 
-def ht_indoor_air(T_interior,surfaces_horizontal,surfaces_vertical):
 
-    Q_conv = 0
+def ht_indoor_air(T_interior, horizontal_surfaces, vertical_surfaces):
 
-    for surface in surfaces_vertical:
+    Q_convection = 0
+
+    for surface in vertical_surfaces:
         if surface['area'] != 0:
             h_vertical = h_convection_vertical(surface['temperature'], T_interior)
-            Q_conv += (surface['temperature'] - T_interior) * h_vertical * surface['area']
+            Q_convection += (surface['temperature'] - T_interior) * h_vertical * surface['area']
 
-    for surface in surfaces_horizontal:
+    for surface in horizontal_surfaces:
         if surface['area'] != 0:
             h_horizontal = h_convection_horizontal(surface['temperature'], T_interior)
-            Q_conv += (surface['temperature'] - T_interior) * h_horizontal * surface['area']
+            Q_convection += (surface['temperature'] - T_interior) * h_horizontal * surface['area']
 
-
-
-    return Q_conv
+    return Q_convection

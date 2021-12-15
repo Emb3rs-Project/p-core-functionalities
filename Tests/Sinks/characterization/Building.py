@@ -43,6 +43,8 @@ class Building():
         self.T_heat_on = 22  # heating start temperature working hours [ºC]
         self.T_off_min = 12  # heating start temperature off peak [ºC]
         self.T_off_max = 28  # cooling start temperature off peak [ºC]
+        self.emissivity_wall = 0.9
+        self. emissivity_glass = 0.9
 
         self.target_temperature_cool = 7  # Cooling
         self.supply_temperature_cool = 12

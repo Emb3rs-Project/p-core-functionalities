@@ -59,7 +59,8 @@ INPUT: object with:
             # renewal_air_per_person  [m3/s.person]
             # vol_dhw_set - daily water consumption [m3]
             # Q_gain_per_floor
-
+            # emissivity_wall
+            # emissivity_glass
 
 ##############################
 OUTPUT: vector with 2 dictionaries, regarding hot and cooling stream needs with:
@@ -83,7 +84,7 @@ from ....Sink.characterization.Building.Auxiliary.building_climate_api import bu
 from ....Sink.characterization.Building.Auxiliary.wall_area import wall_area
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
 import copy
-from ....Sink.characterization.Building.Auxiliary.building_sky_heat_loss import building_sky_heat_loss
+from ....Sink.characterization.Building.Auxiliary.surface_outside_rad_heat_loss import surface_outside_rad_heat_loss
 from ....Sink.characterization.Building.Auxiliary.ht_indoor_air import ht_indoor_air
 from ....Sink.characterization.Building.Auxiliary.building_dhw import building_dhw
 from ....General.Auxiliary_General.month_last_hour import month_last_hour
@@ -144,6 +145,8 @@ def building(in_var):
         renewal_air_per_person = in_var.renewal_air_per_person  # [m3/s.person]
         vol_dhw_set = in_var.vol_dhw_set
         Q_gain_per_floor = in_var.Q_gain_per_floor
+        emissivity_wall = in_var.emissivity_wall
+        emissivity_glass = in_var.emissivity_glass
 
     except:
         # or get data
@@ -187,6 +190,9 @@ def building(in_var):
             Q_gain_per_floor = number_person_per_floor * 108 + (15 + 12) * area_floor  # occupancy and appliances heat gains [W]
             renewal_air_per_person = 10 * 10 ** (-3)  # [m3/s] per person
 
+        emissivity_wall = 0.9
+        emissivity_glass = 0.85
+
 
 
     # DEFINED VARS ----------------------------------------------------------------------------------
@@ -197,11 +203,11 @@ def building(in_var):
     T_ground = 15  # ground temperature [ºC]
     T_net = 15  # domestic water inlet temperature [ºC]
     T_dhw = 38  # domestic hot water (dhw) temperature [ºC]
-    u_glass = 1/(1/u_glass - 0.13 - 0.04)
-    u_wall = 1/(1/u_wall - 0.13 - 0.04)  # Thermal conductivity between inner/outer walls surface with wall middle [W/m2.K]
-    u_wall = u_wall*2   # Thermal conductivity between inner/outer walls surface with wall middle [W/m2.K]
-    u_roof = 1/(1/u_roof - 0.13 - 0.04)*2
-    u_floor = 1/(1/u_floor - 0.13 - 0.04)*2
+    u_glass = 1 / (1 / u_glass - 0.13 - 0.04)
+    u_wall = 1 / (1 / u_wall - 0.13 - 0.04)  # Thermal conductivity between inner/outer walls surface with wall middle [W/m2.K]
+    u_wall = u_wall * 2  # Thermal conductivity between inner/outer walls surface with wall middle [W/m2.K]
+    u_roof = 1 / (1 / u_roof - 0.13 - 0.04) * 2
+    u_floor = 1 / (1 / u_floor - 0.13 - 0.04) * 2
     u_deck = u_roof
     alpha_roof = alpha_wall
 
@@ -253,7 +259,7 @@ def building(in_var):
     c_S_wall = cp_wall * area_S_wall
     c_E_wall = cp_wall * area_E_wall
     c_W_wall = cp_wall * area_W_wall
-    emissivity_facade = 0.9
+
 
     # SIMULATION ----------------------------------------------
     # Initialize vars
@@ -345,29 +351,29 @@ def building(in_var):
             Q_sun_floor = (Q_sun_N_facade * area_N_glass + Q_sun_S_facade * area_S_glass + Q_sun_E_facade * area_E_glass + Q_sun_W_facade * area_W_glass) * tau_glass  # total transmitted radiation by glass to floor/deck [W]
 
             # Radiation Heat Transfer
-            Q_rad_N_glass = ht_radiation_vertical_surface(glass_in_N,glass_in_E,glass_in_S,glass_in_W,wall_in_E,wall_in_S,wall_in_W,deck_below_in,deck_above_in)  # North Glass
-            Q_rad_N_wall = ht_radiation_vertical_surface(wall_in_N,glass_in_E,glass_in_S,glass_in_W,wall_in_E,wall_in_S,wall_in_W,deck_below_in,deck_above_in)  # North Wall
-            Q_rad_E_glass = ht_radiation_vertical_surface(glass_in_E,glass_in_N,glass_in_S,glass_in_W,wall_in_N,wall_in_S,wall_in_W,deck_below_in,deck_above_in)
-            Q_rad_E_wall = ht_radiation_vertical_surface(wall_in_E,glass_in_N,glass_in_S,glass_in_W,wall_in_N,wall_in_S,wall_in_W,deck_below_in,deck_above_in)
-            Q_rad_S_glass = ht_radiation_vertical_surface(glass_in_S,glass_in_E,glass_in_N,glass_in_W,wall_in_E,wall_in_N,wall_in_W,deck_below_in,deck_above_in)
-            Q_rad_S_wall = ht_radiation_vertical_surface(wall_in_S,glass_in_E,glass_in_N,glass_in_W,wall_in_E,wall_in_N,wall_in_W,deck_below_in,deck_above_in)
-            Q_rad_W_glass = ht_radiation_vertical_surface(glass_in_W,glass_in_E,glass_in_S,glass_in_N,wall_in_E,wall_in_S,wall_in_N,deck_below_in,deck_above_in)
-            Q_rad_W_wall = ht_radiation_vertical_surface(wall_in_W,glass_in_E,glass_in_S,glass_in_N,wall_in_E,wall_in_S,wall_in_N,deck_below_in,deck_above_in)
-            Q_rad_deck_below = ht_radiation_horizontal_surface(deck_below_in,wall_in_W,glass_in_W,glass_in_E,glass_in_S,glass_in_N,wall_in_E,wall_in_S,wall_in_N,deck_above_in)
-            Q_rad_deck_above = ht_radiation_horizontal_surface(deck_above_in,wall_in_W,glass_in_W,glass_in_E,glass_in_S,glass_in_N,wall_in_E,wall_in_S,wall_in_N,deck_below_in)
-            Q_rad_roof = ht_radiation_horizontal_surface(roof_in, wall_in_W, glass_in_W, glass_in_E, glass_in_S, glass_in_N, wall_in_E,wall_in_S, wall_in_N, deck_above_in)
-            Q_rad_floor = ht_radiation_horizontal_surface(floor_in, wall_in_W, glass_in_W, glass_in_E, glass_in_S, glass_in_N, wall_in_E,wall_in_S, wall_in_N, deck_below_in)
+            Q_rad_N_glass = ht_radiation_vertical_surface(glass_in_N,glass_in_E,glass_in_S,glass_in_W,wall_in_E,wall_in_S,wall_in_W,deck_below_in,deck_above_in, emissivity_wall,emissivity_glass)  # North Glass
+            Q_rad_N_wall = ht_radiation_vertical_surface(wall_in_N,glass_in_E,glass_in_S,glass_in_W,wall_in_E,wall_in_S,wall_in_W,deck_below_in,deck_above_in, emissivity_wall,emissivity_glass)  # North Wall
+            Q_rad_E_glass = ht_radiation_vertical_surface(glass_in_E,glass_in_N,glass_in_S,glass_in_W,wall_in_N,wall_in_S,wall_in_W,deck_below_in,deck_above_in, emissivity_wall,emissivity_glass)
+            Q_rad_E_wall = ht_radiation_vertical_surface(wall_in_E,glass_in_N,glass_in_S,glass_in_W,wall_in_N,wall_in_S,wall_in_W,deck_below_in,deck_above_in, emissivity_wall,emissivity_glass)
+            Q_rad_S_glass = ht_radiation_vertical_surface(glass_in_S,glass_in_E,glass_in_N,glass_in_W,wall_in_E,wall_in_N,wall_in_W,deck_below_in,deck_above_in, emissivity_wall,emissivity_glass)
+            Q_rad_S_wall = ht_radiation_vertical_surface(wall_in_S,glass_in_E,glass_in_N,glass_in_W,wall_in_E,wall_in_N,wall_in_W,deck_below_in,deck_above_in, emissivity_wall,emissivity_glass)
+            Q_rad_W_glass = ht_radiation_vertical_surface(glass_in_W,glass_in_E,glass_in_S,glass_in_N,wall_in_E,wall_in_S,wall_in_N,deck_below_in,deck_above_in, emissivity_wall,emissivity_glass)
+            Q_rad_W_wall = ht_radiation_vertical_surface(wall_in_W,glass_in_E,glass_in_S,glass_in_N,wall_in_E,wall_in_S,wall_in_N,deck_below_in,deck_above_in, emissivity_wall,emissivity_glass)
+            Q_rad_deck_below = ht_radiation_horizontal_surface(deck_below_in,wall_in_W,glass_in_W,glass_in_E,glass_in_S,glass_in_N,wall_in_E,wall_in_S,wall_in_N,deck_above_in,emissivity_wall,emissivity_glass)
+            Q_rad_deck_above = ht_radiation_horizontal_surface(deck_above_in,wall_in_W,glass_in_W,glass_in_E,glass_in_S,glass_in_N,wall_in_E,wall_in_S,wall_in_N,deck_below_in,emissivity_wall,emissivity_glass)
+            Q_rad_roof = ht_radiation_horizontal_surface(roof_in, wall_in_W, glass_in_W, glass_in_E, glass_in_S, glass_in_N, wall_in_E,wall_in_S, wall_in_N, deck_above_in,emissivity_wall,emissivity_glass)
+            Q_rad_floor = ht_radiation_horizontal_surface(floor_in, wall_in_W, glass_in_W, glass_in_E, glass_in_S, glass_in_N, wall_in_E,wall_in_S, wall_in_N, deck_below_in,emissivity_wall,emissivity_glass)
 
             # Sky Radiation Heat Losses
-            Q_infra_N_outer_wall = building_sky_heat_loss(emissivity_facade, T_N_wall_out, T_sky, T_exterior, math.pi/2)  # Radiation heat loss [W/m2]
-            Q_infra_S_outer_wall = building_sky_heat_loss(emissivity_facade,T_S_wall_out, T_sky, T_exterior, math.pi/2)
-            Q_infra_E_outer_wall = building_sky_heat_loss(emissivity_facade,T_E_wall_out, T_sky, T_exterior, math.pi/2)
-            Q_infra_W_outer_wall = building_sky_heat_loss(emissivity_facade,T_W_wall_out, T_sky, T_exterior, math.pi/2)
-            Q_infra_N_outer_glass = building_sky_heat_loss(emissivity_facade,T_N_glass_out, T_sky, T_exterior, math.pi/2)
-            Q_infra_S_outer_glass = building_sky_heat_loss(emissivity_facade,T_S_glass_out, T_sky, T_exterior, math.pi/2)
-            Q_infra_E_outer_glass = building_sky_heat_loss(emissivity_facade,T_E_glass_out, T_sky, T_exterior, math.pi/2)
-            Q_infra_W_outer_glass = building_sky_heat_loss(emissivity_facade,T_W_glass_out, T_sky, T_exterior, math.pi/2)
-            Q_infra_roof_out = building_sky_heat_loss(emissivity_facade,T_roof_out, T_sky, T_exterior, 0)
+            Q_infra_N_outer_wall = surface_outside_rad_heat_loss(emissivity_wall, T_N_wall_out, T_sky, T_exterior, math.pi/2)  # Radiation heat loss [W/m2]
+            Q_infra_S_outer_wall = surface_outside_rad_heat_loss(emissivity_wall,T_S_wall_out, T_sky, T_exterior, math.pi/2)
+            Q_infra_E_outer_wall = surface_outside_rad_heat_loss(emissivity_wall,T_E_wall_out, T_sky, T_exterior, math.pi/2)
+            Q_infra_W_outer_wall = surface_outside_rad_heat_loss(emissivity_wall,T_W_wall_out, T_sky, T_exterior, math.pi/2)
+            Q_infra_N_outer_glass = surface_outside_rad_heat_loss(emissivity_glass,T_N_glass_out, T_sky, T_exterior, math.pi/2)
+            Q_infra_S_outer_glass = surface_outside_rad_heat_loss(emissivity_glass,T_S_glass_out, T_sky, T_exterior, math.pi/2)
+            Q_infra_E_outer_glass = surface_outside_rad_heat_loss(emissivity_glass,T_E_glass_out, T_sky, T_exterior, math.pi/2)
+            Q_infra_W_outer_glass = surface_outside_rad_heat_loss(emissivity_glass,T_W_glass_out, T_sky, T_exterior, math.pi/2)
+            Q_infra_roof_out = surface_outside_rad_heat_loss(emissivity_wall,T_roof_out, T_sky, T_exterior, 0)
 
             # Each floor Heat balance of indoor temperature [W]
             surfaces_vertical = [glass_in_N, glass_in_E, glass_in_S, glass_in_W, wall_in_E, wall_in_S, wall_in_W,wall_in_N]

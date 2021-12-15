@@ -3,8 +3,8 @@ alisboa/jmcunha
 
 
 ##############################
-INFO: Greenhouse Simulation. Simulates heat  over the year, according to greenhouse specifications
-    and climate weather data
+INFO: Greenhouse Simulation. Simulates the heat needs over the year according to the greenhouse specifications
+    and climate weather data of the location
 
 
 ##############################
@@ -64,10 +64,10 @@ OUTPUT: vector with 2 dictionaries, regarding hot and cooling stream needs with:
 
 import json
 import math
+import copy
 from ....Sink.characterization.Building.Auxiliary.building_climate_api import building_climate_api
 from ....Sink.characterization.Building.Auxiliary.wall_area import wall_area
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
-import copy
 from ....General.Auxiliary_General.month_last_hour import month_last_hour
 from ....Sink.characterization.Building.Auxiliary.h_convection_horizontal import h_convection_horizontal
 from ....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical

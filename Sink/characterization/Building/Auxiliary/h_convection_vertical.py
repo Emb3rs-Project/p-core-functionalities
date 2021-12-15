@@ -1,12 +1,29 @@
-""""
+"""
+alisboa/jmcunha
 
-Info: Vertical heat transfer coefficient [W/m2.K].
+
+##############################
+INFO: Vertical heat transfer coefficient (ASHRAE Vertical Wall).
+
+
+##############################
+INPUT:
+        # T_component_1  [ºC]
+        # T_component_2  [ºC]
+
+
+##############################
+OUTPUT:
+        # h_c  [W/m2.K]
+
 
 """
-def h_convection_vertical (T_1,T_2):
 
-    delta_T = abs(T_1-T_2)
 
-    h = 1.31 * delta_T**(1/3) # [W/m2.K] - ref:https://bigladdersoftware.com/epx/docs/8-4/engineering-reference/inside-heat-balance.html#inside-heat-balance
+def h_convection_vertical(T_component_1, T_component_2):
 
-    return h
+    delta_T = abs(T_component_1 - T_component_2)
+
+    h_c = 1.31 * delta_T ** (1 / 3)
+
+    return h_c
