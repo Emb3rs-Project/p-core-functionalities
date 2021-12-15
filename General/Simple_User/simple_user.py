@@ -8,32 +8,37 @@ INPUT: object with:
 
         # id
         # type_of_object - 'sink' or 'source'
-        # streams -> vector with dictionaries
+        # streams - array with dictionaries
 
         Where in streams:
-         # supply_temperature [ºC]
-         # target_temperature [ºC]
-         # fluid - name
-         # fluid_cp [kJ/kg.K]
-         # flowrate [kg/h]
-         # saturday_on - 1 (yes)  or 0 (no)
-         # sunday_on - 1 (yes)  or 0 (no)
-         # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
-         # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
+         # streams = {
+         #          'supply_temperature' [ºC]
+         #          'target_temperature' [ºC]
+         #          'fluid - name
+         #          'fluid_cp' [kJ/kg.K]
+         #          'flowrate' [kg/h]
+         #          'saturday_on' - 1 (yes)  or 0 (no)
+         #          'sunday_on' - 1 (yes)  or 0 (no)
+         #          'shutdown_periods' - array with day arrays e.g. [[130,140],[289,299]]
+         #          'daily_periods' - array with hour arrays; e.g. [[8,12],[15,19]]
+         #          }
 
 ##############################
-OUTPUT: vector with dictionaries:
+OUTPUT: array with streams dictionaries, e.g. streams_output =[stream_1,stream_2, ... :
 
-        # id - stream id
-        # object_type - stream
-        # object_id - # Object ID associated; e.g. process or equipment ID
-        # fluid - water
-        # stream_type - inflow
-        # schedule - array with 1=working and 0 =not_working
-        # hourly_generation - array [kWh]
-        # capacity [kW]
-        # supply_temperature [ºC]
-        # target_temperature [ºC]
+        Where for example
+        # stream_1 = {
+        #           'id' - stream id
+        #           'object_type' - stream
+        #           'object_id' - # Object ID associated; e.g. process or equipment ID
+        #           'fluid' - water
+        #           'stream_type' - inflow
+        #           'schedule' - array with 1=working and 0 =not_working
+        #           'hourly_generation' - array [kWh]
+        #           'capacity' [kW]
+        #           'supply_temperature' [ºC]
+        #           'target_temperature' [ºC]
+        #           }
 
 """
 
@@ -84,9 +89,8 @@ def simple_user(in_var):
         streams_output.append(info_stream)
 
     # OUTPUT ------------------------
-    output = {"streams": streams_output}
 
     # output = json.dumps(output, indent=2)
 
-    return output
+    return streams_output
 
