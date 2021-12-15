@@ -1,35 +1,52 @@
 """
-@author: jmcunha/alisboa
+alisboa/jmcunha
 
-Info: Receive Fluid type and return appropriate heat exchanger and U value [W/m2.K]
 
-Return: [hx_type,hx_u_value]
+##############################
+INFO: Receives heatx exchanger working fluids and return appropriate heat exchanger and u value.
+
+
+##############################
+INPUT:
+        # fluids to be analyzed: fluid_1, fluid_2
+
+
+##############################
+OUTPUT:
+        # hx_type - e.g. hx_kettle_boiler, hx_economizer, hx_plate
+        # hx_u_value  [W/m2.K]
+
+
 """
+
 
 import json
 import os
 
 
-def hx_type_and_u(fluid_1,fluid_2):
+def hx_type_and_u(fluid_1, fluid_2):
 
     script_dir = os.path.dirname(__file__)
-    abs_file_path = os.path.join(script_dir, "Json_files","medium_list.json" )
+    abs_file_path = os.path.join(script_dir, "Json_files", "medium_list.json")
 
     with open(abs_file_path) as f:
         data = json.load(f)
 
+    # get fluid 1 state
     try:
         state_1 = data[fluid_1]['fluid_type']
     except:
         print('fluid does not exist in db. state = liquid')
         state_1 = 'liquid'
 
+    # get fluid 2 state
     try:
         state_2 = data[fluid_2]['fluid_type']
     except:
         print('fluid does not exist in db. state = liquid')
         state_2 = 'liquid'
 
+    # get hx values
     if state_1 == 'liquid' and state_2 == 'liquid':
         hx_type = 'hx_plate'
         hx_u_value = 2000
@@ -47,6 +64,4 @@ def hx_type_and_u(fluid_1,fluid_2):
         hx_type = 'hx_plate'
         hx_u_value = 800
 
-    return hx_type,hx_u_value
-
-
+    return hx_type, hx_u_value

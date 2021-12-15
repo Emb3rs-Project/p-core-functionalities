@@ -1,9 +1,11 @@
 """
 alisboa/jmcunha
 
+
 ##############################
 INFO: Building Simulation. Simulates heat an cooling consumptions over the year, according to building specifications
     and climate weather data
+
 
 ##############################
 INPUT: object with:

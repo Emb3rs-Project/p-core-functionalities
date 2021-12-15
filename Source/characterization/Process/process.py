@@ -2,7 +2,7 @@
 alisboa/jmcunha
 
 ##############################
-INFO: Create Process Object and characterize its streams.
+INFO: Create Process object and characterize its streams.
 
 ##############################
 INPUT: object with:
@@ -28,7 +28,7 @@ INPUT: object with:
              # mass [kg]
 
          Where in maintenance_data :
-             # capacity [kW]]
+             # capacity [kW]
 
         Where in inflow_data :
              # fluid - fluid name
@@ -60,7 +60,7 @@ class Process:
         self.object_type = 'process'
         self.streams = []
 
-        # INPUT ---
+        # INPUT
         self.id = in_var.id  # process id
         self.equipment = in_var.equipment # heat/cool equipment id associated to
         self.operation_temperature = in_var.operation_temperature

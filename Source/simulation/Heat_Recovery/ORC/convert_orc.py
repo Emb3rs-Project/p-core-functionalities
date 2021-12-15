@@ -13,7 +13,7 @@ INPUT:  consumer_type - 'household' or 'non-household'
 
 
 ##############################
-OUTPUT: vector with multiple dictionaries with:
+OUTPUT: array best_options with multiple dictionaries with:
 
             # streams_id - vector with streams ID
             # electrical_generation_nominal [kW]
@@ -32,16 +32,16 @@ OUTPUT: vector with multiple dictionaries with:
 
 """
 
-from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_aux import convert_aux
 import itertools
-from .....KB_General.equipment_details import equipment_details
 import pandas as pd
+from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_aux import convert_aux
+from .....KB_General.equipment_details import equipment_details
 from .....General.Auxiliary_General.get_country import get_country
 from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.economic_data import economic_data
 
 def convert_orc(in_var):
 
-    # INPUT ----
+    # INPUT
     streams = in_var.streams
     consumer_type = in_var.consumer_type
     location = in_var.location
@@ -76,7 +76,7 @@ def convert_orc(in_var):
     # Intermediate Circuit Characteristics
     intermediate_fluid = 'water'
 
-    # COMPUTE ------
+    # COMPUTE
     # get country
     latitude, longitude = location
     country = get_country(latitude, longitude)
@@ -99,7 +99,7 @@ def convert_orc(in_var):
             if list(subset) != []:
                 combinations.append(list(subset))
 
-    # compute stream convertion info when aggregated and not aggregated
+    # compute stream conversion info when aggregated and not aggregated
     streams_info = {}
     for stream_index in streams_best_five_index:
         stream = streams[stream_index]
@@ -182,8 +182,8 @@ def convert_orc(in_var):
     df_data = economic_data(orc_years_working, country, consumer_type, df_data)
 
     # get best
-    output = df_data.sort_values('electrical_generation_yearly_turnkey', ascending=True).head(n=get_best_number).to_dict(orient='records')
+    best_options = df_data.sort_values('electrical_generation_yearly_turnkey', ascending=True).head(n=get_best_number).to_dict(orient='records')
 
-    return output
+    return best_options
 
 

@@ -1,6 +1,7 @@
 """
 ##############################
-INFO: GET SOURCE CONVERTION TECHNOLOGIES TO SEND TEO
+INFO: Get Source conversion technologies
+
 
 ##############################
 INPUT:  group_of_sources = [source_1,source_2,...] each source with dictionary {source_id,source_location,streams}

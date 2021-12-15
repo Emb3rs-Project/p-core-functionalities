@@ -2,7 +2,8 @@
 alisboa/jmcunha
 
 ##############################
-INFO: GET SINK CONVERTION TECHNOLOGIES TO SEND TEO
+INFO: Get Sink conversion technologies
+
 
 ##############################
 INPUT: group_of_sinks = [sink_1,sink_2,...] each sink with dictionary {sink_id,sink_location,streams}
@@ -71,7 +72,7 @@ from ....General.Convert_Equipments.Convert_Options.add_hx import Add_HX
 from ....General.Convert_Equipments.Convert_Options.add_solar_thermal import Add_Solar_Thermal
 from ....General.Convert_Equipments.Convert_Options.add_heat_pump import Add_Heat_Pump
 from ....General.Convert_Equipments.Convert_Options.add_chp import Add_CHP
-from ....General.Convert_Equipments.Convert_Options.add_absorption_chiller import Add_Absorption_Chiller
+from ....General.Convert_Equipments.Convert_Options.add_thermal_chiller import Add_Thermal_Chiller
 from ....General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from ....General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
 from ....General.Convert_Equipments.Convert_Options.add_electric_chiller import Add_Electric_Chiller
@@ -297,7 +298,7 @@ def convert_sinks(in_var):
                     needed_supply_capacity = stream_nominal_capacity/after_hx_global_conversion_efficiency - hx_power_supply  # [kW]
 
                     # add absorption chiller
-                    info_technology = Add_Absorption_Chiller(country, consumer_type, thermal_chiller_supply_capacity, power_fraction)
+                    info_technology = Add_Thermal_Chiller(country, consumer_type, thermal_chiller_supply_capacity, power_fraction)
 
                     # absorption chiller evaporation temperature not reached
                     if hx_sink_target_temperature < thermal_chiller_evap_T_hot:

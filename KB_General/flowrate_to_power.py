@@ -1,14 +1,26 @@
 """
-INFO: Pumping - [m3/h] to [kW]  from KB_General
+alisboa/jmcunha
 
-INPUT: Flowrate in [kg/h]
 
-OUTPUT: Power in [kW]
+##############################
+INFO: Computes power needed for the given flowrate
+
+
+##############################
+INPUT:
+        # flowrate  [kg/h]
+
+
+##############################
+OUTPUT:
+        # power  [kW]
+
 
 """
 
 import json
 import os
+
 
 def flowrate_to_power(flowrate):
 
@@ -21,6 +33,6 @@ def flowrate_to_power(flowrate):
     pumping_power_c = float(data['circulation_pumping']['pumping_power_c'])
     pumping_power_n = float(data['circulation_pumping']['pumping_power_n'])
 
-    return pumping_power_c * (flowrate) ** (pumping_power_n)  # [m3/h] to [kW]  from KB_General
+    power = pumping_power_c * flowrate ** pumping_power_n  # [kg/h] to [kW]
 
-
+    return power

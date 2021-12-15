@@ -29,7 +29,7 @@ INFO: Main function of Heat Recovery Module.
 ############################################################
 INPUT: object with:
         # pinch_delta_T_min - delta temperature for pinch analysis  [ºC]
-        # input_objects  - equipments/processes/isolated stream
+        # all_input_objects  - equipments/processes/isolated stream
 
             When an equipment:
                 # id
@@ -42,7 +42,7 @@ INPUT: object with:
                 # equipment
                 # streams
 
-            When a isolated stream or streams (from the above objects):
+            When a isolated stream or streams (from the above objects_to_analyze):
                 # id
                 # fluid
                 # flowrate
@@ -117,7 +117,7 @@ def convert_pinch(in_var):
 
     ############################################################################################################
     # INPUT
-    input_objects = in_var.input_objects  # equipments/processes/isolated streams
+    all_input_objects = in_var.all_input_objects  # equipments/processes/isolated streams
     pinch_delta_T_min = in_var.pinch_delta_T_min
     country = in_var.country
 
@@ -127,7 +127,7 @@ def convert_pinch(in_var):
         number_output_options = 3
 
     # Defined Vars
-    objects = []
+    objects_to_analyze = []
     streams = []
     perform_all_combinations = False  # parameter to only perform all combinations for isolated streams and processes
     individual_equipment_optimization = False  # parameter to only perform equipment heat recovery
@@ -140,9 +140,9 @@ def convert_pinch(in_var):
     pinch_delta_T_min = pinch_delta_T_min / 2
 
     # analyse processes and isolated streams to build the streams list
-    for object in input_objects:
+    for object in all_input_objects:
         if object['object_type'] == 'process':  # from processes get streams
-            objects.append(object)
+            objects_to_analyze.append(object)
             for stream in object['streams']:
                 if stream['stream_type'] == 'inflow' or stream['stream_type'] == 'outflow':
                     streams.append(stream)
@@ -153,10 +153,10 @@ def convert_pinch(in_var):
     if streams != []:
         perform_all_combinations = True
     else:
-        object = input_objects[0]
+        object = all_input_objects[0]
         individual_equipment_optimization = True
         if object['object_type'] == 'equipment':
-            objects.append(object)
+            objects_to_analyze.append(object)
             for stream in object['streams']:
                 if stream['stream_type'] == 'excess_heat' or stream['stream_type'] == 'inflow':
                     streams.append(stream)
@@ -233,8 +233,8 @@ def convert_pinch(in_var):
     empty_df = pd.DataFrame(empty_data, columns=['None'])
 
     # economic and environmental analysis for pinch data
-    if objects != []:
-        info_pinch = eco_env_analysis(info_pinch, objects, input_objects, all_df)
+    if objects_to_analyze != []:
+        info_pinch = eco_env_analysis(info_pinch, objects_to_analyze, all_input_objects, country)
     else:
         # isolated streams
         only_isolated_streams = True

@@ -1,6 +1,7 @@
 """
 ##############################
-INFO: Simple User streams characterization.
+INFO: Simple User streams characterization. Receives user's streams data from the platform and creates a standard
+      stream data output to be used in other modules.
 
 ##############################
 INPUT: object with:
@@ -28,7 +29,7 @@ OUTPUT: vector with dictionaries:
         # object_id - # Object ID associated; e.g. process or equipment ID
         # fluid - water
         # stream_type - inflow
-        # schedule - 1 and 0 profile
+        # schedule - array with 1=working and 0 =not_working
         # hourly_generation - array [kWh]
         # capacity [kW]
         # supply_temperature [ºC]

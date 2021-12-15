@@ -1,10 +1,34 @@
-""""
+"""
+alisboa/jmcunha
 
-Info: Get Climate Data for a specific location.
-      Returns building soalr radiation incident in each facade [W/m2], ambient and sky temperatures [ºC],
+##############################
+INFO: Get climate data for a specific location.
+      Returns  incident solar radiation in each building' facade [W/m2], ambient and sky temperatures [ºC],
       and wind speed at 10m [m/s].
 
+
+##############################
+INPUT:
+        # latitude  [º]
+        # longitude  [º]
+
+
+##############################
+OUTPUT: df (year hourly profile) with the following keys:
+
+        # T_exterior
+        # T_sky
+        # Q_sun_N_facade
+        # Q_sun_S_facade
+        # Q_sun_E_facade
+        # Q_sun_W_facade
+        # Q_sun_roof
+        # Q_solar_collector
+        # Wind_speed
+
+
 """
+
 
 
 import math
