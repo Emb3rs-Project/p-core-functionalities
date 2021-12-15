@@ -11,7 +11,7 @@ INFO: It were created correlations for the turnkey, om_fix, and equipment effici
 ##############################
 INPUT:
         # equipment - equipment name
-        # equipment_char -  characteristic parameter of the equipment
+        # equipment_char -  characteristic parameter of the equipment ( check Json_file/equipment_details.json for more info)
 
 
 ##############################

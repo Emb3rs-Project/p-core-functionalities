@@ -25,7 +25,7 @@ RETURN: object with all technology info:
         # equipment_sub_type
         # fuel_type
         # country
-        # global_conversion_efficiency
+        # global_conversion_efficiency  []
         # fuel_properties
         # supply_temperature  [ºC]
         # return_temperature  [ºC]

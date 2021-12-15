@@ -35,7 +35,6 @@ import os
 def fuel_properties(country, fuel_type, consumer_type):
 
     # init arrays
-    price = 'none'
     density = 'none'
     lhv_fuel = 'none'  # [kWh/kg]
     excess_air_fuel = 'none'  # average

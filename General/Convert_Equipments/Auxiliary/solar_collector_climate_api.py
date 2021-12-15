@@ -14,10 +14,10 @@ INPUT:
 
 ##############################
 RETURN: df (year hourly profile) with the following keys:
-        # T_exterior
-        # T_sky
-        # Q_beam_solar_collector
-        # Q_dif_solar_collector
+        # T_exterior  [ºC]
+        # T_sky  [ºC]
+        # Q_beam_solar_collector  [W/m2]
+        # Q_dif_solar_collector  [W/m2]
 
 
 """

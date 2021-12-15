@@ -10,7 +10,7 @@ INFO: Fluids and materials properties script. According to the called function, 
 ##############################
 INPUT:
         # fluid_name
-        # temperature - only in fluid_material_cp and fluid_material_rho
+        # temperature - only in fluid_material_cp and fluid_material_rho  [ºC]
 
 ##############################
 OUTPUT: according to the called function:

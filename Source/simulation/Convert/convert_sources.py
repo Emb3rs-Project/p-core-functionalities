@@ -1,53 +1,97 @@
 """
-##############################
-INFO: Get Source conversion technologies
+alisboa/jmcunha
 
 
 ##############################
-INPUT:  group_of_sources = [source_1,source_2,...] each source with dictionary {source_id,source_location,streams}
-        last_iteration_data = [] or output from first iteration
-        sink_group_grid_supply_temperature
-        sink_group_grid_return_temperature
-        grid_losses -> vector with vectors with grid losses for each stream of source  [[source_1_stream_1_loss, source_1_stream_2_loss],...]
+INFO: Sources conversion technologies.
 
-        Where in each source of group_of_sources :
-            # id
-            # location = [latitude,longitude]
-            # consumer_type - 'household' or 'non-household'
-            # streams -> vector with dictionaries with {stream_id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation}
+      For each source are designed the conversion technologies needed. The design may be done for each stream individually or
+      it can be made to the aggregated of streams (the user must provide his preference). After the designing, it is known
+      the power available from each source.
+
+      When performing the conversion, three design options may occur:
+            1) when the stream is flue_gas or the supply temperature is larger than the defined safety_temperature=100ºC,
+            it is always designed an intermediate oil circuit between stream and grid, for a more realistic approach
+            (it is safer to implement intermediate circuit)
+            2) when the source streams supply temperature are lower then the desired grid temperature, heating technologies
+            are designed to reach its temperature
+
+     Possible conversions: HX, ORC cascaded, HX + intermediate circuit + HX, heating technology + HX
+
+     !!!!!
+     IMPORTANT: it is expected that this script runs twice. The first time without knowing the grid losses and thus
+     overestimating the source power available to be converted to the grid. The second time with estimated grid losses
+     by the GIS, which will be used to give a better estimate of the real power available by the sources.
 
 
 ##############################
-OUTPUT: vector with multiple dictionaries [{'source_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies'},..]
-      Where:
-         # source_id
-         # source_grid_supply_temperature
-         # source_grid_return_temperature
-         # streams_converted
+INPUT:  object with:
+
+        # group_of_sources = [source_1,source_2,...] each source dictionary
+        # last_iteration_data = [] or output from first iteration
+        # sink_group_grid_supply_temperature
+        # sink_group_grid_return_temperature
+        # grid_losses - array with vectors with grid losses for each stream of source  [[source_1_stream_1_loss, source_1_stream_2_loss],...]
+
+            Where, for example:
+             # source_1 = {
+             #              'id'
+             #              'location' = [latitude,longitude]
+             #              'consumer_type' - 'household' or 'non-household'
+             #              'streams' - array with dictionaries
+             #             }
+
+                     Where, for example:
+                         # streams = {
+                         #              'stream_id'
+                         #              'object_type'
+                         #              'stream_type'
+                         #              'fluid'
+                         #              'capacity'
+                         #              'supply_temperature'
+                         #              'target_temperature'
+                         #              'hourly_generation'
+                         #          }
+
+
+##############################
+OUTPUT: vector with multiple dictionaries [source_1,source_2,...]  [{'source_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies'},..]
+
+      Where, for example:
+         # source_1 {
+         #          'source_id',
+         #          'source_grid_supply_temperature',
+         #          'source_grid_return_temperature',
+         #          'streams_converted',
+         #          }
 
             Where in streams_converted:
-             # stream_id
-             # hourly_stream_capacity [kWh]
-             # conversion_technologies - multiple dictionaries with technologies possible to implement
+                 # streams_converted = {
+                 #          'stream_id'
+                 #          'hourly_stream_capacity' [kWh]
+                 #          'conversion_technologies' - multiple dictionaries with technologies possible to implement
+                 #          }
 
-              Where in conversion_technologies:
-                # conversion_technologies = {
-                #         'equipment'
-                #         'max_capacity'  [kW]
-                #         'turnkey_a' [€/kW]
-                #         'turnkey_b' [€]
-                #         'conversion_efficiency'  []
-                #         'om_fix'   [€/year.kW]
-                #         'om_var'  [€/kWh]
-                #         'emissions'  [kg.CO2/kWh]
-                #         'tecnhologies' - technologies info in details,
-                #     }
+                  Where in conversion_technologies:
+                     # conversion_technologies = {
+                     #                              'equipment'
+                     #                              'max_capacity'  [kW]
+                     #                              'turnkey_a' [€/kW]
+                     #                              'turnkey_b' [€]
+                     #                              'conversion_efficiency'  []
+                     #                              'om_fix'   [€/year.kW]
+                     #                              'om_var'  [€/kWh]
+                     #                              'emissions'  [kg.CO2/kWh]
+                     #                              'tecnhologies' - technologies info in detail,
+                     #                            }
 
 
 
 
 """
 
+from copy import copy
+import json
 from ....General.Convert_Equipments.Auxiliary.source_get_hx_temperatures import source_get_hx_temperatures
 from ....General.Convert_Equipments.Convert_Options.add_boiler import Add_Boiler
 from ....General.Convert_Equipments.Convert_Options.add_hx import Add_HX
@@ -58,8 +102,6 @@ from ....General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from ....General.Convert_Equipments.Convert_Options.add_orc_cascaded import Add_ORC_Cascaded
 from ....General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
 from ....Source.simulation.Auxiliary.design_orc import design_orc
-from copy import copy
-import json
 from ....General.Auxiliary_General.get_country import get_country
 
 
@@ -83,7 +125,7 @@ def convert_sources(in_var):
 
     conversion_technologies = []
 
-    # Defined vars -----------------------
+    # Defined vars
     ambient_temperature = 15
     max_grid_temperature = 120  # defined maximum hot water grid temperature [ºC]
     safety_temperature = 100  # if heat stream above this temperature, use intermediate oil circuit [ºC]
@@ -178,8 +220,6 @@ def convert_sources(in_var):
             # only convert sources where grid supply temperature is inferior to max_grid_temperature
             if source_grid_supply_temperature <= max_grid_temperature:
 
-
-
                     # design/cost equipment
                     if stream['stream_type'] == 'excess_heat' or stream['stream_type'] == 'outflow':
 
@@ -195,7 +235,6 @@ def convert_sources(in_var):
 
                             # get HX grid temperatures
                             hx_source_supply_temperature = source_grid_supply_temperature + hx_delta_T
-                            hx_source_target_temperature = source_grid_return_temperature + hx_delta_T
 
                             if stream['supply_temperature'] >= safety_temperature:
                                 hx_number = 2
@@ -203,7 +242,6 @@ def convert_sources(in_var):
                             else:
                                 hx_number = 1
                                 intermediate_circuit = False
-
 
                             # heating technologies not needed
                             if stream['supply_temperature'] >= hx_source_supply_temperature + hx_delta_T*hx_number:
