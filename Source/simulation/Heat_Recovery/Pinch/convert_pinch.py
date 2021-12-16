@@ -29,85 +29,102 @@ INFO: Main function of Heat Recovery Module.
 ############################################################
 INPUT: object with:
         # pinch_delta_T_min - delta temperature for pinch analysis  [ºC]
-        # all_input_objects  - equipments/processes/isolated stream
+        # all_input_objects  - array with equipments/processes/isolated_stream dicts
         # country - country name
+        # lifetime  (not mandatory, it is assumed lifetime=20 years)
+        # number_output_options (not mandatory, it is assumed number_output_options=3)
 
-            When an equipment:
-                # id
-                # streams
-                # fuel_type
+            When an equipment (check script at Source/characterization/Generate_Equipment):
+            # equipment = {
+            #              'id',
+            #              'streams', - array with streams dicts
+            #              'fuel_type'
+            #             }
 
-            When a process:
-                # id
-                # object_type
-                # equipment
-                # streams
+            When a process (check script at Source/characterization/Process/process):
+            # process = {
+            #            'id',
+            #            'object_type',
+            #            'equipment', - associated equipment ID
+            #            'streams', - array with streams dicts
+            #            }
 
-            When a isolated stream or streams (from the above objects_to_analyze):
-                # id
-                # fluid
-                # flowrate
-                # supply_temperature
-                # target_temperature
-                # object_id
-                # schedule - vector with 1 and 0
-                # hourly_generation  [kWh]
+            When a isolated_stream or streams (from the above objects), for example:
+            # stream = {
+            #           'id',
+            #           'fluid' - fluid name
+            #           'flowrate'  [kg/h]
+            #           'supply_temperature'  [ºC]
+            #           'target_temperature'  [ºC]
+            #           'object_id' - associated process/equipment ID
+            #           'schedule' - array with hourly schedule, 1=operating and 0_not_operating
+            #           'hourly_generation' - array with hourly power [kWh]
+            #           }
 
 
 ############################################################
 RETURN: dictionary with 3 keys:
-            # co2_optimization - vector with 3 dictionaries for the 3 best max co2 emissions saving
-            # energy_recovered_optimization - vector with 3 dictionaries for the 3 best max energy recovered
-            # energy_investment_optimization - vector with 3 dictionaries for the 3 best max energy_recovered/turnkey
+            # co2_optimization - array with dictionaries for the best max co2 emissions savings, e.g. co2_optimization = [co2_option_1, co2_option_2,...]
+            # energy_recovered_optimization - array with 3 dictionaries for the 3 best max energy recovered
+            # energy_investment_optimization - array with 3 dictionaries for the 3 best max energy_recovered/turnkey
 
             Each one provides the three best design options in dictionaries, each option with the following keys:
-                # ID  - option ID [ID]
-                # streams - streams ID [ID]
-                # capex  [€]
-                # om_fix  [€/year]
-                # hot_utility  [kW]
-                # cold_utility  [kW]
-                # lifetime  [year]
-                # co2_savings  [kg CO2/kWh]
-                # money_savings  [€]
-                # energy_dispatch  [kWh]
-                # discount_rate  []
-                # pinch_temperature  [ºC]
-                # theo_minimum_hot_utility  [kW]
-                # theo_minimum_cold_utility  [kW]
+            For example in :
+                # co2_option_1 = {
+                #                 'ID' - designed solution ID  [ID]
+                #                 'streams' - streams in pinch design ID [ID]
+                #                 'capex'  [€]
+                #                 'om_fix' - yearly om fix costs [€/year]
+                #                 'hot_utility' - power of the hot utility needed, so that the cold streams reach their target_temperature  [kW]
+                #                 'cold_utility' - power of the cold utility needed, so that the hot streams reach their target_temperature  [kW]
+                #                 'lifetime' - considered lifetime  [year]
+                #                 'co2_savings' - annualized co2 savings by implementing the pinch design [kg CO2/kWh]
+                #                 'money_savings' - annualized energy savings by implementing the pinch design  [€/kWh]
+                #                 'energy_dispatch' - yearly energy recovered by implementing the pinch design [kWh/year]
+                #                 'discount_rate'  []
+                #                 'pinch_temperature' - design pinch temperature [ºC]
+                #                 'theo_minimum_hot_utility' - theoretical power of the hot utility needed, so that the cold streams reach their target_temperature  [kW]
+                #                 'theo_minimum_cold_utility' - theoretical power of the cold utility needed, so that the hot streams reach their target_temperature  [kW]
+                #                 'equipment_detailed_savings', - list with equipment details saving when implementing the pinch design
+                #                 'pinch_hx_data' - list with pinch design data
+                #                 }
 
-                Where in pinch_hx_data, the following keys:
-                    # Power  [kW]
-                    # HX_Hot_Stream  [ID]
-                    # HX_Cold_Stream  [ID]
-                    # HX_Original_Hot_Stream  [ID]
-                    # HX_Original_Cold_Stream  [ID]
-                    # HX_Type  [hx type]
-                    # HX_Turnkey_Cost  [€]
-                    # HX_OM_Fix_Cost  [€/year]
-                    # HX_Hot_Stream_T_Hot  [ºC]
-                    # HX_Hot_Stream_T_Cold  [ºC]
-                    # HX_Cold_Stream_T_Hot  [ºC]
-                    # HX_Cold_Stream_T_Cold  [ºC]
-                    # Storage  [m3]
-                    # Storage_Satisfies  [%]
-                    # Storage_Turnkey_Cost  [€]
-                    # Total_Turnkey_Cost  [€]
-                    # Recovered_Energy  [kWh/year]
+                Where in pinch_hx_data various dict with HX designed, e.g. pinch_hx_data=[hx_1,hx_2,...] :
+                For example:
+                    # hx_1 = {
+                    #         'HX_Power'  [kW]
+                    #         'HX_Hot_Stream'  [ID]
+                    #         'HX_Cold_Stream'  [ID]
+                    #         'HX_Original_Hot_Stream'  [ID]
+                    #         'HX_Original_Cold_Stream'  [ID]
+                    #         'HX_Type'  [hx type]
+                    #         'HX_Turnkey_Cost'  [€]
+                    #         'HX_OM_Fix_Cost'  [€/year]
+                    #         'HX_Hot_Stream_T_Hot'  [ºC]
+                    #         'HX_Hot_Stream_T_Cold'  [ºC]
+                    #         'HX_Cold_Stream_T_Hot'  [ºC]
+                    #         'HX_Cold_Stream_T_Cold'  [ºC]
+                    #         'Storage'  [m3]
+                    #         'Storage_Satisfies'  [%]
+                    #         'Storage_Turnkey_Cost'  [€]
+                    #         'Total_Turnkey_Cost'  [€]
+                    #         'Recovered_Energy'  [kWh/year]
+                    #          }
 
                 Where in equipment_detailed_savings, the following keys:
-                    # Equipment_ID  [ID]
-                    # CO2_Savings_Year  [kg CO2/year]
-                    # Recovered_Energy  [kWh/year]
-                    # Savings_Year  [€]
-                    # Total_Turnkey_Cost  [€]
-
+                    # equipment_detailed_savings = {
+                    #                               'Equipment_ID'  [ID]
+                    #                               'CO2_Savings_Year'  [kg CO2/year]
+                    #                               'Recovered_Energy'  [kWh/year]
+                    #                               'Savings_Year'  [€]
+                    #                               'Total_Turnkey_Cost'  [€]
+                    #                               }
 
 
 """
 
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.pinch_analysis import pinch_analysis
-from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.get_best_3_outputs import get_best_3_outputs
+from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.get_best_x_outputs import get_best_x_outputs
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.eco_env_analysis import eco_env_analysis
 from .....KB_General.fluid_material import fluid_material_cp
 from .....KB_General.fuel_properties import fuel_properties
@@ -121,19 +138,23 @@ def convert_pinch(in_var):
     all_input_objects = in_var.all_input_objects  # equipments/processes/isolated streams
     pinch_delta_T_min = in_var.pinch_delta_T_min
     country = in_var.country
+    perform_all_combinations = in_var.perform_all_combinations  # parameter to only perform all combinations for isolated streams and processes.
 
     try:
         number_output_options = in_var.number_output_options
     except:
         number_output_options = 3
 
+    try:
+        lifetime = in_var.lifetime
+    except:
+        lifetime = 20
+
     # Defined Vars
     objects_to_analyze = []
     streams = []
-    perform_all_combinations = False  # parameter to only perform all combinations for isolated streams and processes
     individual_equipment_optimization = False  # parameter to only perform equipment heat recovery
     only_isolated_streams = False  # parameter to check if only isolated streams are given
-
 
     ############################################################################################################
     # DATA PRE-TREATMENT
@@ -142,6 +163,7 @@ def convert_pinch(in_var):
 
     # analyse processes and isolated streams to build the streams list
     for object in all_input_objects:
+
         if object['object_type'] == 'process':  # from processes get streams
             objects_to_analyze.append(object)
             for stream in object['streams']:
@@ -151,16 +173,16 @@ def convert_pinch(in_var):
             streams.append(object)
 
     # if empty, it means analyse equipment internal heat recovery
-    if streams != []:
-        perform_all_combinations = True
-    else:
+    if streams == []:
         object = all_input_objects[0]
+        perform_all_combinations = False
         individual_equipment_optimization = True
         if object['object_type'] == 'equipment':
             objects_to_analyze.append(object)
             for stream in object['streams']:
                 if stream['stream_type'] == 'excess_heat' or stream['stream_type'] == 'inflow':
                     streams.append(stream)
+
 
     # create DF with streams characteristics (df_char) and  DF with only streams profiles (df_profile)
     df_char = pd.DataFrame(columns=['ID', 'Fluid', 'Flowrate', 'Supply_Temperature', 'Target_Temperature'])
@@ -174,6 +196,7 @@ def convert_pinch(in_var):
                                   'Target_Temperature': stream['target_temperature']}, ignore_index=True)
 
         df_profile_data.append(stream['schedule'])
+
 
     df_profile = pd.DataFrame(data=df_profile_data)  # create df
     df_profile.set_index(df_char['ID'], inplace=True)
@@ -211,9 +234,7 @@ def convert_pinch(in_var):
     info_pinch, design_id = pinch_analysis(df_operating, df_profile, pinch_delta_T_min, hx_delta_T, design_id)
 
     # pinch analysis for all streams combinations
-    perform_all_combinations = True
-    perform_all_combinations = False
-    if perform_all_combinations is True:
+    if perform_all_combinations == True:
         for L in range(0, len(range(df_char.shape[0]))):
             for subset in itertools.combinations(range(df_char.shape[0]), L):
                 if list(subset) != [] and len(list(subset)) > 1:
@@ -255,18 +276,23 @@ def convert_pinch(in_var):
         # perform full analysis
         if individual_equipment_optimization is False and only_isolated_streams is False:
             for index, info in enumerate(info_pinch):
-                pinch_data = info['df_hx']
-                economic_data = info['df_equipment_economic']
-                df_optimization = df_optimization.append({
-                    'index': index,
-                    'co2_savings': economic_data['CO2_Savings_Year'].sum(),
-                    'money_savings': economic_data['Savings_Year'].sum(),
-                    'energy_recovered': economic_data['Recovered_Energy'].sum(),
-                    'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / economic_data[
-                    'Recovered_Energy'].sum(),
-                    'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
-                    'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
-                }, ignore_index=True)
+
+                if info['analysis_state'] == 'performed':
+                    pinch_data = info['df_hx']
+
+                    economic_data = info['df_equipment_economic']
+                    df_optimization = df_optimization.append({
+                        'index': index,
+                        'streams':info['streams'],
+                        'co2_savings': economic_data['CO2_Savings_Year'].sum(),
+                        'money_savings': economic_data['Savings_Year'].sum(),
+                        'energy_recovered': economic_data['Recovered_Energy'].sum(),
+                        'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / economic_data[
+                        'Recovered_Energy'].sum(),
+                        'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
+                        'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
+                    }, ignore_index=True)
+
 
         # equipment internal heat recovery/ only isolated streams
         else:
@@ -291,21 +317,22 @@ def convert_pinch(in_var):
                     'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
                 }, ignore_index=True)
 
+
         # drop duplicates
         df_optimization = df_optimization.drop_duplicates(
             subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
 
         # get best options that recover maximum energy
         energy_recovered = df_optimization.sort_values('energy_recovered', ascending=False).head(number_output_options)
-        energy_recovered_options = get_best_3_outputs(info_pinch, energy_recovered)
+        energy_recovered_options = get_best_x_outputs(info_pinch, energy_recovered, country, lifetime)
 
         # get best options that give best energy_recovery/turnkey ratio
         energy_investment = df_optimization.sort_values('energy_investment').head(number_output_options)
-        energy_investment_options = get_best_3_outputs(info_pinch, energy_investment)
+        energy_investment_options = get_best_x_outputs(info_pinch, energy_investment, country, lifetime)
 
         # get best options that save maximum amount of CO2
         co2_savings = df_optimization.sort_values('co2_savings', ascending=False).head(number_output_options)
-        co2_savings_options = get_best_3_outputs(info_pinch, co2_savings)
+        co2_savings_options = get_best_x_outputs(info_pinch, co2_savings, country, lifetime)
 
         # isolated streams are not linked to any equipment, thus not possible to know how much CO2 is saved
         if only_isolated_streams == True:
@@ -318,7 +345,7 @@ def convert_pinch(in_var):
         }
 
     except:
-        print('Error in convert_pinch. Probably complex case')
+        print('Error in convert_pinch. Probably no possible solution or complex case. ')
         output = []
 
 

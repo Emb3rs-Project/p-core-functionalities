@@ -120,15 +120,15 @@ def match_remaining_streams_main(df_streams_in,df_streams_out,df_hx,above_pinch,
         # HX possible
         else:
             # get HX with largest power
-            row_hx_max_power = df_hx_dummy[df_hx_dummy['Power'] == max(df_hx_dummy['Power'].values)].iloc[0]
-            if row_hx_max_power['Power'] < 1:  # safety
+            row_hx_max_power = df_hx_dummy[df_hx_dummy['HX_Power'] == max(df_hx_dummy['HX_Power'].values)].iloc[0]
+            if row_hx_max_power['HX_Power'] < 1:  # safety
                 break
 
             df_hx = df_hx.append(row_hx_max_power, ignore_index=True)
 
             # update original dfs
-            hot_stream_index = row_hx_max_power['Hot_Stream']
-            cold_stream_index = row_hx_max_power['Cold_Stream']
+            hot_stream_index = row_hx_max_power['HX_Hot_Stream']
+            cold_stream_index = row_hx_max_power['HX_Cold_Stream']
             hot_stream = df_hot_streams.loc[hot_stream_index]
             cold_stream = df_cold_streams.loc[cold_stream_index]
 

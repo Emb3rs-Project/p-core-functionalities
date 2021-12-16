@@ -101,6 +101,7 @@ def pinch_analysis(df_streams, df_streams_profile, pinch_delta_T_min, hx_delta_T
                                                                                        pinch_point_temperature,
                                                                                        hx_delta_T,
                                                                                        above_pinch=True)
+
     info_df_hx_above_pinch = design_hx_storage(df_streams_profile,
                                         info_df_hx_above_pinch,
                                         above_pinch=True)
@@ -111,6 +112,7 @@ def pinch_analysis(df_streams, df_streams_profile, pinch_delta_T_min, hx_delta_T
                                                                                        pinch_point_temperature,
                                                                                        hx_delta_T,
                                                                                        above_pinch=False)
+
     info_df_hx_below_pinch = design_hx_storage(df_streams_profile,
                                         info_df_hx_below_pinch,
                                         above_pinch=False)

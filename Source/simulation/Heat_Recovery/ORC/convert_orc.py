@@ -9,7 +9,7 @@ INFO: Convert_Options Raw Data to ORC/RC, for maximum electrical generation.
 INPUT:  consumer_type - 'household' or 'non-household'
         location = [latitude,longitude]
         get_best_number - number of best convertion cases, 3 by default
-        streams -> vector with dictionaries with {id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation, schedule}
+        streams - array with dicts where {id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation, schedule}
 
 
 ##############################

@@ -51,7 +51,7 @@ def hx_type_and_u(fluid_1, fluid_2):
         hx_type = 'hx_plate'
         hx_u_value = 2000
 
-    elif (state_1 == 'flue_gas' and state_2 == 'liquid') or (state_1 == 'liquid' and state_2 == 'flue_gas'):
+    elif (state_1 == 'flue_gas' and state_2 == 'liquid') or (state_1 == 'liquid' and state_2 == 'flue_gas') or  (state_1 == 'gas' and state_2 == 'flue_gas') or  (state_1 == 'flue_gas' and state_2 == 'gas'):
         hx_type = 'hx_economizer'
         hx_u_value = 50
 

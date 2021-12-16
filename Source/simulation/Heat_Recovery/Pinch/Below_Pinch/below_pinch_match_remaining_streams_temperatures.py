@@ -30,9 +30,8 @@ RETURN:
 import copy
 
 
-def below_pinch_match_remaining_streams_temperatures(
-        hot_stream_T_hot, hot_stream_min_T_cold, hot_stream_mcp, cold_stream_T_hot, cold_stream_min_T_cold,
-        cold_stream_mcp, hx_delta_T):
+def below_pinch_match_remaining_streams_temperatures(hot_stream_T_hot, hot_stream_min_T_cold, hot_stream_mcp, cold_stream_T_hot,
+                                                     cold_stream_min_T_cold, cold_stream_mcp, hx_delta_T):
 
     find_T_vector = [5, 1, 0.1]
     hot_stream_T_cold_init = hot_stream_T_hot - 0.001  # initial guess

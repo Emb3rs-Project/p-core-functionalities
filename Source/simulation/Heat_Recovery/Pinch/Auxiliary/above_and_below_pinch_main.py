@@ -41,7 +41,7 @@ INPUT:
         # pinch_delta_T_min - delta temperature for pinch analysis  [ºC]
         # pinch_T  [ºC]
         # hx_delta_T - heat exchangers minimum delta T  [ºC]
-        # above_pinch  [True or False]
+        # above_pinch -  [True or False]
 
         Where in df_streams, the necessary following keys:
             # Fluid - fluid type
@@ -56,23 +56,23 @@ INPUT:
 
 ##############################
 RETURN:
-        # all_designs - array with different hx design (df_hx)  possibilities
+        # all_designs - array with different hx design (df_hx)  possibilities, e.g. all_designs=[df_hx_1,df_hx_2,..]
         # pinch_analysis_possible - check if it was possible to perform pinch analysis above/below pinch [True or False]
 
-        Where in each df_hx of all_designs, the following keys:
-            # Power  [kW]
-            # HX_Hot_Stream  [ID]
-            # HX_Cold_Stream  [ID]
-            # HX_Original_Hot_Stream  [ID]
-            # HX_Original_Cold_Stream  [ID]
-            # HX_Type  [hx type]
-            # HX_Turnkey_Cost  [€]
-            # HX_OM_Fix_Cost  [€/year]
-            # HX_Hot_Stream_T_Hot  [ºC]
-            # HX_Hot_Stream_T_Cold  [ºC]
-            # HX_Cold_Stream_T_Hot  [ºC]
-            # HX_Cold_Stream_T_Cold  [ºC]
-            # Storage  [m3]
+        Where in each df_hx, the following keys:
+            # 'HX_Power'  [kW]
+            # 'HX_Hot_Stream'  [ID]
+            # 'HX_Cold_Stream'  [ID]
+            # 'HX_Original_Hot_Stream'  [ID]
+            # 'HX_Original_Cold_Stream'  [ID]
+            # 'HX_Type'  [hx type]
+            # 'HX_Turnkey_Cost'  [€]
+            # 'HX_OM_Fix_Cost'  [€/year]
+            # 'HX_Hot_Stream_T_Hot'  [ºC]
+            # 'HX_Hot_Stream_T_Cold'  [ºC]
+            # 'HX_Cold_Stream_T_Hot'  [ºC]
+            # 'HX_Cold_Stream_T_Cold'  [ºC]
+            # 'Storage'  [m3]
 
 
 """
@@ -83,6 +83,7 @@ from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.check_streams_number
 from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.first_match_reach_pinch import first_match_reach_pinch
 from copy import deepcopy
 import pandas as pd
+
 
 def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_T, above_pinch):
 
@@ -95,13 +96,13 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_
     pinch_T_hot = pinch_T + pinch_delta_T_min
 
     # create DF for heat exchangers
-    df_hx = pd.DataFrame(columns=['Power',
-                                  'Original_Stream_In',
-                                  'Original_Stream_Out',
-                                  'Hot_Stream_T_Hot',
-                                  'Hot_Stream_T_Cold',
-                                  'Hot_Stream',
-                                  'Cold_Stream',
+    df_hx = pd.DataFrame(columns=['HX_Power',
+                                  'HX_Original_Cold_Stream',
+                                  'HX_Original_Hot_Stream',
+                                  'HX_Hot_Stream_T_Hot',
+                                  'HX_Hot_Stream_T_Cold',
+                                  'HX_Hot_Stream',
+                                  'HX_Cold_Stream',
                                   'HX_Type',
                                   'HX_Turnkey_Cost',
                                   'HX_OM_Fix_Cost',
@@ -132,8 +133,10 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_
     # 2) know if streams reach pinch
     # 3) define streams_in and streams_out
 
+
     if df_hot_streams.empty is False and df_cold_streams.empty is False:
         pinch_analysis_possible = True
+
 
         if above_pinch == True:
             df_hot_streams['Closest_Pinch_Temperature'] = df_hot_streams.apply(
@@ -241,8 +244,7 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_
 
     # check for repeated HX designed
     if all_df_hx != []:
-        for i in all_df_hx:
-            i['df_hx'].drop(columns=['Hot_Stream', 'Cold_Stream'], inplace=True)
+
         keep = []
         if len(all_df_hx) > 1:
             keep.append(all_df_hx[0])
@@ -253,8 +255,8 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_
                 for j in keep:
                     j_df_hx = j['df_hx'].sort_values(by=['HX_Turnkey_Cost'])
 
-                    if i_df_hx[['Power', 'Original_Stream_In', 'Original_Stream_Out', 'HX_Turnkey_Cost']].equals(
-                            j_df_hx[['Power', 'Original_Stream_In', 'Original_Stream_Out',
+                    if i_df_hx[['HX_Power', 'HX_Original_Hot_Stream', 'HX_Original_Cold_Stream', 'HX_Turnkey_Cost']].equals(
+                            j_df_hx[['HX_Power', 'HX_Original_Hot_Stream', 'HX_Original_Cold_Stream',
                                      'HX_Turnkey_Cost']]) != True and append == True:
                         append = True
                     else:

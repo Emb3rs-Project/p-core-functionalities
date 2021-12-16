@@ -13,11 +13,11 @@ from ....Source.characterization.Process.process import Process
 class Option_1:
     def __init__(self):
 
-        test = 6
+        test = 3
         if test == 1:
             ### OPTION 1  ###################################################
             # OPTION 1 - TEST 1
-            self.input_objects = [
+            self.all_input_objects = [
                 stream_industry(1, 'outflow', 'thermal_oil', 150, 100, 0.5 * 3600 / 2, 0.5* 3600 * 2 * (150 - 100), [1, 1, 1, 1]),
                 stream_industry(1, 'outflow', 'thermal_oil', 90, 170, 0.2 * 3600 / 2, 0.2 * 3600 * 2 * (170 - 90), [1, 1, 1, 1]),
                 stream_industry(1, 'inflow', 'thermal_oil', 90, 140, 0.4 * 3600 / 2, 0.4 * 3600 * 2 * (140 - 90), [1, 1, 0, 1])]
@@ -25,7 +25,7 @@ class Option_1:
 
         elif test == 2:
             # OPTION 1 - TEST 2
-            self.input_objects = [
+            self.all_input_objects = [
                 stream_industry(1, 'outflow', 'thermal_oil', 750, 350, 0.045 * 3600 / 2, 0.045 * 3600 * 2 * (750 - 350),  [1, 1, 1, 1]),
                 stream_industry(1, 'outflow', 'thermal_oil', 550, 250, 0.04 * 3600 / 2, 0.04 * 3600 * 2 * (550 - 250), [1, 1, 1, 1]),
                 stream_industry(1, 'inflow', 'thermal_oil', 300, 900, 0.043 * 3600 / 2, 0.043 * 3600 * 2 * (900 - 300), [1, 1, 0, 1]),
@@ -34,7 +34,7 @@ class Option_1:
 
         elif test == 3:
             # OPTION 1 - TEST 3
-            self.input_objects = [
+            self.all_input_objects = [
                 stream_industry(1, 'outflow', 'thermal_oil', 150, 100, 0.15 * 3600 / 2, 0.15 * 3600 * 2 * (150 - 40), [1, 1, 1, 1]),
                 stream_industry(1, 'outflow', 'thermal_oil', 140, 100, 0.25 * 3600 / 2, 0.25 * 3600 * 2 * (140 - 100), [1, 1, 1, 1]),
                 stream_industry(1, 'outflow', 'thermal_oil', 130, 100, 0.1 * 3600 / 2, 0.1 * 3600 * 2 * (130 - 100),  [1, 1, 1, 1]),
@@ -45,7 +45,7 @@ class Option_1:
         elif test == 4:
             # OPTION 1 - TEST 4
             # pag.323
-            self.input_objects = [
+            self.all_input_objects = [
                 stream_industry(1, 'outflow', 'thermal_oil', 327, 150, 0.1098 * 3600 / 2, 34.1,  [1, 1, 1, 1]),
                 stream_industry(1, 'outflow', 'thermal_oil', 495, 307, 0.134 * 3600 / 2, 16.5, [1, 1, 1, 1]),
                 stream_industry(1, 'outflow', 'thermal_oil', 220, 150, 0.2062 * 3600 / 2, 5.5,   [1, 1, 1, 1]),
@@ -60,7 +60,7 @@ class Option_1:
 
         elif test == 5:
             # OPTION 1 - TEST 5
-            self.input_objects = [
+            self.all_input_objects = [
                 stream_industry(1, 'outflow', 'thermal_oil', 349, 183, 0.178 * 3600 / 2, 34.1, [1, 1, 1, 1]),
                 stream_industry(1, 'outflow', 'thermal_oil', 341, 183, 0.1 * 3600 / 2, 16.5,   [1, 1, 1, 1]),
                 stream_industry(1, 'outflow', 'thermal_oil', 268, 183, 0.065 * 3600 / 2, 5.5,  [1, 1, 1, 1]),
@@ -72,7 +72,7 @@ class Option_1:
 
         elif test == 6:
             # OPTION 1 - TEST 6
-            self.input_objects = [
+            self.all_input_objects = [
                 stream_industry(1, 'outflow', 'thermal_oil', 250, 40, 0.15 * 3600 / 2, 0.15 * 3600 * 2 * (250 - 40), [1, 1, 1, 1]),
                 stream_industry(2, 'outflow', 'thermal_oil', 200, 80, 0.25 * 3600 / 2, 0.25 * 3600 * 2 * (200 - 80), [1, 1, 1, 1]),
                 stream_industry(3, 'outflow', 'thermal_oil', 20, 180, 0.2 * 3600 / 2, 0.1 * 3600 * 2 * (180 - 20),[1, 1, 1, 1]),
@@ -83,7 +83,7 @@ class Option_1:
         elif test == 7:
             # OPTION 1 - TEST 7
             # https://processdesign.mccormick.northwestern.edu/index.php/Pinch_analysis
-            self.input_objects = [
+            self.all_input_objects = [
                 stream_industry(1, 'outflow', 'thermal_oil', 180, 40, 40 * 3600 / 2, 40 * 3600 * 2 * (180 - 40),[1, 1, 1, 1]),
                 stream_industry(2, 'outflow', 'thermal_oil', 150, 60, 30 * 3600 / 2, 30 * 3600 * 2 * (150 - 60),[1, 1, 1, 1]),
                 stream_industry(3, 'outflow', 'thermal_oil', 30, 180, 60 * 3600 / 2, 60 * 3600 * 2 * (180 - 30),[1, 1, 1, 1]),
@@ -94,7 +94,7 @@ class Option_1:
         elif test == 8:
             # OPTION 1 - TEST 8
             # pag.338
-            self.input_objects = [
+            self.all_input_objects = [
                 stream_industry(2, 'outflow', 'thermal_oil', 327, 50, 0.1098 * 3600 / 2, 34.1, [1]),
                 stream_industry(5, 'outflow', 'thermal_oil', 495, 307, 0.134 * 3600 / 2, 16.5, [1]),
                 stream_industry(6, 'outflow', 'thermal_oil', 220, 59, 0.2062 * 3600 / 2, 5.5, [1]),
@@ -111,11 +111,12 @@ class Option_1:
 
         # give IDs
         numbers = 1
-        for i in self.input_objects:
+        for i in self.all_input_objects:
             i['id'] = numbers
             numbers += 1
 
         self.country = 'Portugal'
+        self.perform_all_combinations = True
 
 
 ######################################################################################################
@@ -155,7 +156,7 @@ class Process_data():
             'flowrate':100,
             'fluid':'thermal_oil',
             'fluid_cp':2,
-            'supply_temperature':10
+            'supply_temperature':15
             }
 
         outflow_stream_1 = {
@@ -199,16 +200,17 @@ class GenerateBoiler():
         # Optional/Expert User inputs -  should be shown on the platform as default values
         self.equipment_sub_type = 'steam_boiler'
         self.supply_fluid = 'steam'
-        self.global_conversion_efficiency = 0.95
+        self.global_conversion_efficiency = 0.93
 
 
 class Input_Data_Remaining_Options():
 
     def __init__(self,all_objects):
 
-        self.all_objects = all_objects
+        self.all_input_objects = all_objects
         self.pinch_delta_T_min = 10
         self.country = 'Portugal'
+        self.perform_all_combinations = True
 
 
 ########################################################################################
@@ -246,8 +248,8 @@ def testConvertPinch():
         # create equipment
         equipment_data = GenerateBoiler()
         equipment = Boiler(equipment_data)
-        # create isolated stream
-        isolated_stream = stream_industry(11, 'inflow', 'thermal_oil', 480, 500, 1.625 * 3600 / 2, 104.8, [1,0,1,0,0,1,1]),
+        # create isolated stream  - meter aqui simple_user maybes
+        isolated_stream = stream_industry(11, 'inflow', 'thermal_oil', 480, 500, 1.625 * 3600 / 2, 104.8, [1,0,1,0,0,1,1])
 
         input_data = Input_Data_Remaining_Options([process.__dict__, equipment.__dict__, isolated_stream])
         test = convert_pinch(input_data)
@@ -267,6 +269,7 @@ def testConvertPinch():
 
     print('time simulation [s]:', total)
 
+    print('testtttttttt',test['energy_recovered_optimization'][0].keys())
     if test != []:
         for key in test.keys():
             print('------------------------------------------------------------------------------------------------------------')

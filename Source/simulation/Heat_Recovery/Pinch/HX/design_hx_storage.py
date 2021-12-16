@@ -61,7 +61,7 @@ def design_hx_storage(df_profile, info_df_hx, above_pinch, storage_delta_T=5):
                 for index, row in df_hx.iterrows():
 
                     # choose type of thermal storage - fixed values
-                    if row['Hot_Stream_T_Hot'] <= maximum_water_storage_temperature + storage_delta_T:
+                    if row['HX_Hot_Stream_T_Hot'] <= maximum_water_storage_temperature + storage_delta_T:
                         fluid = 'water'
                         cp_fluid = fluid_material_cp(fluid, maximum_water_storage_temperature)  # [kJ/(kg.K)]
                         rho_fluid = 1000  # [kg/m3]
@@ -73,13 +73,17 @@ def design_hx_storage(df_profile, info_df_hx, above_pinch, storage_delta_T=5):
                         cost_fluid = 0.5  # [€/L]
 
                     # get streams
-                    power_hx = row['Power']  # hx power
-                    if above_pinch == True:
-                        index_cold_stream = row['Original_Stream_Out']  # original index stream - to get hourly profile
-                        index_hot_stream = row['Original_Stream_In']
-                    else:
-                        index_cold_stream = row['Original_Stream_In']
-                        index_hot_stream = row['Original_Stream_Out']
+                    power_hx = row['HX_Power']  # hx power
+
+                   # if above_pinch == True:
+                    #    index_cold_stream = row['Original_Stream_Out']  # original index stream - to get hourly profile
+                   #     index_hot_stream = row['Original_Stream_In']
+                    #else:
+                   #     index_cold_stream = row['Original_Stream_In']
+                   #     index_hot_stream = row['Original_Stream_Out']
+
+                    index_cold_stream = row['HX_Original_Cold_Stream']  # original index stream - to get hourly profile
+                    index_hot_stream = row['HX_Original_Hot_Stream']
 
                     profile_cold_stream = df_profile.loc[index_cold_stream]  # hourly profile with 0 and 1
                     profile_hot_stream = df_profile.loc[index_hot_stream]
@@ -166,8 +170,8 @@ def design_hx_storage(df_profile, info_df_hx, above_pinch, storage_delta_T=5):
                             vector_storage_satisfies.append(storage_satisfies)
 
                         # compute storage volume
-                        hot_stream_T_hot = row['Hot_Stream_T_Hot']
-                        hot_stream_T_cold = row['Hot_Stream_T_Cold']
+                        hot_stream_T_hot = row['HX_Hot_Stream_T_Hot']
+                        hot_stream_T_cold = row['HX_Hot_Stream_T_Cold']
                         volume_storage = new_volume_max_storage * 3600 / (
                                     cp_fluid * rho_fluid * (hot_stream_T_hot - hot_stream_T_cold))  # [m3]
                         vector_storage_volume.append(volume_storage)

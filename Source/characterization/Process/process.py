@@ -7,14 +7,14 @@ INFO: Create Process object and characterize its streams.
 ##############################
 INPUT: object with:
 
-        # id   # process id
-        # equipment  # heat/cooling equipment id associated to
+        # id  - process id
+        # equipment - heat/cooling equipment id associated to
         # operation_temperature  # process operation_temperature [ºC]
         # saturday_on - 1 (yes)  or 0 (no)
         # sunday_on - 1 (yes)  or 0 (no)
         # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
         # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
-        # schedule_type  # 0=Continuous, 1=Batch
+        # schedule_type  - 0=Continuous, 1=Batch
         # cycle_time_percentage  - Cycle percentage for Startup and Outflow; 0 to 0.9
         # startup_data - vector with dictionaries
         # maintenance_data - vector with dictionaries
@@ -62,7 +62,7 @@ class Process:
 
         # INPUT
         self.id = in_var.id  # process id
-        self.equipment = in_var.equipment # heat/cool equipment id associated to
+        self.equipment = in_var.equipment  # heat/cool equipment id associated to
         self.operation_temperature = in_var.operation_temperature
         self.saturday_on = in_var.saturday_on
         self.sunday_on = in_var.sunday_on

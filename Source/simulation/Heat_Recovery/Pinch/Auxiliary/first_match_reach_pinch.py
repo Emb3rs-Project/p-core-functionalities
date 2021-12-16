@@ -83,8 +83,8 @@ def first_match_reach_pinch(df_streams_in, df_streams_out, df_hx, hx_delta_T, ab
                 keep_combination_copy = keep_combination_copy.sort_values('HX_Turnkey_Cost')
                 keep_combination_copy.index = np.arange(1, len(keep_combination_copy) + 1)
 
-                if combination_copy[['Power', 'HX_Turnkey_Cost']].equals(
-                        keep_combination_copy[['Power', 'HX_Turnkey_Cost']]) != True and append == True:
+                if combination_copy[['HX_Power', 'HX_Turnkey_Cost']].equals(
+                        keep_combination_copy[['HX_Power', 'HX_Turnkey_Cost']]) != True and append == True:
                     append = True
                 else:
                     append = False
@@ -278,22 +278,39 @@ def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
                             if above_pinch == True:
                                 df_streams_out.loc[stream_out_index, ['Closest_Pinch_Temperature']] = hx_stream_out_T_hot
                                 df_streams_in.loc[stream_in_index, ['Closest_Pinch_Temperature']] = hx_stream_in_T_hot
+
+                                # design HX
+                                new_hx_row = design_hx(stream_in_index,
+                                                       stream_out_index,
+                                                       hx_stream_in_T_hot,
+                                                       hx_stream_in_T_cold,
+                                                       stream_in_fluid,
+                                                       hx_stream_out_T_hot,
+                                                       hx_stream_out_T_cold,
+                                                       stream_out_fluid,
+                                                       hx_power,
+                                                       original_stream_in_index,
+                                                       original_stream_out_index)
+
+
                             else:
                                 df_streams_out.loc[stream_out_index, ['Closest_Pinch_Temperature']] = hx_stream_out_T_cold
                                 df_streams_in.loc[stream_in_index, ['Closest_Pinch_Temperature']] = hx_stream_in_T_cold
 
-                            # design HX
-                            new_hx_row = design_hx(stream_in_index,
-                                                         stream_out_index,
-                                                         hx_stream_in_T_hot,
-                                                         hx_stream_in_T_cold,
-                                                         stream_in_fluid,
-                                                         hx_stream_out_T_hot,
-                                                         hx_stream_out_T_cold,
-                                                         stream_out_fluid,
-                                                         hx_power,
-                                                         original_stream_in_index,
-                                                         original_stream_out_index)
+                                # design HX
+                                new_hx_row = design_hx(stream_out_index,
+                                                       stream_in_index,
+                                                       hx_stream_out_T_hot,
+                                                       hx_stream_out_T_cold,
+                                                       stream_out_fluid,
+                                                       hx_stream_in_T_hot,
+                                                       hx_stream_in_T_cold,
+                                                       stream_in_fluid,
+                                                       hx_power,
+                                                       original_stream_out_index,
+                                                       original_stream_in_index)
+
+
 
                             df_hx = df_hx.append(new_hx_row, ignore_index=True)
                             combination = deepcopy([df_streams_in, df_streams_out, df_hx])

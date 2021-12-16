@@ -9,20 +9,35 @@ INFO:  Design and cost HX according to streams info
 INPUT:
         # hot_stream_index,
         # cold_stream_index
-        # hx_hot_stream_T_hot
-        # hx_hot_stream_T_cold
+        # hx_hot_stream_T_hot  [ºC]
+        # hx_hot_stream_T_cold  [ºC]
         # hot_stream_fluid
-        # hx_cold_stream_T_hot
-        # hx_cold_stream_T_cold
+        # hx_cold_stream_T_hot  [ºC]
+        # hx_cold_stream_T_cold  [ºC]
         # cold_stream_fluid
-        # hx_power
+        # hx_power  [kW]
         # original_hot_stream_index
         # original_cold_stream_index
 
 
 ##############################
-RETURN:
-        # new_hx_row
+RETURN: a new_hx_row to add to the df_hx,
+
+        Where,
+            # new_hx_row = {
+            #               'Power', - hx power [kW]
+            #               'Hot_Stream', - stream ID, may be equal to Original_Hot_Stream or different if split occurred
+            #               'Cold_Stream', - stream ID
+            #               'Hot_Stream_T_Hot',  [ºC]
+            #               'Hot_Stream_T_Cold',  [ºC]
+            #               'HX_Type', - type of hx, e.g. hx_plate, hx_shell_and_tubes, hx_kettle_boiler
+            #               'HX_Turnkey_Cost',  [€]
+            #               'HX_OM_Fix_Cost',  [€/year]
+            #               'Original_Hot_Stream', - original stream ID
+            #               'Original_Cold_Stream', - original stream ID
+            #               'Hot_Split', - if split stream or not; True or False
+            #               'Cold_Split',
+            #               }
 
 """
 
@@ -52,17 +67,22 @@ def design_hx(hot_stream_index, cold_stream_index, hx_hot_stream_T_hot, hx_hot_s
     else:
         cold_split = False
 
-    new_hx_row = {'Power': round(hx_power + .0, 1),
-                  'Hot_Stream': hot_stream_index,
-                  'Cold_Stream': cold_stream_index,
-                  'Hot_Stream_T_Hot': round(hx_hot_stream_T_hot + .0, 1),
-                  'Hot_Stream_T_Cold': round(hx_hot_stream_T_cold + .0, 1),
+    new_hx_row = {
+                  'HX_Power': round(hx_power + .0, 1),
+                  'HX_Hot_Stream': hot_stream_index,
+                  'HX_Cold_Stream': cold_stream_index,
+                  'HX_Hot_Stream_T_Hot': round(hx_hot_stream_T_hot + .0, 1),
+                  'HX_Hot_Stream_T_Cold': round(hx_hot_stream_T_cold + .0, 1),
+                  'HX_Cold_Stream_T_Hot': round(hx_cold_stream_T_hot + .0, 1),
+                  'HX_Cold_Stream_T_Cold': round(hx_cold_stream_T_cold + .0, 1),
                   'HX_Type': hx_type,
                   'HX_Turnkey_Cost': round(hx_turnkey_cost + .0, 1),
                   'HX_OM_Fix_Cost': round(hx_om_fix_cost + .0, 1),
-                  'Original_Stream_In': int(original_hot_stream_index),
-                  'Original_Stream_Out': int(original_cold_stream_index),
+                  'HX_Original_Hot_Stream': int(original_hot_stream_index),
+                  'HX_Original_Cold_Stream': int(original_cold_stream_index),
                   'Hot_Split': hot_split,
-                  'Cold_Split': cold_split}
+                  'Cold_Split': cold_split
+    }
+
 
     return new_hx_row
