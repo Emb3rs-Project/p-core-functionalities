@@ -13,7 +13,7 @@ from ....Source.characterization.Process.process import Process
 class Option_1:
     def __init__(self):
 
-        test = 3
+        test = 2
         if test == 1:
             ### OPTION 1  ###################################################
             # OPTION 1 - TEST 1
@@ -269,7 +269,6 @@ def testConvertPinch():
 
     print('time simulation [s]:', total)
 
-    print('testtttttttt',test['energy_recovered_optimization'][0].keys())
     if test != []:
         for key in test.keys():
             print('------------------------------------------------------------------------------------------------------------')

@@ -32,6 +32,7 @@ def get_interest_rate(country):
     except:
         country_acronym = data_eu_countries['Portugal']
 
+
     # get data
     url = 'https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/IRT_LT_MCBY_A?format=JSON&lang=en&freq=A&int_rt=MCBY&geo=EU27_2020&geo=EU28&geo=EA&geo=BE&geo=BG&geo=CZ&geo=DK&geo=DE&geo=EE&geo=IE&geo=EL&geo=ES&geo=FR&geo=HR&geo=IT&geo=CY&geo=LV&geo=LT&geo=LU&geo=HU&geo=MT&geo=NL&geo=AT&geo=PL&geo=PT&geo=RO&geo=SI&geo=SK&geo=FI&geo=SE&geo=UK&time=2011&time=2012&time=2013&time=2014&time=2015&time=2016&time=2017&time=2018&time=2019&time=2020'
     html = requests.get(url).content
@@ -51,6 +52,7 @@ def get_interest_rate(country):
         number_years = len(mydata['dimension']['time']['category']['label'])
         index_interest_rate = str(number_years * get_country_index - 1)
         interest_rate = mydata['value'][index_interest_rate]
+
 
     return interest_rate
 
