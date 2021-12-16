@@ -1,23 +1,25 @@
 """
 alisboa/jmcunha
 
+
 ##############################
 INFO: Create Boiler Object and characterize its streams.
 
+
 ##############################
 INPUT: object with:
-
-        # id - equipment id
+        # id - equipment ID
         # supply_temperature [ºC]
         # open_closed_loop - 1 (yes)  or 0 (no)
             # if open_closed_loop = 1 -> user must input -> return_temperature [ºC]
-        # global_conversion_efficiency
+        # global_conversion_efficiency  []
         # fuel_type -  fuel type (natural_gas, fuel_oil, biomass, electricity)
         # saturday_on - 1 (yes)  or 0 (no)
         # sunday_on - 1 (yes)  or 0 (no)
         # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
         # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
 
+        !!!
         IMPORTANT
         To compute excess heat characteristics the equipment supply capacity must be known.
         The user may choose to add directly the equipment supply_capacity or link processes with the equipment.
@@ -27,11 +29,13 @@ INPUT: object with:
                 Where, e.g, in process_1:
                     # process_1 = {'streams':[{stream_1_info},{stream_2_info},..]
 
+
 ##############################
 OUTPUT: object Boiler.
 
+        !!!
         IMPORTANT:
-         # boiler.streams important attribute for CF Internal Heat Recovery  and convert streams
+         # boiler.streams important attribute for source simulation - Heat Recovery and Convert
 
 """
 

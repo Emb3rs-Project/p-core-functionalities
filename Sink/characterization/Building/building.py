@@ -11,13 +11,13 @@ INFO: Building Simulation. Simulates heat an cooling consumptions over the year,
 INPUT: object with:
 
         Mandatory/Basic User inputs:
-            # latitude
-            # longitude
-            # number_floor
+            # latitude  [º]
+            # longitude  [º]
+            # number_floor  []
             # width_floor [m]
             # length_floor [m]
             # height_floor [m]
-            # ratio_wall_N - value between  0 and 1
+            # ratio_wall_N - value between  0 and 1  []
             # ratio_wall_S
             # ratio_wall_E
             # ratio_wall_W
@@ -28,6 +28,7 @@ INPUT: object with:
             # building_type - 'office','residential' or ' hotel'
             # building_orientation - 'N','S','E' or 'W'
 
+            !!!
             IMPORTANT -  for Mandatory/Basic User:
                 # if  building_type = 'residential' -> mandatory input -> number_person_per_floor
                 # if  building_type = 'hotel' -> mandatory input -> number_rooms
@@ -45,7 +46,7 @@ INPUT: object with:
             # T_heat_on [ºC]
             # T_off_min [ºC]
             # T_off_max [ºC]
-            # tau_glass - value between  0 and 1
+            # tau_glass - value between  0 and 1  []
             # alpha_wall
             # alpha_floor
             # alpha_glass
@@ -58,21 +59,24 @@ INPUT: object with:
             # air_change_hour [1/h]
             # renewal_air_per_person  [m3/s.person]
             # vol_dhw_set - daily water consumption [m3]
-            # Q_gain_per_floor
-            # emissivity_wall
+            # Q_gain_per_floor  [W]
+            # emissivity_wall  []
             # emissivity_glass
 
 ##############################
-OUTPUT: vector with 2 dictionaries, regarding hot and cooling stream needs with:
+OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stream_1,stream_2, ... :
 
-        # id - stream id
-        # object_type - stream
-        # fluid - water
-        # stream_type - inflow
-        # monthly_generation - array [kWh]
-        # hourly_generation - array [kWh]
-        # supply_temperature [ºC]
-        # target_temperature [ºC]
+        Where for example:
+        # stream_1 = {
+        #           'id' - stream id
+        #           'object_type' - stream
+        #           'fluid' - water
+        #           'stream_type' - inflow
+        #           'monthly_generation' - array [kWh]
+        #           'hourly_generation' - array [kWh]
+        #           'supply_temperature' [ºC]
+        #           'target_temperature' [ºC]
+        #           }
 
 
 """
@@ -582,28 +586,28 @@ def building(in_var):
 
     # OUTPUT -------
     output = {
-        'streams':[{
-            'id':9999999,
-            'object_type':'stream',
-            'fluid':'water',
-            'stream_type':'inflow',
-            "monthly_generation":profile_monthly_heat,  # [kWh]
-            "hourly_generation":profile_hourly_heat,  # [kWh]
-            "supply_temperature":supply_temperature_heat,  # [ºC]
-            "target_temperature":target_temperature_heat,  # [ºC]
-            },
+        'streams': [{
+            'id': 9999999,
+            'object_type': 'stream',
+            'fluid': 'water',
+            'stream_type': 'inflow',
+            "monthly_generation": profile_monthly_heat,  # [kWh]
+            "hourly_generation": profile_hourly_heat,  # [kWh]
+            "supply_temperature": supply_temperature_heat,  # [ºC]
+            "target_temperature": target_temperature_heat,  # [ºC]
+        },
             {
-            'id':8888888,
-            'object_type':'stream',
-            'fluid':'water',
-            'stream_type':'inflow',
-            "monthly_generation":profile_monthly_cool,  # [kWh]
-            "hourly_generation":profile_hourly_cool,  # [kWh]
-            "supply_temperature":supply_temperature_cool,  # [ºC]
-            "target_temperature":target_temperature_cool  # [ºC]
-                }]
+                'id': 8888888,
+                'object_type': 'stream',
+                'fluid': 'water',
+                'stream_type': 'inflow',
+                "monthly_generation": profile_monthly_cool,  # [kWh]
+                "hourly_generation": profile_hourly_cool,  # [kWh]
+                "supply_temperature": supply_temperature_cool,  # [ºC]
+                "target_temperature": target_temperature_cool  # [ºC]
+            }]
 
-        }
+    }
 
 
     #output = json.dumps(output, indent=2)

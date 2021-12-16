@@ -1,8 +1,10 @@
 """
 alisboa/jmcunha
 
+
 ##############################
 INFO: Create CHP Object and characterize its streams.
+
 
 ##############################
 INPUT: object with:
@@ -17,6 +19,7 @@ INPUT: object with:
         # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
         # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
 
+        !!!
         IMPORTANT
         1) user can input electrical generation or supply heat capacity, with corresponding conversion efficiencies
                 # thermal_conversion_efficiency (0 to 1) and supply_capacity [kW]
@@ -31,11 +34,13 @@ INPUT: object with:
                 Where, e.g, in process_1:
                     # process_1 = {'streams':[{stream_1_info},{stream_2_info},..]
 
+
 ##############################
 OUTPUT: object CHP.
 
+        !!!
         IMPORTANT:
-         # chp.streams important attribute for CF Internal Heat Recovery  and convert streams
+         # chp.streams important attribute for source simulation - Heat Recovery and Convert
 
 """
 

@@ -1,8 +1,10 @@
 """
 alisboa/jmcunha
 
+
 ##############################
 INFO: Create Burner Object and characterize its streams.
+
 
 ##############################
 INPUT: object with:
@@ -16,6 +18,7 @@ INPUT: object with:
         # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
         # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
 
+        !!!
         IMPORTANT
         To compute excess heat characteristics the equipment supply capacity must be known.
         The user may choose to add directly the equipment supply_capacity or link processes with the equipment.
@@ -29,8 +32,9 @@ INPUT: object with:
 ##############################
 OUTPUT: object Burner.
 
+        !!!
         IMPORTANT:
-         # burner.streams important attribute for CF Internal Heat Recovery  and convert streams
+         # burner.streams important attribute for source simulation - Heat Recovery and Convert
 
 """
 

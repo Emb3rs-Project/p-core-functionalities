@@ -24,9 +24,9 @@ INPUT: object with:
          #          }
 
 ##############################
-OUTPUT: array with streams dictionaries, e.g. streams_output =[stream_1,stream_2, ... :
+OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stream_1,stream_2, ... :
 
-        Where for example
+        Where for example:
         # stream_1 = {
         #           'id' - stream id
         #           'object_type' - stream
@@ -89,8 +89,9 @@ def simple_user(in_var):
         streams_output.append(info_stream)
 
     # OUTPUT ------------------------
+    output = {"streams": streams_output}
 
     # output = json.dumps(output, indent=2)
 
-    return streams_output
+    return output
 

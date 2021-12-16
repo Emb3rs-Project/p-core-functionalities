@@ -13,21 +13,25 @@ INPUT:  consumer_type - 'household' or 'non-household'
 
 
 ##############################
-OUTPUT: array best_options with multiple dictionaries with:
+OUTPUT: array best_options with dictionaries, e.g. best_options=[option_1,option_2,..]
 
-            # streams_id - vector with streams ID
-            # electrical_generation_nominal [kW]
-            # electrical_generation_yearly [kWh]
-            # excess_heat_supply_capacity [kW]
-            # conversion_efficiency []
-            # turnkey - intermediate + orc turnkey [€]
-            # om_fix - om fix intermediate + orc turnkey [€/year]
-            # om_var  - om var intermediate + orc turnkey [€]
-            # electrical_generation_yearly_turnkey
-            # npv_5 - NPV 5 years
-            # npv_15 - NPV 15 years
-            # npv_25 - NPV 25 years
-            # payback - number of years to reach NPV = 0
+        Where, for example:
+
+        option_1 = {
+        #           'streams_id' - vector with streams ID
+        #           'electrical_generation_nominal' [kW]
+        #           'electrical_generation_yearly' [kWh]
+        #           'excess_heat_supply_capacity' [kW]
+        #           'conversion_efficiency' []
+        #           'turnkey' - intermediate + orc turnkey [€]
+        #           'om_fix' - om fix intermediate + orc turnkey [€/year]
+        #           'om_var'  - om var intermediate + orc turnkey [€]
+        #           'electrical_generation_yearly_turnkey'
+        #           'npv_5' - NPV 5 years
+        #           'npv_15' - NPV 15 years
+        #           'npv_25' - NPV 25 years
+        #           'payback' - number of years to reach NPV = 0
+        #  }
 
 
 """
@@ -57,7 +61,6 @@ def convert_orc(in_var):
         orc_years_working = 25
 
     # Initialize Arrays
-    output = []
     convert_info = []
 
     # Defined vars

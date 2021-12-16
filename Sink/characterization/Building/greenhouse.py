@@ -4,26 +4,27 @@ alisboa/jmcunha
 
 ##############################
 INFO: Greenhouse Simulation. Simulates the heat needs over the year according to the greenhouse specifications
-    and climate weather data of the location
+      and climate weather data of the location
 
 
 ##############################
 INPUT: object with:
 
         Mandatory/Basic User inputs:
-            # latitude
-            # longitude
-            # width_floor
-            # length_floor
-            # height_floor
-            # shutdown_periods
-            # daily_periods
+            # latitude  []
+            # longitude  []
+            # width_floor  [m]
+            # length_floor  [m]
+            # height_floor  [m]
             # building_orientation
-            # saturday_on
-            # sunday_on
+            # saturday_on - 1 (yes)  or 0 (no)
+            # sunday_on - 1 (yes)  or 0 (no)
+            # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
+            # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
             # lights_on - 1=with lights system ; 0=no lights system
-            # hours_lights_needed - lighting hours in greenhouse (counting with daily iluminance) [h]
+            # hours_lights_needed - lighting hours in greenhouse (counting with daily illuminance) [h]
 
+            !!!
             IMPORTANT - for Mandatory/Basic User:
                     #  get  building_efficiency to compute f_c
                         1=tight sealed greenhouse
@@ -48,16 +49,19 @@ INPUT: object with:
 
 
 ##############################
-OUTPUT: vector with 2 dictionaries, regarding hot and cooling stream needs with:
+OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stream_1,stream_2, ... :
 
-        # id - stream id
-        # object_type - stream
-        # fluid - water
-        # stream_type - inflow
-        # monthly_generation - array [kWh]
-        # hourly_generation - array [kWh]
-        # supply_temperature [ºC]
-        # target_temperature [ºC]
+        Where for example:
+        # stream_1 = {
+        #           'id' - stream id
+        #           'object_type' - stream
+        #           'fluid' - water
+        #           'stream_type' - inflow
+        #           'monthly_generation' - array [kWh]
+        #           'hourly_generation' - array [kWh]
+        #           'supply_temperature' [ºC]
+        #           'target_temperature' [ºC]
+        #           }
 
 
 """
@@ -361,20 +365,19 @@ def greenhouse(in_var):
         profile_hourly_heat.append(cumulative_heat_hourly)  # space heating demand [kWh]
         profile_hourly_cool.append(cumulative_cool_hourly)  # space cooling demand [kWh]
 
-
     # OUTPUT -------------
     output = {
-        'streams':{
-            'id':7777,
-            'object_type':'stream',
-            'fluid':'water',
-            'stream_type':'inflow',
-            "monthly_generation":profile_monthly_heat,  # [kWh]
-            "hourly_generation":profile_hourly_heat,  # [kWh]
-            "supply_temperature":supply_temperature_heat,  # [ºC]
-            "target_temperature":target_temperature_heat,  # [ºC]
-            }
+        'streams': {
+            'id': 777777,
+            'object_type': 'stream',
+            'fluid': 'water',
+            'stream_type': 'inflow',
+            "monthly_generation": profile_monthly_heat,  # [kWh]
+            "hourly_generation": profile_hourly_heat,  # [kWh]
+            "supply_temperature": supply_temperature_heat,  # [ºC]
+            "target_temperature": target_temperature_heat,  # [ºC]
         }
+    }
 
     #output = json.dumps(output, indent=2)
 

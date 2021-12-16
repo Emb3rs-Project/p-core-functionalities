@@ -86,8 +86,6 @@ OUTPUT: vector with multiple dictionaries [source_1,source_2,...]  [{'source_id'
                      #                            }
 
 
-
-
 """
 
 from copy import copy
@@ -107,7 +105,7 @@ from ....General.Auxiliary_General.get_country import get_country
 
 def convert_sources(in_var):
 
-    # INPUT --------------
+    # INPUT
     group_of_sources = in_var.group_of_sources
     sink_group_grid_supply_temperature = in_var.sink_group_grid_supply_temperature
     sink_group_grid_return_temperature = in_var.sink_group_grid_return_temperature
@@ -346,8 +344,6 @@ def convert_sources(in_var):
                                         conversion_technologies.append(info)
 
 
-
-
                             # grid may not supply enough heat to the source
                             # add heating technologies
                             else:
@@ -389,20 +385,18 @@ def convert_sources(in_var):
                                     info = join_hx_and_technology([info_technology,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source')
                                     conversion_technologies.append(info)
 
-
                             output_converted.append({
-                                'stream_id':stream['id'],
-                                'hourly_stream_capacity':hourly_stream_capacity,  # [kWh]
-                                'conversion_technologies':conversion_technologies,  # [€/kW]
-                                })
-
+                                'stream_id': stream['id'],
+                                'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
+                                'conversion_technologies': conversion_technologies,  # [€/kW]
+                            })
 
         output.append({
-                'source_id':source['id'],
-                'source_grid_supply_temperature':source_grid_supply_temperature,
-                'source_grid_return_temperature':source_grid_return_temperature,
-                'streams_converted':output_converted
-                })
+            'source_id': source['id'],
+            'source_grid_supply_temperature': source_grid_supply_temperature,
+            'source_grid_return_temperature': source_grid_return_temperature,
+            'streams_converted': output_converted
+        })
 
 
     #output = json.dumps(output, indent=2)

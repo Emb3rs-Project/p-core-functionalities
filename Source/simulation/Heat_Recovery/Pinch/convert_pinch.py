@@ -30,6 +30,7 @@ INFO: Main function of Heat Recovery Module.
 INPUT: object with:
         # pinch_delta_T_min - delta temperature for pinch analysis  [ºC]
         # all_input_objects  - equipments/processes/isolated stream
+        # country - country name
 
             When an equipment:
                 # id
