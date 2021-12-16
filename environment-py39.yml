@@ -13,3 +13,4 @@ dependencies:
   - urllib3=
   - beautifulsoup4=
   - matplotlib=
+  - requests=
