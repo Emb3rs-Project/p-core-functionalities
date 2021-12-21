@@ -51,7 +51,7 @@ def design_orc(stream_capacity, stream_fluid, stream_supply_temperature, stream_
     flue_gas_T_minimum = 120  # minimum temperature flue_gas can be cooled [ºC]
     design_temperature = 350  # above this temperature 'rc', below 'orc'[ºC]
 
-    # if streams are aggregated, a intermediate circuit is implemented
+    # if streams are aggregated, an intermediate circuit is implemented
     if aggregate_streams == True:
         intermediate_circuit_exist = True
         intermediate_T_hot = orc_T_evap + hx_delta_T
