@@ -85,7 +85,7 @@ class Boiler():
         # schedule
         schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
 
-        # get supply capacity to compute excees heat characteristics
+        # get supply capacity to compute excess heat characteristics
         try:
             supply_capacity = in_var.supply_capacity
             self.supply_capacity = supply_capacity
