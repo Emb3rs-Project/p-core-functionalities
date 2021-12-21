@@ -38,10 +38,10 @@ OUTPUT: array best_options with dictionaries, e.g. best_options=[option_1,option
 
 import itertools
 import pandas as pd
-from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_aux import convert_aux
+from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_orc_aux import convert_aux
 from .....KB_General.equipment_details import equipment_details
 from .....General.Auxiliary_General.get_country import get_country
-from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.economic_data import economic_data
+from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.orc_economic import economic_data
 
 def convert_orc(in_var):
 
