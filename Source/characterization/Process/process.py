@@ -24,7 +24,6 @@ INPUT: object with:
          Where in startup_data :
              # fluid - fluid name
              # initial_temperature [ºC]
-             # operation_temperature [ºC]
              # mass [kg]
 
          Where in maintenance_data :
