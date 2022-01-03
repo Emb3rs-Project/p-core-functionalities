@@ -170,7 +170,8 @@ def pinch_analysis(df_streams, df_streams_profile, pinch_delta_T_min, hx_delta_T
                                                  'theo_minimum_cold_utility': theo_minimum_cold_utility,
                                                  'cold_utility': df_hx['cold_utility'],
                                                  'df_hx': df_hx['df_hx'],
-                                                 'pinch_temperature': pinch_point_temperature
+                                                 'pinch_temperature': pinch_point_temperature + pinch_delta_T_min,
+                                                 'pinch_delta_T_min': pinch_delta_T_min * 2,
                                                  })
 
             design_id += 1
@@ -185,7 +186,8 @@ def pinch_analysis(df_streams, df_streams_profile, pinch_delta_T_min, hx_delta_T
                                              'theo_minimum_cold_utility': theo_minimum_cold_utility,
                                              'cold_utility': None,
                                              'df_hx': None,
-                                             'pinch_temperature': pinch_point_temperature
+                                             'pinch_temperature': pinch_point_temperature + pinch_delta_T_min,
+                                             'pinch_delta_T_min': pinch_delta_T_min*2,
                                              })
         design_id += 1
 

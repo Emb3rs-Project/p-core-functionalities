@@ -247,7 +247,6 @@ def convert_pinch(in_var):
                             for df in df_hx_hourly:
                                 info_pinch.append(df)
 
-
     ############################################################################################################
     # ECONOMIC/CO2 EMISSIONS ANALYSIS
     all_df = []
@@ -297,25 +296,26 @@ def convert_pinch(in_var):
         # equipment internal heat recovery/ only isolated streams
         else:
             for index, info in enumerate(info_pinch):
-                pinch_data = info['df_hx']
-                if object['object_type'] == 'equipment':
-                    data = fuel_properties(country, object['fuel_type'], 'non-household')
-                    co2_emission_per_kw = data['co2_emissions']
-                    fuel_cost_kwh = data['price']
-                else:
-                    only_isolated_streams = True
-                    co2_emission_per_kw = 0
-                    fuel_cost_kwh = 0
+                if info['analysis_state'] == 'performed':
+                    pinch_data = info['df_hx']
+                    if object['object_type'] == 'equipment':
+                        data = fuel_properties(country, object['fuel_type'], 'non-household')
+                        co2_emission_per_kw = data['co2_emissions']
+                        fuel_cost_kwh = data['price']
+                    else:
+                        only_isolated_streams = True
+                        co2_emission_per_kw = 0
+                        fuel_cost_kwh = 0
 
-                df_optimization = df_optimization.append({
-                    'index': index,
-                    'co2_savings': pinch_data['Recovered_Energy'].sum() * co2_emission_per_kw,
-                    'money_savings': pinch_data['Recovered_Energy'].sum() * fuel_cost_kwh,
-                    'energy_recovered': pinch_data['Recovered_Energy'].sum(),
-                    'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / pinch_data['Recovered_Energy'].sum(),
-                    'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
-                    'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
-                }, ignore_index=True)
+                    df_optimization = df_optimization.append({
+                        'index': index,
+                        'co2_savings': pinch_data['Recovered_Energy'].sum() * co2_emission_per_kw,
+                        'money_savings': pinch_data['Recovered_Energy'].sum() * fuel_cost_kwh,
+                        'energy_recovered': pinch_data['Recovered_Energy'].sum(),
+                        'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / pinch_data['Recovered_Energy'].sum(),
+                        'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
+                        'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
+                    }, ignore_index=True)
 
 
         # drop duplicates

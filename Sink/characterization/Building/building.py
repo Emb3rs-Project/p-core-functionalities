@@ -324,9 +324,13 @@ def building(in_var):
     max_air_delta_T_per_minute = 1  # 1ºC per min
     max_air_delta_T_allowed = time_step * max_air_delta_T_per_minute / 60
 
+    vector_T_interior = []
+
     for profile_index, profile_operating in enumerate(profile):
 
         if (profile_index in month_last_hour_vector) or (profile_index == 8759):
+
+
             profile_monthly_heat.append(cumulative_heat_monthly)  # space heating demand [kWh]
             profile_monthly_cool.append(cumulative_cool_monthly)  # space cooling demand [kWh]
 
@@ -538,6 +542,7 @@ def building(in_var):
             # Explicit Heat Balances --
             # Interior Air
             T_interior = T_interior + (Q_building_floor + Q_heat_required) * time_step / (rho_air * cp_air * volume_floor)  # [ºC]
+            vector_T_interior.append(T_interior)
             # Wall
             T_N_wall = explicit_computation_component_temperature(T_N_wall, T_N_wall_in, T_N_wall_out, u_wall,area_N_wall, time_step, c_N_wall)
             T_S_wall = explicit_computation_component_temperature(T_S_wall, T_S_wall_in, T_S_wall_out, u_wall, area_S_wall, time_step, c_S_wall)
