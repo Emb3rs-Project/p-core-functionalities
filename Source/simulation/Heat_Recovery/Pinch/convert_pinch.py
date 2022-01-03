@@ -247,6 +247,7 @@ def convert_pinch(in_var):
                             for df in df_hx_hourly:
                                 info_pinch.append(df)
 
+
     ############################################################################################################
     # ECONOMIC/CO2 EMISSIONS ANALYSIS
     all_df = []
@@ -270,6 +271,7 @@ def convert_pinch(in_var):
                                             'energy_investment',
                                             'turnkey'
                                             ])
+
 
     try:
         # perform full analysis

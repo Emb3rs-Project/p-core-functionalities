@@ -71,6 +71,8 @@ class Add_ORC_Cascaded():
                                                 info_power_fraction['supply_capacity'] / info_power_fraction['conversion_efficiency']
                                                 )
 
+        self.supply_capacity = info_max_power['supply_capacity']
+
         self.data_teo = {
             'equipment': self.equipment_sub_type,
             'fuel_type': self.fuel_type,
