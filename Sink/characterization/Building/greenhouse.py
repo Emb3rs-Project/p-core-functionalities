@@ -84,8 +84,8 @@ def greenhouse(in_var):
     # INPUT ----------------------------------------------
     latitude = in_var.latitude
     longitude = in_var.longitude
-    width_floor = in_var.width  # [m]
-    length_floor = in_var.length  # [m]
+    width_floor = in_var.width_floor  # [m]
+    length_floor = in_var.length_floor  # [m]
     height_floor = in_var.height_floor  # [m]
     shutdown_periods = in_var.shutdown_periods
     daily_periods = in_var.daily_periods
