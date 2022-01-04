@@ -109,8 +109,8 @@ def building(in_var):
     longitude = in_var.longitude
     country = in_var.country
     number_floor = in_var.number_floor  # number of floors
-    width_floor = in_var.width  # [m]
-    length_floor = in_var.length  # [m]
+    width_floor = in_var.width_floor  # [m]
+    length_floor = in_var.length_floor  # [m]
     height_floor = in_var.height_floor  # [m]
     ratio_wall_N = in_var.ratio_wall_N  # wall area fraction
     ratio_wall_S = in_var.ratio_wall_S
