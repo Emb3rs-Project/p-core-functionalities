@@ -100,14 +100,13 @@ from ....Sink.characterization.Building.Auxiliary.steady_state_exterior_wall imp
 from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_vertical_surface import ht_radiation_vertical_surface
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_horizontal_surface import ht_radiation_horizontal_surface
-
+from ....General.Auxiliary_General.get_country import get_country
 
 def building(in_var):
 
     # INPUT ----------------------------------------------
     latitude = in_var.latitude
     longitude = in_var.longitude
-    country = in_var.country
     number_floor = in_var.number_floor  # number of floors
     width_floor = in_var.width_floor  # [m]
     length_floor = in_var.length_floor  # [m]
@@ -122,6 +121,8 @@ def building(in_var):
     daily_periods = in_var.daily_periods
     building_type = in_var.building_type
     building_orientation = in_var.building_orientation
+
+    country = get_country(latitude, longitude)
 
     try:
         # User input or defined
