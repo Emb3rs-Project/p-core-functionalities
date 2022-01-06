@@ -5,7 +5,7 @@ alisboa/jmcunha
 ##############################
 INFO: Design ORC/RC according to the excess heat streams given.
       The following assumptions are implemetend:
-       - above design_temperature = 350ºC, 'rc', below 'orc'[ºC]
+       - above design_temperature = 500ºC, 'rc', below 'orc'[ºC]
        - 120 ºC is the minimum temperature flue_gas can be cooled. Design constraint - lower flue_gas temperatures mean
        condensation
        - orc_delta_T = 30
