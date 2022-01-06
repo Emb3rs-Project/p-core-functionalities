@@ -115,7 +115,7 @@ class Cooling_Equipment():
         # Excess Heat
         if self.equipment_sub_type == 'co2_chiller':
             # capacity [kW]
-            excess_heat_supply_capacity = self.supply_capacity * 1.5203
+            excess_heat_supply_capacity = self.supply_capacity * 1.520
 
             # flowrate [kg/h]
             excess_heat_flowrate = compute_flow_rate(excess_heat_fluid,
