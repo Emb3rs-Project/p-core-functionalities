@@ -11,8 +11,7 @@ INFO: Design ORC/RC according to the excess heat streams given.
        - orc_delta_T = 30
 
        The conversion design can be for a unique stream  or the aggregated of multiple streams. If the excess streams are
-       to be aggregated to enhance the power available to convert in the ORC, a intermediate circuit characteristics are
-       designed.
+       to be aggregated to enhance the power available to convert in the ORC, a intermediate circuit is designed.
 
 
 ##############################
