@@ -21,7 +21,7 @@ OUTPUT: dictionary with:
             # om_fix - aggregated om_fix  [€/year.kW]
             # om_var - aggregated om_var  [€/kWh]
             # emissions - aggregated emissions  [kg.CO2/kWh]
-            # technologies - each equipment info in detail
+            # technologies - each equipment info in detail - right now not an output
 
 
 """
@@ -75,7 +75,7 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
         'om_fix': om_fix / max_power_stream,  # [€/year.kW]
         'om_var': om_var / max_power_stream,  # [€/kWh]
         'emissions': emissions / max_power_stream,  # [kg.CO2/kWh]
-        'technologies': technologies_dict,
+        #'technologies': technologies_dict,
 
     }
 
