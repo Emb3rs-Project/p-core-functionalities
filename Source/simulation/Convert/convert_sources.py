@@ -28,7 +28,7 @@ INFO: Sources conversion technologies.
 INPUT:  object with:
 
         # group_of_sources = [source_1,source_2,...] each source dictionary
-        # last_iteration_data = [] or output from first iteration
+        # last_iteration_data = [] or output from first iteration - all_sources_info
         # sink_group_grid_supply_temperature
         # sink_group_grid_return_temperature
         # grid_losses - array with vectors with grid losses for each stream of source  [[source_1_stream_1_loss, source_1_stream_2_loss],...]
@@ -118,7 +118,7 @@ def convert_sources(in_var):
         last_iteration_data = []
 
     # Initialize array
-    output = []
+    all_sources_info = []
     info_all_boilers = []
 
     conversion_technologies = []
@@ -391,7 +391,7 @@ def convert_sources(in_var):
                                 'conversion_technologies': conversion_technologies,  # [€/kW]
                             })
 
-        output.append({
+        all_sources_info.append({
             'source_id': source['id'],
             'source_grid_supply_temperature': source_grid_supply_temperature,
             'source_grid_return_temperature': source_grid_return_temperature,
@@ -401,7 +401,7 @@ def convert_sources(in_var):
 
     #output = json.dumps(output, indent=2)
 
-    return output
+    return all_sources_info
 
 
 
