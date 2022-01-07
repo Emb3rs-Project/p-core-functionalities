@@ -82,7 +82,7 @@ OUTPUT: vector with multiple dictionaries [source_1,source_2,...]  [{'source_id'
                      #                              'om_fix'   [€/year.kW]
                      #                              'om_var'  [€/kWh]
                      #                              'emissions'  [kg.CO2/kWh]
-                     #                              'tecnhologies' - technologies info in detail,
+                     #                              'tecnhologies' - technologies info in detail, - RIGHT NOW, NOT ON THE OUTPUT
                      #                            }
 
 
