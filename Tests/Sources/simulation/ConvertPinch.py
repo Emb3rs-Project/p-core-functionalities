@@ -209,7 +209,7 @@ class Input_Data_Remaining_Options():
 
         self.all_input_objects = all_objects
         self.pinch_delta_T_min = 10
-        self.country = 'Portugal'
+        self.location = [41.13, -8.61]
         self.perform_all_combinations = True
 
 

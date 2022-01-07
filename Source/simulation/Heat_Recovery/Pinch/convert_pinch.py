@@ -30,7 +30,7 @@ INFO: Main function of Heat Recovery Module.
 INPUT: object with:
         # pinch_delta_T_min - delta temperature for pinch analysis  [ºC]
         # all_input_objects  - array with equipments/processes/isolated_stream dicts
-        # country - country name
+        # location - [latitude, longitude]
         # lifetime  (not mandatory, it is assumed lifetime=20 years)
         # number_output_options (not mandatory, it is assumed number_output_options=3)
 
@@ -129,6 +129,7 @@ from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.get_best_x_outputs imp
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.eco_env_analysis import eco_env_analysis
 from .....KB_General.fluid_material import fluid_material_cp
 from .....KB_General.fuel_properties import fuel_properties
+from .....General.Auxiliary_General.get_country import get_country
 import itertools
 import pandas as pd
   
@@ -138,7 +139,7 @@ def convert_pinch(in_var):
     # INPUT
     all_input_objects = in_var.all_input_objects  # equipments/processes/isolated streams
     pinch_delta_T_min = in_var.pinch_delta_T_min
-    country = in_var.country
+    latitude, longitude = in_var.location
     perform_all_combinations = in_var.perform_all_combinations  # parameter to only perform all combinations for isolated streams and processes.
 
     try:
@@ -151,7 +152,9 @@ def convert_pinch(in_var):
     except:
         lifetime = 20
 
+
     # Defined Vars
+    country = get_country(latitude, longitude)
     objects_to_analyze = []
     streams = []
     individual_equipment_optimization = False  # parameter to only perform equipment heat recovery
