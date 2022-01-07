@@ -92,7 +92,7 @@ OUTPUT: the following dictionary,
                      #                              'om_fix'   [€/year.kW]
                      #                              'om_var'  [€/kWh]
                      #                              'emissions'  [kg.CO2/kWh]
-                     #                              'tecnhologies' - technologies info in detail,
+                     #                              'tecnhologies' - technologies info in detail, - RIGHT NOW, NOT AND OUTPUT
                      #                            }
 
 
