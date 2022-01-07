@@ -37,6 +37,7 @@ INPUT: object with:
             When an equipment (check script at Source/characterization/Generate_Equipment):
             # equipment = {
             #              'id',
+            #              'object_type',
             #              'streams', - array with streams dicts
             #              'fuel_type'
             #             }
