@@ -37,9 +37,7 @@ INPUT: group_of_sinks = [sink_1,sink_2,...] each sink with a dict
         #       'streams' - array with dictionaries with {id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation}
         #    }
 
-      IMPORTANT:
-         # hourly_generation for streams (profile 1 and 0), hourly_generation for building  (kWh profile)
-
+ 
 
 ##############################
 OUTPUT: the following dictionary,
