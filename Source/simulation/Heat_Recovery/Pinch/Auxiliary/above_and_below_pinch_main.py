@@ -65,6 +65,8 @@ RETURN:
             # 'HX_Cold_Stream'  [ID]
             # 'HX_Original_Hot_Stream'  [ID]
             # 'HX_Original_Cold_Stream'  [ID]
+            # 'HX_Hot_Stream_flowrate', [kg/h]
+            # 'HX_Cold_Stream_flowrate',  [kg/h]
             # 'HX_Type'  [hx type]
             # 'HX_Turnkey_Cost'  [€]
             # 'HX_OM_Fix_Cost'  [€/year]

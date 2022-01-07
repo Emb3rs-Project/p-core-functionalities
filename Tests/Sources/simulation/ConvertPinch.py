@@ -115,7 +115,7 @@ class Option_1:
             i['id'] = numbers
             numbers += 1
 
-        self.country = 'Portugal'
+        self.location = [41.13, -8.61]
         self.perform_all_combinations = True
 
 

@@ -74,6 +74,7 @@ RETURN: dictionary with 3 keys:
                 # co2_option_1 = {
                 #                 'ID' - designed solution ID  [ID]
                 #                 'streams' - streams in pinch design ID [ID]
+                #                 'streams_info' - array with dicts
                 #                 'capex'  [€]
                 #                 'om_fix' - yearly om fix costs [€/year]
                 #                 'hot_utility' - power of the hot utility needed, so that the cold streams reach their target_temperature  [kW]
@@ -98,6 +99,8 @@ RETURN: dictionary with 3 keys:
                     #         'HX_Cold_Stream'  [ID]
                     #         'HX_Original_Hot_Stream'  [ID]
                     #         'HX_Original_Cold_Stream'  [ID]
+                    #         'HX_Hot_Stream_flowrate', [kg/h]
+                    #         'HX_Cold_Stream_flowrate',  [kg/h]
                     #         'HX_Type'  [hx type]
                     #         'HX_Turnkey_Cost'  [€]
                     #         'HX_OM_Fix_Cost'  [€/year]
@@ -121,6 +124,12 @@ RETURN: dictionary with 3 keys:
                     #                               'Total_Turnkey_Cost'  [€]
                     #                               }
 
+               Where in streams_info, multiple dicts with :
+                    # id - original stream_id
+                    # above_pinch - dict with keys
+                            # flowrate - final flowrate
+                            # split streams - array with dicts with "id" and "flowrate"
+                    # below_pinch - same as above_pinch
 
 """
 
@@ -288,7 +297,8 @@ def convert_pinch(in_var):
                     economic_data = info['df_equipment_economic']
                     df_optimization = df_optimization.append({
                         'index': index,
-                        'streams':info['streams'],
+                        'streams': info['streams'],
+                        'streams_info': info['streams_info'],
                         'co2_savings': economic_data['CO2_Savings_Year'].sum(),
                         'money_savings': economic_data['Savings_Year'].sum(),
                         'energy_recovered': economic_data['Recovered_Energy'].sum(),
@@ -327,6 +337,7 @@ def convert_pinch(in_var):
         # drop duplicates
         df_optimization = df_optimization.drop_duplicates(
             subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
+
 
         # get best options that recover maximum energy
         energy_recovered = df_optimization.sort_values('energy_recovered', ascending=False).head(number_output_options)

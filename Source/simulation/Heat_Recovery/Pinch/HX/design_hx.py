@@ -25,16 +25,18 @@ RETURN: a new_hx_row to add to the df_hx,
 
         Where,
             # new_hx_row = {
-            #               'Power', - hx power [kW]
-            #               'Hot_Stream', - stream ID, may be equal to Original_Hot_Stream or different if split occurred
-            #               'Cold_Stream', - stream ID
-            #               'Hot_Stream_T_Hot',  [ºC]
-            #               'Hot_Stream_T_Cold',  [ºC]
+            #               'HX_Power', - hx power [kW]
+            #               'HX_Hot_Stream', - stream ID, may be equal to Original_Hot_Stream or different if split occurred
+            #               'HX_Cold_Stream', - stream ID
+            #               'HX_Hot_Stream_flowrate',
+            #               'HX_Cold_Stream_flowrate',
+            #               'HX_Hot_Stream_T_Hot',  [ºC]
+            #               'HX_Hot_Stream_T_Cold',  [ºC]
             #               'HX_Type', - type of hx, e.g. hx_plate, hx_shell_and_tubes, hx_kettle_boiler
             #               'HX_Turnkey_Cost',  [€]
             #               'HX_OM_Fix_Cost',  [€/year]
-            #               'Original_Hot_Stream', - original stream ID
-            #               'Original_Cold_Stream', - original stream ID
+            #               'HX_Original_Hot_Stream', - original stream ID
+            #               'HX_Original_Cold_Stream', - original stream ID
             #               'Hot_Split', - if split stream or not; True or False
             #               'Cold_Split',
             #               }
@@ -43,6 +45,7 @@ RETURN: a new_hx_row to add to the df_hx,
 
 from ......General.Convert_Equipments.Auxiliary.design_cost_hx import design_cost_hx
 from ......KB_General.hx_type_and_u import hx_type_and_u
+from ......KB_General.fluid_material import fluid_material_cp
 
 
 def design_hx(hot_stream_index, cold_stream_index, hx_hot_stream_T_hot, hx_hot_stream_T_cold, hot_stream_fluid,
@@ -67,10 +70,17 @@ def design_hx(hot_stream_index, cold_stream_index, hx_hot_stream_T_hot, hx_hot_s
     else:
         cold_split = False
 
+    hot_stream_cp = fluid_material_cp(hot_stream_fluid, hx_hot_stream_T_hot)
+    hot_stream_flowrate = hx_power / (abs(hx_hot_stream_T_hot - hx_hot_stream_T_cold) * hot_stream_cp)
+    cold_stream_cp = fluid_material_cp(cold_stream_fluid, hx_cold_stream_T_hot)
+    cold_stream_flowrate = hx_power / (abs(hx_cold_stream_T_hot - hx_cold_stream_T_cold) * cold_stream_cp)
+
     new_hx_row = {
                   'HX_Power': round(hx_power + .0, 1),
                   'HX_Hot_Stream': hot_stream_index,
                   'HX_Cold_Stream': cold_stream_index,
+                  'HX_Hot_Stream_flowrate': hot_stream_flowrate,
+                  'HX_Cold_Stream_flowrate': cold_stream_flowrate,
                   'HX_Hot_Stream_T_Hot': round(hx_hot_stream_T_hot + .0, 1),
                   'HX_Hot_Stream_T_Cold': round(hx_hot_stream_T_cold + .0, 1),
                   'HX_Cold_Stream_T_Hot': round(hx_cold_stream_T_hot + .0, 1),

@@ -55,6 +55,7 @@ from ......KB_General.get_interest_rate import get_interest_rate
 def get_best_x_outputs(info_pinch,df_optimization,country,lifetime):
 
     best_x_options = []
+
     interest_rate = get_interest_rate(country)
 
     for index, row in df_optimization.iterrows():
@@ -62,6 +63,7 @@ def get_best_x_outputs(info_pinch,df_optimization,country,lifetime):
         best_x_options.append({
             'ID': info_pinch[int(df_optimization['index'].loc[index])]['ID'],
             'streams': info_pinch[int(df_optimization['index'].loc[index])]['streams'],
+            'streams_info': info_pinch[int(df_optimization['index'].loc[index])]['streams_info'],
             'capex': row['turnkey'],  # turnkey hx + storage
             'om_fix': row['om_fix'],
             'hot_utility': info_pinch[int(df_optimization['index'].loc[index])]['hot_utility'],

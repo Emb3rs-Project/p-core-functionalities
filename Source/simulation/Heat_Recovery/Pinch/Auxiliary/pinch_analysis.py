@@ -46,12 +46,21 @@ RETURN:
                 # ID - design ID [ID]
                 # analysis_state - shows message: 'error in performing - probably specific/complex case' or 'performed'
                 # streams - streams ID  [ID]
+                # streams_info - to know the final streams, and respective splits, above and below pinch
                 # theo_minimum_hot_utility - minimum theoretical hot utility  [kW]
                 # hot_utility  [kW]
                 # theo_minimum_cold_utility - minimum theoretical cold utility  [kW]
                 # cold_utility  [kW]
                 # pinch_temperature  [ºC]
                 # df_hx  [kg CO2/kWh]
+
+                Where in streams_info, multiple dicts with :
+                    # id - original stream_id
+                    # above_pinch - dict with keys
+                            # flowrate - final flowrate
+                            # split streams - array with dicts with "id" and "flowrate"
+                    # below_pinch - same as above_pinch
+
 
                 Where in df_hx, the following keys:
                     # Power  [kW]
@@ -162,9 +171,66 @@ def pinch_analysis(df_streams, df_streams_profile, pinch_delta_T_min, hx_delta_T
 
     if len(vector_df_hx) > 0:
         for df_hx in vector_df_hx:
+
+            streams_info =[]
+
+            # get list of streams - accounting for splits
+            # HOT STREAMS
+            all_hot_original_stream_id = df_hx['df_hx']['HX_Original_Hot_Stream'].unique()  # get original streams ID
+            for stream_id in all_hot_original_stream_id:
+                df_split_streams = df_hx['df_hx'].loc[df_hx['df_hx']['HX_Original_Hot_Stream'] == stream_id]
+
+                streams_info.append(
+                    {"id": stream_id,
+                     "above_pinch": [],
+                     "below_pinch": [],
+                     }
+                )
+
+                for index, split_stream in df_split_streams.iterrows():
+                    hot_pinch_temperature = pinch_point_temperature + pinch_delta_T_min
+
+                    if split_stream['HX_Hot_Stream_T_Cold'] >= hot_pinch_temperature:
+                        above_below = 'above_pinch'
+                    else:
+                        above_below = 'below_pinch'
+
+                    streams_info[-1][above_below].append({
+                                                    "id": split_stream['HX_Hot_Stream'],
+                                                    "flowrate": split_stream['HX_Hot_Stream_flowrate'],
+                                                   })
+
+            # COLD STREAMS
+            all_cold_original_stream_id = df_hx['df_hx'][
+                'HX_Original_Cold_Stream'].unique()  # get original streams ID
+            for stream_id in all_cold_original_stream_id:
+                df_split_streams = df_hx['df_hx'].loc[df_hx['df_hx']['HX_Original_Cold_Stream'] == stream_id]
+
+                streams_info.append(
+                    {"id": stream_id,
+                     "above_pinch": [],
+                     "below_pinch": [],
+                     }
+                )
+
+                for index, split_stream in df_split_streams.iterrows():
+                    cold_pinch_temperature = pinch_point_temperature - pinch_delta_T_min
+
+                    if split_stream['HX_Cold_Stream_T_Hot'] > cold_pinch_temperature:
+                        above_below = 'above_pinch'
+                    else:
+                        above_below = 'below_pinch'
+
+                    streams_info[-1][above_below].append({
+                        "id": split_stream['HX_Cold_Stream'],
+                        "flowrate": split_stream['HX_Cold_Stream_flowrate'],
+                    })
+
+
             detailed_info_pinch_analysis.append({'ID': design_id,
                                                  'analysis_state': 'performed',
                                                  'streams': df_streams.index.values,
+                                                 'streams_info': streams_info,
                                                  'theo_minimum_hot_utility': theo_minimum_hot_utility,
                                                  'hot_utility': df_hx['hot_utility'],
                                                  'theo_minimum_cold_utility': theo_minimum_cold_utility,
@@ -181,6 +247,7 @@ def pinch_analysis(df_streams, df_streams_profile, pinch_delta_T_min, hx_delta_T
         detailed_info_pinch_analysis.append({'ID': design_id,
                                              'analysis_state': 'error in performing - probably specific/complex case',
                                              'streams': df_streams.index.values,
+                                             'streams_info': [],
                                              'theo_minimum_hot_utility': theo_minimum_hot_utility,
                                              'hot_utility': None,
                                              'theo_minimum_cold_utility': theo_minimum_cold_utility,
