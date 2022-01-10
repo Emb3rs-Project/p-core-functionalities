@@ -123,7 +123,7 @@ def building_climate_api(latitude,longitude):
             if math.degrees(solar_collector_incidence_angle) > 90:
                 solar_collector_incidence_angle = math.radians(90)
 
-            Q_sun_N_facade = data[i, 4] * math.cos(N_wall_incidence_angle) + (180 - wall_inclination) / (180) * data[i, 5]  # correção da direta e difusa na parede
+            Q_sun_N_facade = data[i, 4] * math.cos(N_wall_incidence_angle) + (180 - wall_inclination) / (180) * data[i, 5]  # direct and dif. solar radiation correction on the facade
             Q_sun_S_facade = data[i, 4] * math.cos(S_wall_incidence_angle) + (180 - wall_inclination) / (180) * data[i, 5]
             Q_sun_E_facade = data[i, 4] * math.cos(E_wall_incidence_angle) + (180 - wall_inclination) / (180) * data[i, 5]
             Q_sun_W_facade = data[i, 4] * math.cos(W_wall_incidence_angle) + (180 - wall_inclination) / (180) * data[i, 5]
