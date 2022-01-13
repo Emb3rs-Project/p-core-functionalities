@@ -77,7 +77,7 @@ from ....Sink.characterization.Building.Auxiliary.h_convection_horizontal import
 from ....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_equation import ht_radiation_equation
 from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
-
+import matplotlib.pyplot as plt
 
 def greenhouse(in_var):
 
@@ -113,7 +113,7 @@ def greenhouse(in_var):
         power_lights = in_var.power_lights  # lighting power per square meter [W/m2]
     except:
         T_cool_on = 35  # cooling start temperature working hours [ºC]
-        T_heat_on = 10  # heating start temperature working hours [ºC]
+        T_heat_on = 18  # heating start temperature working hours [ºC]
         target_temperature_heat = 50
         supply_temperature_heat = 30
         power_lights = 20  # [W/m2]
@@ -197,6 +197,7 @@ def greenhouse(in_var):
     volume_greenhouse = area_floor * height_floor  # indoor air volume per floor [m3]
     total_cover_area = area_W_wall + area_N_wall + area_S_wall + area_E_wall + area_floor
 
+
     # SIMULATION ----------------------------------------------------------------
     # Initialize vars
     profile_hourly_heat = []
@@ -218,6 +219,10 @@ def greenhouse(in_var):
     one_hour = int(3600 / time_step)  # time step number
     max_air_delta_T_per_minute = 1  # 1ºC per min
     max_air_delta_T_allowed = time_step * max_air_delta_T_per_minute / 60
+    vect = []
+    vect_1 = []
+    vect_2 = []
+
 
     for profile_index, profile_operating in enumerate(profile):
 
@@ -226,6 +231,7 @@ def greenhouse(in_var):
             profile_monthly_cool.append(cumulative_cool_monthly)  # space cooling demand [kWh]
             cumulative_heat_monthly = 0  # reset monthly heating needs
             cumulative_cool_monthly = 0  # reset monthly cooling needs
+
 
         if profile_index == 8759:
             break  # safety
@@ -270,9 +276,6 @@ def greenhouse(in_var):
 
             # Exterior Losses - ref:https://doi.org/10.1016/j.inpa.2017.12.003
             T_cover = 2 / 3 * T_exterior + T_interior * 1 / 3  # average T_cover [ºC]
-            u_total = (1/u_cover + 1/u_exterior)**(-1)  # [W/m2.K]
-
-            Q_lost_exterior = u_total * total_cover_area * (T_exterior - T_interior)
 
             # Ground Losses
             Q_lost_ground = u_ground * area_floor * (T_ground - T_interior)
@@ -285,13 +288,16 @@ def greenhouse(in_var):
 
             # Cover Convection
             h_vertical = h_convection_vertical(T_cover, T_interior)
-            Q_vertical_wall_big = (T_cover - T_interior) * h_vertical * area_N_wall
-            Q_vertical_wall_small = (T_cover - T_interior) * h_vertical * area_E_wall
-
             h_horizontal = h_convection_horizontal(T_cover, T_interior)
-            Q_top = (T_cover - T_interior) * h_horizontal * area_floor
-            Q_conv_total = Q_top + 2 * (Q_vertical_wall_small + Q_vertical_wall_big)
+            u_horizontal = (1/u_cover + 1/u_exterior + 1/h_horizontal)**(-1)
+            u_vertical = (1/u_cover + 1/u_exterior + 1/h_vertical)**(-1)
 
+            Q_top = area_floor * u_horizontal * (T_exterior - T_interior)
+            Q_vertical_wall_small = area_E_wall * u_vertical * (T_exterior - T_interior)
+            Q_vertical_wall_big = area_N_wall * u_vertical * (T_exterior - T_interior)
+            Q_lost_exterior = Q_top + 2 * (Q_vertical_wall_small + Q_vertical_wall_big)
+            Q_conv_total = 0
+            
             # Infiltration
             Q_infiltrations = rho_air * cp_air * air_change_per_second * (T_exterior - T_interior)
 
@@ -352,14 +358,15 @@ def greenhouse(in_var):
             elif T_interior >= T_cool_on and T_exterior >= T_cool_on:
                 T_interior = T_exterior
 
-
             # Data Profiles
             if Q_heat_required > 0:
-                cumulative_heat_monthly += Q_heat_required * time_step / 3600000  # [kW]
+                cumulative_heat_monthly += Q_heat_required * time_step / 3600000  # [kWh]
                 cumulative_heat_hourly += Q_heat_required * time_step / 3600000
             else:
                 cumulative_cool_monthly += 0
                 cumulative_cool_hourly += 0
+
+
 
         # Hourly Profiles
         profile_hourly_heat.append(cumulative_heat_hourly)  # space heating demand [kWh]
@@ -378,6 +385,8 @@ def greenhouse(in_var):
             "target_temperature": target_temperature_heat,  # [ºC]
         }
     }
+
+
 
     #output = json.dumps(output, indent=2)
 

@@ -10,15 +10,15 @@ class Greenhouse:
         self.building_orientation = "S"
         self.building_type = "greenhouse"
         self.building_efficiency = 1
-        self.width = 50
-        self.length = 23
+        self.width_floor = 50
+        self.length_floor = 23
         self.height_floor = 3  # greenhouse height [m]
         self.shutdown_periods = []
         self.hours_lights_needed = 15  # number of hours plants needed with light
         self.daily_periods = [[0, 24]]  # heating needed all day
         self.lights_on = 0  # on
         self.T_cool_on = 35  # cooling start temperature working hours [ºC]
-        self.T_heat_on = 10  # heating start temperature working hours [ºC]
+        self.T_heat_on = 18  # heating start temperature working hours [ºC]
         self.building_efficiency = 1  # show options of greenhouse efficiency - 1=tight sealed greenhouse; 2=medium; 3=loose
 
         ###################
@@ -27,7 +27,7 @@ class Greenhouse:
         self.saturday_on = 1  # heat on saturdays - assumed greenhouse works everyday
         self.sunday_on = 1  # heat on sunday - assumed greenhouse works everyday
         self.power_lights = 20  # [W/m2]
-        self.u_cover = 6  # [W/m2]
+        self.u_cover = 6.5  # [W/m2]
         self.leaf_area_index = 1
         self.rh_air = 0.70  # relative humidity
         self.indoor_air_speed = 0.1  # [m/s]
