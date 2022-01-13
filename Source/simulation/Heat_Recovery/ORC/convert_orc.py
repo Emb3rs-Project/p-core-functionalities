@@ -18,19 +18,18 @@ OUTPUT: array best_options with dictionaries, e.g. best_options=[option_1,option
         Where, for example:
 
         option_1 = {
+        #           'ID' - orc design ID
         #           'streams_id' - vector with streams ID
         #           'electrical_generation_nominal' [kW]
         #           'electrical_generation_yearly' [kWh]
         #           'excess_heat_supply_capacity' [kW]
         #           'conversion_efficiency' []
-        #           'turnkey' - intermediate + orc turnkey [€]
-        #           'om_fix' - om fix intermediate + orc turnkey [€/year]
-        #           'om_var'  - om var intermediate + orc turnkey [€]
-        #           'electrical_generation_yearly_turnkey'
-        #           'npv_5' - NPV 5 years
-        #           'npv_15' - NPV 15 years
-        #           'npv_25' - NPV 25 years
-        #           'payback' - number of years to reach NPV = 0
+        #           'turnkey' [€]
+        #           'om_fix' - yearly om fix costs [€/year]
+        #           'om_var' [€/kWh]
+        #           'electrical_generation_yearly_turnkey' [kWh/€]
+        #           'co2_savings'  [kg CO2/kWh]
+        #           'money_savings' [€/kWh]
         #  }
 
 
@@ -41,7 +40,8 @@ import pandas as pd
 from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_orc_aux import convert_aux
 from .....KB_General.equipment_details import equipment_details
 from .....General.Auxiliary_General.get_country import get_country
-from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.orc_economic import economic_data
+from .....KB_General.fuel_properties import fuel_properties
+from .....KB_General.get_interest_rate import get_interest_rate
 
 def convert_orc(in_var):
 
@@ -84,6 +84,10 @@ def convert_orc(in_var):
     latitude, longitude = location
     country = get_country(latitude, longitude)
 
+    # get interest rate and fuel price
+    interest_rate = get_interest_rate(country)
+    electricity_data = fuel_properties(country, 'electricity', consumer_type)
+
     # check if streams temperature enough to be converted
     df_streams = pd.DataFrame.from_dict(streams)
     df_streams = df_streams.drop(df_streams[df_streams['target_temperature'] < hx_orc_return_temperature].index)
@@ -92,7 +96,7 @@ def convert_orc(in_var):
 
     # get best 5
     df_streams['sum_hourly_generation'] = df_streams.apply(lambda x: sum(x['hourly_generation']), axis=1)
-    df_streams_best_five = df_streams.sort_values('hourly_generation',ascending=False).head(n=get_best_number)
+    df_streams_best_five = df_streams.sort_values('hourly_generation', ascending=False).head(n=get_best_number)
     streams_best_five_index = df_streams_best_five.index.tolist()
 
     # do all possible combinations between the 5 streams
@@ -119,6 +123,7 @@ def convert_orc(in_var):
 
         streams_info[str(stream_index)] = {'info_individual':info_individual,'info_aggregate': info_aggregate}
 
+    new_id = 1
     # convert streams - all combinations possible
     for combination in combinations:
         electrical_generation_yearly = 0
@@ -166,23 +171,30 @@ def convert_orc(in_var):
 
         # all convert options
         convert_info.append({
+            'ID': new_id,
             'streams_id': combination_streams_id[0],
             'electrical_generation_nominal': electrical_generation_nominal_total,  # [kW]
-            'electrical_generation_yearly':electrical_generation_yearly,  # [kWh]
+            'electrical_generation_yearly': electrical_generation_yearly,  # electric generation per year [kWh]
             'excess_heat_supply_capacity': stream_thermal_capacity_total,  # [kW]
             'conversion_efficiency': electrical_generation_nominal / stream_thermal_capacity_total,  # [%]
             'turnkey': total_turnkey,  # [€]
-            'om_fix': om_fix_total,  # [€/year]
-            'om_var': om_var_total , # [€]
-            'electrical_generation_yearly_turnkey':total_turnkey/electrical_generation_yearly
+            'om_fix': om_fix_total,  # yearly om fix costs [€/year]
+            'om_var': om_var_total/electrical_generation_yearly,  # [€/kWh]
+            'electrical_generation_yearly_turnkey': total_turnkey / electrical_generation_yearly,
+            'co2_savings': electricity_data['co2_emissions'],  # [kg CO2/kWh]
+            'money_savings': electricity_data['price'],  # [€/kWh]
             })
+
+        new_id += 1
 
     df_data = pd.DataFrame()
     for dict in convert_info:
         df_data = df_data.append(dict,ignore_index=True)
 
-    # get economic data
-    df_data = economic_data(orc_years_working, country, consumer_type, df_data)
+
+    # update columns for Business Module
+    df_data['discount_rate'] = interest_rate
+    df_data['lifetime'] = orc_years_working
 
     # get best
     best_options = df_data.sort_values('electrical_generation_yearly_turnkey', ascending=True).head(n=get_best_number).to_dict(orient='records')

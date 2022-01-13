@@ -43,7 +43,9 @@ def equipment_details(equipment, equipment_char):
     try:
         turnkey = float(data[equipment]['turnkey_cost_S']) + float(
             data[equipment]['turnkey_cost_c']) * equipment_char ** float(data[equipment]['turnkey_cost_n'])
+
         om_fix = float(data[equipment]['fixed_om_c']) * turnkey ** float(data[equipment]['fixed_om_n'])
+
         global_conversion_efficiency = float(data[equipment]['global_conversion_efficiency_S']) + float(
             data[equipment]['global_conversion_efficiency_c']) * equipment_char ** float(
             data[equipment]['global_conversion_efficiency_n'])

@@ -19,10 +19,10 @@ INPUT:
             # electrical_generation_yearly [kWh]
             # excess_heat_supply_capacity [kW]
             # conversion_efficiency []
-            # turnkey - intermediate + orc turnkey [€]
-            # om_fix - om fix intermediate + orc turnkey [€/year]
-            # om_var  - om var intermediate + orc turnkey [€]
-            # electrical_generation_yearly_turnkey
+            # capex - intermediate + orc capex [€]
+            # om_fix - om fix intermediate + orc capex [€/year]
+            # om_var  - om var intermediate + orc capex [€]
+            # electrical_generation_yearly_capex
 
 
 ##############################
@@ -32,10 +32,10 @@ OUTPUT: df with:
             # electrical_generation_yearly [kWh]
             # excess_heat_supply_capacity [kW]
             # conversion_efficiency []
-            # turnkey - intermediate + orc turnkey [€]
-            # om_fix - om fix intermediate + orc turnkey [€/year]
-            # om_var  - om var intermediate + orc turnkey [€]
-            # electrical_generation_yearly_turnkey
+            # capex - intermediate + orc capex [€]
+            # om_fix - om fix intermediate + orc capex [€/year]
+            # om_var  - om var intermediate + orc capex [€]
+            # electrical_generation_yearly_capex
             # npv_5 - NPV 5 years
             # npv_15 - NPV 15 years
             # npv_25 - NPV 25 years
@@ -55,28 +55,18 @@ def economic_data(orc_years_working, country, consumer_type,df_data):
     fuel_data = fuel_properties(country, 'electricity', consumer_type)
     electricity_price = fuel_data['price']
 
-    # create cash flows df
-    df_cash_flow = pd.DataFrame()
 
     # cash_flow = - om_var - om_fix + savings_electricity
     for year in range(1, orc_years_working + 1):
         savings_electricity = electricity_price * df_data['electrical_generation_yearly']
         df_cash_flow[str(year)] = (-df_data['om_fix'] + -df_data['om_var'] + savings_electricity) / ((1 + interest_rate) ** year)
 
-    # compute npv for 3 time splits
-    for year in [5, 15, orc_years_working]:
-        df_data['npv_' + str(year)] = -df_data['turnkey'] + df_cash_flow.iloc[:, 0:int(year - 1)].sum(axis=1)
 
-    # get payback
-    df_merge = pd.concat([-df_data['turnkey'], df_cash_flow], axis=1)
-    find_npv_zero = df_merge.cumsum(axis=1)
 
-    df_data['payback'] = None
-    for index, row in find_npv_zero.iterrows():
-        row = row[row >= 0]
+    # update columns for Business Module
+    df_data['discount_rate'] = interest_rate
+    df_data['lifetime'] = orc_years_working
 
-        if row.empty is False:
-            if row.iloc[0] > 0:
-                df_data.loc[index, 'payback'] = int(row.index[0])  # since it starts in zero
 
     return df_data
+

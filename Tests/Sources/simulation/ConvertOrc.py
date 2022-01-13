@@ -44,7 +44,7 @@ def testConvertORC():
     test = convert_orc(data)
 
     for convert in test:
-        print(convert['streams_id'])
+        print(convert)
 
     """
     for convert in test:
