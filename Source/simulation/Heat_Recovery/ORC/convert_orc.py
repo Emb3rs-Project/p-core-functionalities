@@ -30,6 +30,8 @@ OUTPUT: array best_options with dictionaries, e.g. best_options=[option_1,option
         #           'electrical_generation_yearly_turnkey' [kWh/€]
         #           'co2_savings'  [kg CO2/kWh]
         #           'money_savings' [€/kWh]
+        #           'discount_rate' []
+        #           'lifetime' [years]
         #  }
 
 
