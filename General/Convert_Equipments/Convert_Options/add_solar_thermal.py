@@ -65,7 +65,7 @@ from ....General.Auxiliary_General.linearize_values import linearize_values
 
 class Add_Solar_Thermal():
 
-    def __init__(self, country, consumer_type, latitude, longitude, yearly_capacity, power_fraction, supply_temperature, return_temperature):
+    def __init__(self, country, consumer_type, latitude, longitude, stream_available_capacity, power_fraction, supply_temperature, return_temperature):
 
         # Defined Vars
         self.object_type = 'equipment'
@@ -74,6 +74,7 @@ class Add_Solar_Thermal():
         self.fuel_properties = fuel_properties(country, self.fuel_type, consumer_type)
         hx_delta_T = 5
         hx_efficiency = 0.95
+        self.defined_thermal_production = 0.7  # [kW/m2]
 
         # get equipment characteristics
         self.latitude = latitude
@@ -100,7 +101,7 @@ class Add_Solar_Thermal():
 
         self.supply_temperature = supply_temperature + hx_delta_T  # HX between Source and Grid
         self.return_temperature = return_temperature + hx_delta_T
-        self.yearly_supply_capacity = yearly_capacity / hx_efficiency
+        self.stream_available_capacity = stream_available_capacity / hx_efficiency
 
         # get climate data
         climate = solar_collector_climate_api(self.latitude, self.longitude)  # Get climate data for the location
@@ -119,17 +120,17 @@ class Add_Solar_Thermal():
 
         self.data_teo = {
             'equipment': self.equipment_sub_type,
-            'fuel_tyoe': self.fuel_type,
+            'fuel_type': self.fuel_type,
             'max_area': info_max_power['area'],  # [m2]
             'max_average_supply_capacity': info_max_power['average_supply_capacity'],  # [kW]
             'hourly_supply_capacity_normalize': info_max_power['hourly_supply_capacity_normalize'],  # [kWh]
+            'hourly_supply_capacity': info_max_power['hourly_supply_capacity'],  # [kWh]
             'turnkey_a': turnkey_a,  # [€/kW]
             'turnkey_b': turnkey_b,  # [€]
             'conversion_efficiency': hx_efficiency,  # []
             'om_fix': info_max_power['om_fix'] / info_max_power['average_supply_capacity'],  # [€/year.kW]
             'om_var': info_max_power['om_var'] / info_max_power['average_supply_capacity'],  # [€/kWh]
             'emissions': self.fuel_properties['co2_emissions']  # [kg.CO2/kWh]
-
         }
 
 
@@ -213,7 +214,7 @@ class Add_Solar_Thermal():
             vector_grid_flowrate.append(grid_flowrate)  # [kg/h.m2]
 
         # compute solar thermal area
-        area = (self.yearly_supply_capacity * power_fraction / sum(vector_grid_power)) / (self.area_ratio)  # [m2]
+        area = (self.stream_available_capacity * power_fraction / self.defined_thermal_production)/ (self.area_ratio)  # [m2]
 
         # get info
         vector_solar_collector_flowrate = [i * area for i in vector_solar_collector_flowrate]  # [kg/h]
@@ -242,6 +243,7 @@ class Add_Solar_Thermal():
             'area': area,  # [m2]
             'average_supply_capacity': average_solar_collector_power,  # [kW]
             'hourly_supply_capacity_normalize': vector_grid_power_normalized,  # [kWh]
+            'hourly_supply_capacity': vector_grid_power,  # [kWh]
             'turnkey': turnkey_total,  # [€]
             'om_fix': om_fix_total,  # [€]
             'om_var': om_var_total  # [€]

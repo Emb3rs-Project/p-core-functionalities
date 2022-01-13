@@ -78,6 +78,7 @@ def fuel_properties(country, fuel_type, consumer_type):
     urlelec = urlelec + country_acronyms
     urlgas = urlgas + country_acronyms
 
+
     if fuel_type == 'electricity':
         info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', urlelec).data, "html.parser").text)
         price = info['value'][consumer_type]  # [€/kWh]
@@ -90,6 +91,7 @@ def fuel_properties(country, fuel_type, consumer_type):
         fuel_type_cost = fuel_type + '_cost'
         try:
             price = float(data_electricity_ghg_and_fuel_cost_per_country[country][fuel_type_cost])  # [€/kWh]
+
         except:
             price = float(data_electricity_ghg_and_fuel_cost_per_country['Portugal'][fuel_type_cost])  # [€/kWh]
             print('country or fuel does not exist in db')

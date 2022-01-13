@@ -23,7 +23,7 @@ class ConvertSource():
 
         self.group_of_sources = [ {'id':1,
                             'consumer_type': 'non-household',
-                             'location':[10,10],
+                             'location':[41.14, -8.6],
                              'streams':[stream_1]
                                 }]
 

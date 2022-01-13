@@ -20,13 +20,13 @@ class ConvertSink():
         self.group_of_sinks = [{
                                 'id':1,
                                 'consumer_type':'non-household',
-                                'location':[10, 10],
+                                'location':[41.14, -8.6],
                                 'streams':[stream_1]
                             },
                             {
                                 'id':56,
                                 'consumer_type':'household',
-                                'location':[11, 11],
+                                'location':[41.14, -8.6],
                                 'streams':[stream_1]
                                 }]
 
