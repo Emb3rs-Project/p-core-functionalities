@@ -380,8 +380,19 @@ def convert_sources(in_var):
                                 info['om_fix'] = info['om_fix'] * (1 - coef_solar_thermal)
                                 conversion_technologies.append(info)
 
+
+                                # add solar thermal + boiler as backup
+                                info_technology_heat_pump = Add_Heat_Pump(country, consumer_type,needed_supply_capacity, power_fraction, hx_source_supply_temperature, stream['supply_temperature'],ambient_temperature)
+                                info = join_hx_and_technology([info_technology_solar_thermal,info_technology_heat_pump,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source')
+                                # update om_var and emissions
+                                info['emissions'] = info['emissions'] * (1 - coef_solar_thermal)
+                                info['om_var'] = info['om_var'] * (1 - coef_solar_thermal)
+                                info['om_fix'] = info['om_fix'] * (1 - coef_solar_thermal)
+                                conversion_technologies.append(info)
+
+
                                 # add heat pump
-                                info_technology = Add_Heat_Pump(country, consumer_type,needed_supply_capacity, power_fraction, hx_source_supply_temperature, stream['supply_temperature'])
+                                info_technology = Add_Heat_Pump(country, consumer_type,needed_supply_capacity, power_fraction, hx_source_supply_temperature, stream['supply_temperature'],ambient_temperature)
                                 info = join_hx_and_technology([info_technology,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source')
                                 conversion_technologies.append(info)
 

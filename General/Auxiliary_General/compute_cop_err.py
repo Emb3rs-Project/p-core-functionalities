@@ -21,14 +21,14 @@ RETURN:
 """
 
 
-def compute_cop_err(type, hot_temperature, cold_temperature):
+def compute_cop_err(type, hot_temperature, cold_temperature,evaporator_temperature=15):
 
-    T_amb = 15  # defined ambient temperature [ºC]
+    # evaporator_temperature = 15  # defined ambient temperature [ºC]
 
     if type == 'electric_chiller':
-        cop = 0.405 * (cold_temperature + 273 + 5) / (T_amb - cold_temperature + 10)
+        cop = 0.405 * (cold_temperature + 273 + 5) / (evaporator_temperature - cold_temperature + 10)
         return cop
 
     else:
-        err = 0.55 * (hot_temperature + 273 + 5) / (hot_temperature - T_amb + 10)
+        err = 0.55 * (hot_temperature + 273 + 5) / (hot_temperature - evaporator_temperature + 10)
         return err

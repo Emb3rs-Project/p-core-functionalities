@@ -52,7 +52,7 @@ from ....General.Auxiliary_General.compute_cop_err import compute_cop_err
 
 class Add_Heat_Pump():
 
-    def __init__(self, country, consumer_type, supply_capacity, power_fraction, supply_temperature, return_temperature):
+    def __init__(self, country, consumer_type, supply_capacity, power_fraction, supply_temperature, return_temperature,evaporator_temperature):
 
         # Defined Vars
         self.object_type = 'equipment'
@@ -63,8 +63,8 @@ class Add_Heat_Pump():
         self.fuel_properties = fuel_properties(country, self.fuel_type, consumer_type)
         self.supply_temperature = supply_temperature  # equipment directly supplies grid
         self.return_temperature = return_temperature
-        self.supply_capacity = supply_capacity  # hHeat supply capacity [kW]
-        self.global_conversion_efficiency = compute_cop_err(self.equipment_sub_type, self.supply_temperature, self.return_temperature)  # get ERR
+        self.supply_capacity = supply_capacity  # heat supply capacity [kW]
+        self.global_conversion_efficiency = compute_cop_err(self.equipment_sub_type, self.supply_temperature, self.return_temperature, evaporator_temperature)  # get ERR
 
         # Design Equipment
         # 100% power
