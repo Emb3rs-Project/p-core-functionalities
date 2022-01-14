@@ -63,10 +63,10 @@ def pinch_point(df_heat_cascade, df_operating):
 
     # get minimum theoretical hot/cold utility for the streams analyzed
     if net_heat_flow[0] == 0:
-        theo_minimum_hot_utility = net_heat_flow[0]  # [kW]
+        theo_minimum_hot_utility = 0 # [kW]
         theo_minimum_cold_utility = net_heat_flow[-1]
     else:
-        theo_minimum_hot_utility = net_heat_flow[-1]
-        theo_minimum_cold_utility = net_heat_flow[0]
+        theo_minimum_hot_utility = net_heat_flow[0]
+        theo_minimum_cold_utility = net_heat_flow[-1]
 
     return pinch_point_T, theo_minimum_hot_utility, theo_minimum_cold_utility
