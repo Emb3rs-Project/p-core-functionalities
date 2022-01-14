@@ -78,10 +78,12 @@ def fuel_properties(country, fuel_type, consumer_type):
     urlelec = urlelec + country_acronyms
     urlgas = urlgas + country_acronyms
 
-
     if fuel_type == 'electricity':
-        info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', urlelec).data, "html.parser").text)
-        price = info['value'][consumer_type]  # [€/kWh]
+        try:
+            info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', urlelec).data, "html.parser").text)
+            price = info['value'][consumer_type]  # [€/kWh]
+        except:
+            price = 0.23  # [€/kWh]
 
     elif fuel_type == "natural_gas":
         info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', urlgas).data, "html.parser").text)

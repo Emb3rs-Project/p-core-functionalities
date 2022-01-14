@@ -39,6 +39,7 @@ OUTPUT: array best_options with dictionaries, e.g. best_options=[option_1,option
 
 import itertools
 import pandas as pd
+import numpy as np
 from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_orc_aux import convert_aux
 from .....KB_General.equipment_details import equipment_details
 from .....General.Auxiliary_General.get_country import get_country
@@ -137,6 +138,7 @@ def convert_orc(in_var):
         stream_thermal_capacity_total = 0
         combo = []
         combination_streams_id = []
+        vec_electrical_generation_nominal_total = []
 
         for stream_index in combination:
 
@@ -155,8 +157,16 @@ def convert_orc(in_var):
                 turnkey_intermediate = streams_info[str(stream_index)]['info_individual']['intermediate_turnkey_max_power']
                 om_var_intermediate = streams_info[str(stream_index)]['info_individual']['intermediate_om_var_max_power']
 
-            electrical_generation_nominal_total += electrical_generation_nominal
+            # yearly and nominal electric generation
+            if vec_electrical_generation_nominal_total == []:
+                vec_electrical_generation_nominal_total = [electrical_generation_nominal * i for i in streams[stream_index]['schedule']]
+            else:
+                vec_electrical_generation_nominal_total += electrical_generation_nominal * np.array(streams[stream_index]['schedule'])
+
             electrical_generation_yearly += electrical_generation_nominal * sum(streams[stream_index]['schedule'])
+
+        # design ORC for this nominal electrical generation
+        electrical_generation_nominal_total = max(vec_electrical_generation_nominal_total)
 
         if len(combination) > 1:
             combination_streams_id.append(combo)
