@@ -43,6 +43,16 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
     technologies_dict = []
 
 
+    if object_type == 'sink':
+        input_fuel = 'dhn_water_sink'
+        output_fuel = 'sink_demand'
+    else:
+        input_fuel = 'excess_heat'
+        output_fuel = 'dhn_water_source'
+
+    teo_equipment_name = 'nothing_yet'
+
+
     for technology in technologies:
 
         technologies_dict.append(technology.__dict__)
@@ -67,6 +77,9 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
     turnkey_a, turnkey_b = linearize_values(turnkey_max_power, turnkey_power_fraction, max_power_stream, power_fraction_supply_capacity)
 
     data_teo = {
+        'teo_equipment_name': teo_equipment_name,
+        'input_fuel':input_fuel,
+        'output_fuel':output_fuel,
         'equipment': conversion_efficiency_technology_name,
         'max_capacity': max_power_stream,  # [kW]
         'turnkey_a': turnkey_a,  # [€/kW]
@@ -75,7 +88,7 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
         'om_fix': om_fix / max_power_stream,  # [€/year.kW]
         'om_var': om_var / max_power_stream,  # [€/kWh]
         'emissions': emissions / max_power_stream,  # [kg.CO2/kWh]
-        #'technologies': technologies_dict,
+        'technologies': technologies_dict,
 
     }
 
