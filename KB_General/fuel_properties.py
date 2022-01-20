@@ -127,7 +127,7 @@ def fuel_properties(country, fuel_type, consumer_type):
 
     fuel_data = {
         'price': price,  # [€/kWh]
-        'lhv_fuel': lhv_fuel,  # [kWh/kg]
+        'lhv_fuel': lhv_fuel/density,  # [kWh/kg]
         'excess_air_fuel': excess_air_fuel,  #
         'air_to_fuel_ratio': air_to_fuel_ratio,  # [kg air/kg fuel]
         'co2_emissions': co2_emissions,  # [kg CO2/kWh]

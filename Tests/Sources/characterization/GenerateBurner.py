@@ -22,16 +22,21 @@ class GenerateBurner():
         self.daily_periods = [[0, 14]]
 
         # Generate_Equipment Characteristics FROM USER
-        self.supply_temperature = 180
+        self.supply_temperature = 1050 # OPTIONAL
 
         ###################################
         # If user does not want to put directly the nominal capacity, the processes fed by this boiler must be input - check in TESTS -> Source -> chracterization -> Process.py
         self.supply_capacity = 7500
+
+        self.excess_heat_supply_temperature = 400
+        self.excess_heat_flowrate = 20
+        self.excess_heat_target_temperature = 120
+
         self.processes = []
 
         ###################
         # Optional/Expert User inputs -  should be shown on the platform as default values
-        self.fuel_type = 'natural_gas'  # Fuel type  (Natural gas, Fuel oil, Biomass)
+        self.fuel_type = 'biomass'  # Fuel type  (Natural gas, Fuel oil, Biomass)
         self.global_conversion_efficiency = 0.9
 
 
@@ -42,12 +47,12 @@ def testGenerateBurner():
     test = Burner(data)
 
 
-    print(test.streams[1]['flowrate'])
+    print(test.streams[0]['flowrate'])
 
     """
-    print(test.streams[1]['flowrate'])
+    print(test.streams[0]['flowrate'])
 
     Expected:
-    18234.66484501108
+    30486.666666666664
     """
 

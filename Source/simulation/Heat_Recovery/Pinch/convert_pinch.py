@@ -141,7 +141,7 @@ from .....KB_General.fuel_properties import fuel_properties
 from .....General.Auxiliary_General.get_country import get_country
 import itertools
 import pandas as pd
-  
+
 def convert_pinch(in_var):
 
     ############################################################################################################
@@ -363,7 +363,7 @@ def convert_pinch(in_var):
 
     except:
         print('Error in convert_pinch. Probably no possible solution or complex case. ')
-        output = []
+        output = {}
 
 
     return output

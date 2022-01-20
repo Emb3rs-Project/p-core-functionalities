@@ -77,7 +77,6 @@ class Add_HX():
         info_max_power = self.design_equipment(power_fraction=1)
         # power fraction
         info_power_fraction = self.design_equipment(power_fraction)
-
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
                                                 info_max_power['supply_capacity'],

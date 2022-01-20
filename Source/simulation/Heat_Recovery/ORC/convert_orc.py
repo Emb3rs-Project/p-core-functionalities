@@ -124,7 +124,10 @@ def convert_orc(in_var):
         stream_thermal_capacity_max_power,orc_type,orc_electrical_generation,intermediate_turnkey_max_power,intermediate_om_fix_max_power,intermediate_om_var_max_power = convert_aux(stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency,power_fraction,intermediate_fluid, country,consumer_type,aggregate_streams)
         info_aggregate = {'orc_type':orc_type, 'stream_thermal_capacity_max_power':stream_thermal_capacity_max_power, 'orc_electrical_generation':orc_electrical_generation, 'intermediate_turnkey_max_power':intermediate_turnkey_max_power, 'intermediate_om_fix_max_power': intermediate_om_fix_max_power, 'intermediate_om_var_max_power': intermediate_om_var_max_power}
 
-        streams_info[str(stream_index)] = {'info_individual':info_individual,'info_aggregate': info_aggregate}
+        streams_info[str(stream_index)] = {
+                                            'info_individual': info_individual,
+                                            'info_aggregate': info_aggregate
+                                           }
 
     new_id = 1
     # convert streams - all combinations possible

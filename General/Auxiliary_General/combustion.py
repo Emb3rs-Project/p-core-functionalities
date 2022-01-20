@@ -117,3 +117,38 @@ def compute_flue_gas_temperature(power_equipment, fuel_type, m_fuel, m_flue_gas)
     inflow_T_outlet = 80  # [ºC]
 
     return T_flue_gas_outlet, inflow_T_outlet
+
+
+def burner_chamber_temperature(fuel_type, m_fuel, m_flue_gas):
+
+    # init vars
+    fluid_type = "flue_gas"
+    initial_temperature = 20 + 274  # considered air temperature  [K]
+
+    # get fuel data
+    fuel_data = fuel_properties('Portugal', fuel_type, 'non-household')
+    lhv_fuel = fuel_data['lhv_fuel']
+
+    # iterate until simplified estimate of chamber temperature
+    T_it = range(0, 3000, 5)  # give random initial values to test the convergence [K]
+    T_chamber_max = []
+
+    for i in range(len(T_it)):
+        iteration = False
+        cp_flue_gas = fluid_material_cp(fluid_type, (T_it[i] + initial_temperature) / 2)  # [kJ/kg.K]
+
+        while iteration == False:
+            T_chamber_new = (lhv_fuel * m_fuel) / (m_flue_gas / 3600 * cp_flue_gas) + initial_temperature  # [K]
+            cp_flue_gas_new = fluid_material_cp(fluid_type, (T_chamber_new + initial_temperature) / 2)  # [kJ/kg.K]
+
+            if (cp_flue_gas_new - cp_flue_gas) < 10**(-5):
+                cp_flue_gas_new = fluid_material_cp(fluid_type, (T_chamber_new + initial_temperature) / 2)  # [kJ/kg.K]
+                cp_flue_gas = cp_flue_gas_new
+                T_chamber_max.append(T_chamber_new)
+                iteration = True
+            else:
+                cp_flue_gas = cp_flue_gas_new
+
+    T_chamber_max_value = max(T_chamber_max)
+
+    return T_chamber_max_value
