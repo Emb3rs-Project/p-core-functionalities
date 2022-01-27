@@ -128,6 +128,7 @@ def convert_sources(in_var):
     safety_temperature = 100  # if heat stream above this temperature, use intermediate oil circuit [ºC]
     boiler_fuel_type = ['electricity', 'natural_gas', 'fuel_oil', 'biomass']  # types of fuel
     chp_fuel_type = ['natural_gas', 'fuel_oil', 'biomass']
+    fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'biomass'}
 
     # Grid Characteristics
     grid_fluid = 'water'
@@ -266,7 +267,8 @@ def convert_sources(in_var):
                                     # add circulation pumping to grid
                                     info_pump_grid = Add_Pump(country, consumer_type,grid_fluid, info_hx_grid.available_power, power_fraction,source_grid_supply_temperature, source_grid_return_temperature)
 
-                                    info = join_hx_and_technology([info_hx_intermediate,info_pump_intermediate,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source')
+                                    teo_equipment_name = 'multiple_heat_exchanger'
+                                    info = join_hx_and_technology(source['id'],[info_hx_intermediate,info_pump_intermediate,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source', teo_equipment_name)
                                     conversion_technologies.append(info)
 
                                 else:
@@ -280,8 +282,8 @@ def convert_sources(in_var):
 
                                     # add circulation pumping to grid
                                     info_pump_grid = Add_Pump(country, consumer_type,grid_fluid, info_hx_grid.available_power, power_fraction, hx_grid_supply_temperature, hx_grid_return_temperature)
-
-                                    info = join_hx_and_technology([info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source')
+                                    teo_equipment_name = 'single_heat_exchanger'
+                                    info = join_hx_and_technology(source['id'],[info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source', teo_equipment_name)
                                     conversion_technologies.append(info)
 
 
@@ -317,31 +319,39 @@ def convert_sources(in_var):
 
                                     # add circulation pumping to grid
                                     if intermediate_circuit is True and orc_cond_supply_temperature < (source_grid_supply_temperature + hx_delta_T) and orc_cond_target_temperature > (source_grid_return_temperature + hx_delta_T):
+                                        # intermediate + orc + boiler when 1) ORC supply temperature< Grid Supply and 2) ORC target temperature> Grid Return
                                         for info_boiler in info_all_boilers:
                                             info_pump_grid = Add_Pump(country, consumer_type, grid_fluid,info_technology.supply_capacity ,power_fraction, source_grid_supply_temperature,source_grid_return_temperature)
-                                            info = join_hx_and_technology([info_hx_intermediate,info_pump_intermediate, info_technology,info_boiler, info_pump_grid],power_fraction, stream_available_capacity,info_pump_grid.supply_capacity, 'source')
+                                            teo_equipment_name = 'orc_' + fuels_teo_nomenclature[info_boiler.fuel_type] + '_boiler'
+                                            info = join_hx_and_technology(source['id'],[info_hx_intermediate,info_pump_intermediate, info_technology,info_boiler, info_pump_grid],power_fraction, stream_available_capacity,info_pump_grid.supply_capacity, 'source',teo_equipment_name)
                                             conversion_technologies.append(info)
 
                                     elif intermediate_circuit is True and orc_cond_supply_temperature < (source_grid_supply_temperature + hx_delta_T):
+                                        # intermediate + orc + boiler
                                         for info_boiler in info_all_boilers:
                                             info_pump_grid = Add_Pump(country, consumer_type, grid_fluid,info_technology.supply_capacity * (orc_cond_supply_temperature - (source_grid_return_temperature + hx_delta_T))/(source_grid_supply_temperature-source_grid_return_temperature) ,power_fraction, source_grid_supply_temperature,source_grid_return_temperature)
-                                            info = join_hx_and_technology([info_hx_intermediate,info_pump_intermediate, info_technology, info_boiler,info_pump_grid],power_fraction, stream_available_capacity,info_pump_grid.supply_capacity, 'source')
+                                            teo_equipment_name = 'orc' + fuels_teo_nomenclature[info_boiler.fuel_type] + 'boiler'
+                                            info = join_hx_and_technology(source['id'],[info_hx_intermediate,info_pump_intermediate, info_technology, info_boiler,info_pump_grid],power_fraction, stream_available_capacity,info_pump_grid.supply_capacity, 'source',teo_equipment_name)
                                             conversion_technologies.append(info)
 
                                     elif orc_cond_supply_temperature < (source_grid_supply_temperature + hx_delta_T) and orc_cond_target_temperature > (source_grid_return_temperature + hx_delta_T):
+                                        # orc + boiler
                                         for info_boiler in info_all_boilers:
                                             info_pump_grid = Add_Pump(country, consumer_type, grid_fluid,info_technology.supply_capacity,power_fraction, source_grid_supply_temperature,source_grid_return_temperature)
-                                            info = join_hx_and_technology([info_technology, info_boiler, info_pump_grid],power_fraction, stream_available_capacity,info_pump_grid.supply_capacity, 'source')
+                                            teo_equipment_name = 'orc_' + fuels_teo_nomenclature[info_boiler.fuel_type] + '_boiler'
+                                            info = join_hx_and_technology(source['id'],[info_technology, info_boiler, info_pump_grid],power_fraction, stream_available_capacity,info_pump_grid.supply_capacity, 'source',teo_equipment_name)
                                             conversion_technologies.append(info)
 
                                     elif orc_cond_supply_temperature < (source_grid_supply_temperature + hx_delta_T):
                                         for info_boiler in info_all_boilers:
                                             info_pump_grid = Add_Pump(country, consumer_type, grid_fluid,(info_technology.supply_capacity + boiler_supply_capacity) * (hx_source_supply_temperature -(source_grid_return_temperature + hx_delta_T))/(hx_source_supply_temperature - orc_cond_target_temperature) ,power_fraction, source_grid_supply_temperature,source_grid_return_temperature)
-                                            info = join_hx_and_technology([info_technology, info_boiler, info_pump_grid],power_fraction, stream_available_capacity,info_pump_grid.supply_capacity, 'source')
+                                            teo_equipment_name = 'orc_' + fuels_teo_nomenclature[info_boiler.fuel_type] + '_boiler'
+                                            info = join_hx_and_technology(source['id'],[info_technology, info_boiler, info_pump_grid],power_fraction, stream_available_capacity,info_pump_grid.supply_capacity, 'source',teo_equipment_name)
                                             conversion_technologies.append(info)
                                     else:
                                         info_pump_grid = Add_Pump(country, consumer_type, grid_fluid,info_technology.supply_capacity ,power_fraction, source_grid_supply_temperature,source_grid_return_temperature)
-                                        info = join_hx_and_technology([info_technology, info_pump_grid],power_fraction, stream_available_capacity,info_pump_grid.supply_capacity, 'source')
+                                        teo_equipment_name = 'orc'
+                                        info = join_hx_and_technology(source['id'],[info_technology, info_pump_grid],power_fraction, stream_available_capacity,info_pump_grid.supply_capacity, 'source',teo_equipment_name)
                                         conversion_technologies.append(info)
 
                             # grid may not supply enough heat to the source
@@ -366,25 +376,30 @@ def convert_sources(in_var):
                                 # add boiler
                                 for fuel in boiler_fuel_type:
                                     info_technology = Add_Boiler(fuel, country, consumer_type,needed_supply_capacity, power_fraction, booster_outlet_temperature, booster_inlet_temperature)
-                                    info = join_hx_and_technology([info_technology,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source')
+                                    teo_equipment_name = fuels_teo_nomenclature[info_technology.fuel_type] + '_waste_heat_recovery_' + 'boiler'
+
+                                    info = join_hx_and_technology(source['id'],[info_technology,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source',teo_equipment_name)
                                     conversion_technologies.append(info)
 
                                 # add solar thermal + boiler as backup
                                 info_technology_solar_thermal = Add_Solar_Thermal(country, consumer_type, latitude, longitude, needed_supply_capacity, power_fraction, booster_outlet_temperature, booster_inlet_temperature)
-                                info_technology_boiler = Add_Boiler('natural_gas', country, consumer_type, needed_supply_capacity,power_fraction,  booster_outlet_temperature, booster_inlet_temperature)
-                                info = join_hx_and_technology([info_technology_solar_thermal,info_technology_boiler,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source')
-                                info['hourly_supply_capacity_normalize'] = info_technology_solar_thermal.data_teo['hourly_supply_capacity_normalize']  # add solar thermal profile
-                                # update om_var and emissions
-                                coef_solar_thermal = info_technology_solar_thermal.data_teo[ 'hourly_supply_capacity'] / needed_yearly_capacity
-                                info['emissions'] = info['emissions'] * (1 - coef_solar_thermal)
-                                info['om_var'] = info['om_var'] * (1 - coef_solar_thermal)
-                                info['om_fix'] = info['om_fix'] * (1 - coef_solar_thermal)
-                                conversion_technologies.append(info)
+                                for fuel in boiler_fuel_type:
+                                    info_technology_boiler = Add_Boiler(fuel, country, consumer_type, needed_supply_capacity,power_fraction,  booster_outlet_temperature, booster_inlet_temperature)
+                                    teo_equipment_name = 'solar_thermal_' + fuels_teo_nomenclature[info_technology_boiler.fuel_type] + '_boiler'
+                                    info = join_hx_and_technology(source['id'],[info_technology_solar_thermal,info_technology_boiler,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source',teo_equipment_name)
+                                    info['hourly_supply_capacity_normalize'] = info_technology_solar_thermal.data_teo['hourly_supply_capacity_normalize']  # add solar thermal profile
+                                    # update om_var and emissions
+                                    coef_solar_thermal = info_technology_solar_thermal.data_teo[ 'hourly_supply_capacity'] / needed_yearly_capacity
+                                    info['emissions'] = info['emissions'] * (1 - coef_solar_thermal)
+                                    info['om_var'] = info['om_var'] * (1 - coef_solar_thermal)
+                                    info['om_fix'] = info['om_fix'] * (1 - coef_solar_thermal)
+                                    conversion_technologies.append(info)
 
 
                                 # add solar thermal + heat pump as backup
                                 info_technology_heat_pump = Add_Heat_Pump(country, consumer_type,needed_supply_capacity, power_fraction, booster_outlet_temperature, booster_inlet_temperature,ambient_temperature)
-                                info = join_hx_and_technology([info_technology_solar_thermal,info_technology_heat_pump,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source')
+                                teo_equipment_name = 'solar_thermal_' + 'hp'
+                                info = join_hx_and_technology(source['id'],[info_technology_solar_thermal,info_technology_heat_pump,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source',teo_equipment_name)
                                 # update om_var and emissions
                                 info['emissions'] = info['emissions'] * (1 - coef_solar_thermal)
                                 info['om_var'] = info['om_var'] * (1 - coef_solar_thermal)
@@ -394,13 +409,15 @@ def convert_sources(in_var):
 
                                 # add heat pump
                                 info_technology = Add_Heat_Pump(country, consumer_type,needed_supply_capacity, power_fraction, booster_outlet_temperature, booster_inlet_temperature,ambient_temperature)
-                                info = join_hx_and_technology([info_technology,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source')
+                                teo_equipment_name = 'hp'
+                                info = join_hx_and_technology(source['id'],[info_technology,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source',teo_equipment_name)
                                 conversion_technologies.append(info)
 
                                 # add chp
                                 for fuel in chp_fuel_type:
                                     info_technology = Add_CHP(fuel, country, consumer_type,needed_supply_capacity, power_fraction, booster_outlet_temperature, booster_inlet_temperature)
-                                    info = join_hx_and_technology([info_technology,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source')
+                                    teo_equipment_name = 'chp_' + fuels_teo_nomenclature[info_technology.fuel_type]
+                                    info = join_hx_and_technology(source['id'],[info_technology,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source',teo_equipment_name)
                                     conversion_technologies.append(info)
 
                             output_converted.append({

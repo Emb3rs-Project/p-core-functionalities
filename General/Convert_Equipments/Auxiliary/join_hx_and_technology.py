@@ -30,7 +30,7 @@ OUTPUT: dictionary with:
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
 
-def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_power_grid,object_type):
+def join_hx_and_technology(object_id,technologies,power_fraction,max_power_stream,max_power_grid,object_type,teo_equipment_name):
 
     turnkey_max_power = 0
     turnkey_power_fraction = 0
@@ -44,13 +44,24 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
 
 
     if object_type == 'sink':
-        input_fuel = 'dhn_water_sink'
-        output_fuel = 'sink_demand'
-    else:
-        input_fuel = 'excess_heat'
-        output_fuel = 'dhn_water_source'
 
-    teo_equipment_name = 'nothing_yet'
+        if teo_equipment_name.find('hp') == 0 or teo_equipment_name.find('absorption_chiller') == 0 :
+            input_fuel = 'dhn_water_sink+electricity'
+        else:
+            input_fuel = 'dhn_water_sink'
+
+        output_fuel = 'sink_demand' + str(object_id)
+
+    else:
+        if teo_equipment_name.find('hp') == 0:
+            input_fuel = 'excess_heat+electricity'
+        else:
+            input_fuel = 'excess_heat'
+
+        if teo_equipment_name.find('orc') == 0 or teo_equipment_name.find('chp') == 0:
+            output_fuel = 'dhn_water_source+electricity'
+        else:
+            output_fuel = 'dhn_water_source'
 
 
     for technology in technologies:
@@ -66,7 +77,7 @@ def join_hx_and_technology(technologies,power_fraction,max_power_stream,max_powe
 
         max_supply_capacity += max_supply_capacity_val
         turnkey_max_power += max_supply_capacity_val * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
-        turnkey_power_fraction += max_supply_capacity_val* power_fraction * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
+        turnkey_power_fraction += max_supply_capacity_val * power_fraction * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
 
         om_fix += technology.data_teo['om_fix'] * max_supply_capacity_val
         om_var += technology.data_teo['om_var'] * max_supply_capacity_val
