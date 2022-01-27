@@ -260,12 +260,13 @@ def convert_sinks(in_var):
                                                         grid_return_temperature-hx_delta_T)
 
                         # add circulation pumping to grid
-                        power_circulation_pumping = stream_nominal_capacity
+                        power_from_grid = stream_nominal_capacity/(1 - 1/info_technology.global_conversion_efficiency)
+                        power_circulation_pumping = power_from_grid
                         info_pump_grid = Add_Pump(country, consumer_type, grid_fluid, power_circulation_pumping, power_fraction,
                                                   grid_supply_temperature, grid_return_temperature)
 
                         info = join_hx_and_technology([info_pump_grid, info_technology], power_fraction,
-                                                      info_pump_grid.supply_capacity, stream_nominal_capacity, 'sink')
+                                                      info_pump_grid.supply_capacity, power_from_grid, 'sink')
                         conversion_technologies.append(info)
 
 
