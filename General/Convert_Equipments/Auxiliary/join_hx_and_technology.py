@@ -38,19 +38,22 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_strea
     om_var = 0
     emissions = 0
     max_supply_capacity = 0
-    conversion_efficiency_technology_name = []
+    all_equipment = []
 
     technologies_dict = []
 
 
     if object_type == 'sink':
 
-        if teo_equipment_name.find('hp') == 0 or teo_equipment_name.find('absorption_chiller') == 0 :
-            input_fuel = 'dhn_water_sink+electricity'
+        if object_id != 'grid_specific':
+            if teo_equipment_name.find('hp') == 0 or teo_equipment_name.find('absorption_chiller') == 0 :
+                input_fuel = 'dhn_water_sink+electricity'
+            else:
+                input_fuel = 'dhn_water_sink'
         else:
-            input_fuel = 'dhn_water_sink'
+            input_fuel = 'grid_specific'
 
-        output_fuel = 'sink_demand' + str(object_id)
+        output_fuel = 'sink_' + str(object_id) + '_demand'
 
     else:
         if teo_equipment_name.find('hp') == 0:
@@ -68,7 +71,7 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_strea
 
         technologies_dict.append(technology.__dict__)
 
-        conversion_efficiency_technology_name.append(technology.data_teo['equipment'])
+        all_equipment.append(technology.data_teo['equipment'])
 
         if technology.data_teo['equipment'] == 'fresnel' or technology.data_teo['equipment'] == 'evacuated_tube' or technology.data_teo['equipment'] == 'flat_plate':
             max_supply_capacity_val = technology.data_teo['max_average_supply_capacity']
@@ -83,15 +86,17 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_strea
         om_var += technology.data_teo['om_var'] * max_supply_capacity_val
         emissions += technology.data_teo['emissions'] * max_supply_capacity_val
 
+
     power_fraction_supply_capacity = max_power_stream * power_fraction
     conversion_efficiency = max_power_grid/max_power_stream
     turnkey_a, turnkey_b = linearize_values(turnkey_max_power, turnkey_power_fraction, max_power_stream, power_fraction_supply_capacity)
+
 
     data_teo = {
         'teo_equipment_name': teo_equipment_name,
         'input_fuel':input_fuel,
         'output_fuel':output_fuel,
-        'equipment': conversion_efficiency_technology_name,
+        'equipment': all_equipment,
         'max_capacity': max_power_stream,  # [kW]
         'turnkey_a': turnkey_a,  # [€/kW]
         'turnkey_b': turnkey_b,  # [€]

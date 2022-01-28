@@ -107,6 +107,7 @@ def fuel_properties(country, fuel_type, consumer_type):
             data_fuel_properties[fuel_type]['excess_air_ratio_max'])) / 2  # average
         air_to_fuel_ratio = float(data_fuel_properties[fuel_type]['air_to_fuel_ratio'])
         co2_emissions = float(data_fuel_properties[fuel_type]['co2_emissions'])  # [kg/kWh]
+        lhv_fuel = lhv_fuel / density
 
     elif fuel_type == 'electricity':
         density = 'none'
@@ -125,9 +126,10 @@ def fuel_properties(country, fuel_type, consumer_type):
     else:
         print('Fuel does not exist in database')
 
+
     fuel_data = {
         'price': price,  # [€/kWh]
-        'lhv_fuel': lhv_fuel/density,  # [kWh/kg]
+        'lhv_fuel': lhv_fuel,  # [kWh/kg]
         'excess_air_fuel': excess_air_fuel,  #
         'air_to_fuel_ratio': air_to_fuel_ratio,  # [kg air/kg fuel]
         'co2_emissions': co2_emissions,  # [kg CO2/kWh]

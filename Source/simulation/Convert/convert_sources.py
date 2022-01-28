@@ -101,6 +101,7 @@ from ....General.Convert_Equipments.Convert_Options.add_orc_cascaded import Add_
 from ....General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
 from ....Source.simulation.Auxiliary.design_orc import design_orc
 from ....General.Auxiliary_General.get_country import get_country
+from ....General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import coef_solar_thermal_backup
 
 
 def convert_sources(in_var):
@@ -129,6 +130,7 @@ def convert_sources(in_var):
     boiler_fuel_type = ['electricity', 'natural_gas', 'fuel_oil', 'biomass']  # types of fuel
     chp_fuel_type = ['natural_gas', 'fuel_oil', 'biomass']
     fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'biomass'}
+    minimum_coef_solar_thermal = 0.5  # solar thermal has to provide at least 50% of streams demand to be considered for TEO
 
     # Grid Characteristics
     grid_fluid = 'water'
@@ -387,24 +389,18 @@ def convert_sources(in_var):
                                     info_technology_boiler = Add_Boiler(fuel, country, consumer_type, needed_supply_capacity,power_fraction,  booster_outlet_temperature, booster_inlet_temperature)
                                     teo_equipment_name = 'solar_thermal_' + fuels_teo_nomenclature[info_technology_boiler.fuel_type] + '_boiler'
                                     info = join_hx_and_technology(source['id'],[info_technology_solar_thermal,info_technology_boiler,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source',teo_equipment_name)
-                                    info['hourly_supply_capacity_normalize'] = info_technology_solar_thermal.data_teo['hourly_supply_capacity_normalize']  # add solar thermal profile
-                                    # update om_var and emissions
-                                    coef_solar_thermal = info_technology_solar_thermal.data_teo[ 'hourly_supply_capacity'] / needed_yearly_capacity
-                                    info['emissions'] = info['emissions'] * (1 - coef_solar_thermal)
-                                    info['om_var'] = info['om_var'] * (1 - coef_solar_thermal)
-                                    info['om_fix'] = info['om_fix'] * (1 - coef_solar_thermal)
-                                    conversion_technologies.append(info)
+                                    coef_solar_thermal, info = coef_solar_thermal_backup(stream['hourly_generation'], info,info_technology_solar_thermal)
+                                    if coef_solar_thermal >= minimum_coef_solar_thermal:
+                                        conversion_technologies.append(info)
 
 
                                 # add solar thermal + heat pump as backup
                                 info_technology_heat_pump = Add_Heat_Pump(country, consumer_type,needed_supply_capacity, power_fraction, booster_outlet_temperature, booster_inlet_temperature,ambient_temperature)
                                 teo_equipment_name = 'solar_thermal_' + 'hp'
                                 info = join_hx_and_technology(source['id'],[info_technology_solar_thermal,info_technology_heat_pump,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source',teo_equipment_name)
-                                # update om_var and emissions
-                                info['emissions'] = info['emissions'] * (1 - coef_solar_thermal)
-                                info['om_var'] = info['om_var'] * (1 - coef_solar_thermal)
-                                info['om_fix'] = info['om_fix'] * (1 - coef_solar_thermal)
-                                conversion_technologies.append(info)
+                                coef_solar_thermal, info = coef_solar_thermal_backup(stream['hourly_generation'], info, info_technology_solar_thermal)
+                                if coef_solar_thermal >= minimum_coef_solar_thermal:
+                                    conversion_technologies.append(info)
 
 
                                 # add heat pump

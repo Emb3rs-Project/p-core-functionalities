@@ -108,6 +108,8 @@ from ....General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from ....General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
 from ....General.Convert_Equipments.Convert_Options.add_electric_chiller import Add_Electric_Chiller
 from ....General.Auxiliary_General.get_country import get_country
+from ....General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import coef_solar_thermal_backup
+import numpy as np
 
 
 def convert_sinks(in_var):
@@ -122,12 +124,12 @@ def convert_sinks(in_var):
 
     grid_specific_heating = []
     grid_specific_cooling = []
-    boiler_fuel_type = ['electricity', 'natural_gas', 'fuel_oil', 'biomass']  # types of fuel
+    boiler_fuel_type = ['natural_gas', 'fuel_oil', 'biomass']  # types of fuel
     fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'biomass'}
-
 
     # Defined vars
     ambient_temperature = 15
+    minimum_coef_solar_thermal = 0.5  # solar thermal has to provide at least 50% of streams demand to be considered for TEO
 
     # Grid Characteristics
     grid_fluid = 'water'
@@ -178,6 +180,8 @@ def convert_sinks(in_var):
     group_latitude = 0
     group_longitude = 0
     group_of_sinks_grid_specific_minimum_supply_temperature = []
+    needed_yearly_capacity = 0
+    group_of_sinks_grid_specific_hourly_capacity = np.empty(len(group_of_sinks[0]['streams'][0]['hourly_generation']))
 
     for sink in group_of_sinks:
         latitude, longitude = sink['location']
@@ -187,7 +191,8 @@ def convert_sinks(in_var):
         for stream in sink['streams']:
             if stream['target_temperature'] > stream['supply_temperature']:
                 group_of_sinks_grid_specific_power_heating += stream['capacity']
-                group_of_sinks_grid_yearly_specific_power_heating = stream['hourly_generation']
+                needed_yearly_capacity += sum(stream['hourly_generation'])  # [kWh]
+                group_of_sinks_grid_specific_hourly_capacity += np.asarray(stream['hourly_generation'])
             else:
                 group_of_sinks_grid_specific_power_cooling += stream['capacity']
                 group_of_sinks_grid_specific_minimum_supply_temperature.append(stream['target_temperature'])
@@ -202,22 +207,46 @@ def convert_sinks(in_var):
             info_technology_group = Add_Boiler(fuel, country, 'non_household',
                                                group_of_sinks_grid_specific_power_heating, power_fraction,
                                                grid_supply_temperature, grid_return_temperature)
-            grid_specific_heating.append(info_technology_group.data_teo)
 
-        # add solar thermal
-        info_technology_group = Add_Solar_Thermal(country, 'non_household', group_latitude, group_longitude,
-                                                  group_of_sinks_grid_specific_power_heating, power_fraction,
-                                                  grid_supply_temperature, grid_return_temperature)
-        grid_specific_heating.append(info_technology_group.data_teo)
+            teo_equipment_name = fuels_teo_nomenclature[info_technology_group.fuel_type] + '_boiler_sink'
+            info = join_hx_and_technology('grid_specific', [info_technology_group], power_fraction,
+                                          info_technology_group.data_teo['max_input_capacity'],
+                                          group_of_sinks_grid_specific_power_heating, 'sink',
+                                          teo_equipment_name)
+
+            grid_specific_heating.append(info)
 
         # add heat pump
-        info_technology_group = Add_Heat_Pump(country, 'non_household', group_of_sinks_grid_specific_power_heating,
-                                              power_fraction, grid_supply_temperature, grid_return_temperature,
-                                              ambient_temperature)
-        grid_specific_heating.append(info_technology_group.data_teo)
+        info_technology_group_hp = Add_Heat_Pump(country, 'non_household', group_of_sinks_grid_specific_power_heating,
+                                                 power_fraction, grid_supply_temperature, grid_return_temperature,
+                                                 ambient_temperature)
+
+        teo_equipment_name = 'hp_sink'
+        info = join_hx_and_technology('grid_specific', [info_technology_group_hp], power_fraction,
+                                      info_technology_group.data_teo['max_input_capacity'],
+                                      group_of_sinks_grid_specific_power_heating, 'sink',
+                                      teo_equipment_name)
+        grid_specific_heating.append(info)
+
+        # add solar thermal + hp
+        info_technology_group_solar_thermal = Add_Solar_Thermal(country, 'non_household', group_latitude, group_longitude,
+                                                                group_of_sinks_grid_specific_power_heating, power_fraction,
+                                                                grid_supply_temperature, grid_return_temperature)
+
+        teo_equipment_name = 'solar_thermal_' + 'hp_sink'
+        info = join_hx_and_technology('grid_specific', [info_technology_group_solar_thermal,
+                                                        info_technology_group_hp], power_fraction,
+                                      group_of_sinks_grid_specific_power_heating,
+                                      group_of_sinks_grid_specific_power_heating, 'sink',
+                                      teo_equipment_name)  # overall conversion efficiency will be 1
+
+        coef_solar_thermal, info = coef_solar_thermal_backup(group_of_sinks_grid_specific_hourly_capacity, info, info_technology_group_solar_thermal)
+        if coef_solar_thermal >= minimum_coef_solar_thermal:
+            grid_specific_heating.append(info)
 
     except:
         pass
+
 
     try:
         info_technology_group = Add_Electric_Chiller(country, 'non_household',
@@ -323,25 +352,17 @@ def convert_sinks(in_var):
                             teo_equipment_name = 'solar_thermal_' + fuels_teo_nomenclature[info_technology_boiler.fuel_type] + '_boiler_sink'
 
                             info = join_hx_and_technology(sink['id'],[info_hx_grid, info_pump_grid, info_technology_solar_thermal,info_technology_boiler], power_fraction, info_pump_grid.supply_capacity, stream_nominal_capacity, 'sink',teo_equipment_name)
-                            info['hourly_supply_capacity_normalize'] = info_technology_solar_thermal.data_teo['hourly_supply_capacity_normalize']  # add solar thermal profile
-                            # update om_var and emissions
-                            coef_solar_thermal = info_technology_solar_thermal.data_teo['hourly_supply_capacity']/needed_yearly_capacity
-                            info['emissions'] = info['emissions']*(1-coef_solar_thermal)
-                            info['om_var'] = info['om_var']*(1-coef_solar_thermal)
-                            info['om_fix'] = info['om_fix']*(1-coef_solar_thermal)
+
+                            info = coef_solar_thermal_backup(stream['hourly_generation'], info, info_technology_solar_thermal)
                             conversion_technologies.append(info)
 
                             # add solar thermal + heat pump as backup
                             info_technology_heat_pump = Add_Heat_Pump(country, consumer_type, needed_supply_capacity, power_fraction,stream['target_temperature'], hx_sink_target_temperature,ambient_temperature)
                             teo_equipment_name = 'solar_thermal_' + 'hp_sink'
-
                             info = join_hx_and_technology(sink['id'],[info_hx_grid, info_pump_grid, info_technology_solar_thermal,info_technology_heat_pump], power_fraction, info_pump_grid.supply_capacity, stream_nominal_capacity, 'sink',teo_equipment_name)
-                            info['hourly_supply_capacity_normalize'] = info_technology_solar_thermal.data_teo['hourly_supply_capacity_normalize']  # add solar thermal profile
-                            # update om_var and emissions
-                            info['emissions'] = info['emissions']*(1-coef_solar_thermal)
-                            info['om_var'] = info['om_var']*(1-coef_solar_thermal)
-                            info['om_fix'] = info['om_fix']*(1-coef_solar_thermal)
-                            conversion_technologies.append(info)
+                            coef_solar_thermal, info = coef_solar_thermal_backup(stream['hourly_generation'], info,info_technology_solar_thermal)
+                            if coef_solar_thermal >= minimum_coef_solar_thermal:
+                                conversion_technologies.append(info)
 
 
                             # add heat pump
