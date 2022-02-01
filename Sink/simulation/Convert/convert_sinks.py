@@ -79,6 +79,8 @@ OUTPUT: the following dictionary,
                  # streams = {
                  #          'stream_id'
                  #          'hourly_stream_capacity' [kWh]
+                 #          'teo_demand_factor'
+                 #          'teo_yearly_demand'
                  #          'conversion_technologies' - multiple dictionaries with technologies possible to implement
                  #          }
 
@@ -223,7 +225,7 @@ def convert_sinks(in_var):
 
         teo_equipment_name = 'hp_sink'
         info = join_hx_and_technology('grid_specific', [info_technology_group_hp], power_fraction,
-                                      info_technology_group.data_teo['max_input_capacity'],
+                                      info_technology_group_hp.data_teo['max_input_capacity'],
                                       group_of_sinks_grid_specific_power_heating, 'sink',
                                       teo_equipment_name)
         grid_specific_heating.append(info)
@@ -484,9 +486,14 @@ def convert_sinks(in_var):
 
                         conversion_technologies.append(info)
 
+            yearly_demand = sum(hourly_stream_capacity)
+            teo_demand_factor = [i/yearly_demand for i in hourly_stream_capacity]
+
             output_converted.append({
                 'stream_id': stream['id'],
                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
+                'teo_demand_factor': teo_demand_factor,
+                'teo_yearly_demand': yearly_demand,
                 'conversion_technologies': conversion_technologies,  # [€/kW]
             })
 

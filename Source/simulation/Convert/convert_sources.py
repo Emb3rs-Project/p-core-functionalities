@@ -69,6 +69,7 @@ OUTPUT: vector with multiple dictionaries [source_1,source_2,...]  [{'source_id'
                  # streams_converted = {
                  #          'stream_id'
                  #          'hourly_stream_capacity' [kWh]
+                 #          'teo_capacity_factor'
                  #          'conversion_technologies' - multiple dictionaries with technologies possible to implement
                  #          }
 
@@ -416,9 +417,12 @@ def convert_sources(in_var):
                                     info = join_hx_and_technology(source['id'],[info_technology,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source',teo_equipment_name)
                                     conversion_technologies.append(info)
 
+                            teo_capacity_factor = [i/stream_available_capacity for i in hourly_stream_capacity]
+
                             output_converted.append({
                                 'stream_id': stream['id'],
                                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
+                                'teo_capacity_factor': teo_capacity_factor,
                                 'conversion_technologies': conversion_technologies,  # [€/kW]
                             })
 

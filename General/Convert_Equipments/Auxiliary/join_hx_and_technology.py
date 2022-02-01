@@ -47,22 +47,25 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_strea
 
         if object_id != 'grid_specific':
             if teo_equipment_name.find('hp') == 0 or teo_equipment_name.find('absorption_chiller') == 0 :
-                input_fuel = 'dhn_water_sink+electricity'
+                input_fuel = 'dhn_water_sink' # + electricity
             else:
                 input_fuel = 'dhn_water_sink'
         else:
-            input_fuel = 'grid_specific'
+            input_fuel = None
 
-        output_fuel = 'sink_' + str(object_id) + '_demand'
+        if object_id != 'grid_specific':
+            output_fuel = 'sink_' + str(object_id) + '_demand'
+        else:
+            output_fuel = 'dhn_water'
 
     else:
         if teo_equipment_name.find('hp') == 0:
-            input_fuel = 'excess_heat+electricity'
+            input_fuel = 'excess_heat'  # + electricity
         else:
             input_fuel = 'excess_heat'
 
         if teo_equipment_name.find('orc') == 0 or teo_equipment_name.find('chp') == 0:
-            output_fuel = 'dhn_water_source+electricity'
+            output_fuel = 'dhn_water_source' # + electricity
         else:
             output_fuel = 'dhn_water_source'
 
@@ -91,11 +94,10 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_strea
     conversion_efficiency = max_power_grid/max_power_stream
     turnkey_a, turnkey_b = linearize_values(turnkey_max_power, turnkey_power_fraction, max_power_stream, power_fraction_supply_capacity)
 
-
     data_teo = {
         'teo_equipment_name': teo_equipment_name,
-        'input_fuel':input_fuel,
-        'output_fuel':output_fuel,
+        'input_fuel': input_fuel,
+        'output_fuel': output_fuel,
         'equipment': all_equipment,
         'max_capacity': max_power_stream,  # [kW]
         'turnkey_a': turnkey_a,  # [€/kW]
@@ -105,7 +107,6 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_strea
         'om_var': om_var / max_power_stream,  # [€/kWh]
         'emissions': emissions / max_power_stream,  # [kg.CO2/kWh]
         'technologies': technologies_dict,
-
     }
 
     return data_teo
