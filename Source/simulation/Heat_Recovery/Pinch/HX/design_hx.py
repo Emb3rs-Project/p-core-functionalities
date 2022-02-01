@@ -72,13 +72,17 @@ def design_hx(hot_stream_index, cold_stream_index, hx_hot_stream_T_hot, hx_hot_s
 
     hot_stream_cp = fluid_material_cp(hot_stream_fluid, hx_hot_stream_T_hot)
     hot_stream_flowrate = hx_power / (abs(hx_hot_stream_T_hot - hx_hot_stream_T_cold) * hot_stream_cp)
+    hot_stream_mcp = hx_power / (abs(hx_hot_stream_T_hot - hx_hot_stream_T_cold) )
     cold_stream_cp = fluid_material_cp(cold_stream_fluid, hx_cold_stream_T_hot)
     cold_stream_flowrate = hx_power / (abs(hx_cold_stream_T_hot - hx_cold_stream_T_cold) * cold_stream_cp)
+    cold_stream_mcp = hx_power / (abs(hx_cold_stream_T_hot - hx_cold_stream_T_cold))
 
     new_hx_row = {
                   'HX_Power': round(hx_power + .0, 1),
                   'HX_Hot_Stream': hot_stream_index,
                   'HX_Cold_Stream': cold_stream_index,
+                  'HX_Hot_Stream_mcp': hot_stream_mcp,
+                  'HX_Cold_Stream_mcp': cold_stream_mcp,
                   'HX_Hot_Stream_flowrate': hot_stream_flowrate,
                   'HX_Cold_Stream_flowrate': cold_stream_flowrate,
                   'HX_Hot_Stream_T_Hot': round(hx_hot_stream_T_hot + .0, 1),

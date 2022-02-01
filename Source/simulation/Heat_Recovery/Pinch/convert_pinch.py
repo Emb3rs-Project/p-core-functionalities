@@ -260,7 +260,6 @@ def convert_pinch(in_var):
                             for df in df_hx_hourly:
                                 info_pinch.append(df)
 
-
     ############################################################################################################
     # ECONOMIC/CO2 EMISSIONS ANALYSIS
     all_df = []
@@ -308,7 +307,6 @@ def convert_pinch(in_var):
                         'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
                     }, ignore_index=True)
 
-
         # equipment internal heat recovery/ only isolated streams
         else:
             for index, info in enumerate(info_pinch):
@@ -333,11 +331,9 @@ def convert_pinch(in_var):
                         'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
                     }, ignore_index=True)
 
-
         # drop duplicates
         df_optimization = df_optimization.drop_duplicates(
             subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
-
 
         # get best options that recover maximum energy
         energy_recovered = df_optimization.sort_values('energy_recovered', ascending=False).head(number_output_options)
@@ -362,7 +358,7 @@ def convert_pinch(in_var):
         }
 
     except:
-        print('Error in convert_pinch. Probably no possible solution or complex case. ')
+        print('Error in making outputs convert_pinch. Probably no possible solution or complex case. ')
         output = {}
 
 
