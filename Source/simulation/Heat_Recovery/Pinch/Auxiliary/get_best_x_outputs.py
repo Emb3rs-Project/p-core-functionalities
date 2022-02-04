@@ -54,7 +54,7 @@ from ......KB_General.get_interest_rate import get_interest_rate
 from ..make_pinch_design_draw import make_pinch_design_draw
 
 
-def get_best_x_outputs(info_pinch,df_optimization,country,lifetime):
+def get_best_x_outputs(info_pinch,df_optimization,country,lifetime,pinch_delta_T_min):
 
     best_x_options = []
 
@@ -62,12 +62,12 @@ def get_best_x_outputs(info_pinch,df_optimization,country,lifetime):
 
     for index, row in df_optimization.iterrows():
 
-        #make_pinch_design_draw(info_pinch[int(df_optimization['index'].loc[index])]['streams'],
-        #                       info_pinch[int(df_optimization['index'].loc[index])]['streams_info'],
-        #                       info_pinch[int(df_optimization['index'].loc[index])]['pinch_temperature'],
-         #                      info_pinch[int(df_optimization['index'].loc[index])]['df_hx'].to_dict(orient='records'),
-        #                       info_pinch[int(df_optimization['index'].loc[index])]['pinch_delta_T_min']
-         #                      )
+        make_pinch_design_draw(info_pinch[int(df_optimization['index'].loc[index])]['streams'],
+                               info_pinch[int(df_optimization['index'].loc[index])]['streams_info'],
+                               info_pinch[int(df_optimization['index'].loc[index])]['pinch_temperature'],
+                               info_pinch[int(df_optimization['index'].loc[index])]['df_hx'].to_dict(orient='records'),
+                               info_pinch[int(df_optimization['index'].loc[index])]['pinch_delta_T_min']
+                               )
 
 
         best_x_options.append({
@@ -84,7 +84,7 @@ def get_best_x_outputs(info_pinch,df_optimization,country,lifetime):
             'energy_dispatch': row['energy_recovered'],
             'discount_rate': interest_rate,
             'equipment_detailed_savings': info_pinch[int(df_optimization['index'].loc[index])]['df_equipment_economic'].to_dict(orient='records'),  # each equipment savings
-            'pinch_temperature': info_pinch[int(df_optimization['index'].loc[index])]['pinch_temperature'],
+            'pinch_temperature': info_pinch[int(df_optimization['index'].loc[index])]['pinch_temperature'] - pinch_delta_T_min,
             'pinch_hx_data': info_pinch[int(df_optimization['index'].loc[index])]['df_hx'].to_dict(orient='records'),  # all pinch data information
             'theo_minimum_hot_utility': info_pinch[int(df_optimization['index'].loc[index])]['theo_minimum_hot_utility'],
             'theo_minimum_cold_utility': info_pinch[int(df_optimization['index'].loc[index])]['theo_minimum_cold_utility'],

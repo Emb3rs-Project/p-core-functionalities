@@ -13,7 +13,10 @@ from ....Source.characterization.Process.process import Process
 class Option_1:
     def __init__(self):
 
-        test = 2
+        test = 1
+     #   test = 4
+      #  test = 5
+
         if test == 1:
             ### OPTION 1  ###################################################
             # OPTION 1 - TEST 1
@@ -116,7 +119,8 @@ class Option_1:
             numbers += 1
 
         self.location = [41.13, -8.61]
-        self.perform_all_combinations = True
+        self.perform_all_combinations = False
+
 
 
 ######################################################################################################
@@ -210,7 +214,8 @@ class Input_Data_Remaining_Options():
         self.all_input_objects = all_objects
         self.pinch_delta_T_min = 10
         self.location = [41.13, -8.61]
-        self.perform_all_combinations = True
+        self.perform_all_combinations = False
+
 
 
 ########################################################################################

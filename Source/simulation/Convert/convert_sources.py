@@ -419,26 +419,43 @@ def convert_sources(in_var):
 
                             teo_capacity_factor = [i/stream_available_capacity for i in hourly_stream_capacity]
 
+                            gis_capacity = conversion_technologies[0]['max_capacity'] * conversion_technologies[0]['conversion_efficiency']
+
                             output_converted.append({
                                 'stream_id': stream['id'],
+                                'gis_capacity': gis_capacity,  # [kW]
                                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
                                 'teo_capacity_factor': teo_capacity_factor,
                                 'conversion_technologies': conversion_technologies,  # [€/kW]
                             })
 
-
         # get conversion for each source
         all_sources_info.append({
             'source_id': source['id'],
+            'location': [latitude, longitude],
             'source_grid_supply_temperature': source_grid_supply_temperature,
             'source_grid_return_temperature': source_grid_return_temperature,
             'streams_converted': output_converted
         })
 
+    n_supply_list = []
+    for source in all_sources_info:
+        for stream in source['streams_converted']:
+            gis_dict = {
+                'id': source['source_id'],
+                'stream_id': stream['stream_id'],
+                'coords': source['location'],
+                'cap': stream['gis_capacity']  # [kW]
+            }
+            n_supply_list.append(gis_dict)
 
+    all_info = {
+        'all_sources_info': all_sources_info,
+        'n_supply_list': n_supply_list
+    }
     #output = json.dumps(output, indent=2)
 
-    return all_sources_info
+    return all_info
 
 
 

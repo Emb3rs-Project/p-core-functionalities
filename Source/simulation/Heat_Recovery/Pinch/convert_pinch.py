@@ -337,15 +337,15 @@ def convert_pinch(in_var):
 
         # get best options that recover maximum energy
         energy_recovered = df_optimization.sort_values('energy_recovered', ascending=False).head(number_output_options)
-        energy_recovered_options = get_best_x_outputs(info_pinch, energy_recovered, country, lifetime)
+        energy_recovered_options = get_best_x_outputs(info_pinch, energy_recovered, country, lifetime,pinch_delta_T_min)
 
         # get best options that give best energy_recovery/turnkey ratio
         energy_investment = df_optimization.sort_values('energy_investment').head(number_output_options)
-        energy_investment_options = get_best_x_outputs(info_pinch, energy_investment, country, lifetime)
+        energy_investment_options = get_best_x_outputs(info_pinch, energy_investment, country, lifetime,pinch_delta_T_min)
 
         # get best options that save maximum amount of CO2
         co2_savings = df_optimization.sort_values('co2_savings', ascending=False).head(number_output_options)
-        co2_savings_options = get_best_x_outputs(info_pinch, co2_savings, country, lifetime)
+        co2_savings_options = get_best_x_outputs(info_pinch, co2_savings, country, lifetime,pinch_delta_T_min)
 
         # isolated streams are not linked to any equipment, thus not possible to know how much CO2 is saved
         if only_isolated_streams == True:

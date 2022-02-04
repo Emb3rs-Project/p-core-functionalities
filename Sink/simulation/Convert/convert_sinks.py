@@ -489,8 +489,11 @@ def convert_sinks(in_var):
             yearly_demand = sum(hourly_stream_capacity)
             teo_demand_factor = [i/yearly_demand for i in hourly_stream_capacity]
 
+            gis_capacity = conversion_technologies[0]['max_capacity'] * conversion_technologies[0]['conversion_efficiency']
+
             output_converted.append({
                 'stream_id': stream['id'],
+                'gis_capacity': gis_capacity,  # [kW]
                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
                 'teo_demand_factor': teo_demand_factor,
                 'teo_yearly_demand': yearly_demand,
@@ -499,6 +502,7 @@ def convert_sinks(in_var):
 
         output_sink.append({
             'sink_id': sink['id'],
+            'location': [latitude, longitude],
             'streams': output_converted
         })
 
@@ -509,6 +513,22 @@ def convert_sinks(in_var):
         'sinks': output_sink
     }
 
+    n_demand_list = []
+    for sink in all_sinks_info['sinks']:
+        for stream in sink['streams']:
+            gis_dict = {
+                'id': sink['sink_id'],
+                'stream_id': stream['stream_id'],
+                'coords': sink['location'],
+                'cap': stream['gis_capacity']  # [kW]
+            }
+            n_demand_list.append(gis_dict)
+
+    all_info = {
+        'all_sinks_info': all_sinks_info,
+        'n_demand_list': n_demand_list
+    }
+
     # output = json.dumps(output, indent=2)
 
-    return all_sinks_info
+    return all_info
