@@ -96,6 +96,7 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_strea
 
     data_teo = {
         'teo_equipment_name': teo_equipment_name,
+        'output': 1,
         'input_fuel': input_fuel,
         'output_fuel': output_fuel,
         'equipment': all_equipment,

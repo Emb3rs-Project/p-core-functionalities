@@ -451,6 +451,7 @@ def convert_sources(in_var):
 
     all_info = {
         'all_sources_info': all_sources_info,
+        'teo_string': 'dhn',
         'n_supply_list': n_supply_list
     }
     #output = json.dumps(output, indent=2)
