@@ -1,7 +1,6 @@
 
 
 
-
 def coef_solar_thermal_backup(stream_hourly_capacity,info_join_technologies,solar_thermal_object):
     solar_thermal_hours_production = solar_thermal_object.data_teo['hourly_supply_capacity'] # solar still production
 
@@ -22,7 +21,7 @@ def coef_solar_thermal_backup(stream_hourly_capacity,info_join_technologies,sola
     info_join_technologies['hourly_supply_capacity_normalize'] = solar_thermal_object.data_teo['hourly_supply_capacity_normalize']  # add solar thermal profile
     info_join_technologies['emissions'] = info_join_technologies['emissions'] * (1 - coef_solar_thermal)
     info_join_technologies['om_var'] = info_join_technologies['om_var'] * (1 - coef_solar_thermal)
-    info_join_technologies['om_fix'] = info_join_technologies['om_fix'] * (1 - coef_solar_thermal)
+    #info_join_technologies['om_fix'] = info_join_technologies['om_fix'] * (1 - coef_solar_thermal)
 
 
     return coef_solar_thermal,info_join_technologies
