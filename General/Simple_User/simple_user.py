@@ -76,6 +76,7 @@ def simple_user(in_var):
             stream["shutdown_periods"],
             stream["daily_periods"],
         )
+
         info_stream = stream_industry(
             object_id,
             stream_type,
@@ -89,9 +90,7 @@ def simple_user(in_var):
         streams_output.append(info_stream)
 
     # OUTPUT ------------------------
-    output = {"streams": streams_output}
-
     # output = json.dumps(output, indent=2)
 
-    return output
+    return streams_output
 

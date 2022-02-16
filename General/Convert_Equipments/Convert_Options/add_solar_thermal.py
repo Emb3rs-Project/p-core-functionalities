@@ -65,16 +65,13 @@ from ....General.Auxiliary_General.linearize_values import linearize_values
 
 class Add_Solar_Thermal():
 
-    def __init__(self, country, consumer_type, latitude, longitude, stream_available_capacity, power_fraction, supply_temperature, return_temperature):
+    def __init__(self, country, consumer_type, latitude, longitude, stream_available_capacity, power_fraction, supply_temperature, return_temperature,hx_delta_T,hx_efficiency):
 
         # Defined Vars
         self.object_type = 'equipment'
         self.supply_fluid = 'thermal_oil'
         self.fuel_type = 'electricity'
         self.fuel_properties = fuel_properties(country, self.fuel_type, consumer_type)
-        hx_delta_T = 5
-        hx_efficiency = 0.95
-        self.defined_thermal_production = 0.7  # [kW/m2]
 
         # get equipment characteristics
         self.latitude = latitude
@@ -108,9 +105,9 @@ class Add_Solar_Thermal():
 
         # Design Equipment
         # 100% Power
-        info_max_power = self.design_equipment(climate, power_fraction=1)
+        info_max_power = self.design_equipment(climate, hx_delta_T, hx_efficiency, power_fraction=1)
         # power fraction
-        info_power_fraction = self.design_equipment(climate, power_fraction)
+        info_power_fraction = self.design_equipment(climate, hx_delta_T, hx_efficiency, power_fraction)
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
@@ -134,11 +131,9 @@ class Add_Solar_Thermal():
         }
 
 
-    def design_equipment(self, climate, power_fraction):
+    def design_equipment(self, climate, hx_delta_T, hx_efficiency, power_fraction):
 
         # Defined vars
-        hx_efficiency = 0.95
-        hx_delta_T = 5
         grid_fluid = 'water'
         solar_collector_fluid_rho = fluid_material_rho('thermal_oil',temperature=90)  # [kg/m3]
         grid_supply_temperature = self.supply_temperature - hx_delta_T
@@ -214,7 +209,8 @@ class Add_Solar_Thermal():
             vector_grid_flowrate.append(grid_flowrate)  # [kg/h.m2]
 
         # compute solar thermal area
-        area = (self.stream_available_capacity * power_fraction / self.defined_thermal_production)/ (self.area_ratio)  # [m2]
+        max_power = max(vector_grid_power)
+        area = (self.stream_available_capacity * power_fraction / max_power)/ (self.area_ratio)  # [m2]
 
         # get info
         vector_solar_collector_flowrate = [i * area for i in vector_solar_collector_flowrate]  # [kg/h]

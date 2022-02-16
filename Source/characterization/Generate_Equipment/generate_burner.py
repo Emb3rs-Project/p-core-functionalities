@@ -110,14 +110,8 @@ class Burner():
 
         # Inflow
         inflow_flowrate = m_air
-
-        try:
-            inflow_target_temperature = in_var.supply_temperature
-        except:
-            inflow_target_temperature = burner_chamber_temperature(self.fuel_type,
-                                                                   fuel_consumption,
-                                                                   m_flue_gas)
-
+        # inflow_target_temperature = burner_chamber_temperature(self.fuel_type, fuel_consumption,m_flue_gas)
+        inflow_target_temperature = 80  # [ºC]
         inflow_fluid_cp = fluid_material_cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
         inflow_capacity = inflow_flowrate * (
                     inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp / 3600  # [kW]

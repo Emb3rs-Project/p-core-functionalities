@@ -46,9 +46,10 @@ def design_orc(stream_capacity, stream_fluid, stream_supply_temperature, stream_
                orc_T_evap, hx_efficiency, aggregate_streams):
 
     # Defined vars
+    carnot_correction_factor = 0.45
     orc_delta_T = 30  # [ºC]
     flue_gas_T_minimum = 120  # minimum temperature flue_gas can be cooled [ºC]
-    design_temperature = 500  # above this temperature 'rc', below 'orc'[ºC]
+    design_temperature = 1500  # above this temperature 'rc', below 'orc'[ºC]
 
     # if streams are aggregated, an intermediate circuit is implemented
     if aggregate_streams == True:
@@ -102,7 +103,8 @@ def design_orc(stream_capacity, stream_fluid, stream_supply_temperature, stream_
     intermediate_T_hot = stream_supply_temperature - hx_delta_T
     stream_thermal_capacity_max_power = stream_capacity * (stream_supply_temperature - stream_target_temperature_corrected) \
                                         / (stream_supply_temperature - stream_target_temperature)
-    eff_carnot = 1 - (orc_T_cond + 273.15) / (orc_T_evap + 273.15)
+
+    eff_carnot = (1 - (orc_T_cond + 273.15) / (orc_T_evap + 273.15)) * carnot_correction_factor
 
     if intermediate_circuit_exist == True:
         overall_thermal_capacity = stream_thermal_capacity_max_power * hx_efficiency ** 2

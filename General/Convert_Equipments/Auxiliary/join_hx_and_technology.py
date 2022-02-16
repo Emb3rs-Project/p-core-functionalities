@@ -30,7 +30,7 @@ OUTPUT: dictionary with:
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
 
-def join_hx_and_technology(object_id,technologies,power_fraction,max_power_stream,max_power_grid,object_type,teo_equipment_name):
+def join_hx_and_technology(object_id,technologies,power_fraction,max_power_stream,max_power_grid,object_type,teo_equipment_name,stream_id):
 
     turnkey_max_power = 0
     turnkey_power_fraction = 0
@@ -94,21 +94,44 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_strea
     conversion_efficiency = max_power_grid/max_power_stream
     turnkey_a, turnkey_b = linearize_values(turnkey_max_power, turnkey_power_fraction, max_power_stream, power_fraction_supply_capacity)
 
-    data_teo = {
-        'teo_equipment_name': teo_equipment_name,
-        'output': 1,
-        'input_fuel': input_fuel,
-        'output_fuel': output_fuel,
-        'equipment': all_equipment,
-        'max_capacity': max_power_stream,  # [kW]
-        'turnkey_a': turnkey_a,  # [€/kW]
-        'turnkey_b': turnkey_b,  # [€]
-        'conversion_efficiency': conversion_efficiency,  # []
-        'om_fix': om_fix / max_power_stream,  # [€/year.kW]
-        'om_var': om_var / max_power_stream,  # [€/kWh]
-        'emissions': emissions / max_power_stream,  # [kg.CO2/kWh]
-        'technologies': technologies_dict,
-    }
+    teo_equipment_name = str(object_type) + '-' + str(object_id) + '-' + str(stream_id) + '-' + str(teo_equipment_name)
 
+    if 'orc' in teo_equipment_name:
+        for technology in technologies:
+            if technology.data_teo['equipment'] == 'orc':
+                electrical_conversion_efficiency = technology.data_teo['electrical_conversion_efficiency']
+
+        data_teo = {
+            'teo_equipment_name': teo_equipment_name,
+            'output': 1,
+            'input_fuel': input_fuel,
+            'output_fuel': output_fuel,
+            'equipment': all_equipment,
+            'max_capacity': max_power_stream,  # [kW]
+            'turnkey_a': turnkey_a,  # [€/kW]
+            'turnkey_b': turnkey_b,  # [€]
+            'conversion_efficiency': conversion_efficiency,  # []
+            'electrical_conversion_efficiency': electrical_conversion_efficiency,
+            'om_fix': om_fix / max_power_stream,  # [€/year.kW]
+            'om_var': om_var / max_power_stream,  # [€/kWh]
+            'emissions': emissions / max_power_stream,  # [kg.CO2/kWh]
+            'technologies': technologies_dict,
+        }
+    else:
+        data_teo = {
+            'teo_equipment_name': teo_equipment_name,
+            'output': 1,
+            'input_fuel': input_fuel,
+            'output_fuel': output_fuel,
+            'equipment': all_equipment,
+            'max_capacity': max_power_stream,  # [kW]
+            'turnkey_a': turnkey_a,  # [€/kW]
+            'turnkey_b': turnkey_b,  # [€]
+            'conversion_efficiency': conversion_efficiency,  # []
+            'om_fix': om_fix / max_power_stream,  # [€/year.kW]
+            'om_var': om_var / max_power_stream,  # [€/kWh]
+            'emissions': emissions / max_power_stream,  # [kg.CO2/kWh]
+            'technologies': technologies_dict,
+        }
     return data_teo
 

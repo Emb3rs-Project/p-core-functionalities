@@ -58,7 +58,7 @@ class Add_Electric_Chiller():
 
         # Defined Vars
         self.object_type = 'equipment'
-        self.equipment_sub_type = 'electric_chiller'
+        self.equipment_sub_type = 'compression_chiller'
         self.fuel_type = 'electricity'
 
         # get equipment characteristics

@@ -79,7 +79,7 @@ def fluid_material_state(fluid_name):
         state = data[fluid_name]['fluid_type']
 
     except:
-        print('fluid does not exist in db. rho = 1')
+        print('fluid state does not exist in db. defaul: liquid')
         state = 'liquid'
 
     return state

@@ -151,4 +151,5 @@ def burner_chamber_temperature(fuel_type, m_fuel, m_flue_gas):
 
     T_chamber_max_value = max(T_chamber_max)
 
+
     return T_chamber_max_value
