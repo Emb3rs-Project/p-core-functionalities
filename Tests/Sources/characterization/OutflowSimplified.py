@@ -19,13 +19,13 @@ class Industry():
 def testOutflowSimplified():
     industry_data = Industry()
     industry_stream_test = simple_user(industry_data)
-    print(industry_stream_test['streams'][0]['capacity'])
+    print(industry_stream_test[0]['flowrate'])
+
 
     """
-    print(industry_stream_test['streams'][0]['capacity'])
+    print(industry_stream_test[0]['flowrate'])
 
-    Expected:
-    6.805555555555555
+    10
     """
 
 testOutflowSimplified()
