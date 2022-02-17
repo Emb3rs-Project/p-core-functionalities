@@ -45,7 +45,15 @@ Import logging (most recent version)  - Used for writing status messages to a fi
 Import numpy as np (version  1.16.4 or higher) - used for working with arrays and functions for working in domain of linear algebra, fourier transform, and matrices
 Import pandas as pd version  (0.25.1 or higher) - Pandas will be used to read the in-puts from an excel file and write outputs into an excel/csv file
 
-# Acknowledgments
+## Emb3rs project
+
+EMB3Rs (“User-driven Energy-Matching & Business Prospection Tool for Industrial Excess Heat/Cold Reduction, Recovery and Redistribution) is a European project funded under the H2020 Program (Grant Agreement N°847121) to develop an open-sourced tool to match potential sources of excess thermal energy with compatible users of heat and cold.
+
+Users, like industries and other sources that produce excess heat, will provide the essential parameters, such as their location and the available excess thermal energy. The EMB3Rs platform will then autonomously and intuitively assess the feasibility of new business scenarios and identify the technical solutions to match these sources with compatible sinks. End users such as building managers, energy communities or individual consumers will be able to determine the costs and benefits of industrial excess heat and cold utilization routes and define the requirements for implementing the most promising solutions. 
+
+The EMB3Rs platform will integrate several analysis modules that will allow a full exploration of the feasible technical routes to the recovery and use of the available excess thermal energy. 
+
+## Acknowledgments
 
 The EMB3RS project has received funding from the European Union’s Horizon 2020 research and innovation program under grant agreement No 847121. This publication reflects only the views of its authors, and the European Commission cannot be held responsible for its content.
 
