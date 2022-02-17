@@ -3,9 +3,8 @@ alisboa/jmcunha
 
 
 ##############################
-INFO: Design ORC/RC according to the excess heat streams given.
+INFO: Design ORC according to the excess heat streams given.
       The following assumptions are implemetend:
-       - above design_temperature = 500ºC, 'rc', below 'orc'[ºC]
        - 120 ºC is the minimum temperature flue_gas can be cooled. Design constraint - lower flue_gas temperatures mean
        condensation
        - orc_delta_T = 30
@@ -29,7 +28,7 @@ INPUT:
 
 ##############################
 OUTPUT:
-        # orc_type - e.g. 'rc' or 'orc'
+        # orc_type -'orc'
         # stream_thermal_capacity_max_power   [kW]
         # orc_electrical_generation  [kW]
         # overall_thermal_capacity - thermal+electrical [kW]
@@ -45,74 +44,71 @@ OUTPUT:
 def design_orc(stream_capacity, stream_fluid, stream_supply_temperature, stream_target_temperature, hx_delta_T, orc_T_cond,
                orc_T_evap, hx_efficiency, aggregate_streams):
 
+
+    ################################################
     # Defined vars
+    orc_type = 'orc'
     carnot_correction_factor = 0.45
     orc_delta_T = 30  # [ºC]
     flue_gas_T_minimum = 120  # minimum temperature flue_gas can be cooled [ºC]
-    design_temperature = 1500  # above this temperature 'rc', below 'orc'[ºC]
+
+
+    ################################################
+    intermediate_T_cold = orc_T_evap + hx_delta_T
 
     # if streams are aggregated, an intermediate circuit is implemented
     if aggregate_streams == True:
         intermediate_circuit_exist = True
-        intermediate_T_hot = orc_T_evap + hx_delta_T
-        intermediate_T_cold = intermediate_T_hot - orc_delta_T
-        orc_type = 'orc'
-
+        number_hx = 2
         if stream_fluid == 'flue_gas':
-            stream_target_temperature_corrected_min = flue_gas_T_minimum  # design constraint - lower flue_gas temperatures mean condensation
+            stream_target_temperature_corrected_min = flue_gas_T_minimum
         else:
             stream_target_temperature_corrected_min = intermediate_T_cold + hx_delta_T
 
-        stream_target_temperature_corrected = intermediate_T_cold + hx_delta_T
+        stream_target_temperature_corrected = orc_T_evap + hx_delta_T * number_hx
 
-    if aggregate_streams == False:
-        if stream_supply_temperature < design_temperature:
-            orc_type = 'orc'
-            intermediate_T_cold = orc_T_evap + hx_delta_T
-            if stream_fluid == 'flue_gas':
-                stream_target_temperature_corrected_min = flue_gas_T_minimum  # design constraint - lower flue_gas temperatures mean condensation
-            else:
-                stream_target_temperature_corrected_min = orc_T_evap + hx_delta_T
-
-            stream_target_temperature_corrected = orc_T_evap + 2 * hx_delta_T
-
-            # from the suppliers info gathered, it was seen that water streams could be directly fed to the orc system,
-            # otherwise an intermediate circuit was needed
-            if stream_fluid != 'water':
-                intermediate_circuit_exist = True
-            else:
-                intermediate_circuit_exist = False
-
+    else:
+        if stream_fluid == 'flue_gas':
+            stream_target_temperature_corrected_min = flue_gas_T_minimum  # design constraint - lower flue_gas temperatures mean condensation
         else:
-            orc_type = 'rc'
-            intermediate_T_cold = 0  # just to run
-            if stream_fluid == 'flue_gas':
-                stream_target_temperature_corrected_min = flue_gas_T_minimum
-            else:
-                stream_target_temperature_corrected_min = orc_T_evap + hx_delta_T
+            stream_target_temperature_corrected_min = orc_T_evap + hx_delta_T
 
-            stream_target_temperature_corrected = orc_T_evap + hx_delta_T
+        # from the suppliers, water streams can be directly fed to the orc system, otherwise implement intermediate circuit
+        if stream_fluid != 'water':
+            intermediate_circuit_exist = True
+            number_hx = 2
+        else:
             intermediate_circuit_exist = False
+            number_hx = 1
+
+        stream_target_temperature_corrected = orc_T_evap + number_hx * hx_delta_T
 
     if stream_target_temperature_corrected <= stream_target_temperature_corrected_min:
         stream_target_temperature_corrected = stream_target_temperature_corrected_min
 
-    if stream_target_temperature_corrected < stream_target_temperature:
+    if stream_target_temperature_corrected <= stream_target_temperature:
         stream_target_temperature_corrected = stream_target_temperature
 
-    intermediate_T_hot = stream_supply_temperature - hx_delta_T
-    stream_thermal_capacity_max_power = stream_capacity * (stream_supply_temperature - stream_target_temperature_corrected) \
-                                        / (stream_supply_temperature - stream_target_temperature)
+    intermediate_T_hot = intermediate_T_cold + orc_delta_T
+    if intermediate_T_hot > stream_supply_temperature - hx_delta_T:
+        intermediate_T_hot = stream_supply_temperature - hx_delta_T
 
-    eff_carnot = (1 - (orc_T_cond + 273.15) / (orc_T_evap + 273.15)) * carnot_correction_factor
+    if stream_supply_temperature > stream_target_temperature_corrected:
+        stream_thermal_capacity_max_power = stream_capacity * (stream_supply_temperature - stream_target_temperature_corrected) / (stream_supply_temperature - stream_target_temperature)
 
-    if intermediate_circuit_exist == True:
-        overall_thermal_capacity = stream_thermal_capacity_max_power * hx_efficiency ** 2
+        # get eff. carnot
+        eff_carnot = (1 - (orc_T_cond + 273.15) / (orc_T_evap + 273.15)) * carnot_correction_factor
+
+        # get overall thermal capacity
+        overall_thermal_capacity = stream_thermal_capacity_max_power * hx_efficiency ** number_hx
+
+        # get electrical generation
+        orc_electrical_generation = overall_thermal_capacity * eff_carnot
+
     else:
-        overall_thermal_capacity = stream_thermal_capacity_max_power * hx_efficiency
-
-    orc_electrical_generation = overall_thermal_capacity * eff_carnot
-
+        stream_thermal_capacity_max_power = 0
+        orc_electrical_generation = 0
+        overall_thermal_capacity = 0
 
     return orc_type, stream_thermal_capacity_max_power, orc_electrical_generation, overall_thermal_capacity, \
            stream_target_temperature_corrected, intermediate_circuit_exist, intermediate_T_hot, intermediate_T_cold

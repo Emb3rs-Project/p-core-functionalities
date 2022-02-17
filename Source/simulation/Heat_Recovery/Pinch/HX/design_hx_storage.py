@@ -19,7 +19,6 @@ INFO: Compute storage needed for each HX according to hot and cold stream schedu
 INPUT:
         # df_profile - DF with all streams schedules (hourly schedule with 1 and 0)
         # info_df_hx - list with all designed options for above or below the pinch
-        # above_pinch - if analysis is above or below pinch  [True/False ]
 
 
 ##############################
@@ -28,7 +27,7 @@ RETURN:
 
         Where the updated keys are:
             # Storage [m3]
-            # Storage_Satisfies - recovery satisfaction by using storage [%]
+            # Storage_Satisfies - percentage fo the deficit hours the storage covers [%]
             # Storage_Turnkey_Cost - storage turnkey for each HX [€]
             # Total_Turnkey_Cost - total turnkey = hx + storage [€]
             # Recovered_Energy - yearly total recovered energy [kWh]
@@ -39,11 +38,14 @@ from ......KB_General.equipment_details import equipment_details
 from ......KB_General.fluid_material import fluid_material_cp
 
 
-def design_hx_storage(df_profile, info_df_hx, above_pinch, storage_delta_T=5):
+def design_hx_storage(df_profile, info_df_hx, storage_delta_T=5):
 
+    ###############################################################
     # Defined vars
     maximum_water_storage_temperature = 90  # [ºC]
 
+
+    ###############################################################
     # Storage design
     if len(info_df_hx) > 0:
         for pinch_case in info_df_hx:
@@ -74,13 +76,6 @@ def design_hx_storage(df_profile, info_df_hx, above_pinch, storage_delta_T=5):
 
                     # get streams
                     power_hx = row['HX_Power']  # hx power
-
-                   # if above_pinch == True:
-                    #    index_cold_stream = row['Original_Stream_Out']  # original index stream - to get hourly profile
-                   #     index_hot_stream = row['Original_Stream_In']
-                    #else:
-                   #     index_cold_stream = row['Original_Stream_In']
-                   #     index_hot_stream = row['Original_Stream_Out']
 
                     index_cold_stream = row['HX_Original_Cold_Stream']  # original index stream - to get hourly profile
                     index_hot_stream = row['HX_Original_Hot_Stream']
@@ -196,9 +191,8 @@ def design_hx_storage(df_profile, info_df_hx, above_pinch, storage_delta_T=5):
                 ######################################################################
                 # OUTPUT
                 # update df_hx
-
                 df_hx['Storage'] = vector_storage_volume  # update storage for each HX [m3]
-                df_hx['Storage_Satisfies'] = vector_storage_satisfies  # recovery satisfaction by using storage [%]
+                df_hx['Storage_Satisfies'] = vector_storage_satisfies  # percentage fo the deficit hours the storage covers [%]
                 df_hx['Storage_Turnkey_Cost'] = vector_storage_turn_key  # storage turnkey for each HX [€]
                 df_hx['Total_Turnkey_Cost'] = df_hx['HX_Turnkey_Cost'] + df_hx['Storage_Turnkey_Cost']  # total turnkey [€]
                 df_hx['Recovered_Energy'] = vector_energy_year  # yearly total recovered energy [kWh]

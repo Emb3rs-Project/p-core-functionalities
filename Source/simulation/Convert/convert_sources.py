@@ -114,7 +114,7 @@ def convert_sources(in_var):
     sink_group_grid_return_temperature = in_var.sink_group_grid_return_temperature
 
     try:
-        grid_losses = in_var.grid_losses  # vector with losses for each source
+        grid_losses = in_var.grid_losses  # vector with losses for each source and stream
         last_iteration_data = in_var.last_iteration_data  # data output from this function from first iteration
     except:
         grid_losses = []
@@ -153,7 +153,6 @@ def convert_sources(in_var):
 
     ############################################################################################################
     # ROUTINE
-
     for source_index,source in enumerate(group_of_sources):
         output_converted = []
         latitude, longitude = source['location']

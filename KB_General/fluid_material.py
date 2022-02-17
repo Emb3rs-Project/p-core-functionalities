@@ -41,7 +41,8 @@ def fluid_material_cp(fluid_name, temperature):
             data[fluid_name]['specific_heat_c3']) * temperature ** 3
 
     except:
-        print('fluid does not exist in db. fluid_cp = 1')
+        print(fluid_name)
+        print('fluid does not exist in db. default: fluid_cp = 1')
         fluid_cp = 1
 
     return fluid_cp
@@ -61,7 +62,7 @@ def fluid_material_rho(fluid_name, temperature):
                                                                                      'density_c3']) * temperature ** 3
 
     except:
-        print('fluid does not exist in db. rho = 1')
+        print('fluid does not exist in db. default: rho = 1')
         rho = 1
 
     return rho
@@ -79,7 +80,7 @@ def fluid_material_state(fluid_name):
         state = data[fluid_name]['fluid_type']
 
     except:
-        print('fluid state does not exist in db. defaul: liquid')
+        print('fluid state does not exist in db. default: state = liquid')
         state = 'liquid'
 
     return state

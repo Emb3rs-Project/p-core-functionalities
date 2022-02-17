@@ -2,7 +2,7 @@
 alisboa/jmcunha
 
 ##############################
-INFO: Convert_Options Raw Data to ORC/RC, for maximum electrical generation.
+INFO: Convert_Options Raw Data to ORC, for maximum electrical generation.
 
 
 ##############################
@@ -48,6 +48,7 @@ from .....KB_General.get_interest_rate import get_interest_rate
 
 def convert_orc(in_var):
 
+    #################################################################
     # INPUT
     streams = in_var.streams
     consumer_type = in_var.consumer_type
@@ -63,11 +64,13 @@ def convert_orc(in_var):
     except:
         orc_years_working = 25
 
+
+    #################################################################
     # Initialize Arrays
     convert_info = []
 
     # Defined vars
-    minimum_orc_power = 100  # [kW]
+    minimum_orc_power = 100  # [kW] - minimum power ORC designed
     hx_delta_T = 5
     hx_efficiency = 0.95
     power_fraction = 0.05
@@ -75,13 +78,15 @@ def convert_orc(in_var):
 
     # ORC Characteristics
     orc_T_evap = 110  # [ºC]
-    orc_T_cond = 30   # [ºC]
+    orc_T_cond = 35   # [ºC]
     hx_orc_supply_temperature = orc_T_evap + hx_delta_T
     hx_orc_return_temperature = hx_orc_supply_temperature - pumping_delta_T
 
     # Intermediate Circuit Characteristics
     intermediate_fluid = 'water'
 
+
+    #################################################################
     # COMPUTE
     # get country
     latitude, longitude = location
@@ -97,7 +102,7 @@ def convert_orc(in_var):
     df_streams = df_streams.drop(df_streams[df_streams['supply_temperature'] < hx_orc_supply_temperature].index)
     df_streams = df_streams.drop(df_streams[df_streams['capacity'] < minimum_orc_power].index)
 
-    # get best 5
+    # get best
     df_streams['sum_hourly_generation'] = df_streams.apply(lambda x: sum(x['hourly_generation']), axis=1)
     df_streams_best_five = df_streams.sort_values('hourly_generation', ascending=False).head(n=get_best_number)
     streams_best_five_index = df_streams_best_five.index.tolist()

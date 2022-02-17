@@ -5,6 +5,8 @@ import matplotlib.lines as mlines
 
 def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pinch_delta_temperature):
 
+    ################################################################
+    # get streams info
     for stream_info in streams_info:
         if len(stream_info['above_pinch']) > 1:
             i = 0
@@ -23,26 +25,26 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
                         stream_info['below_pinch'].pop(index_below)
 
 
-    dict_for_hx = {}
+    ###########################
     # Defined vars
+    dict_for_hx = {}
+    left_side_pinch = []
+    right_side_pinch = []
     arrow_width = 0.1
-    circle_radius = 1.4
-    small_circle_radius = 1.2
-    height_hx_power = circle_radius + 0.3
-    diagonal_space = 5
+    circle_radius = 1.4  # HX circle
+    small_circle_radius = 1.2  # inside HX circle
+    height_hx_power = circle_radius + 0.3  # height to write HX Power
+    diagonal_space = 5  # space to make splits diagonals
     mini_space = 3.5
-    mini_space_out_stream = 10
-    start_putting_streams = 100000
-    y_max = start_putting_streams
     space_between_streams = 10
     space_between_splits = 5
-    height_temperature_text = 0.9
+    height_temperature_text = 0.9  # height to write temperatures
     how_many_above = 0  # how many total streams are above pinch
     how_many_below = 0  # how many total streams are below pinch
 
+
     ######################################################################################
-    # Obtain x_min, x_max adn y_min
-    add_to_y_max = 0
+    # Obtain x_min, x_max and y_min
     number_streams = 0
     for stream in streams_info:
         how_many_above += len(stream['above_pinch'])
@@ -64,9 +66,9 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
     y_min = 0
     pinch = x_max/2
 
-    #####################
-    # HX INFO
 
+    #####################
+    # get HX info
     above_pinch_hx = []
     below_pinch_hx = []
     info_to_design_hx = {}
@@ -81,24 +83,22 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
     mini_space_hot_stream_out = (x_max/2)/(len(below_pinch_hx)+2)
     diagonal_space_hot_stream_out = (x_max/2)/(len(below_pinch_hx)+2) +2
 
+
     ######################################################################################
     # DRAW STREAMS
     y_stream = y_max
-    y_stream -= space_between_streams
-
-    left_side_pinch = []
-    right_side_pinch = []
+    y_stream -= space_between_streams  # first stream to be drawn y
 
     for stream in streams_info:
         supply_temperature, target_temperature = stream['temperatures']
 
+        # get streams left and right temperature
         # hot stream
         if supply_temperature > target_temperature:
             if supply_temperature > pinch_temperature and target_temperature > pinch_temperature:
                 left_side_pinch.append(target_temperature)
             elif supply_temperature < pinch_temperature and target_temperature < pinch_temperature:
                 right_side_pinch.append(supply_temperature)
-
         # cold stream
         else:
             if supply_temperature < pinch_temperature and target_temperature < pinch_temperature:
@@ -106,17 +106,19 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
             elif supply_temperature > pinch_temperature and target_temperature > pinch_temperature:
                 left_side_pinch.append(supply_temperature)
 
+    # check for inconsistency
     if len(left_side_pinch)>0:
         left_side_pinch.sort()
     if len(right_side_pinch) > 0:
         right_side_pinch.sort(reverse=True)
 
+    # draw stream per stream - original and splits
     for stream in streams_info:
         number_splits_above = 0
         number_splits_below = 0
         supply_temperature, target_temperature = stream['temperatures']
 
-        # DRAW ORIGINAL STREAM
+        # draw original stream
         # hot stream
         if supply_temperature > target_temperature:
 
@@ -138,8 +140,8 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
                 right_temperature = pinch-(left_side_pinch.index(target_temperature) + 1) * 3
 
 
-            plt.gca().text(left_temperature + 0.5 , y_stream+height_temperature_text, str(supply_temperature) + 'º', ha="left", va="bottom")
-            plt.gca().text(right_temperature - 2.5, y_stream+height_temperature_text, str(target_temperature)+ 'º', ha="left", va="bottom")
+            plt.gca().text(left_temperature + 0.5 , y_stream+height_temperature_text, "{:.1f}".format(supply_temperature) + 'º', ha="left", va="bottom")
+            plt.gca().text(right_temperature - 2.5, y_stream+height_temperature_text, "{:.1f}".format(target_temperature)+ 'º', ha="left", va="bottom")
             rectangle = plt.Rectangle((left_temperature-0.1, y_stream-1), 0.2, 2, color='r')
             plt.gca().add_patch(rectangle)
 
@@ -206,9 +208,11 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
             else:
                 left_temperature = pinch + (right_side_pinch.index(target_temperature) + 1) * 3
 
+            # write temperatures
+            plt.gca().text(left_temperature + 2.4 , y_stream+height_temperature_text, "{:.2f}".format(target_temperature)+ 'º', ha="right", va="bottom")
+            plt.gca().text(right_temperature - 0.8, y_stream+height_temperature_text, "{:.2f}".format(supply_temperature)+ 'º', ha="right", va="bottom")
 
-            plt.gca().text(left_temperature + 2.4 , y_stream+height_temperature_text, str(target_temperature)+ 'º', ha="right", va="bottom")
-            plt.gca().text(right_temperature - 0.8, y_stream+height_temperature_text, str(supply_temperature)+ 'º', ha="right", va="bottom")
+            # draw arrows
             rectangle = plt.Rectangle((right_temperature-0.1, y_stream-1), 0.2, 2, color='b')
             plt.gca().add_patch(rectangle)
             plt.arrow(right_temperature,  # x1
@@ -257,6 +261,8 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
 
         y_stream -= space_between_streams + space_between_splits * max([number_splits_above, number_splits_below])
 
+
+    ##########################################################################
     # Design HX
     info_to_design_hx['above_pinch'] = above_pinch_hx
     info_to_design_hx['below_pinch'] = below_pinch_hx
@@ -286,7 +292,7 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
                     if round(pinch_temperature) != round(match['HX_Hot_Stream_T_Cold']) and round(stream_info['temperatures'][1]) != round(match['HX_Hot_Stream_T_Cold']):
                         plt.gca().text(go_to_the_left + 1,
                                        dict_for_hx[str(match['HX_Hot_Stream'])] + height_temperature_text ,
-                                       str(round(match['HX_Hot_Stream_T_Cold'])) + 'º', ha="left", va="bottom")
+                                       "{:.1f}".format(round(match['HX_Hot_Stream_T_Cold'])) + 'º', ha="left", va="bottom")
                         break
 
             # write cold streams hx temperatures
@@ -295,7 +301,7 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
                     if round(stream_info['temperatures'][1]) != round(match['HX_Cold_Stream_T_Hot']):
                         plt.gca().text(go_to_the_left - 1,
                                        dict_for_hx[str(match['HX_Cold_Stream'])] + height_temperature_text ,
-                                       str(round(match['HX_Cold_Stream_T_Hot'])) + 'º', ha="right", va="bottom")
+                                       "{:.1f}".format(round(match['HX_Cold_Stream_T_Hot'])) + 'º', ha="right", va="bottom")
                         break
 
             go_to_the_left -= left_movement
@@ -324,7 +330,7 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
                     if round(stream_info['temperatures'][1]) != match['HX_Hot_Stream_T_Cold']:
                         plt.gca().text(go_to_the_right + 1,
                                        dict_for_hx[str(match['HX_Hot_Stream'])] + height_temperature_text ,
-                                       str(round(match['HX_Hot_Stream_T_Cold'])) +'º', ha="left", va="bottom")
+                                       "{:.1f}".format(round(match['HX_Hot_Stream_T_Cold'])) +'º', ha="left", va="bottom")
 
                         break
 
@@ -336,7 +342,7 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
 
                         plt.gca().text(go_to_the_right - 1,
                                        dict_for_hx[str(match['HX_Cold_Stream'])] + height_temperature_text ,
-                                       str(round(match['HX_Cold_Stream_T_Hot'])) + 'º', ha="right", va="bottom")
+                                       "{:.1f}".format(round(match['HX_Cold_Stream_T_Hot'])) + 'º', ha="right", va="bottom")
                         break
 
             go_to_the_right += right_movement
@@ -369,7 +375,7 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
                     for key in dict_temperatures[str(stream['id'])].keys():
                         write_temperature += dict_temperatures[str(stream['id'])][key]['temperature'] * dict_temperatures[str(stream['id'])][key]['mcp'] /mcp_total
 
-                    plt.gca().text(diagonal_space_cold_stream_out, stream_y + height_temperature_text, str(round(write_temperature,1)) + 'º',ha='center',va='bottom')
+                    plt.gca().text(diagonal_space_cold_stream_out, stream_y + height_temperature_text, "{:.1f}".format(write_temperature) + 'º',ha='center',va='bottom')
 
                     power_utility = mcp_total * (target_temperature-write_temperature)
 
@@ -441,7 +447,7 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
                                              dict_temperatures[str(stream['id'])][key]['mcp'] / mcp_total
 
                     plt.gca().text(x_max-diagonal_space_hot_stream_out, stream_y + height_temperature_text,
-                                   str(round(write_temperature, 1)) + 'º', ha='center', va='bottom')
+                                   "{:.1f}".format(write_temperature) + 'º', ha='center', va='bottom')
 
                     power_utility = mcp_total * abs(target_temperature - write_temperature)
 
@@ -492,19 +498,19 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
 
     # plot pinch line and temperatures
     plt.plot((pinch, pinch), (y_min, y_max), 'k--')
-    plt.gca().text(pinch, y_max+5, '- PINCH ('+str(pinch_temperature - pinch_delta_temperature/2) + 'ºC) -',weight='bold', ha='center', va='top',size='large')
-    plt.gca().text(pinch, y_max, str(pinch_temperature) + 'ºC', style='italic', ha='right', va='bottom')
-    plt.gca().text(pinch, y_min - 1, str(pinch_temperature-pinch_delta_temperature) + 'ºC', style='italic', ha='left', va='top')
+    plt.gca().text(pinch, y_max+5, '- PINCH ('+"{:.1f}".format(pinch_temperature - pinch_delta_temperature/2) + 'ºC) -',weight='bold', ha='center', va='top',size='large')
+    plt.gca().text(pinch, y_max, "{:.1f}".format(pinch_temperature) + 'ºC', style='italic', ha='right', va='bottom')
+    plt.gca().text(pinch, y_min - 1, "{:.1f}".format(pinch_temperature-pinch_delta_temperature) + 'ºC', style='italic', ha='left', va='top')
 
     # plot cp
     plt.gca().text(x_max + 13, y_max+3, 'Original Streams', ha='center', va='center',size='large')
 
     plt.gca().text(x_max + 13, y_max+1, '$mc_p$', weight='bold', ha='center', va='center',size='large')
-    plt.gca().text(x_max + 13, y_max-1, '[kJ/kg.K]', ha='center', va='center')
+    plt.gca().text(x_max + 13, y_max-1, '[kJ/K]', ha='center', va='center')
     plt.gca().add_patch(plt.Rectangle((x_max+7.5, y_min), 11, (y_max-y_min+5), alpha=0.2, edgecolor='black', facecolor='silver',clip_on=False, linewidth=0.5))
 
     for stream in streams_info:
-        plt.gca().text(x_max + 13, dict_for_hx[str(stream['id'])], str(stream['mcp']), ha='center', va='center',size='large')
+        plt.gca().text(x_max + 13, dict_for_hx[str(stream['id'])], "{:.2f}".format(stream['mcp']), ha='center', va='center',size='large')
 
 
     # plot axis limits
@@ -530,35 +536,6 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
     plt.show()
 
 
-
-###################################################################
-
-streams = 0
-pinch_data = [{'id':1,'HX_Power': 5.5, 'HX_Original_Cold_Stream': 5, 'HX_Original_Hot_Stream': 2, 'HX_Hot_Stream_T_Hot': 238.2, 'HX_Hot_Stream_T_Cold': 183.0, 'HX_Hot_Stream': 2, 'HX_Cold_Stream': 5, 'HX_Type': 'hx_plate', 'HX_Turnkey_Cost': 1604.8, 'HX_OM_Fix_Cost': 160.5, 'Storage': 0, 'HX_Cold_Stream_T_Cold': 163.0, 'HX_Cold_Stream_T_Hot': 194.0, 'HX_Cold_Stream_flowrate': 0.089, 'HX_Hot_Stream_flowrate': 0.04999999999999999, 'Cold_Split': None, 'Hot_Split': None, 'Storage_Satisfies': 0, 'Storage_Turnkey_Cost': 0, 'Total_Turnkey_Cost': 1604.8, 'Recovered_Energy': 22.0}, {'id':2,'HX_Power': 3.1, 'HX_Original_Cold_Stream': 5, 'HX_Original_Hot_Stream': 3, 'HX_Hot_Stream_T_Hot': 230.7, 'HX_Hot_Stream_T_Cold': 183.0, 'HX_Hot_Stream': 3, 'HX_Cold_Stream': 51050, 'HX_Type': 'hx_plate', 'HX_Turnkey_Cost': 1541.7, 'HX_OM_Fix_Cost': 154.2, 'Storage': 0, 'HX_Cold_Stream_T_Cold': 163.0, 'HX_Cold_Stream_T_Hot': 194.0, 'HX_Cold_Stream_flowrate': 0.05, 'HX_Hot_Stream_flowrate': 0.03250000000000001, 'Cold_Split': None, 'Hot_Split': None, 'Storage_Satisfies': 0, 'Storage_Turnkey_Cost': 0, 'Total_Turnkey_Cost': 1541.7, 'Recovered_Energy': 12.4}, {'id':3,'HX_Power': 5.5, 'HX_Original_Cold_Stream': 5, 'HX_Original_Hot_Stream': 1, 'HX_Hot_Stream_T_Hot': 214.0, 'HX_Hot_Stream_T_Cold': 183.0, 'HX_Hot_Stream': 1, 'HX_Cold_Stream': 521220500, 'HX_Type': 'hx_plate', 'HX_Turnkey_Cost': 1672.2, 'HX_OM_Fix_Cost': 167.2, 'Storage': 0, 'HX_Cold_Stream_T_Cold': 163.0, 'HX_Cold_Stream_T_Hot': 194.0, 'HX_Cold_Stream_flowrate': 0.089115, 'HX_Hot_Stream_flowrate': 0.08899999999999997, 'Cold_Split': None, 'Hot_Split': None, 'Storage_Satisfies': 0, 'Storage_Turnkey_Cost': 0, 'Total_Turnkey_Cost': 1672.2, 'Recovered_Energy': 22.0}, {'id':4,'HX_Power': 4.5, 'HX_Original_Cold_Stream': 5, 'HX_Original_Hot_Stream': 4, 'HX_Hot_Stream_T_Hot': 225.4, 'HX_Hot_Stream_T_Cold': 183.0, 'HX_Hot_Stream': 4, 'HX_Cold_Stream': 5321661305000, 'HX_Type': 'hx_plate', 'HX_Turnkey_Cost': 1601.0, 'HX_OM_Fix_Cost': 160.1, 'Storage': 0, 'HX_Cold_Stream_T_Cold': 163.0, 'HX_Cold_Stream_T_Hot': 194.0, 'HX_Cold_Stream_flowrate': 0.071885, 'HX_Hot_Stream_flowrate': 0.05249999999999999, 'Cold_Split': None, 'Hot_Split': None, 'Storage_Satisfies': 0, 'Storage_Turnkey_Cost': 0, 'Total_Turnkey_Cost': 1601.0, 'Recovered_Energy': 18.0}, {'id':5,'HX_Power': 24.0, 'HX_Original_Cold_Stream': 6, 'HX_Original_Hot_Stream': 1, 'HX_Hot_Stream_T_Hot': 349.0, 'HX_Hot_Stream_T_Cold': 214.0, 'HX_Hot_Stream': 1, 'HX_Cold_Stream': 51087948528000, 'HX_Type': 'hx_plate', 'HX_Turnkey_Cost': 1809.7, 'HX_OM_Fix_Cost': 181.0, 'Storage': 0, 'HX_Cold_Stream_T_Cold': 189.0, 'HX_Cold_Stream_T_Hot': 279.1, 'HX_Cold_Stream_flowrate': 0.13332000000000002, 'HX_Hot_Stream_flowrate': 0.089, 'Cold_Split': 1.0, 'Hot_Split': 0.0, 'Storage_Satisfies': 0, 'Storage_Turnkey_Cost': 0, 'Total_Turnkey_Cost': 1809.7, 'Recovered_Energy': 72.0}, {'id':6,'HX_Power': 10.3, 'HX_Original_Cold_Stream': 6, 'HX_Original_Hot_Stream': 2, 'HX_Hot_Stream_T_Hot': 341.0, 'HX_Hot_Stream_T_Cold': 238.2, 'HX_Hot_Stream': 2, 'HX_Cold_Stream': 6, 'HX_Type': 'hx_plate', 'HX_Turnkey_Cost': 1578.7, 'HX_OM_Fix_Cost': 157.9, 'Storage': 0, 'HX_Cold_Stream_T_Cold': 189.0, 'HX_Cold_Stream_T_Hot': 248.9, 'HX_Cold_Stream_flowrate': 0.08579499999999998, 'HX_Hot_Stream_flowrate': 0.05, 'Cold_Split': 0.0, 'Hot_Split': 0.0, 'Storage_Satisfies': 0, 'Storage_Turnkey_Cost': 0, 'Total_Turnkey_Cost': 1578.7, 'Recovered_Energy': 30.900000000000002}, {'id':7,'HX_Power': 2.4, 'HX_Original_Cold_Stream': 6, 'HX_Original_Hot_Stream': 3, 'HX_Hot_Stream_T_Hot': 268.0, 'HX_Hot_Stream_T_Cold': 230.7, 'HX_Hot_Stream': 3, 'HX_Cold_Stream': 122520, 'HX_Type': 'hx_plate', 'HX_Turnkey_Cost': 1464.8, 'HX_OM_Fix_Cost': 146.5, 'Storage': 0, 'HX_Cold_Stream_T_Cold': 189.0, 'HX_Cold_Stream_T_Hot': 220.1, 'HX_Cold_Stream_flowrate': 0.038945, 'HX_Hot_Stream_flowrate': 0.0325, 'Cold_Split': 1.0, 'Hot_Split': 0.0, 'Storage_Satisfies': 0, 'Storage_Turnkey_Cost': 0, 'Total_Turnkey_Cost': 1464.8, 'Recovered_Energy': 7.199999999999999}, {'id':8,'HX_Power': 2.7, 'HX_Original_Cold_Stream': 6, 'HX_Original_Hot_Stream': 4, 'HX_Hot_Stream_T_Hot': 250.9, 'HX_Hot_Stream_T_Cold': 225.4, 'HX_Hot_Stream': 4, 'HX_Cold_Stream': 2501858400, 'HX_Type': 'hx_plate', 'HX_Turnkey_Cost': 1524.7, 'HX_OM_Fix_Cost': 152.5, 'Storage': 0, 'HX_Cold_Stream_T_Cold': 189.0, 'HX_Cold_Stream_T_Hot': 230.9, 'HX_Cold_Stream_flowrate': 0.03194, 'HX_Hot_Stream_flowrate': 0.052499999999999984, 'Cold_Split': 1.0, 'Hot_Split': 0.0, 'Storage_Satisfies': 0, 'Storage_Turnkey_Cost': 0, 'Total_Turnkey_Cost': 1524.7, 'Recovered_Energy': 8.100000000000001}]
-
-pinch_temperature = 183
-pinch_delta_temperature = 20
-streams_info = [{
-                    'id': 2, 'temperatures': [341, 183], 'above_pinch': [{'id': 2, 'flowrate': 0.04999999999999999}],
-                    'below_pinch': []}, {
-                    'id': 3, 'temperatures': [268, 183], 'above_pinch': [{'id': 3, 'flowrate': 0.03250000000000001}],
-                    'below_pinch': []}, {
-                    'id': 1, 'temperatures': [349, 183], 'above_pinch': [{'id': 1, 'flowrate': 0.08899999999999997}],
-                    'below_pinch': []}, {
-                    'id': 4, 'temperatures': [251, 183], 'above_pinch': [{'id': 4, 'flowrate': 0.05249999999999999}],
-                    'below_pinch': []}, {
-                    'id': 5, 'temperatures': [163, 194],
-                    'above_pinch': [{'id': 5, 'flowrate': 0.089}, {'id': 51050, 'flowrate': 0.05},
-                                    {'id': 521220500, 'flowrate': 0.089115},
-                                    {'id': 5321661305000, 'flowrate': 0.071885}], 'below_pinch': []}, {
-                    'id': 6, 'temperatures': [189, 368],
-                    'above_pinch': [{'id': 51087948528000, 'flowrate': 0.13332000000000002},
-                                    {'id': 6, 'flowrate': 0.08579499999999998}, {'id': 122520, 'flowrate': 0.038945},
-                                    {'id': 2501858400, 'flowrate': 0.03194}], 'below_pinch': []}]
-
-
-
-#make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pinch_delta_temperature)
 
 
 

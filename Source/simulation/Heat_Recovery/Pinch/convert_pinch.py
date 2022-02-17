@@ -237,7 +237,6 @@ def convert_pinch(in_var):
         else row['Target_Temperature'] + pinch_delta_T_min, axis=1
     )
 
-
     ############################################################################################################
     # PINCH ANALYSIS
     design_id = 0  # give each design an ID - initial value
@@ -358,7 +357,7 @@ def convert_pinch(in_var):
         }
 
     except:
-        print('Error in making outputs convert_pinch. Probably no possible solution or complex case. ')
+        print('Error in convert_pinch')
         output = {}
 
 
