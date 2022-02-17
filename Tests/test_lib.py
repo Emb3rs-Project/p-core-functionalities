@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import warnings
 from colorama import init
 from colorama.ansi import Back, Fore, Style
 
@@ -60,6 +61,7 @@ def defineArguments(availableTests):
 
 
 def processInput(args, availableTests):
+    warnings.filterwarnings("ignore")
     if args.run_all:
         run_all_tests(args, availableTests)
         return
