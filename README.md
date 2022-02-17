@@ -60,32 +60,54 @@ The EMB3RS project has received funding from the European Union’s Horizon 2020
 
 [1]	H. M. S. Office, The future of heating: A strategic framework for low carbon heat in the uk, Tech. rep., Department of Energy and Climate Change at https://www.gov.uk/government/publications/the-future-of-heating-a-strategic-framework-for-low-carbon-heat (2012);
 
-[2]	J. N. Chiu, J. Castro Flores, V. Martin, B. Lacarri`ere, Industrial surplus heat transportation for use in district heating, Energydoi:10.1016/j.energy.2016.05.003
+[2]	J. N. Chiu, J. Castro Flores, V. Martin, B. Lacarriere, Industrial surplus heat transportation for use in district heating, Energydoi:10.1016/j.energy.2016.05.003
 
 [3]	I. C. Kemp, Pinch analysis and Process Integration, 2nd editio. Butterworth-Heinemann, 2006.
 
 [4]	E. Bavoux, “Python Eurostat API,” 2021. https://pypi.org/project/eurostatapiclient/
 
 [5]	R. Zhar, A. Allouhi, and A. Jamil, “A comparative study and sensitivity analysis of different ORC configurations for waste heat recovery,” Case Studies in Thermal Engineering, vol. 28, p. 101608, Dec. 2021.
+
 [6]	D. Sartori et al., “Guide to Cost-benefit Analysis of Investment Projects Economic appraisal tool for Cohesion Policy 2014-2020,” Brussels, 2014.
+
 [7]	S. Quoilin, M. van den Broek, S. Declaye, P. Dewallef, and V. Lemort, “Techno-economic survey of Organic Rankine Cycle (ORC) systems,” Renewable and Sustainable Energy Reviews, vol. 22, pp. 168–186, Jun. 2013, doi: 10.1016/J.RSER.2013.01.028.
-[8]-	BitzerGroup, “ElectraTherm organic rankine cycle systems technical brochure.” Bitzer Group, 2020.
-[9]-	G. P. Hammond and J. B. Norman, “Heat recovery opportunities in UK industry,” Applied Energy, vol. 116, pp. 387–397, 2014, doi: 10.1016/j.apenergy.2013.11.008.
+
+[8]	BitzerGroup, “ElectraTherm organic rankine cycle systems technical brochure.” Bitzer Group, 2020.
+
+[9]	G. P. Hammond and J. B. Norman, “Heat recovery opportunities in UK industry,” Applied Energy, vol. 116, pp. 387–397, 2014, doi: 10.1016/j.apenergy.2013.11.008.
+
 [10]	M. Imran, M. Usman, B.-S. Park, H.-J. Kim, and D.-H. Lee, “Multi-objective optimization of evaporator of organic Rankine cycle (ORC) for low temperature geothermal heat source,” Applied Thermal Engineering, vol. 80, pp. 1–9, Apr. 2015, doi: 10.1016/j.applthermaleng.2015.01.034.
+
 [11]	DGEG, “Direcção Geral de Energia e Geologia - Tarifas de referência de Instalações de Cogeração,” 2021. https://www.dgeg.gov.pt/media/pspn4mgv/desp_17_2021.pdf (accessed Jan. 10, 2022).
+
 [12]	A. A. V. Ochoa, J. C. C. Dutra, J. R. G. Henríquez, and C. A. C. dos Santos, “Dynamic study of a single effect absorption chiller using the pair LiBr/H2O,” Energy Conversion and Management, vol. 108, pp. 30–42, Jan. 2016, doi: 10.1016/J.ENCONMAN.2015.11.009.
+
 [13]	Z. Guo-Yan, W. En, and T. Shang-Tung, “Techno-economic study on compact heat exchangers,” International Journal of Energy Research, vol. 32, no. 12, Oct. 2008.
+
 [14]	W. Wagner, VDI Heat Atlas, vol. 2010. Springer Berlin Heidelberg, 2010. doi: 10.1007/978-3-540-77877-6.
+
 [15]	G. Towler and R. Sinnot, Chemical Engineering Design; Principles, Practice and Economics of Plant and Process Design. Elsevier, 2008.
+
 [16]	Ekocoil, “Ekocoil economizers technical datasheet.” Ekocoil, Finnland. [Online]. Available: http://www.ekocoil.fi/
+
 [17]	H. Kauko, D. Rohde, B. R. Knudsen, and T. Sund-Olsen, “Potential of thermal energy storage for a district heating system utilizing industrial waste heat,” Energies, vol. 13, no. 15, 2020, doi: 10.3390/en13153923.
+
 [18]	Grundfos, “Grundfos product center,” 2018. product-selection.grundfos.com
+
 [19]	Thermax, “Thermax absorption chillers budgetary price quotations 2020.” Thermax global, 2020. [Online]. Available: https://www.thermaxglobal.com/
-[20]	F. Gamborg and C. Wolter, “Technology Data for Generation of Electricity and District Heating.” Danish Energy Agency, Esbjerg, 2020. [Online]. Available: https://ens.dk/en/our-services/projections-and-models/technology-data/technology-data-generation-electricity-and
+
+[20]	F. Gamborg and C. Wolter, “Technology Data for Generation of Electricity and District Heating.” Danish Energy Agency, Esbjerg, 2020. Available: https://ens.dk/en/our-services/projections-and-models/technology-data/technology-data-generation-electricity-and
+
 [21]	EuropeanEnvironmentAgency, “Greenhouse gas emission intensity of electricity generation,” 2020. www.eea.europa.eu
+
 [22]	GlobalPetrolPrices, “Diesel prices around the world.” 2021. [Online]. Available: www.globalpetrolprices.com/diesel_prices
+
 [23]	Richi, “How Much Does 1 Ton Of Wood Pellets Cost.” [Online]. Available: https://www.cn-pellet.com/faq/how-much-does-1-ton-of-wood-pellets-cost.html
+
 [24]	Hoval, “Hoval industrial boilers”, [Online]. Available: https://www.hovalpartners.com/products-solutions/solutions/industrial-boiler-solutions
+
 [25]	Bosch, “Bosch industrial hot water boilers 2019 catalogue,” 2020, p. 234. [Online]. Available: www.bosch-industrial.com
+
 [26]	European Commission, “Energy Sources, Production Costs and Performance of Technologies for Power Generation, Heating and Transport,” 2008.
+
 [27]	FENAGY, “FENAGY H600 CO2 heat pumps (https://r744.com/product/fenagy-heat-pump-h600/),” 2022. https://r744.com/product/fenagy-heat-pump-h600/ (accessed Jan. 14, 2022).
