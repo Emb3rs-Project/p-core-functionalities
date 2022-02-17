@@ -38,12 +38,12 @@ https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Sink/si
 
 
 ## Requirements
-A python version of 3.7.7 or higher is required to run the TEO
-Import os (most recent version) - The OS module in Python provides functions for interacting with the operating system
-Import datetime as dt (most recent version) - Used to display current date and time
-Import logging (most recent version)  - Used for writing status messages to a file or any other output streams.
-Import numpy as np (version  1.16.4 or higher) - used for working with arrays and functions for working in domain of linear algebra, fourier transform, and matrices
-Import pandas as pd version  (0.25.1 or higher) - Pandas will be used to read the in-puts from an excel file and write outputs into an excel/csv file
+A python version of 3.7.7 or higher is required to run the module
+- Import os (most recent version) - The OS module in Python provides functions for interacting with the operating system
+- Import datetime as dt (most recent version) - Used to display current date and time
+- Import logging (most recent version)  - Used for writing status messages to a file or any other output streams.
+- Import numpy as np (version  1.16.4 or higher) - used for working with arrays and functions for working in domain of linear algebra, fourier transform, and matrices
+- Import pandas as pd version  (0.25.1 or higher) - Pandas will be used to read the in-puts from an excel file and write outputs into an excel/csv file
 
 ## Emb3rs project
 
