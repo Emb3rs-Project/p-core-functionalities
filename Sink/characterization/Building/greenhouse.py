@@ -289,8 +289,19 @@ def greenhouse(in_var):
             # Cover Convection
             h_vertical = h_convection_vertical(T_cover, T_interior)
             h_horizontal = h_convection_horizontal(T_cover, T_interior)
-            u_horizontal = (1/u_cover + 1/u_exterior + 1/h_horizontal)**(-1)
-            u_vertical = (1/u_cover + 1/u_exterior + 1/h_vertical)**(-1)
+
+            coef_horizontal = 1
+            coef_vertical = 1
+            if h_horizontal == 0:
+                h_horizontal=1
+                coef_horizontal=0
+            if h_vertical == 0:
+                h_vertical =1
+                coef_vertical = 0
+
+            u_horizontal = (1/u_cover + 1/u_exterior + 1/h_horizontal*coef_horizontal)**(-1)
+            u_vertical = (1/u_cover + 1/u_exterior + 1/h_vertical*coef_vertical)**(-1)
+
 
             Q_top = area_floor * u_horizontal * (T_exterior - T_interior)
             Q_vertical_wall_small = area_E_wall * u_vertical * (T_exterior - T_interior)

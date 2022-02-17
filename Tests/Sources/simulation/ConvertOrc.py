@@ -21,8 +21,11 @@ class Source_simplified():
 
 source = Source_simplified()
 industry_stream_test = simple_user(source)
-industry_stream_test['streams'][0]['id'] = 1
-industry_stream_test['streams'][1]['id'] = 2
+stream_id = 1
+
+for stream in industry_stream_test:
+    stream['id'] = stream_id
+    stream_id += 1
 
 ###########################################
 ###########################################
@@ -40,7 +43,7 @@ class ConvertOrc:
 
 def testConvertORC():
 
-    data = ConvertOrc(industry_stream_test['streams'])
+    data = ConvertOrc(industry_stream_test)
     test = convert_orc(data)
 
     for convert in test:

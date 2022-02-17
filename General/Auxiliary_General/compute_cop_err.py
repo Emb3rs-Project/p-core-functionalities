@@ -9,7 +9,7 @@ INFO: compute electric chiller COP and heat pump ERR according to given temperat
 ##############################
 INPUT:
         # type - equipment type, e.g. electric_chiller or heat pump
-        # hot_temperature  [ºC]
+        # condenser_temperature  [ºC]
         # cold_temperature [ºC]
 
 
@@ -21,7 +21,7 @@ RETURN:
 """
 
 
-def compute_cop_err(type, hot_temperature, cold_temperature,evaporator_temperature=15):
+def compute_cop_err(type, condenser_temperature, cold_temperature,evaporator_temperature=15):
 
     # evaporator_temperature = 15  # defined ambient temperature [ºC]
 
@@ -30,5 +30,5 @@ def compute_cop_err(type, hot_temperature, cold_temperature,evaporator_temperatu
         return cop
 
     else:
-        err = 0.55 * (hot_temperature + 273 + 5) / (hot_temperature - evaporator_temperature + 10)
+        err = 0.55 * (condenser_temperature + 273 + 5) / (condenser_temperature - evaporator_temperature + 10)
         return err

@@ -16,9 +16,9 @@ class Building():
             self.number_rooms = 0 # does not matter
         self.number_person_per_floor = 100  # number of occupants per floor
         self.number_floor = 3  # number of floors
-        self.width = 32
-        self.length = 16
-        self.area_floor = self.width * self.length  # floor space area [m2]
+        self.width_floor = 32
+        self.length_floor = 16
+        self.area_floor = self.width_floor * self.length_floor  # floor space area [m2]
         self.height_floor = 3.5  # floor height [m]
         self.ratio_wall_N = 0.5  # wall area fraction
         self.ratio_wall_S = 0.5

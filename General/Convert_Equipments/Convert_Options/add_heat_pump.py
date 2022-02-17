@@ -89,7 +89,7 @@ class Add_Heat_Pump():
         self.data_teo = {
             'equipment': self.equipment_sub_type,
             'fuel_type': self.fuel_type,
-            'max_input_capacity': info_max_power['supply_capacity'] / self.global_conversion_efficiency,  # [kW]
+            'max_input_capacity': self.evap_capacity,  # [kW]
             'turnkey_a': turnkey_a,  # [€/kW]
             'turnkey_b': turnkey_b,  # [€]
             'conversion_efficiency': self.global_conversion_efficiency,  # []
@@ -100,6 +100,7 @@ class Add_Heat_Pump():
 
 
     def design_equipment(self,power_fraction):
+
         supply_capacity = self.supply_capacity * power_fraction  # thermal power supplied [kW]
         electric_power_equipment = supply_capacity / self.global_conversion_efficiency
         global_conversion_efficiency_equipment, om_fix_total, turnkey_equipment = equipment_details(self.equipment_sub_type, supply_capacity)
