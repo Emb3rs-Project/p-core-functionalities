@@ -1,4 +1,7 @@
-The Core Functionalities module will allow a full characterization of the main objects of the EMB3Rs platform and prepare the data for the simulation process by the analysis modules.
+# EMB3RS Core functionalities (CF) module
+
+## Introduction
+The Core Functionalities (CF) module performs a full characterization of the main objects (sinks and sources) of the EMB3Rs platform and prepare the data for the simulation process by the analysis modules.
 
 For sources, the CF module is divided into 2 submodules: characterization and simulation.
 
@@ -8,11 +11,10 @@ Detailed information for the source characterization can be found here:
 
 https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Source/characterization/readme.md
 
-Whenever a user performs a simulation on the platform, the CF source simulation submodule will retrieve the required data from the platform and calculate the end use. The submodule has 2 main functions (convert_sources and generate_heat_recovery), and 17 auxiliary functions. 
+Whenever a user performs a simulation on the platform, the CF source simulation submodule will retrieve the required data from the platform and calculate the end use. The submodule has 2 main functions (convert_sources, convert_pinch and convert_orc), and 17 auxiliary functions. 
 
 Detailed information for the source simulation can be found here:
 https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Source/simulation/readme.md
-
 
 
 For sinks, the CF module is also divided into 2 submodules, charaterization and simulation.
