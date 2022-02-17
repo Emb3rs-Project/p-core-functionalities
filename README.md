@@ -59,9 +59,13 @@ The EMB3RS project has received funding from the European Union’s Horizon 2020
 ## References
 
 [1]	H. M. S. Office, The future of heating: A strategic framework for low carbon heat in the uk, Tech. rep., Department of Energy and Climate Change at https://www.gov.uk/government/publications/the-future-of-heating-a-strategic-framework-for-low-carbon-heat (2012);
+
 [2]	J. N. Chiu, J. Castro Flores, V. Martin, B. Lacarri`ere, Industrial surplus heat transportation for use in district heating, Energydoi:10.1016/j.energy.2016.05.003
+
 [3]	I. C. Kemp, Pinch analysis and Process Integration, 2nd editio. Butterworth-Heinemann, 2006.
+
 [4]	E. Bavoux, “Python Eurostat API,” 2021. https://pypi.org/project/eurostatapiclient/
+
 [5]	R. Zhar, A. Allouhi, and A. Jamil, “A comparative study and sensitivity analysis of different ORC configurations for waste heat recovery,” Case Studies in Thermal Engineering, vol. 28, p. 101608, Dec. 2021.
 [6]	D. Sartori et al., “Guide to Cost-benefit Analysis of Investment Projects Economic appraisal tool for Cohesion Policy 2014-2020,” Brussels, 2014.
 [7]	S. Quoilin, M. van den Broek, S. Declaye, P. Dewallef, and V. Lemort, “Techno-economic survey of Organic Rankine Cycle (ORC) systems,” Renewable and Sustainable Energy Reviews, vol. 22, pp. 168–186, Jun. 2013, doi: 10.1016/J.RSER.2013.01.028.
