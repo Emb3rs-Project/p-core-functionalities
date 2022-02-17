@@ -51,10 +51,7 @@ The EMB3RS project has received funding from the European Union’s Horizon 2020
 
 ## Licenses
 
-•	Check the license for PuLP, I suppose we will have to use the same; report the li-cense name and info and link;
-•	The PULP version of OSeMOSYS has been licensed under an ‘Apache License 2.0’ which is a permissive license whose main conditions require preservation of copy-right and license notices. Contributors provide an express grant of patent rights. Li-censed works, modifications, and larger works may be distributed under different terms and without source code.
-•	The input data file ‘Input_file_TEO.xlsx’ is licensed under a Creative Commons At-tribution 4.0 International License.
-
+•	All the code developed is licensed under a Creative Commons At-tribution 4.0 International License. Further modifications, and larger works may be distributed under different terms and without source code.
 
 ## References
 
