@@ -58,13 +58,13 @@ The EMB3RS project has received funding from the European Union’s Horizon 2020
 
 ## References
 
-[1]-	H. M. S. Office, The future of heating: A strategic framework for low carbon heat in the uk, Tech. rep., Department of Energy and Climate Change at https://www.gov.uk/government/publications/the-future-of-heating-a-strategic-framework-for-low-carbon-heat (2012)
-[2]-	J. N. Chiu, J. Castro Flores, V. Martin, B. Lacarri`ere, Industrial surplus heat transportation for use in district heating, Energydoi:10.1016/j.energy.2016.05.003
-[3]-	I. C. Kemp, Pinch analysis and Process Integration, 2nd editio. Butterworth-Heinemann, 2006.
-[4]-	E. Bavoux, “Python Eurostat API,” 2021. https://pypi.org/project/eurostatapiclient/
-[5]-	R. Zhar, A. Allouhi, and A. Jamil, “A comparative study and sensitivity analysis of different ORC configurations for waste heat recovery,” Case Studies in Thermal Engineering, vol. 28, p. 101608, Dec. 2021.
-[6]-	D. Sartori et al., “Guide to Cost-benefit Analysis of Investment Projects Economic appraisal tool for Cohesion Policy 2014-2020,” Brussels, 2014.
-[7]-	S. Quoilin, M. van den Broek, S. Declaye, P. Dewallef, and V. Lemort, “Techno-economic survey of Organic Rankine Cycle (ORC) systems,” Renewable and Sustainable Energy Reviews, vol. 22, pp. 168–186, Jun. 2013, doi: 10.1016/J.RSER.2013.01.028.
+[1]	H. M. S. Office, The future of heating: A strategic framework for low carbon heat in the uk, Tech. rep., Department of Energy and Climate Change at https://www.gov.uk/government/publications/the-future-of-heating-a-strategic-framework-for-low-carbon-heat (2012);
+[2]	J. N. Chiu, J. Castro Flores, V. Martin, B. Lacarri`ere, Industrial surplus heat transportation for use in district heating, Energydoi:10.1016/j.energy.2016.05.003
+[3]	I. C. Kemp, Pinch analysis and Process Integration, 2nd editio. Butterworth-Heinemann, 2006.
+[4]	E. Bavoux, “Python Eurostat API,” 2021. https://pypi.org/project/eurostatapiclient/
+[5]	R. Zhar, A. Allouhi, and A. Jamil, “A comparative study and sensitivity analysis of different ORC configurations for waste heat recovery,” Case Studies in Thermal Engineering, vol. 28, p. 101608, Dec. 2021.
+[6]	D. Sartori et al., “Guide to Cost-benefit Analysis of Investment Projects Economic appraisal tool for Cohesion Policy 2014-2020,” Brussels, 2014.
+[7]	S. Quoilin, M. van den Broek, S. Declaye, P. Dewallef, and V. Lemort, “Techno-economic survey of Organic Rankine Cycle (ORC) systems,” Renewable and Sustainable Energy Reviews, vol. 22, pp. 168–186, Jun. 2013, doi: 10.1016/J.RSER.2013.01.028.
 [8]-	BitzerGroup, “ElectraTherm organic rankine cycle systems technical brochure.” Bitzer Group, 2020.
 [9]-	G. P. Hammond and J. B. Norman, “Heat recovery opportunities in UK industry,” Applied Energy, vol. 116, pp. 387–397, 2014, doi: 10.1016/j.apenergy.2013.11.008.
 [10]	M. Imran, M. Usman, B.-S. Park, H.-J. Kim, and D.-H. Lee, “Multi-objective optimization of evaporator of organic Rankine cycle (ORC) for low temperature geothermal heat source,” Applied Thermal Engineering, vol. 80, pp. 1–9, Apr. 2015, doi: 10.1016/j.applthermaleng.2015.01.034.
