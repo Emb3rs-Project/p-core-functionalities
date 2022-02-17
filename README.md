@@ -1,31 +1,35 @@
 # EMB3RS Core functionalities (CF) module
 
 ## Introduction
-The Core Functionalities (CF) module performs a full characterization of the main objects (sinks and sources) of the EMB3Rs platform and prepare the data for the simulation process by the analysis modules.
+The purpose of the Core Functionalities (CF) module is to allow full characterization of the EMB3Rs platform objects (sinks and sources) and provide technical information to all the analysis modules, namely the graphical information systems (GIS) module, the techno-economic (TEO) module, the market module (MM), and the business module (BM); to run their simulations.   
 
-For sources, the CF module is divided into 2 submodules: characterization and simulation.
+The CF module divides both sinks and sources submodules into two main sections: characterization and simulation. The characterization focuses on receiving the user inputs and performing the needed computations to characterize the created objects, e.g., when the user creates a sink object, namely a greenhouse, the CF will compute its yearly heating needs according to its location, greenhouse dimensions, and other input parameters. The simulation focuses on performing analysis based on the characterization information, e.g. for a source’s excess heat streams (which were computed in the characterization), the conversion simulation will evaluate the available amount of energy that can be provided to a district heating network (DHN).
 
-The CF source characterization submodule receives input data from the user and generates streams for each source available (inflows, excess heat and supply heat). It has 6 main functions (outflow_simplified, generate_process, generate_boiler, generate_burner generate_cooling_equipment and generate_chp), and 5 auxiliary functions (schedule_hour; T_flue_gas; combustion_mass_flows; compute_flow_rate and stream). These are the main functionalities to analyse user data input for sources.
+The main CF submodules, and respective items, are: 
 
-Detailed information for the source characterization can be found here:
+Source: 
+- Industry’s equipment, processes, and streams characterization (characterization) 
+- Excess heat characterization (characterization) 
+- Internal heat recovery analysis (simulation) 
 
-https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Source/characterization/readme.md
+Conversion of the source’s excess heat streams to the DHN and evaluation of the technologies to be implemented (simulation) 
 
-Whenever a user performs a simulation on the platform, the CF source simulation submodule will retrieve the required data from the platform and calculate the end use. The submodule has 2 main functions (convert_sources, convert_pinch and convert_orc), and 17 auxiliary functions. 
+Sink: 
+- Industry and buildings – greenhouse, hotel, residential, office - heating/cooling demand and streams characterization (characterization) 
+- Conversion of the DHN to the sink needs and evaluation of the technologies to be implemented (simulation) 
 
-Detailed information for the source simulation can be found here:
-https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Source/simulation/readme.md
+Looking into more detail at the main platform objects. 
 
+When a user creates a source, there are two methods to perform its characterization. A simple form if the user desires to characterize directly specific excess heat streams and a more detailed form for users who intend an industry complete characterization. These need to introduce in detail their equipment and processes data. In terms of simulation, whether simplified or detailed characterization, the CF module will convert the source´s excess heat to the DHN, estimating the available conversion heat and the technologies that could be implemented. Only for the users who performed the detailed characterization is performed the internal heat recovery analysis – based on a pinch analysis-, in which the CF suggests possible heat exchanger design combinations. 
 
-For sinks, the CF module is also divided into 2 submodules, charaterization and simulation.
+Detailed information for the source characterization can be found here (https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Source/characterization/readme.md)
 
-To characterize sinks, the CF has 3 main functions and 16 auxiliary functions. There is the industry function for simplified users that wish to manually add a heat/cold demand.
-The building and greenhouse functions is for users that intend to add a climate dependent heating/cooling demand. The functions will then generate an hourly heating/cooling demand profile for a full year based on climate data and indoor temperature requirements.
+Detailed information for the source simulation can be found here (https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Source/simulation/readme.md)
+
+When a user creates a sink, it is prompted to the user to characterize its heating/cooling demand. Similar to the source, there is a simplified form for the user to input directly a specific heat/cold stream demand, and a more detailed form for the users who which to characterize buildings – residential, offices, hotels, and greenhouses. According to the user's buildings specification, the CF will characterize the building by generating the heating/cooling demand. Simulation-wise, the CF will evaluate the technologies that could be implemented on the DHN to meet the heat/cold sink´s needs. 
 
 Detailed information for the sink characterization can be found here:
 https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Sink/characterization/readme.md
-
-On the simulation subgroup, there is 1 main function (convert_sinks),
 
 Detailed information for the sink simulation can be found here:
 https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Sink/simulation/readme.md
