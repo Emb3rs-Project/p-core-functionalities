@@ -5,7 +5,7 @@ The purpose of the Core Functionalities (CF) module is to allow full characteriz
 
 The CF module divides both sinks and sources submodules into two main sections: characterization and simulation. The characterization focuses on receiving the user inputs and performing the needed computations to characterize the created objects, e.g., when the user creates a sink object, namely a greenhouse, the CF will compute its yearly heating needs according to its location, greenhouse dimensions, and other input parameters. The simulation focuses on performing analysis based on the characterization information, e.g. for a source’s excess heat streams (which were computed in the characterization), the conversion simulation will evaluate the available amount of energy that can be provided to a district heating network (DHN).
 
-##The CF Module
+## The CF Module
 
 The main CF submodules, and respective items, are: 
 
