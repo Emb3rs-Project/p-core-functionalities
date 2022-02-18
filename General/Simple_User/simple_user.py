@@ -49,7 +49,8 @@ import json
 
 def simple_user(in_var):
 
-    # INPUT  ------------------------
+    ##########################################################################################
+    # INPUT
     object_id = in_var.object_id
     type_of_object = in_var.type_of_object
     streams = in_var.streams
@@ -62,7 +63,9 @@ def simple_user(in_var):
 
     streams_output = []
 
-    # COMPUTE ------------------------
+
+    ##########################################################################################
+    # COMPUTE
     for stream in streams:
         capacity = (
             stream["flowrate"]
@@ -87,10 +90,9 @@ def simple_user(in_var):
             capacity,
             schedule,
         )
+
         streams_output.append(info_stream)
 
-    # OUTPUT ------------------------
-    # output = json.dumps(output, indent=2)
 
     return streams_output
 

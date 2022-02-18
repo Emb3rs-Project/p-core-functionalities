@@ -7,7 +7,6 @@ def coef_solar_thermal_backup(stream_hourly_capacity,solar_thermal_object,heatin
 
     power_provided_by_solar_thermal = 0
     for index,hour_power in enumerate(stream_hourly_capacity):
-
         if solar_thermal_hours_production[index] > 0:
             if hour_power > 0:
                 if hour_power > solar_thermal_hours_production[index]:

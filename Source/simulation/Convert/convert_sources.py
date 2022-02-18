@@ -19,8 +19,8 @@ INFO: Sources conversion technologies.
      Possible conversions: HX, ORC cascaded, HX + intermediate circuit + HX, heating technology + HX
 
      !!!!!
-     IMPORTANT: it is expected that this script runs twice. The first time without knowing the grid losses and thus
-     overestimating the source power available to be converted to the grid. The second time with estimated grid losses
+     IMPORTANT: it is expected that this script runs multiple times. The first time without knowing the grid losses and thus
+     overestimating the source power available to be converted to the grid. The remaining times with estimated grid losses
      by the GIS, which will be used to give a better estimate of the real power available by the sources.
 
 
@@ -168,7 +168,7 @@ def convert_sources(in_var):
                 delta_T_supply = 0
                 delta_T_return = 0
 
-            # second iteration - grid losses considered
+            # other iterations - grid losses considered
             else:
                 # get source grid losses
                 grid_losses_power = grid_losses[source_index][stream_index]
@@ -226,7 +226,6 @@ def convert_sources(in_var):
             if source_grid_supply_temperature <= max_grid_temperature:
 
                     if stream['stream_type'] == 'excess_heat' or stream['stream_type'] == 'outflow':
-
                         # get stream hourly generation capacity
                         hourly_stream_capacity = stream['hourly_generation']
 
@@ -294,13 +293,12 @@ def convert_sources(in_var):
                                 orc_T_evap = orc_T_cond + orc_evap_cond_delta_T
                                 orc_type,stream_available_capacity,orc_electrical_generation,overall_thermal_capacity,hx_stream_target_temperature,intermediate_circuit,hx_intermediate_supply_temperature,hx_intermediate_return_temperature = design_orc(stream['capacity'],stream['fluid'], stream['supply_temperature'],stream['target_temperature'], hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency,aggregate_streams=False)
                                 if intermediate_circuit == True:
-                                    hx_number = 1
+                                    hx_number = 2
                                 else:
-                                    hx_number = 0
+                                    hx_number = 1
 
                                 if stream['supply_temperature'] >= (orc_T_evap + hx_delta_T*hx_number):
-
-                                    info_technology = Add_ORC_Cascaded(orc_T_cond, orc_type, overall_thermal_capacity, orc_electrical_generation,power_fraction)
+                                    info_technology = Add_ORC_Cascaded(orc_T_cond, orc_type, overall_thermal_capacity, orc_electrical_generation, power_fraction)
 
                                     # get intermediate circuit
                                     if intermediate_circuit == True:
@@ -446,7 +444,6 @@ def convert_sources(in_var):
         'teo_string': 'dhn',
         'n_supply_list': n_supply_list
     }
-    #output = json.dumps(output, indent=2)
 
     return all_info
 

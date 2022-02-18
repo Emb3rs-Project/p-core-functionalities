@@ -48,7 +48,7 @@ def design_orc(stream_capacity, stream_fluid, stream_supply_temperature, stream_
     ################################################
     # Defined vars
     orc_type = 'orc'
-    carnot_correction_factor = 0.45
+    carnot_correction_factor = 0.44
     orc_delta_T = 30  # [ºC]
     flue_gas_T_minimum = 120  # minimum temperature flue_gas can be cooled [ºC]
 

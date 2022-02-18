@@ -8,9 +8,20 @@ INFO: Convert_Options Raw Data to ORC, for maximum electrical generation.
 ##############################
 INPUT:  consumer_type - 'household' or 'non-household'
         location = [latitude,longitude]
-        get_best_number - number of best convertion cases, 3 by default
-        streams - array with dicts where {id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation, schedule}
+        get_best_number - number of best conversion cases, 3 by default
+        streams - array with dicts where
+                    {id,
+                     object_type,
+                     stream_type,
+                     fluid, capacity,
+                     supply_temperature,
+                     target_temperature,
+                     hourly_generation,
+                     schedule}
 
+        OPTIONAL:
+            orc_T_evap [ºC]
+            orc_T_cond [ºC]
 
 ##############################
 OUTPUT: array best_options with dictionaries, e.g. best_options=[option_1,option_2,..]
@@ -74,13 +85,19 @@ def convert_orc(in_var):
     hx_delta_T = 5
     hx_efficiency = 0.95
     power_fraction = 0.05
-    pumping_delta_T = 30  # [ºC]
 
     # ORC Characteristics
-    orc_T_evap = 110  # [ºC]
-    orc_T_cond = 35   # [ºC]
-    hx_orc_supply_temperature = orc_T_evap + hx_delta_T
-    hx_orc_return_temperature = hx_orc_supply_temperature - pumping_delta_T
+    try:
+        orc_T_evap = in_var.orc_T_evap
+        orc_T_cond = in_var.orc_T_cond
+    except:
+        orc_T_evap = 110  # [ºC]
+        orc_T_cond = 35   # [ºC]
+
+    carnot_correction_factor = 0.44
+    eff_carnot = (1 - (orc_T_cond + 273.15) / (orc_T_evap + 273.15)) * carnot_correction_factor
+
+    min_orc_supply_temperature = orc_T_evap + hx_delta_T
 
     # Intermediate Circuit Characteristics
     intermediate_fluid = 'water'
@@ -98,8 +115,7 @@ def convert_orc(in_var):
 
     # check if streams temperature enough to be converted
     df_streams = pd.DataFrame.from_dict(streams)
-    df_streams = df_streams.drop(df_streams[df_streams['target_temperature'] < hx_orc_return_temperature].index)
-    df_streams = df_streams.drop(df_streams[df_streams['supply_temperature'] < hx_orc_supply_temperature].index)
+    df_streams = df_streams.drop(df_streams[df_streams['supply_temperature'] < min_orc_supply_temperature].index)
     df_streams = df_streams.drop(df_streams[df_streams['capacity'] < minimum_orc_power].index)
 
     # get best
@@ -138,7 +154,6 @@ def convert_orc(in_var):
     # convert streams - all combinations possible
     for combination in combinations:
         electrical_generation_yearly = 0
-        electrical_generation_nominal_total = 0
         om_fix_intermediate = 0
         turnkey_intermediate = 0
         om_var_intermediate = 0
@@ -196,7 +211,7 @@ def convert_orc(in_var):
             'electrical_generation_nominal': electrical_generation_nominal_total,  # [kW]
             'electrical_generation_yearly': electrical_generation_yearly,  # electric generation per year [kWh]
             'excess_heat_supply_capacity': stream_thermal_capacity_total,  # [kW]
-            'conversion_efficiency': electrical_generation_nominal / stream_thermal_capacity_total,  # [%]
+            'conversion_efficiency': eff_carnot,  # [%]
             'turnkey': total_turnkey,  # [€]
             'om_fix': om_fix_total,  # yearly om fix costs [€/year]
             'om_var': om_var_total/electrical_generation_yearly,  # [€/kWh]

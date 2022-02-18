@@ -42,10 +42,8 @@ def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
         cycle_end_time.append(period[-1])
 
     # Initialize Arrays
-    now = datetime.datetime.now()
-    last_year = now.year - 1
+    last_year = 2024
     year_hours = int(datetime.date(last_year, 12, 31).timetuple().tm_yday*24)  # Number of hours on that specific year
-
     profile_hour = [0] * year_hours
     day = [0] * year_hours
     hday = [0] * year_hours

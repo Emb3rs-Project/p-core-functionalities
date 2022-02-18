@@ -249,7 +249,6 @@ def convert_sinks(in_var):
     except:
         pass
 
-
     try:
         info_technology_group = Add_Electric_Chiller(country, 'non_household',
                                                      group_of_sinks_grid_specific_power_cooling, power_fraction,
@@ -402,7 +401,6 @@ def convert_sinks(in_var):
                                                                      stream['target_temperature'],
                                                                      thermal_chiller_supply_temperature, )
                     else:
-                        electric_chiller_supply_capacity = 0
                         thermal_chiller_supply_capacity = stream_nominal_capacity
                         info_electric_chiller = []
 
