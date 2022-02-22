@@ -64,7 +64,7 @@ class Add_Heat_Pump():
         self.supply_temperature = supply_temperature
         self.return_temperature = return_temperature
 
-        self.global_conversion_efficiency = compute_cop_err(self.equipment_sub_type, self.supply_temperature, self.return_temperature, evaporator_temperature)  # get ERR
+        self.global_conversion_efficiency = compute_cop_err(self.equipment_sub_type, self.supply_temperature, evaporator_temperature)  # get ERR
 
         try:
             self.supply_capacity = evap_capacity/(1-1/self.global_conversion_efficiency)  # heat supply capacity [kW]

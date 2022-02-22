@@ -66,7 +66,7 @@ class Add_Electric_Chiller():
         self.supply_temperature = supply_temperature  # equipment directly supplies grid/sink/source [ºC]
         self.return_temperature = return_temperature
         self.supply_capacity = supply_capacity  # heat supply capacity [kW]
-        self.global_conversion_efficiency = compute_cop_err(self.equipment_sub_type, self.supply_temperature, self.return_temperature)  # COP
+        self.global_conversion_efficiency = compute_cop_err(self.equipment_sub_type, self.supply_temperature,evaporator_temperature=15)  # COP
 
         # Design Equipment
         # 100% power
