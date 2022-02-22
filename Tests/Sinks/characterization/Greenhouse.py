@@ -8,11 +8,11 @@ class Greenhouse:
         self.latitude = 41.1045
         self.longitude = -8.3539
         self.building_orientation = "S"
-        self.building_type = "greenhouse"
+        self.greenhouse_orientation = "greenhouse"
         self.building_efficiency = 1
-        self.width_floor = 50
-        self.length_floor = 23
-        self.height_floor = 3  # greenhouse height [m]
+        self.width = 50
+        self.length = 23
+        self.height = 3  # greenhouse height [m]
         self.shutdown_periods = []
         self.hours_lights_needed = 15  # number of hours plants needed with light
         self.daily_periods = [[0, 24]]  # heating needed all day
@@ -48,7 +48,9 @@ class Greenhouse:
 def testGreenhouse():
 
     data = Greenhouse()
-    test = greenhouse(data)
+    input_data = {}
+    input_data['platform'] = data.__dict__
+    test = greenhouse(input_data)
 
     print(test["streams"]["monthly_generation"])
 
@@ -56,6 +58,6 @@ def testGreenhouse():
     print(test['streams']['monthly_generation'])
 
     Expected:
-    [24469.28100074767, 19606.17644184405, 20096.139343171337, 11691.867447314375, 7396.801809778702, 9239.693996466927, 10010.338109405815, 12512.384545455652, 10829.674260201178, 9794.192509877636, 22324.462056426717, 23818.11333804366]
+    [34360.06786579071, 27126.003499951665, 27565.57197713766, 21650.832164568514, 14797.813745460455, 10800.824021053113, 6460.46181873828, 7254.042281065299, 9533.84325632785, 17493.78056170256, 34676.07498035828, 36286.162510339]
     """
 

@@ -116,19 +116,24 @@ import numpy as np
 
 def convert_sinks(in_var):
 
-    # INPUT
-    group_of_sinks = in_var.group_of_sinks  # e.g. building, greenhouse, streams
 
+    ##################################################################################################################
+    # INPUT
+    group_of_sinks = in_var['platform']['group_of_sinks']  # e.g. building, greenhouse, streams
+
+
+    ##################################################################################################################
     # Initialize array
     output_sink = []
     vector_sink_max_target_temperature = []
     vector_sink_max_supply_temperature = []
-
     grid_specific_heating = []
     grid_specific_cooling = []
     boiler_fuel_type = ['natural_gas', 'fuel_oil', 'biomass']  # types of fuel
     fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'biomass'}
 
+
+    ##################################################################################################################
     # Defined vars
     ambient_temperature = 15
     minimum_coef_solar_thermal = 0.5  # solar thermal has to provide at least 50% of streams demand to be considered for TEO
@@ -151,6 +156,8 @@ def convert_sinks(in_var):
     thermal_chiller_efficiency = 0.71  # COP
     boiler_efficiency = 0.95
 
+
+    ##################################################################################################################
     for sink in group_of_sinks:
         # get grid temperature according to max sink target temperature
         for stream in sink['streams']:
@@ -174,9 +181,7 @@ def convert_sinks(in_var):
         ###################################################################################################
         ###################################################################################################
 
-    ###################################################################################################
     # create backup for sink group
-    # for sink in group_of_sinks:
     group_of_sinks_grid_specific_power_heating = 0
     group_of_sinks_grid_specific_power_cooling = 0
     group_latitude = 0
@@ -531,6 +536,5 @@ def convert_sinks(in_var):
         'n_demand_list': n_demand_list
     }
 
-    # output = json.dumps(output, indent=2)
 
     return all_info

@@ -17,14 +17,16 @@ class Industry():
 
 
 def testOutflowSimplified():
-    industry_data = Industry()
-    industry_stream_test = simple_user(industry_data)
-    print(industry_stream_test[0]['flowrate'])
 
+    industry_data = Industry()
+    input_data = {}
+    input_data['platform'] = industry_data.__dict__
+    industry_stream_test = simple_user(input_data)
+
+    print(industry_stream_test['streams'][0]['flowrate'])
 
     """
-    print(industry_stream_test[0]['flowrate'])
-
+    Expected:
     10
     """
 

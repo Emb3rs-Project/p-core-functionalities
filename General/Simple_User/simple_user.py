@@ -44,16 +44,16 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
 
 from ...General.Auxiliary_General.stream_industry import stream_industry
 from ...General.Auxiliary_General.schedule_hour import schedule_hour
-import json
 
 
 def simple_user(in_var):
 
+
     ##########################################################################################
     # INPUT
-    object_id = in_var.object_id
-    type_of_object = in_var.type_of_object
-    streams = in_var.streams
+    object_id = in_var['platform']['object_id']
+    type_of_object = in_var['platform']['type_of_object']
+    streams = in_var['platform']['streams']
 
     # Defined vars
     if type_of_object == "sink":
@@ -66,12 +66,13 @@ def simple_user(in_var):
 
     ##########################################################################################
     # COMPUTE
+
     for stream in streams:
         capacity = (
-            stream["flowrate"]
-            * stream["fluid_cp"]
-            * abs((stream["supply_temperature"] - stream["target_temperature"]))
-            / 3600
+                stream["flowrate"]
+                * stream["fluid_cp"]
+                * abs((stream["supply_temperature"] - stream["target_temperature"]))
+                / 3600
         )  # [kW]
         schedule = schedule_hour(
             stream["saturday_on"],
@@ -93,6 +94,6 @@ def simple_user(in_var):
 
         streams_output.append(info_stream)
 
+    output = {'streams': streams_output}
 
-    return streams_output
-
+    return output

@@ -8,15 +8,15 @@ INFO: Greenhouse Simulation. Simulates the heat needs over the year according to
 
 
 ##############################
-INPUT: object with:
+INPUT: dictionary with:
 
         Mandatory/Basic User inputs:
             # latitude  []
             # longitude  []
-            # width_floor  [m]
-            # length_floor  [m]
-            # height_floor  [m]
-            # building_orientation
+            # width  [m]
+            # length  [m]
+            # height  [m]
+            # greenhouse_orientation
             # saturday_on - 1 (yes)  or 0 (no)
             # sunday_on - 1 (yes)  or 0 (no)
             # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
@@ -82,35 +82,36 @@ import matplotlib.pyplot as plt
 def greenhouse(in_var):
 
     # INPUT ----------------------------------------------
-    latitude = in_var.latitude
-    longitude = in_var.longitude
-    width_floor = in_var.width_floor  # [m]
-    length_floor = in_var.length_floor  # [m]
-    height_floor = in_var.height_floor  # [m]
-    shutdown_periods = in_var.shutdown_periods
-    daily_periods = in_var.daily_periods
-    building_orientation = in_var.building_orientation
-    saturday_on = in_var.saturday_on
-    sunday_on = in_var.sunday_on
-    lights_on = in_var.lights_on  # 1- with lights system ; 0 - no lights system
-    hours_lights_needed = in_var.hours_lights_needed  # lighting hours in greenhouse (counting with daily iluminance) [h]
+    latitude = in_var['platform']['latitude']
+    longitude = in_var['platform']['longitude']
+    width = in_var['platform']['width']
+    length = in_var['platform']['length']
+    height = in_var['platform']['height']
+    shutdown_periods = in_var['platform']['shutdown_periods']
+    daily_periods = in_var['platform']['daily_periods']
+    greenhouse_orientation = in_var['platform']['greenhouse_orientation']
+    saturday_on = in_var['platform']['saturday_on']
+    sunday_on = in_var['platform']['sunday_on']
+    lights_on = in_var['platform']['lights_on']  # 1- with lights system ; 0 - no lights system
+    hours_lights_needed = in_var['platform']['hours_lights_needed']  # lighting hours in greenhouse (counting with daily iluminance) [h]
 
-    # User input or defined
     try:
-        f_c = in_var.f_c  # Building efficiency - 1=A to 3=F
-        T_cool_on = in_var.T_cool_on  # cooling start temperature working hours [ºC]
-        T_heat_on = in_var.T_heat_on  # heating start temperature working hours [ºC]
-        supply_temperature_heat = in_var.supply_temperature_heat
-        target_temperature_heat = in_var.target_temperature_heat
-        leaf_area_index = in_var.leaf_area_index  # ratio of area_plants/area_floor
-        rh_air = in_var.rh_air  # controlled interior air RH
-        u_cover = in_var.u_cover  # heat transfer coefficient cover [W/m2.K]
-        indoor_air_speed = in_var.indoor_air_speed  # indoor_air_speed [m/s]
-        leaf_length = in_var.leaf_length  # characteristic leaf length [m]
-        tau_cover_long_wave_radiation = in_var.tau_cover_long_wave_radiation  # cover transmissivity long wave radiation
-        emissivity_cover_long_wave_radiation = in_var.emissivity_cover_long_wave_radiation  # emissivity long wave radiation
-        tau_cover_solar_radiation = in_var.tau_cover_solar_radiation  # cover transmissivity solar radiation
-        power_lights = in_var.power_lights  # lighting power per square meter [W/m2]
+        f_c = in_var['platform']['f_c']  # Building efficiency - 1=A to 3=F
+        T_cool_on = in_var['platform']['T_cool_on']  # cooling start temperature working hours [ºC]
+        T_heat_on = in_var['platform']['T_heat_on']  # heating start temperature working hours [ºC]
+        supply_temperature_heat = in_var['platform']['supply_temperature_heat']
+        target_temperature_heat = in_var['platform']['target_temperature_heat']
+        leaf_area_index = in_var['platform']['leaf_area_index']  # ratio of area_plants/area_floor
+        rh_air = in_var['platform']['rh_air']  # controlled interior air RH
+        u_cover = in_var['platform']['u_cover']  # heat transfer coefficient cover [W/m2.K]
+        indoor_air_speed = in_var['platform']['indoor_air_speed']  # indoor_air_speed [m/s]
+        leaf_length = in_var['platform']['leaf_length']  # characteristic leaf length [m]
+        tau_cover_long_wave_radiation = in_var['platform']['tau_cover_long_wave_radiation']  # cover transmissivity long wave radiation
+        emissivity_cover_long_wave_radiation = in_var['platform']['emissivity_cover_long_wave_radiation']  # emissivity long wave radiation
+        tau_cover_solar_radiation = in_var['platform']['tau_cover_solar_radiation']  # cover transmissivity solar radiation
+        power_lights = in_var['platform']['power_lights']  # lighting power per square meter [W/m2]
+
+
     except:
         T_cool_on = 35  # cooling start temperature working hours [ºC]
         T_heat_on = 18  # heating start temperature working hours [ºC]
@@ -126,9 +127,10 @@ def greenhouse(in_var):
         emissivity_cover_long_wave_radiation = 0.2
         tau_cover_solar_radiation = 0.75
 
-        if in_var.building_efficiency == 1:
+        building_efficiency = in_var['platform']['building_efficiency']
+        if building_efficiency == 1:
             f_c = 2.5 * 10 ** (-4) # factor to estimate building infiltrations
-        elif in_var.building_efficiency == 2:
+        elif building_efficiency == 2:
             f_c = 5 * 10 ** (-4)
         else:
             f_c = 15 * 10 ** (-4)
@@ -188,13 +190,13 @@ def greenhouse(in_var):
 
 
     # Greenhouse Properties
-    area_floor = width_floor*length_floor  # [m2]
+    area_floor = width*length  # [m2]
     area_plants = area_floor * leaf_area_index
-    area_N_wall = wall_area('N', building_orientation, width_floor, length_floor, height_floor)  # area North facade [m2]
-    area_S_wall = wall_area('S', building_orientation, width_floor, length_floor, height_floor)
-    area_E_wall = wall_area('E', building_orientation, width_floor, length_floor, height_floor)
-    area_W_wall = wall_area('W', building_orientation, width_floor, length_floor, height_floor)
-    volume_greenhouse = area_floor * height_floor  # indoor air volume per floor [m3]
+    area_N_wall = wall_area('N', greenhouse_orientation, width, length, height)  # area North facade [m2]
+    area_S_wall = wall_area('S', greenhouse_orientation, width, length, height)
+    area_E_wall = wall_area('E', greenhouse_orientation, width, length, height)
+    area_W_wall = wall_area('W', greenhouse_orientation, width, length, height)
+    volume_greenhouse = area_floor * height  # indoor air volume per floor [m3]
     total_cover_area = area_W_wall + area_N_wall + area_S_wall + area_E_wall + area_floor
 
 
@@ -245,7 +247,7 @@ def greenhouse(in_var):
 
             # Correct wind speed
             z_0 = 0.01 # surface roughness
-            wind_speed = wind_speed * (math.log((height_floor/2) / z_0)) / (math.log(10 / z_0))
+            wind_speed = wind_speed * (math.log((height/2) / z_0)) / (math.log(10 / z_0))
             u_exterior = (5.8 + 3.94 * wind_speed)  # outside heat convection coef. [W/m2.K] - ref: doi:10.1016/j.applthermaleng.2007.12.005
 
 

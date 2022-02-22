@@ -43,7 +43,6 @@ OUTPUT: object Burner.
 
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
 from ....General.Auxiliary_General.combustion import combustion_mass_flows, burner_chamber_temperature
-from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.fluid_material import fluid_material_cp
 
@@ -52,6 +51,8 @@ class Burner():
 
     def __init__(self, in_var):
 
+
+        ############################################################################################
         # Defined Vars
         self.object_type = 'equipment'
         self.equipment_sub_type = 'burner'  # burner
@@ -60,37 +61,36 @@ class Burner():
         inflow_fluid = 'air'
         inflow_supply_temperature = 20  # ambient temperature
 
-        # INPUT
-        self.id = in_var.id  # Create ID
+
+        ############################################################################################
+        # INPUT/COMPUTE DATA
+        self.id = in_var['platform']['id']  # equipment ID
+        self.fuel_type = in_var['platform']['fuel_type']  # Fuel type  (Natural gas, Fuel oil, Biomass)
+        excess_heat_supply_temperature = in_var['platform']['excess_heat_supply_temperature']
+        excess_heat_flowrate = in_var['platform']['excess_heat_flowrate']
+        saturday_on = in_var['platform']['saturday_on']
+        sunday_on = in_var['platform']['sunday_on']
+        shutdown_periods = in_var['platform']['shutdown_periods']  # e.g: [[59,74],[152,172],[362,365]]
+        daily_periods = in_var['platform']['daily_periods']  # e.g: [[8,12],[15,19]]
 
         try:
-            self.global_conversion_efficiency = in_var.global_conversion_efficiency
+            self.global_conversion_efficiency = in_var['platform']['global_conversion_efficiency']
         except:
-            self.global_conversion_efficiency = 0.95
-
-        self.fuel_type = in_var.fuel_type  # Fuel type  (Natural gas, Fuel oil, Biomass)
-        excess_heat_supply_temperature = in_var.excess_heat_supply_temperature
-        excess_heat_flowrate = in_var.excess_heat_flowrate
+            self.global_conversion_efficiency = 0.90
 
         try:
-            excess_heat_target_temperature = in_var.excess_heat_target_temperature
+            excess_heat_target_temperature = in_var['platform']['excess_heat_target_temperature']
         except:
             excess_heat_target_temperature = 120
-
-        saturday_on = in_var.saturday_on
-        sunday_on = in_var.sunday_on
-        shutdown_periods = in_var.shutdown_periods  # e.g: [[59,74],[152,172],[362,365]]
-        daily_periods = in_var.daily_periods  # e.g: [[8,12],[15,19]]
 
         # schedule
         schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
 
-        # get supply capacity to compute excess heat characteristics
+        # get supply capacity
         try:
-            supply_capacity = in_var.supply_capacity
-            self.supply_capacity = supply_capacity
+            self.supply_capacity = in_var['platform']['supply_capacity']
         except:
-            processes = in_var.processes
+            processes = in_var['platform']['processes']
             total_yearly_supply_capacity = 0
 
             if processes != []:
@@ -108,15 +108,20 @@ class Burner():
                                                                     self.global_conversion_efficiency,
                                                                     self.fuel_type)
 
-        # Inflow
+        # Inflow -----
         inflow_flowrate = m_air
-        # inflow_target_temperature = burner_chamber_temperature(self.fuel_type, fuel_consumption,m_flue_gas)
         inflow_target_temperature = 80  # [ºC]
         inflow_fluid_cp = fluid_material_cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
-        inflow_capacity = inflow_flowrate * (
-                    inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp / 3600  # [kW]
+        inflow_capacity = inflow_flowrate * ( inflow_target_temperature - inflow_supply_temperature) \
+                          * inflow_fluid_cp / 3600  # [kW]
 
-        # equipment streams
+        # Excess Heat ---
+        flue_gas_cp = fluid_material_cp(supply_fluid, excess_heat_supply_temperature)
+        excess_heat_supply_capacity = excess_heat_flowrate * abs(excess_heat_supply_temperature - excess_heat_target_temperature) \
+                                      * flue_gas_cp
+
+
+        # Get Streams
         # Air Inflow
         self.streams.append(stream_industry(self.id,
                                             'inflow',
@@ -126,12 +131,6 @@ class Burner():
                                             inflow_flowrate,
                                             inflow_capacity,
                                             schedule))
-
-
-        # Excess Heat
-        flue_gas_cp = fluid_material_cp(supply_fluid, excess_heat_supply_temperature)
-        excess_heat_supply_capacity = excess_heat_flowrate * abs(
-                excess_heat_supply_temperature - excess_heat_target_temperature) * flue_gas_cp
 
         self.streams.append(stream_industry(self.id,
                                             'excess_heat',

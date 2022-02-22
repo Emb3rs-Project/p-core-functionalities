@@ -66,8 +66,8 @@ def get_best_x_outputs(info_pinch,df_optimization,country,lifetime,pinch_delta_T
         #                       info_pinch[int(df_optimization['index'].loc[index])]['streams_info'],
         #                       info_pinch[int(df_optimization['index'].loc[index])]['pinch_temperature'],
         #                       info_pinch[int(df_optimization['index'].loc[index])]['df_hx'].to_dict(orient='records'),
-         #                      info_pinch[int(df_optimization['index'].loc[index])]['pinch_delta_T_min']
-         #                      )
+        #                       info_pinch[int(df_optimization['index'].loc[index])]['pinch_delta_T_min']
+        #                       )
 
 
         best_x_options.append({

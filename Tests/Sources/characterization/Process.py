@@ -59,15 +59,14 @@ class Process_data():
 def testProcess():
 
     process_data = Process_data()
-    process = Process(process_data)
+    input_data = {}
+    input_data['platform'] = process_data.__dict__
+    process = Process(input_data)
 
     for stream in process.streams:
         print(stream['stream_type'])
 
     """    
-    for stream in process.streams:
-        print(stream['stream_type'])
-    
     Expected:
     startup
     maintenance

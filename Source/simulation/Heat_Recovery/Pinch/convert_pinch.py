@@ -146,13 +146,13 @@ def convert_pinch(in_var):
 
     ############################################################################################################
     # INPUT
-    all_input_objects = in_var.all_input_objects  # equipments/processes/isolated streams
-    pinch_delta_T_min = in_var.pinch_delta_T_min
-    latitude, longitude = in_var.location
-    perform_all_combinations = in_var.perform_all_combinations  # parameter to only perform all combinations for isolated streams and processes.
+    all_input_objects = in_var['platform']['all_input_objects']  # equipments/processes/isolated streams
+    pinch_delta_T_min = in_var['platform']['pinch_delta_T_min']
+    latitude, longitude = in_var['platform']['location']
+    perform_all_combinations = in_var['platform']['perform_all_combinations']  # parameter to only perform all combinations for isolated streams and processes.
 
     try:
-        number_output_options = in_var.number_output_options
+        number_output_options = in_var['platform']['number_output_options']
     except:
         number_output_options = 3
 

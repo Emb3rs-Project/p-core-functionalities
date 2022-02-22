@@ -8,7 +8,7 @@ INFO: Building Simulation. Simulates heat an cooling consumptions over the year,
 
 
 ##############################
-INPUT: object with:
+INPUT: dictionary with:
 
         Mandatory/Basic User inputs:
             # latitude  [º]
@@ -104,63 +104,66 @@ from ....General.Auxiliary_General.get_country import get_country
 
 def building(in_var):
 
+    ################################################################################################
     # INPUT ----------------------------------------------
-    latitude = in_var.latitude
-    longitude = in_var.longitude
-    number_floor = in_var.number_floor  # number of floors
-    width_floor = in_var.width_floor  # [m]
-    length_floor = in_var.length_floor  # [m]
-    height_floor = in_var.height_floor  # [m]
-    ratio_wall_N = in_var.ratio_wall_N  # wall area fraction
-    ratio_wall_S = in_var.ratio_wall_S
-    ratio_wall_E = in_var.ratio_wall_E
-    ratio_wall_W = in_var.ratio_wall_W
-    saturday_on = in_var.saturday_on
-    sunday_on = in_var.sunday_on
-    shutdown_periods = in_var.shutdown_periods
-    daily_periods = in_var.daily_periods
-    building_type = in_var.building_type
-    building_orientation = in_var.building_orientation
+    latitude = in_var['platform']['latitude']
+    longitude = in_var['platform']['longitude']
+    number_floor = in_var['platform']['number_floor']
+    width_floor = in_var['platform']['width_floor']
+    length_floor = in_var['platform']['length_floor']
+    height_floor = in_var['platform']['height_floor']
+    ratio_wall_N = in_var['platform']['ratio_wall_N']
+    ratio_wall_S = in_var['platform']['ratio_wall_S']
+    ratio_wall_E = in_var['platform']['ratio_wall_E']
+    ratio_wall_W = in_var['platform']['ratio_wall_W']
+    saturday_on = in_var['platform']['saturday_on']
+    sunday_on = in_var['platform']['sunday_on']
+    shutdown_periods = in_var['platform']['shutdown_periods']
+    daily_periods = in_var['platform']['daily_periods']
+    building_type = in_var['platform']['building_type']
+    building_orientation = in_var['platform']['building_orientation']
 
+    # get country to obtain building properties
     country = get_country(latitude, longitude)
 
     try:
-        # User input or defined
-        number_person_per_floor = in_var.number_person_per_floor  # number of occupants per floor
-        supply_temperature_heat = in_var.supply_temperature_heat  # Heating
-        target_temperature_heat = in_var.target_temperature_heat
-        supply_temperature_cool = in_var.supply_temperature_cool  # Cooling
-        target_temperature_cool = in_var.target_temperature_cool
-        T_cool_on = in_var.T_cool_on  # cooling start temperature working hours [ºC]
-        T_heat_on = in_var.T_heat_on  # heating start temperature working hours [ºC]
-        T_off_min = in_var.T_off_min  # heating start temperature off peak [ºC]
-        T_off_max = in_var.T_off_max  # cooling start temperature off peak [ºC]
-        tau_glass = in_var.tau_glass  # Glass transmissivity
-        u_wall = in_var.u_wall  # Wall heat transfer coefficient [W/m2.K]
-        u_roof = in_var.u_roof
-        u_glass = in_var.u_glass
-        u_floor = in_var.u_floor
-        alpha_wall = in_var.alpha_wall
-        alpha_floor = in_var.alpha_floor
-        alpha_glass = in_var.alpha_glass
-        cp_floor = in_var.cp_floor  # Roof specific heat capacitance [J/m2.K]
-        cp_roof = in_var.cp_roof  # Roof specific heat capacitance [J/m2.K]
-        cp_wall = in_var.cp_wall  # Wall specific heat capacitance [J/m2.K]
-        air_change_hour = in_var.air_change_hour  # air changes per second [1/h]
-        renewal_air_per_person = in_var.renewal_air_per_person  # [m3/s.person]
-        vol_dhw_set = in_var.vol_dhw_set
-        Q_gain_per_floor = in_var.Q_gain_per_floor
-        emissivity_wall = in_var.emissivity_wall
-        emissivity_glass = in_var.emissivity_glass
+        number_person_per_floor = in_var['platform']['number_person_per_floor']  # number of occupants per floor
+        supply_temperature_heat = in_var['platform']['supply_temperature_heat']  # Heating
+        target_temperature_heat = in_var['platform']['target_temperature_heat']
+        supply_temperature_cool = in_var['platform']['supply_temperature_cool']  # Cooling
+        target_temperature_cool = in_var['platform']['target_temperature_cool']
+        T_cool_on = in_var['platform']['T_cool_on']  # cooling start temperature working hours [ºC]
+        T_heat_on = in_var['platform']['T_heat_on']  # heating start temperature working hours [ºC]
+        T_off_min = in_var['platform']['T_off_min']  # heating start temperature off peak [ºC]
+        T_off_max = in_var['platform']['T_off_max']  # cooling start temperature off peak [ºC]
+        tau_glass = in_var['platform']['tau_glass']  # Glass transmissivity
+        u_wall = in_var['platform']['u_wall']  # Wall heat transfer coefficient [W/m2.K]
+        u_roof = in_var['platform']['u_roof']
+        u_glass = in_var['platform']['u_glass']
+        u_floor = in_var['platform']['u_floor']
+        alpha_wall = in_var['platform']['alpha_wall']
+        alpha_floor = in_var['platform']['alpha_floor']
+        alpha_glass = in_var['platform']['alpha_glass']
+        cp_floor = in_var['platform']['cp_floor']  #  Specific heat capacitance [J/m2.K]
+        cp_roof = in_var['platform']['cp_roof']
+        cp_wall = in_var['platform']['cp_wall']
+        air_change_hour = in_var['platform']['air_change_hour']  # air changes per hour [1/h]
+        renewal_air_per_person = in_var['platform']['renewal_air_per_person']  # [m3/s.person]
+        vol_dhw_set = in_var['platform']['vol_dhw_set']
+        Q_gain_per_floor = in_var['platform']['Q_gain_per_floor']
+        emissivity_wall = in_var['platform']['emissivity_wall']
+        emissivity_glass = in_var['platform']['emissivity_glass']
+
 
     except:
-        # or get data
         u_wall, u_roof, u_glass, u_floor, tau_glass, alpha_wall, alpha_floor, alpha_glass, cp_wall, cp_floor, cp_roof, air_change_hour = building_properties(country, building_type)
 
         area_floor = width_floor * length_floor
 
         # building streams
-        if in_var.space_heating_type == 0:
+        space_heating_type = in_var['platform']['space_heating_type']
+
+        if space_heating_type == 0:
             target_temperature_heat = 75
             supply_temperature_heat = 45
         else:
@@ -177,13 +180,13 @@ def building(in_var):
         T_off_max = 28  # cooling start temperature off peak [ºC
 
         if building_type == 'residential':
-            number_person_per_floor = in_var.number_person_per_floor
+            number_person_per_floor = in_var['platform']['number_person_per_floor']
             Q_gain_per_floor = 5 * area_floor  # occupancy and appliances heat gains [W]
             vol_dhw_set = 0.03 * number_person_per_floor  # daily dwelling DHW consumption per floor [m3]
             renewal_air_per_person = 0  # renewal fresh air [m3/s]
 
         elif building_type == 'hotel':
-            number_rooms = in_var.number_rooms
+            number_rooms = in_var['platform']['number_rooms']
             number_person_per_floor = 2 * number_rooms  # number of rooms per floor
             vol_dhw_set = 0.03 * number_person_per_floor  # daily dwelling DHW consumption [m3]
             Q_gain_per_floor = 5 * area_floor  # occupancy and appliances heat gains [W]
@@ -199,7 +202,7 @@ def building(in_var):
         emissivity_glass = 0.85
 
 
-
+    ################################################################################################
     # DEFINED VARS ----------------------------------------------------------------------------------
     # Simulation Properties
     interpolation_weight = 0.8
@@ -229,6 +232,7 @@ def building(in_var):
         domestic_hot_water = True
 
 
+    ################################################################################################
     # COMPUTE ----------------------------------------------
     # Schedule
     profile = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)  # vector: [0,1,1,0,..]; 0-on 1-off
@@ -299,7 +303,7 @@ def building(in_var):
     T_roof_out = copy.copy(T_off_min)
     T_deck = copy.copy(T_off_min)  # deck temperature
     T_deck_above = copy.copy(T_off_min)  # floor of building floors (above zero floor)
-    T_deck_below = copy.copy(T_off_min)  # deck_below_in of building floors larger than 0, except last floor
+    T_deck_below = copy.copy(T_off_min)  # deck of building floors larger than 0, except last floor
     T_floor = copy.copy(T_off_min)  # zero floor, floor temperature
     T_floor_in = copy.copy(T_off_min)
     vol_dhw = 0

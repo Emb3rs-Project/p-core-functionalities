@@ -61,17 +61,17 @@ def convert_orc(in_var):
 
     #################################################################
     # INPUT
-    streams = in_var.streams
-    consumer_type = in_var.consumer_type
-    location = in_var.location
+    streams = in_var['platform']['streams']
+    consumer_type = in_var['platform']['consumer_type']
+    location = in_var['platform']['location']
 
     try:
-        get_best_number = in_var.get_best_number
+        get_best_number = in_var['platform']['get_best_number']
     except:
         get_best_number = 3
 
     try:
-        orc_years_working = in_var.orc_years_working
+        orc_years_working = in_var['platform']['orc_years_working']
     except:
         orc_years_working = 25
 

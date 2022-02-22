@@ -60,46 +60,46 @@ class Process:
         self.streams = []
 
         # INPUT
-        self.id = in_var.id  # process id
-        self.equipment = in_var.equipment  # heat/cool equipment id associated to
-        self.operation_temperature = in_var.operation_temperature
-        self.saturday_on = in_var.saturday_on
-        self.sunday_on = in_var.sunday_on
-        self.shutdown_periods = in_var.shutdown_periods
-        self.daily_periods = in_var.daily_periods
-        self.schedule_type = in_var.schedule_type  # 0-Continuous, 1-Batch
+        self.id = in_var['platform']['id']  # process ID
+        self.equipment = in_var['platform']['equipment']  # heat/cool equipment id associated to
+        self.operation_temperature = in_var['platform']['operation_temperature']
+        self.saturday_on = in_var['platform']['saturday_on']
+        self.sunday_on = in_var['platform']['sunday_on']
+        self.shutdown_periods = in_var['platform']['shutdown_periods']  # e.g: [[59,74],[152,172],[362,365]]
+        self.daily_periods = in_var['platform']['daily_periods']  # e.g: [[8,12],[15,19]]
+        self.schedule_type = in_var['platform']['schedule_type']  # 0-Continuous, 1-Batch
 
         try:
-            self.cycle_time_percentage = in_var.cycle_time_percentage # Cycle percentage for Startup and Outflow (when in Batch)
-            if self.cycle_time_percentage >=1 or self.cycle_time_percentage <= 0:
+            self.cycle_time_percentage = in_var['platform']['cycle_time_percentage']  # Cycle percentage for Startup and Outflow (when in Batch)
+            if self.cycle_time_percentage >= 1 or self.cycle_time_percentage <= 0:
                 self.cycle_time_percentage = 0.1
         except:
             self.cycle_time_percentage = 0.1
 
         # Startup
         try:
-            startup_data = in_var.startup_data
+            startup_data = in_var['platform']['startup_data']
             self.generate_process_startup(startup_data)
         except:
             pass
 
         # Maintenance
         try:
-            maintenance_data = in_var.maintenance_data
+            maintenance_data = in_var['platform']['maintenance_data']
             self.generate_process_maintenance(maintenance_data)
         except:
             pass
 
         # Inflows
         try:
-            inflow_data = in_var.inflow_data
+            inflow_data = in_var['platform']['inflow_data']
             self.generate_process_inflow(inflow_data)
         except:
             pass
 
         # Outflows
         try:
-            outflow_data = in_var.outflow_data
+            outflow_data = in_var['platform']['outflow_data']
             self.generate_process_outflow(outflow_data)
         except:
             pass
@@ -126,7 +126,6 @@ class Process:
 
         # Maintenance Info
         for maintenance in data:
-
             schedule = self.schedule('maintenance')
 
             self.streams.append(stream_industry(self.id,
@@ -192,10 +191,7 @@ class Process:
         # Initialize Arrays
         now = datetime.datetime.now()
         last_year = now.year - 1
-        year_10min = int(
-            datetime.date(last_year, 12, 31).timetuple().tm_yday * 24 * 6)  # number of 10min on that specific year
-        year_hour = int(datetime.date(last_year, 12, 31).timetuple().tm_yday * 24)
-
+        year_10min = int(datetime.date(last_year, 12, 31).timetuple().tm_yday * 24 * 6)  # number of 10min on that specific year
         profile_10min = [0] * year_10min
         profile_hour = []
         day = [0] * year_10min
@@ -203,7 +199,6 @@ class Process:
         tenminday = [0] * year_10min
         week = [0] * year_10min
         weekday = [0] * year_10min
-
         weekday[0] = datetime.date(last_year, 1, 1).weekday() + 1  # Weekday of 1st day of the year
 
         # Generate Profile
@@ -265,6 +260,5 @@ class Process:
                 profile_hour.append(sum(profile_10min[(i - 6):i]) / len(profile_10min[(i - 6):i]))
                 hour_old = hday[i]
 
-        # OUTPUT
 
         return profile_hour

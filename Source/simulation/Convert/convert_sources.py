@@ -109,13 +109,13 @@ def convert_sources(in_var):
 
     ############################################################################################################
     # INPUT
-    group_of_sources = in_var.group_of_sources
-    sink_group_grid_supply_temperature = in_var.sink_group_grid_supply_temperature
-    sink_group_grid_return_temperature = in_var.sink_group_grid_return_temperature
+    group_of_sources = in_var['platform']['group_of_sources']
+    sink_group_grid_supply_temperature = in_var['cf-module']['sink_group_grid_supply_temperature']
+    sink_group_grid_return_temperature = in_var['cf-module']['sink_group_grid_return_temperature']
 
     try:
-        grid_losses = in_var.grid_losses  # vector with losses for each source and stream
-        last_iteration_data = in_var.last_iteration_data  # data output from this function from first iteration
+        grid_losses = in_var['gis-module']['grid_losses']  # vector with losses for each source and stream
+        last_iteration_data = in_var['cf-module']['last_iteration_data']  # data output from this function from first iteration
     except:
         grid_losses = []
         last_iteration_data = []

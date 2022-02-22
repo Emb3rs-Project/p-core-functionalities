@@ -51,34 +51,37 @@ class Building():
         # self.u_wall, self.u_roof, self.u_glass, self.u_floor,self.tau_glass, self.alpha_wall, self.alpha_floor, self.alpha_glass, self.cp_wall, self.cp_floor, self.cp_roof,  self.air_change_hour = building_properties(self.country,self.building_type)
 
         if self.building_type == 'residential':
-            self.Q_gain = 5 * self.area_floor  # occupancy and appliances heat gains [W]
+            self.Q_gain_per_floor = 5 * self.area_floor  # occupancy and appliances heat gains [W]
             self.vol_dhw_set = 0.03 * self.number_person_per_floor  # daily dwelling DHW consumption per floor [m3]
             self.renewal_air_per_person = 0  # renewal fresh air [m3/s]
 
         elif self.building_type == 'hotel':
             self.number_person_per_floor = 2 * self.number_rooms  # number of rooms per floor
             self.vol_dhw_set = 0.03 * self.number_person_per_floor  # daily dwelling DHW consumption [m3]
-            self.Q_gain = 5 * self.area_floor  # occupancy and appliances heat gains [W]
+            self.Q_gain_per_floor = 5 * self.area_floor  # occupancy and appliances heat gains [W]
             self.renewal_air_per_person = 0  # renewal fresh air [m3/s]
 
         else:
             self.number_person_per_floor = round(self.area_floor / 9)  # number of occupants per floor (9m2 per occupant)
             self.vol_dhw_set = 0
-            self.Q_gain = self.number_person_per_floor * 108 + (15 + 12) * self.area_floor  # occupancy and appliances heat gains [W]
+            self.Q_gain_per_floor = self.number_person_per_floor * 108 + (15 + 12) * self.area_floor  # occupancy and appliances heat gains [W]
             self.renewal_air_per_person = 10 * 10 ** (-3)  # [m3/s]
 
 
 def testBuilding():
 
     # Office/Hotel/Residential Building
-    data = Building()
-    test = building(data)
+    data_building = Building()
+    input_data = {}
+    input_data['platform'] = data_building.__dict__
+    test = building(input_data)
+
     print(test['streams'][0]['monthly_generation'])
 
     """
     print(test['streams'][0]['monthly_generation'])
 
     Expected:
-    [11588.205345261358, 7386.5061589027255, 5597.359096704344, 1933.5649260986288, 71.08217388706045, 7.606453299671028, 1.82517429973742, 10.809158370953018, 82.90969631901801, 877.3154347663569, 4532.200310144091, 8439.652024257577]
+    [9911.371909940874, 5770.759849320614, 3920.523099102963, 1973.6469068373362, 99.94233373898948, 10.48881136773229, 12.080701917663642, 11.964988150873587, 212.90883342474393, 1007.3412837863171, 2748.7041973066575, 6916.810412898163]
     """
 

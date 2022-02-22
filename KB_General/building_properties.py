@@ -39,7 +39,7 @@ def building_properties(country, building_type):
         data = json.load(f)
 
     try:
-        if building_type == 'office' or building_type == 'hotel':
+        if building_type == 'residential' or building_type == 'hotel':
             u_wall = float(data[country]['residential_u_wall'])  # Wall heat transfer coefficient [W/m2.K]
             u_roof = float(data[country]['residential_u_roof'])  # Roof heat transfer coefficient [W/m2.K]
             u_glass = float(data[country]['residential_u_glass'])  # Glass heat transfer coefficient [W/m2.K]
@@ -63,7 +63,7 @@ def building_properties(country, building_type):
         print('country does not exist in db. Portugal set as country.')
         country = 'Portugal'
 
-        if building_type == 'office' or building_type == 'hotel':
+        if building_type == 'residential' or building_type == 'hotel':
             u_wall = float(data[country]['residential_u_wall'])
             u_roof = float(data[country]['residential_u_roof'])
             u_glass = float(data[country]['residential_u_glass'])
