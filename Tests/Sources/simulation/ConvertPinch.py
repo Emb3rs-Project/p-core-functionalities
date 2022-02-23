@@ -12,7 +12,7 @@ from ....Source.characterization.Process.process import Process
 
 def Option_1():
 
-        test = 2
+        test = 7
 
         if test == 1:
             # OPTION 1 - TEST 1
@@ -195,6 +195,7 @@ def Input_Data_Remaining_Options(all_objects,pinch_delta_T_min=10):
     in_var['platform']['pinch_delta_T_min'] = pinch_delta_T_min
     in_var['platform']['location'] = [41.13, -8.61]
     in_var['platform']['perform_all_combinations'] = True
+    in_var['platform']['number_output_options'] = 3
 
     return in_var
 
