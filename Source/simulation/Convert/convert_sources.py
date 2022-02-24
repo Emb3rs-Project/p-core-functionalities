@@ -25,7 +25,7 @@ INFO: Sources conversion technologies.
 
 
 ##############################
-INPUT:  object with:
+INPUT:  dict with:
 
         # group_of_sources = [source_1,source_2,...] each source dictionary
         # last_iteration_data = [] or output from first iteration - all_sources_info
@@ -412,6 +412,9 @@ def convert_sources(in_var):
 
                             output_converted.append({
                                 'stream_id': stream['id'],
+                                "input_fuel": None,
+                                "output_fuel": "excess_heat",
+                                "output": 1,
                                 'gis_capacity': gis_capacity,  # [kW]
                                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
                                 'teo_capacity_factor': teo_capacity_factor,
@@ -442,6 +445,10 @@ def convert_sources(in_var):
     all_info = {
         'all_sources_info': all_sources_info,
         'teo_string': 'dhn',
+        "input_fuel": "dh_water_supply" ,
+        "output_fuel": "dh_water_demand",
+        "output": 1,
+        "input": 1,
         'n_supply_list': n_supply_list
     }
 

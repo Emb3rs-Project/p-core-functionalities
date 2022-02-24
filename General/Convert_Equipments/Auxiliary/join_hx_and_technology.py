@@ -39,7 +39,6 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
     emissions = 0
     max_supply_capacity = 0
     all_equipment = []
-
     technologies_dict = []
 
 
@@ -47,16 +46,16 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
 
         if object_id != 'grid_specific':
             if teo_equipment_name.find('hp') == 0 or teo_equipment_name.find('absorption_chiller') == 0 :
-                input_fuel = 'dhn_water_sink' # + electricity
+                input_fuel = 'dhn_water_demand' # + electricity
             else:
-                input_fuel = 'dhn_water_sink'
+                input_fuel = 'dhn_water_demand'
         else:
             input_fuel = None
 
         if object_id != 'grid_specific':
-            output_fuel = 'sink_' + str(object_id) + '_demand'
+            output_fuel = str(object_id) + '_' + str(stream_id) + '_' + 'demand',
         else:
-            output_fuel = 'dhn_water'
+            output_fuel = 'dhn_water_supply'
 
     else:
         if teo_equipment_name.find('hp') == 0:
@@ -65,9 +64,9 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
             input_fuel = 'excess_heat'
 
         if teo_equipment_name.find('orc') == 0 or teo_equipment_name.find('chp') == 0:
-            output_fuel = 'dhn_water_source' # + electricity
+            output_fuel = 'dhn_water_supply' # + electricity
         else:
-            output_fuel = 'dhn_water_source'
+            output_fuel = 'dhn_water_supply'
 
 
     for technology in technologies:

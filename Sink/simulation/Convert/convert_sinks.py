@@ -32,9 +32,9 @@ INPUT: group_of_sinks = [sink_1,sink_2,...] each sink with a dict
       Where, for example:
         # sink_1 {
         #       'id'
-        #       'location' = [country,latitude,longitude]
+        #       'location' = [latitude,longitude]
         #       'consumer_type' - 'household' or 'non-household'
-        #       'streams' - array with dictionaries with {id, object_type, stream_type, fluid, capacity, supply_temperature, target_temperature,hourly_generation}
+        #       'streams' - array with dictionaries with {id, object_type, stream_type, fluid, capacity, supply_temperature,target_temperature, hourly_generation}
         #    }
 
  
@@ -151,7 +151,7 @@ def convert_sinks(in_var):
     # Convert_Options Characteristics
     power_fraction = 0.05  # Defined as 5%
     thermal_chiller_generator_T_cold = 70  # [ºC]
-    thermal_chiller_generator_T_hot = 90  # [ºC]
+    thermal_chiller_generator_T_hot = 85  # [ºC]
     thermal_chiller_supply_temperature = 7  # [ºC]
     thermal_chiller_efficiency = 0.71  # COP
     boiler_efficiency = 0.95
@@ -500,6 +500,7 @@ def convert_sinks(in_var):
 
             output_converted.append({
                 'stream_id': stream['id'],
+                'demand_fuel': str(sink['id']) + '_' + str(stream['id']) + '_' + 'demand',
                 'gis_capacity': gis_capacity,  # [kW]
                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
                 'teo_demand_factor': teo_demand_factor,
