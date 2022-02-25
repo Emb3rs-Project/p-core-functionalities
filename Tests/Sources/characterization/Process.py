@@ -1,7 +1,10 @@
 
 from ....Source.characterization.Process.process import Process
+from ....utilities.kb import KB
+from ....utilities.kb_data import kb
 
 class Process_data():
+
     def __init__(self):
 
         self.id = 55
@@ -61,7 +64,7 @@ def testProcess():
     process_data = Process_data()
     input_data = {}
     input_data['platform'] = process_data.__dict__
-    process = Process(input_data)
+    process = Process(input_data,KB(kb))
 
     for stream in process.streams:
         print(stream['stream_type'])

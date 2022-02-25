@@ -17,12 +17,21 @@ import requests
 import ast
 import os
 import json
+import urllib3
+from bs4 import BeautifulSoup
+from dataclasses import dataclass
+import json
 
 def get_interest_rate(country):
 
+    url = 'https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/TEIMF050?format=JSON&lang=en'
 
-    interest_rate = 0.1
-
+    try:
+        #info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', url).data, "html.parser").text)
+        interest_rate = 0.05
+    except:
+        interest_rate = 0.05
 
     return interest_rate
 
+a = get_interest_rate('Portugal')

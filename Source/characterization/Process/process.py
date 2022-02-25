@@ -50,10 +50,11 @@ OUTPUT: object Process
 
 from ....General.Auxiliary_General.stream_industry import stream_industry
 import datetime
+from ....utilities.kb import KB
 
 class Process:
 
-    def __init__(self,in_var):
+    def __init__(self,in_var, kb : KB):
 
         # defined var
         self.object_type = 'process'

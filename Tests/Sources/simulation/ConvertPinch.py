@@ -217,7 +217,7 @@ def testConvertPinch():
     process_data = Process_data()
     input_process_data = {}
     input_process_data['platform'] = process_data.__dict__
-    process = Process(input_process_data)
+    process = Process(input_process_data,KB(kb))
 
     # create equipment
     equipment_data = GenerateBoiler()
