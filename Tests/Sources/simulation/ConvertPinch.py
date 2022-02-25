@@ -2,6 +2,8 @@ from ....Source.simulation.Heat_Recovery.Pinch.convert_pinch import convert_pinc
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....Source.characterization.Generate_Equipment.generate_boiler import Boiler
 from ....Source.characterization.Process.process import Process
+from ....utilities.kb import KB
+from ....utilities.kb_data import kb
 
 # IMPORTANT
 ### OPTION 1 - just pinch analysis (energy optimization) - INPUT: isolated streams (example below)
@@ -12,7 +14,7 @@ from ....Source.characterization.Process.process import Process
 
 def Option_1():
 
-        test = 7
+        test = 2
 
         if test == 1:
             # OPTION 1 - TEST 1
@@ -221,7 +223,7 @@ def testConvertPinch():
     equipment_data = GenerateBoiler()
     input_equipment_data = {}
     input_equipment_data['platform'] = equipment_data.__dict__
-    equipment = Boiler(input_equipment_data)
+    equipment = Boiler(input_equipment_data,KB(kb))
     # create isolated stream
     isolated_stream = stream_industry(11, 'inflow', 'thermal_oil', 480, 500, 1.625 * 3600 / 2, 104.8,[1, 0, 1, 0, 0, 1, 1])
 
@@ -229,22 +231,22 @@ def testConvertPinch():
     if option == 1:
         all_input_objects, pinch_delta_T_min = Option_1()
         input_data = Input_Data_Remaining_Options(all_input_objects,pinch_delta_T_min)
-        test = convert_pinch(input_data)
+        test = convert_pinch(input_data, KB(kb))
 
     # OPTION 2 - test processes, equipments
     elif option ==2:
         input_data = Input_Data_Remaining_Options([process.__dict__, equipment.__dict__])
-        test = convert_pinch(input_data)
+        test = convert_pinch(input_data, KB(kb))
 
     # OPTION 3 - test processes, equipments and isolated streams
     elif option == 3:
         input_data = Input_Data_Remaining_Options([process.__dict__, equipment.__dict__, isolated_stream])
-        test = convert_pinch(input_data)
+        test = convert_pinch(input_data, KB(kb))
 
     # OPTION 4 - test equipment (one at a time)
     elif option == 4:
         input_data = Input_Data_Remaining_Options([equipment.__dict__])
-        test = convert_pinch(input_data)
+        test = convert_pinch(input_data, KB(kb))
 
 
     t1 = time.time()

@@ -52,11 +52,8 @@ def testGreenhouse():
     input_data['platform'] = data.__dict__
     test = greenhouse(input_data)
 
-    print(test["streams"]["monthly_generation"])
-
-    """
-    print(test['streams']['monthly_generation'])
-
+    print(test)
+    """"
     Expected:
     [34360.06786579071, 27126.003499951665, 27565.57197713766, 21650.832164568514, 14797.813745460455, 10800.824021053113, 6460.46181873828, 7254.042281065299, 9533.84325632785, 17493.78056170256, 34676.07498035828, 36286.162510339]
     """

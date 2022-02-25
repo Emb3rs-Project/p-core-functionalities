@@ -34,16 +34,20 @@ RETURN:
 
 """
 
-from ......KB_General.equipment_details import equipment_details
-from ......KB_General.fluid_material import fluid_material_cp
+from ......KB_General.equipment_details import EquipmentDetails
+from ......KB_General.medium import Medium
+from ......utilities.kb import KB
 
 
-def design_hx_storage(df_profile, info_df_hx, storage_delta_T=5):
+def design_hx_storage(kb : KB, df_profile, info_df_hx, storage_delta_T=5):
 
     ###############################################################
     # Defined vars
-    maximum_water_storage_temperature = 90  # [ºC]
 
+    maximum_water_storage_temperature = 90  # [ºC]
+    # info KB
+    equipment_details = EquipmentDetails(kb)
+    medium = Medium(kb)
 
     ###############################################################
     # Storage design
@@ -65,12 +69,12 @@ def design_hx_storage(df_profile, info_df_hx, storage_delta_T=5):
                     # choose type of thermal storage - fixed values
                     if row['HX_Hot_Stream_T_Hot'] <= maximum_water_storage_temperature + storage_delta_T:
                         fluid = 'water'
-                        cp_fluid = fluid_material_cp(fluid, maximum_water_storage_temperature)  # [kJ/(kg.K)]
+                        cp_fluid = medium.cp(fluid, maximum_water_storage_temperature)  # [kJ/(kg.K)]
                         rho_fluid = 1000  # [kg/m3]
                         cost_fluid = 0.0004  # [€/L]
                     else:
                         fluid = 'thermal_oil'
-                        cp_fluid = fluid_material_cp(fluid,150)
+                        cp_fluid = medium.cp(fluid,150)
                         rho_fluid = 920
                         cost_fluid = 0.5  # [€/L]
 
@@ -172,7 +176,7 @@ def design_hx_storage(df_profile, info_df_hx, storage_delta_T=5):
                         vector_storage_volume.append(volume_storage)
 
                         # compute turnkey
-                        global_conversion_efficiency, om_fix, storage_turn_key = equipment_details('thermal_storage',
+                        global_conversion_efficiency, om_fix, storage_turn_key = equipment_details.get_values('thermal_storage',
                                                                                                    volume_storage)
                         storage_fluid_turn_key = volume_storage * cost_fluid
                         storage_total_turn_key = storage_turn_key + storage_fluid_turn_key

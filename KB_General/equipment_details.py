@@ -23,39 +23,40 @@ OUTPUT:
 
 """
 
-import json
-import os
+
+from dataclasses import dataclass
 
 
-def equipment_details(equipment, equipment_char):
+@dataclass
+class EquipmentDetails:
 
-    global_conversion_efficiency = 1
-    electrical_conversion_efficiency = 1
-    om_fix = 1
-    turnkey = 1
+    kb_data: dict
 
-    script_dir = os.path.dirname(__file__)
-    abs_file_path = os.path.join(script_dir, "Json_files", "equipment_details.json")
+    def get_values(self, equipment, equipment_char):
 
-    with open(abs_file_path) as f:
-        data = json.load(f)
+        global_conversion_efficiency = 1
+        electrical_conversion_efficiency = 1
+        om_fix = 1
+        turnkey = 1
 
-    try:
-        turnkey = float(data[equipment]['turnkey_cost_S']) + float(
-            data[equipment]['turnkey_cost_c']) * equipment_char ** float(data[equipment]['turnkey_cost_n'])
+        data = self.kb_data.get("equipment_details")
 
-        om_fix = float(data[equipment]['fixed_om_c']) * turnkey ** float(data[equipment]['fixed_om_n'])
+        try:
+            turnkey = float(data[equipment]['turnkey_cost_S']) + float(
+                data[equipment]['turnkey_cost_c']) * equipment_char ** float(data[equipment]['turnkey_cost_n'])
 
-        global_conversion_efficiency = float(data[equipment]['global_conversion_efficiency_S']) + float(
-            data[equipment]['global_conversion_efficiency_c']) * equipment_char ** float(
-            data[equipment]['global_conversion_efficiency_n'])
-        electrical_conversion_efficiency = float(data[equipment]['electrical_efficiency_c']) * equipment_char ** float(
-            data[equipment]['electrical_efficiency_n'])
-    except:
-        print('equipment not in db. script: equipment_details')
+            om_fix = float(data[equipment]['fixed_om_c']) * turnkey ** float(data[equipment]['fixed_om_n'])
 
-    # special case CHP
-    if equipment == 'chp_gas_engine' or equipment == 'chp_gas_turbine':
-        global_conversion_efficiency = [global_conversion_efficiency, electrical_conversion_efficiency]  # thermal and electrical efficiency
+            global_conversion_efficiency = float(data[equipment]['global_conversion_efficiency_S']) + float(
+                data[equipment]['global_conversion_efficiency_c']) * equipment_char ** float(
+                data[equipment]['global_conversion_efficiency_n'])
+            electrical_conversion_efficiency = float(data[equipment]['electrical_efficiency_c']) * equipment_char ** float(
+                data[equipment]['electrical_efficiency_n'])
+        except:
+            print('equipment not in db. script: equipment_details')
 
-    return global_conversion_efficiency, om_fix, turnkey
+        # special case CHP
+        if equipment == 'chp_gas_engine' or equipment == 'chp_gas_turbine':
+            global_conversion_efficiency = [global_conversion_efficiency, electrical_conversion_efficiency]  # thermal and electrical efficiency
+
+        return global_conversion_efficiency, om_fix, turnkey

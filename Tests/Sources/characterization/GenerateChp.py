@@ -1,7 +1,8 @@
 
 
 from ....Source.characterization.Generate_Equipment.generate_chp import Chp
-
+from ....utilities.kb import KB
+from ....utilities.kb_data import kb
 
 class GenerateChp():
 
@@ -40,7 +41,7 @@ def testGenerateChp():
     data = GenerateChp()
     input_data = {}
     input_data['platform'] = data.__dict__
-    test = Chp(input_data)
+    test = Chp(input_data, KB(kb))
 
 
     print(test.streams[0]['capacity'])

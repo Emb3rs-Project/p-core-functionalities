@@ -136,13 +136,15 @@ RETURN: dictionary with 3 keys:
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.pinch_analysis import pinch_analysis
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.get_best_x_outputs import get_best_x_outputs
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.eco_env_analysis import eco_env_analysis
-from .....KB_General.fluid_material import fluid_material_cp
-from .....KB_General.fuel_properties import fuel_properties
+from .....KB_General.medium import Medium
+from .....KB_General.fuel_properties import FuelProperties
 from .....General.Auxiliary_General.get_country import get_country
 import itertools
 import pandas as pd
+from .....utilities.kb import KB
 
-def convert_pinch(in_var):
+
+def convert_pinch(in_var, kb : KB):
 
     ############################################################################################################
     # INPUT
@@ -169,6 +171,9 @@ def convert_pinch(in_var):
     individual_equipment_optimization = False  # parameter to only perform equipment heat recovery
     only_isolated_streams = False  # parameter to check if only isolated streams are given
 
+    # info KB
+    fuel_properties = FuelProperties(kb)
+    medium = Medium(kb)
     ############################################################################################################
     # DATA PRE-TREATMENT
     hx_delta_T = pinch_delta_T_min
@@ -217,7 +222,7 @@ def convert_pinch(in_var):
 
     # get all streams info necessary for pinch analysis
     df_char['Cp'] = df_char.apply(
-        lambda row: fluid_material_cp(row['Fluid'], row['Supply_Temperature']), axis=1
+        lambda row: medium.cp(row['Fluid'], row['Supply_Temperature']), axis=1
     )
 
     df_char['mcp'] = df_char['Flowrate'] * df_char['Cp'] / 3600  # [kW/K]
@@ -243,7 +248,7 @@ def convert_pinch(in_var):
     df_operating = df_char.copy()  # provide streams to be analyzed
 
     # pinch analysis for all streams
-    info_pinch, design_id = pinch_analysis(df_operating, df_profile, pinch_delta_T_min, hx_delta_T, design_id)
+    info_pinch, design_id = pinch_analysis(kb, df_operating, df_profile, pinch_delta_T_min, hx_delta_T, design_id)
 
     # pinch analysis for all streams combinations
     if perform_all_combinations == True:
@@ -253,7 +258,7 @@ def convert_pinch(in_var):
                     df_operating = (df_char.copy()).iloc[list(subset)]
                     if df_operating[df_operating['Stream_Type'] == 'Hot'].empty == False and df_operating[
                         df_operating['Stream_Type'] == 'Cold'].empty == False:
-                        df_hx_hourly, design_id = pinch_analysis(df_operating, df_profile, pinch_delta_T_min,
+                        df_hx_hourly, design_id = pinch_analysis(kb, df_operating, df_profile, pinch_delta_T_min,
                                                                  hx_delta_T, design_id)
                         if df_hx_hourly != []:
                             for df in df_hx_hourly:
@@ -312,7 +317,7 @@ def convert_pinch(in_var):
                 if info['analysis_state'] == 'performed':
                     pinch_data = info['df_hx']
                     if object['object_type'] == 'equipment':
-                        data = fuel_properties(country, object['fuel_type'], 'non-household')
+                        data = fuel_properties.get_values(country, object['fuel_type'], 'non-household')
                         co2_emission_per_kw = data['co2_emissions']
                         fuel_cost_kwh = data['price']
                     else:

@@ -46,23 +46,26 @@ RETURN: object with all technology info:
 """
 
 
-from ....KB_General.equipment_details import equipment_details
-from ....KB_General.fuel_properties import fuel_properties
+from ....utilities.kb import KB
+from ....KB_General.equipment_details import EquipmentDetails
+from ....KB_General.fuel_properties import FuelProperties
 from ....General.Auxiliary_General.linearize_values import linearize_values
 from ....General.Auxiliary_General.compute_cop_err import compute_cop_err
 
 
 class Add_Electric_Chiller():
 
-    def __init__(self, country, consumer_type, supply_capacity, power_fraction, supply_temperature, return_temperature):
+    def __init__(self, kb: KB, country, consumer_type, supply_capacity, power_fraction, supply_temperature, return_temperature):
 
         # Defined Vars
         self.object_type = 'equipment'
         self.equipment_sub_type = 'compression_chiller'
         self.fuel_type = 'electricity'
 
+
         # get equipment characteristics
-        self.fuel_properties = fuel_properties(country, self.fuel_type, consumer_type)
+        fuel_properties = FuelProperties(kb)
+        self.fuel_properties = fuel_properties.get_values(country, self.fuel_type, consumer_type)
         self.supply_temperature = supply_temperature  # equipment directly supplies grid/sink/source [ºC]
         self.return_temperature = return_temperature
         self.supply_capacity = supply_capacity  # heat supply capacity [kW]
@@ -70,9 +73,9 @@ class Add_Electric_Chiller():
 
         # Design Equipment
         # 100% power
-        info_max_power = self.design_equipment(power_fraction=1)
+        info_max_power = self.design_equipment(kb,power_fraction=1)
         # power fraction
-        info_power_fraction = self.design_equipment(power_fraction)
+        info_power_fraction = self.design_equipment(kb,power_fraction)
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
@@ -93,11 +96,12 @@ class Add_Electric_Chiller():
         }
 
 
-    def design_equipment(self, power_fraction):
+    def design_equipment(self,kb, power_fraction):
 
         supply_capacity = self.supply_capacity * power_fraction  # thermal power supplied [kW]
         electric_power_equipment = supply_capacity / self.global_conversion_efficiency  # equipment needed electric power [kW]
-        global_conversion_efficiency_equipment, om_fix_total, turnkey_equipment = equipment_details(self.equipment_sub_type, supply_capacity)
+        equipment_details = EquipmentDetails(kb)
+        global_conversion_efficiency_equipment, om_fix_total, turnkey_equipment = equipment_details.get_values(self.equipment_sub_type, supply_capacity)
         om_var_total = self.fuel_properties['price'] * electric_power_equipment  # [€]
 
         info = {

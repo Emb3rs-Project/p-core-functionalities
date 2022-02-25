@@ -1,7 +1,8 @@
 
 
 from ....Source.characterization.Generate_Equipment.generate_boiler import Boiler
-
+from ....utilities.kb import KB
+from ....utilities.kb_data import kb
 
 class GenerateBoiler():
 
@@ -35,7 +36,7 @@ def testGenerateBoiler():
     data = GenerateBoiler()
     input_data = {}
     input_data['platform'] = data.__dict__
-    test = Boiler(input_data)
+    test = Boiler(input_data, KB(kb))
 
 
     print(test.streams[0]['capacity'])

@@ -4,25 +4,37 @@ import os
 
 def load_db():
     script_dir = os.path.dirname(__file__)
+
     building_properties = json.load(
-        os.path.join(script_dir, "Json_files", "building_properties.json")
+        open(os.path.join(script_dir, "Json_files", "building_properties.json"))
     )
+
     equipment_details = json.load(
-        os.path.join(script_dir, "Json_files", "equipment_details.json")
+        open(os.path.join(script_dir, "Json_files", "equipment_details.json"))
     )
-    flowrate_to_power = os.path.join(script_dir, "Json_files", "equipment_details.json")
-    fluid_material = os.path.join(script_dir, "Json_files", "medium_list.json")
-    fuel_properties = os.path.join(script_dir, "Json_files", "eu_country_acronym.json")
+    medium_list = json.load(
+        open(os.path.join(script_dir, "Json_files", "medium_list.json")))
+
+    fuel_properties = json.load(
+        open(os.path.join(script_dir, "Json_files", "fuel_properties.json")))
+
+
+    eu_country_acronym = json.load(
+        open(os.path.join(script_dir, "Json_files", "eu_country_acronym.json")))
+
+    electricity_ghg_fuel_costs_per_country = json.load(
+        open(os.path.join(script_dir, "Json_files", "electricity_ghg_fuel_costs_per_country.json")))
+
     # get_interest_rate ?
-    hx_type_and_u = os.path.join(script_dir, "Json_files", "medium_list.json")
+
 
     return {
         "building_properties": building_properties,
         "equipment_details": equipment_details,
-        "flowrate_to_power": flowrate_to_power,
-        "fluid_material": fluid_material,
+        "medium_list": medium_list,
         "fuel_properties": fuel_properties,
-        "hx_type_and_u": hx_type_and_u,
+        "eu_country_acronym": eu_country_acronym,
+        'electricity_ghg_fuel_costs_per_country': electricity_ghg_fuel_costs_per_country
     }
 
 

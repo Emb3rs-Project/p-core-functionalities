@@ -48,15 +48,15 @@ RETURN: object with all technology info:
 """
 
 
-from ....KB_General.equipment_details import equipment_details
+from ....utilities.kb import KB
+from ....KB_General.equipment_details import EquipmentDetails
 from ....General.Auxiliary_General.linearize_values import linearize_values
-from ....KB_General.hx_type_and_u import hx_type_and_u
+from ....KB_General.hx_data import HxData
 from ....General.Auxiliary_General.compute_delta_T_lmtd import compute_delta_T_lmtd_counter
-
 
 class Add_HX():
 
-    def __init__(self, hot_stream_T_hot, hot_stream_T_cold, hot_stream_fluid, cold_stream_T_hot, cold_stream_T_cold,
+    def __init__(self, kb : KB, hot_stream_T_hot, hot_stream_T_cold, hot_stream_fluid, cold_stream_T_hot, cold_stream_T_cold,
                  cold_stream_fluid, power, power_fraction):
 
         # Defined Vars
@@ -70,13 +70,15 @@ class Add_HX():
         self.hot_stream_T_cold = hot_stream_T_cold
         self.cold_stream_T_hot = cold_stream_T_hot
         self.cold_stream_T_cold = cold_stream_T_cold
-        self.equipment_sub_type, self.u_value = hx_type_and_u(hot_stream_fluid, cold_stream_fluid)
+
+        hx_data = HxData(kb)
+        self.equipment_sub_type, self.u_value = hx_data.get_values(hot_stream_fluid, cold_stream_fluid)
 
         # Design Equipment
         # 100% power
-        info_max_power = self.design_equipment(power_fraction=1)
+        info_max_power = self.design_equipment(kb,power_fraction=1)
         # power fraction
-        info_power_fraction = self.design_equipment(power_fraction)
+        info_power_fraction = self.design_equipment(kb,power_fraction)
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
                                                 info_max_power['supply_capacity'],
@@ -96,7 +98,7 @@ class Add_HX():
         }
 
 
-    def design_equipment(self, power_fraction):
+    def design_equipment(self,kb, power_fraction):
 
         hx_power = self.power * power_fraction
 
@@ -106,7 +108,9 @@ class Add_HX():
             self.delta_T_lmtd = compute_delta_T_lmtd_counter(self.hot_stream_T_hot, self.hot_stream_T_cold, self.cold_stream_T_hot, self.cold_stream_T_cold)
             hx_char = abs(hx_power) / (self.u_value / 1000 * self.delta_T_lmtd)  # Plate/Shell&tubes - characteristic value is Area  [m2]
 
-        self.global_conversion_efficiency, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type, hx_char)
+
+        equipment_details = EquipmentDetails(kb)
+        self.global_conversion_efficiency, om_fix_total, turnkey_total = equipment_details.get_values(self.equipment_sub_type, hx_char)
         om_var_total = 0  # om variable considered negligible
 
         info = {

@@ -1,7 +1,8 @@
 
 from ....Source.simulation.Heat_Recovery.ORC.convert_orc import convert_orc
 from ....General.Simple_User.simple_user import simple_user
-
+from ....utilities.kb import KB
+from ....utilities.kb_data import kb
 
 ###########################################
 # This is just to imitate the data treatment done by the platform. JUMP THIS PART.
@@ -51,7 +52,7 @@ def testConvertORC():
     data = ConvertOrc(industry_stream_test['streams'])
     input_data = {}
     input_data['platform'] = data.__dict__
-    test = convert_orc(input_data)
+    test = convert_orc(input_data, KB(kb))
 
     for convert in test:
         print(convert)

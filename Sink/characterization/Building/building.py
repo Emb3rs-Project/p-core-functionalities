@@ -64,10 +64,10 @@ INPUT: dictionary with:
             # emissivity_glass
 
 ##############################
-OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stream_1,stream_2, ... :
+OUTPUT: dict with key 'streams' with streams dictionaries - 'hot_stream' and 'cold_stream'
 
         Where for example:
-        # stream_1 = {
+        # 'hot_stream' = {
         #           'id' - stream id
         #           'object_type' - stream
         #           'fluid' - water
@@ -81,9 +81,7 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
 
 """
 
-import json
 import math
-
 from ....utilities.kb import KB
 from ....KB_General.building_properties import BuildingProperties
 from ....Sink.characterization.Building.Auxiliary.building_climate_api import building_climate_api
@@ -103,7 +101,6 @@ from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data im
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_vertical_surface import ht_radiation_vertical_surface
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_horizontal_surface import ht_radiation_horizontal_surface
 from ....General.Auxiliary_General.get_country import get_country
-from module.KB_General import building_properties
 
 def building(in_var, kb : KB):
 
@@ -600,7 +597,7 @@ def building(in_var, kb : KB):
 
     # OUTPUT -------
     output = {
-        'streams': [{
+        'hot_stream': {
             'id': 9999999,
             'object_type': 'stream',
             'fluid': 'water',
@@ -610,7 +607,7 @@ def building(in_var, kb : KB):
             "supply_temperature": supply_temperature_heat,  # [ºC]
             "target_temperature": target_temperature_heat,  # [ºC]
         },
-            {
+        'cold_stream': {
                 'id': 8888888,
                 'object_type': 'stream',
                 'fluid': 'water',
@@ -619,7 +616,7 @@ def building(in_var, kb : KB):
                 "hourly_generation": profile_hourly_cool,  # [kWh]
                 "supply_temperature": supply_temperature_cool,  # [ºC]
                 "target_temperature": target_temperature_cool  # [ºC]
-            }]
+            }
 
     }
 

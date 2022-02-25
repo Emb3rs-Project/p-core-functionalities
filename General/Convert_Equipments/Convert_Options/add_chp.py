@@ -46,15 +46,15 @@ RETURN: object with all technology info:
 
 """
 
-
-from ....KB_General.equipment_details import equipment_details
-from ....KB_General.fuel_properties import fuel_properties
+from ....utilities.kb import KB
+from ....KB_General.equipment_details import EquipmentDetails
+from ....KB_General.fuel_properties import FuelProperties
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
 
 class Add_CHP():
 
-    def __init__(self, fuel_type, country, consumer_type, supply_capacity, power_fraction, supply_temperature,
+    def __init__(self, kb: KB, fuel_type, country, consumer_type, supply_capacity, power_fraction, supply_temperature,
                  return_temperature):
 
         # Defined Vars
@@ -68,19 +68,21 @@ class Add_CHP():
 
         # get equipment characteristics
         self.fuel_type = fuel_type
-        self.fuel_properties = fuel_properties(country, self.fuel_type, consumer_type)
+        fuel_properties = FuelProperties(kb)
+        self.fuel_properties = fuel_properties.get_values(country, self.fuel_type, consumer_type)
         self.supply_temperature = supply_temperature  # equipment directly supplies grid
         self.return_temperature = return_temperature
         self.supply_capacity = supply_capacity  # equipment directly supplies grid
-        all_conversion_efficiency, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type, supply_capacity)
+        equipment_details = EquipmentDetails(kb)
+        all_conversion_efficiency, om_fix_total, turnkey_total = equipment_details.get_values(self.equipment_sub_type, supply_capacity)
         self.thermal_conversion_efficiency = all_conversion_efficiency[0]
         self.electrical_conversion_efficiency = all_conversion_efficiency[1]
 
         # Design Equipment
         # 100% power
-        info_max_power = self.design_equipment(power_fraction=1)
+        info_max_power = self.design_equipment(kb,power_fraction=1)
         # Power Fraction
-        info_power_fraction = self.design_equipment(power_fraction)
+        info_power_fraction = self.design_equipment(kb,power_fraction)
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
@@ -103,12 +105,13 @@ class Add_CHP():
         }
 
 
-    def design_equipment(self, power_fraction):
+    def design_equipment(self,kb, power_fraction):
 
         supply_capacity = self.supply_capacity * (power_fraction)  # thermal power needed [kW]
         electrical_generation = supply_capacity / (self.thermal_conversion_efficiency) * (self.electrical_conversion_efficiency)  # [kW]
 
-        all_conversion_efficiency, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type, supply_capacity)
+        equipment_details = EquipmentDetails(kb)
+        all_conversion_efficiency, om_fix_total, turnkey_total = equipment_details.get_values(self.equipment_sub_type, supply_capacity)
         fuel_power_equipment = supply_capacity / self.thermal_conversion_efficiency
         om_var_total = self.fuel_properties['price'] * fuel_power_equipment
 

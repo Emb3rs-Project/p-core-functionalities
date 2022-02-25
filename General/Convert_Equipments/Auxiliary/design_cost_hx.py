@@ -26,15 +26,20 @@ RETURN:
 
 """
 
-from ....KB_General.hx_type_and_u import hx_type_and_u
-from ....KB_General.equipment_details import equipment_details
+from ....KB_General.hx_data import HxData
+from ....KB_General.equipment_details import EquipmentDetails
 from ....General.Auxiliary_General.compute_delta_T_lmtd import compute_delta_T_lmtd_counter
+from ....utilities.kb import KB
 
 
-def design_cost_hx(hot_stream_T_hot, hot_stream_T_cold, hot_stream_fluid, cold_stream_T_hot, cold_stream_T_cold,cold_stream_fluid, hx_power):
+def design_cost_hx(kb : KB, hot_stream_T_hot, hot_stream_T_cold, hot_stream_fluid, cold_stream_T_hot, cold_stream_T_cold,cold_stream_fluid, hx_power):
 
     # HX info
-    hx_type, hx_u_value = hx_type_and_u(hot_stream_fluid, cold_stream_fluid)
+    hx_data = HxData(kb)
+    equipment_details = EquipmentDetails(kb)
+
+
+    hx_type, hx_u_value = hx_data.get_values(hot_stream_fluid, cold_stream_fluid)
     delta_T_lmtd = compute_delta_T_lmtd_counter(hot_stream_T_hot, hot_stream_T_cold, cold_stream_T_hot,cold_stream_T_cold)
 
     # get turnkey and om_fix cost
@@ -46,7 +51,7 @@ def design_cost_hx(hot_stream_T_hot, hot_stream_T_cold, hot_stream_fluid, cold_s
                 hx_char = abs(hx_power) / (
                             hx_u_value / 1000 * delta_T_lmtd)  # Plate/Shell&tubes - characteristic value is Area  [m2]
 
-            global_conversion_efficiency, hx_om_fix, hx_turnkey = equipment_details(hx_type, hx_char)
+            global_conversion_efficiency, hx_om_fix, hx_turnkey = equipment_details.get_values(hx_type, hx_char)
 
         except:
             hx_turnkey = 0

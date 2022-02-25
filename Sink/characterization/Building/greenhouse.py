@@ -66,7 +66,6 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
 
 """
 
-import json
 import math
 import copy
 from ....Sink.characterization.Building.Auxiliary.building_climate_api import building_climate_api
@@ -77,7 +76,6 @@ from ....Sink.characterization.Building.Auxiliary.h_convection_horizontal import
 from ....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_equation import ht_radiation_equation
 from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
-import matplotlib.pyplot as plt
 
 def greenhouse(in_var):
 
@@ -221,9 +219,6 @@ def greenhouse(in_var):
     one_hour = int(3600 / time_step)  # time step number
     max_air_delta_T_per_minute = 1  # 1ºC per min
     max_air_delta_T_allowed = time_step * max_air_delta_T_per_minute / 60
-    vect = []
-    vect_1 = []
-    vect_2 = []
 
 
     for profile_index, profile_operating in enumerate(profile):
@@ -387,7 +382,7 @@ def greenhouse(in_var):
 
     # OUTPUT -------------
     output = {
-        'streams': {
+        'hot_stream': {
             'id': 777777,
             'object_type': 'stream',
             'fluid': 'water',

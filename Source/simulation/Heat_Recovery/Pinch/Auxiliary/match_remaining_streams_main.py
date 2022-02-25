@@ -41,7 +41,7 @@ from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_match_r
 from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_match_remaining_streams import below_pinch_match_remaining_streams
 
 
-def match_remaining_streams_main(df_streams_in,df_streams_out,df_hx,above_pinch,hx_delta_T,restriction):
+def match_remaining_streams_main(kb, df_streams_in,df_streams_out,df_hx,above_pinch,hx_delta_T,restriction):
 
     # check if above/below pinch
     if above_pinch == True:
@@ -94,14 +94,14 @@ def match_remaining_streams_main(df_streams_in,df_streams_out,df_hx,above_pinch,
 
                 # design HX
                 if above_pinch == True:
-                    x, x, new_generated_hx = above_pinch_match_remaining_streams(hot_stream_index, hot_stream,
+                    x, x, new_generated_hx = above_pinch_match_remaining_streams(kb, hot_stream_index, hot_stream,
                                                                                  cold_stream_index, cold_stream,
                                                                                  df_cold_streams_dummy,
                                                                                  df_hot_streams_dummy,
                                                                                  hx_delta_T, restriction)
 
                 else:
-                    x, x, new_generated_hx = below_pinch_match_remaining_streams(hot_stream_index, hot_stream,
+                    x, x, new_generated_hx = below_pinch_match_remaining_streams(kb, hot_stream_index, hot_stream,
                                                                                  cold_stream_index, cold_stream,
                                                                                  df_cold_streams_dummy,
                                                                                  df_hot_streams_dummy,
@@ -133,13 +133,13 @@ def match_remaining_streams_main(df_streams_in,df_streams_out,df_hx,above_pinch,
             cold_stream = df_cold_streams.loc[cold_stream_index]
 
             if above_pinch == True:
-                df_cold_streams, df_hot_streams, x = above_pinch_match_remaining_streams(hot_stream_index, hot_stream,
+                df_cold_streams, df_hot_streams, x = above_pinch_match_remaining_streams(kb, hot_stream_index, hot_stream,
                                                                                          cold_stream_index,
                                                                                          cold_stream, df_cold_streams,
                                                                                          df_hot_streams, hx_delta_T,
                                                                                          restriction)
             else:
-                df_cold_streams, df_hot_streams, x = below_pinch_match_remaining_streams(hot_stream_index, hot_stream,
+                df_cold_streams, df_hot_streams, x = below_pinch_match_remaining_streams(kb, hot_stream_index, hot_stream,
                                                                                          cold_stream_index,
                                                                                          cold_stream,
                                                                                          df_cold_streams,

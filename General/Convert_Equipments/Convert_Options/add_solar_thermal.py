@@ -56,22 +56,25 @@ RETURN: object with all technology info:
 import numpy as np
 from ....General.Convert_Equipments.Auxiliary.solar_collector_climate_api import solar_collector_climate_api
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from ....KB_General.equipment_details import equipment_details
-from ....KB_General.fuel_properties import fuel_properties
-from ....KB_General.fluid_material import fluid_material_rho
+from ....KB_General.equipment_details import EquipmentDetails
+from ....KB_General.fuel_properties import FuelProperties
+from ....KB_General.medium import Medium
 from ....KB_General.flowrate_to_power import flowrate_to_power
 from ....General.Auxiliary_General.linearize_values import linearize_values
+from ....utilities.kb import KB
 
 
 class Add_Solar_Thermal():
 
-    def __init__(self, country, consumer_type, latitude, longitude, stream_available_capacity, power_fraction, supply_temperature, return_temperature,hx_delta_T,hx_efficiency):
+    def __init__(self, kb : KB, country, consumer_type, latitude, longitude, stream_available_capacity, power_fraction, supply_temperature, return_temperature,hx_delta_T,hx_efficiency):
 
         # Defined Vars
         self.object_type = 'equipment'
         self.supply_fluid = 'thermal_oil'
         self.fuel_type = 'electricity'
-        self.fuel_properties = fuel_properties(country, self.fuel_type, consumer_type)
+
+        fuel_properties = FuelProperties(kb)
+        self.fuel_properties = fuel_properties.get_values(country, self.fuel_type, consumer_type)
 
         # get equipment characteristics
         self.latitude = latitude
@@ -105,9 +108,9 @@ class Add_Solar_Thermal():
 
         # Design Equipment
         # 100% Power
-        info_max_power = self.design_equipment(climate, hx_delta_T, hx_efficiency, power_fraction=1)
+        info_max_power = self.design_equipment(kb,climate, hx_delta_T, hx_efficiency, power_fraction=1)
         # power fraction
-        info_power_fraction = self.design_equipment(climate, hx_delta_T, hx_efficiency, power_fraction)
+        info_power_fraction = self.design_equipment(kb,climate, hx_delta_T, hx_efficiency, power_fraction)
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
@@ -131,11 +134,12 @@ class Add_Solar_Thermal():
         }
 
 
-    def design_equipment(self, climate, hx_delta_T, hx_efficiency, power_fraction):
+    def design_equipment(self,kb, climate, hx_delta_T, hx_efficiency, power_fraction):
 
         # Defined vars
         grid_fluid = 'water'
-        solar_collector_fluid_rho = fluid_material_rho('thermal_oil',temperature=90)  # [kg/m3]
+        medium = Medium(kb)
+        solar_collector_fluid_rho = medium.rho('thermal_oil',temperature=90)  # [kg/m3]
         grid_supply_temperature = self.supply_temperature - hx_delta_T
         grid_return_temperature = self.return_temperature - hx_delta_T
 
@@ -152,7 +156,7 @@ class Add_Solar_Thermal():
             P_max = max(matrix[:, 2])
 
         solar_collector_minimum_power = (P_max * 10 ** (-3)) * 0.1  # [kW/m2]
-        solar_collector_minimum_flowrate = compute_flow_rate(self.supply_fluid,
+        solar_collector_minimum_flowrate = compute_flow_rate(kb, self.supply_fluid,
                                                              solar_collector_minimum_power,
                                                              self.supply_temperature,
                                                              self.return_temperature)  # [kg/h.m2]
@@ -217,8 +221,9 @@ class Add_Solar_Thermal():
         vector_grid_power = [i * area for i in vector_grid_power]  # [kW]
 
         # turnkey solar thermal + pumping
-        global_conversion_efficiency_equipment, om_fix_equipment, turnkey_equipment = equipment_details(self.equipment_sub_type, area)
-        global_conversion_efficiency_equipment_pump, om_fix_equipment_pump, turnkey_equipment_pump = equipment_details(
+        equipment_details = EquipmentDetails(kb)
+        global_conversion_efficiency_equipment, om_fix_equipment, turnkey_equipment = equipment_details.get_values(self.equipment_sub_type, area)
+        global_conversion_efficiency_equipment_pump, om_fix_equipment_pump, turnkey_equipment_pump = equipment_details.get_values(
             'circulation_pumping', max(vector_solar_collector_flowrate) / solar_collector_fluid_rho)  # pump turnkey according to max flowrate possible
 
         turnkey_total = turnkey_equipment + turnkey_equipment_pump  # [€]

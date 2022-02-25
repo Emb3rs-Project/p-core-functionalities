@@ -44,21 +44,25 @@ RETURN: a new_hx_row to add to the df_hx,
 """
 
 from ......General.Convert_Equipments.Auxiliary.design_cost_hx import design_cost_hx
-from ......KB_General.hx_type_and_u import hx_type_and_u
-from ......KB_General.fluid_material import fluid_material_cp
+from ......KB_General.hx_data import HxData
+from ......KB_General.medium import Medium
+from ......utilities.kb import KB
 
 
-def design_hx(hot_stream_index, cold_stream_index, hx_hot_stream_T_hot, hx_hot_stream_T_cold, hot_stream_fluid,
+def design_hx( kb : KB ,hot_stream_index, cold_stream_index, hx_hot_stream_T_hot, hx_hot_stream_T_cold, hot_stream_fluid,
               hx_cold_stream_T_hot, hx_cold_stream_T_cold, cold_stream_fluid, hx_power, original_hot_stream_index,
               original_cold_stream_index):
 
+    # info KB
+    hx_data = HxData(kb)
+    medium = Medium(kb)
 
 
-    hx_turnkey_cost, hx_om_fix_cost = design_cost_hx(hx_hot_stream_T_hot, hx_hot_stream_T_cold, hot_stream_fluid,
+    hx_turnkey_cost, hx_om_fix_cost = design_cost_hx(kb, hx_hot_stream_T_hot, hx_hot_stream_T_cold, hot_stream_fluid,
                                                      hx_cold_stream_T_hot, hx_cold_stream_T_cold, cold_stream_fluid,
                                                      hx_power)
 
-    hx_type, hx_u_value = hx_type_and_u(hot_stream_fluid, cold_stream_fluid)
+    hx_type, hx_u_value = hx_data.get_values(hot_stream_fluid, cold_stream_fluid)
 
     if hot_stream_index != original_hot_stream_index:
         hot_split = True
@@ -70,10 +74,10 @@ def design_hx(hot_stream_index, cold_stream_index, hx_hot_stream_T_hot, hx_hot_s
     else:
         cold_split = False
 
-    hot_stream_cp = fluid_material_cp(hot_stream_fluid, hx_hot_stream_T_hot)
+    hot_stream_cp = medium.cp(hot_stream_fluid, hx_hot_stream_T_hot)
     hot_stream_flowrate = hx_power / (abs(hx_hot_stream_T_hot - hx_hot_stream_T_cold) * hot_stream_cp)
     hot_stream_mcp = hx_power / (abs(hx_hot_stream_T_hot - hx_hot_stream_T_cold) )
-    cold_stream_cp = fluid_material_cp(cold_stream_fluid, hx_cold_stream_T_hot)
+    cold_stream_cp = medium.cp(cold_stream_fluid, hx_cold_stream_T_hot)
     cold_stream_flowrate = hx_power / (abs(hx_cold_stream_T_hot - hx_cold_stream_T_cold) * cold_stream_cp)
     cold_stream_mcp = hx_power / (abs(hx_cold_stream_T_hot - hx_cold_stream_T_cold))
 

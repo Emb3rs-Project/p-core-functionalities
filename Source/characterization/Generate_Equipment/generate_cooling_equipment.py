@@ -49,13 +49,14 @@ OUTPUT: object Cooling Equipment.
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....General.Auxiliary_General.stream_industry import stream_industry
-from ....KB_General.fluid_material import fluid_material_cp
-from ....KB_General.equipment_details import equipment_details
+from ....KB_General.medium import Medium
+from ....KB_General.equipment_details import EquipmentDetails
 from ....General.Auxiliary_General.compute_cop_err import compute_cop_err
+from ....utilities.kb import KB
 
 class Cooling_Equipment():
 
-    def __init__(self, in_var):
+    def __init__(self, in_var, kb : KB):
 
         ############################################################################################
         # Defined Vars
@@ -63,7 +64,8 @@ class Cooling_Equipment():
         self.streams = []
         self.fuel_type = 'electricity'  # Electricity
         excess_heat_fluid = 'water'  # excess heat fluid type
-
+        equipment_details = EquipmentDetails(kb)
+        medium = Medium(kb)
 
         ############################################################################################
         # INPUT
@@ -96,7 +98,7 @@ class Cooling_Equipment():
             self.global_conversion_efficiency = in_var['platform']['global_conversion_efficiency']  # COP
         except:
             if self.equipment_sub_type != 'compression_chiller':
-                cop, om_fix, turnkey = equipment_details(self.equipment_sub_type,self.supply_capacity)
+                cop, om_fix, turnkey = equipment_details.get_values(self.equipment_sub_type,self.supply_capacity)
             else:
                 cop = compute_cop_err('compression_chiller')
 
@@ -105,19 +107,19 @@ class Cooling_Equipment():
         if self.equipment_sub_type == 'co2_chiller':
             excess_heat_supply_temperature = 90  # discharge temperature [ºC]
             excess_heat_target_temperature = 60  # gas cooler entry temperature [ºC]
-            excess_heat_fluid_cp = fluid_material_cp(excess_heat_fluid, (
+            excess_heat_fluid_cp = medium.cp(excess_heat_fluid, (
                         excess_heat_supply_temperature + excess_heat_target_temperature) / 2)
 
         elif self.equipment_sub_type == 'compression_chiller':
             excess_heat_supply_temperature = 45
             excess_heat_target_temperature = 35
-            excess_heat_fluid_cp = fluid_material_cp(excess_heat_fluid, (
+            excess_heat_fluid_cp = medium.cp(excess_heat_fluid, (
                         excess_heat_supply_temperature + excess_heat_target_temperature) / 2)
 
         elif self.equipment_sub_type == 'cooling_tower':
             excess_heat_supply_temperature = 38
             excess_heat_target_temperature = 33
-            excess_heat_fluid_cp = fluid_material_cp(excess_heat_fluid, (
+            excess_heat_fluid_cp = medium.cp(excess_heat_fluid, (
                     excess_heat_supply_temperature + excess_heat_target_temperature) / 2)
 
 

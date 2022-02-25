@@ -57,7 +57,7 @@ from copy import deepcopy
 import numpy as np
 
 
-def first_match_reach_pinch(df_streams_in, df_streams_out, df_hx, hx_delta_T, above_pinch):
+def first_match_reach_pinch(kb, df_streams_in, df_streams_out, df_hx, hx_delta_T, above_pinch):
 
     original_combination = deepcopy([df_streams_in, df_streams_out, df_hx])
 
@@ -66,7 +66,7 @@ def first_match_reach_pinch(df_streams_in, df_streams_out, df_hx, hx_delta_T, ab
 
     # get all combinations with recursive function
     combination = deepcopy([df_streams_in, df_streams_out, df_hx])
-    all_combinations = make_combinations(combination, all_combinations, hx_delta_T, above_pinch)
+    all_combinations = make_combinations(kb, combination, all_combinations, hx_delta_T, above_pinch)
 
     # eliminate repeated df_streams
     if len(all_combinations) > 1:
@@ -101,7 +101,7 @@ def first_match_reach_pinch(df_streams_in, df_streams_out, df_hx, hx_delta_T, ab
     return all_combinations
 
 
-def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
+def make_combinations(kb, combination, all_combinations, hx_delta_T, above_pinch):
 
     # get streams and hx dfs
     combination_copy = deepcopy(combination)
@@ -280,7 +280,8 @@ def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
                                 df_streams_in.loc[stream_in_index, ['Closest_Pinch_Temperature']] = hx_stream_in_T_hot
 
                                 # design HX
-                                new_hx_row = design_hx(stream_in_index,
+                                new_hx_row = design_hx(kb,
+                                                       stream_in_index,
                                                        stream_out_index,
                                                        hx_stream_in_T_hot,
                                                        hx_stream_in_T_cold,
@@ -298,7 +299,7 @@ def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
                                 df_streams_in.loc[stream_in_index, ['Closest_Pinch_Temperature']] = hx_stream_in_T_cold
 
                                 # design HX
-                                new_hx_row = design_hx(stream_out_index,
+                                new_hx_row = design_hx(kb, stream_out_index,
                                                        stream_in_index,
                                                        hx_stream_out_T_hot,
                                                        hx_stream_out_T_cold,
@@ -321,7 +322,7 @@ def make_combinations(combination, all_combinations, hx_delta_T, above_pinch):
                             # continue iteration or reach end and save
                             if df_streams_in[
                                 (df_streams_in['Match'] == False) & (df_streams_in['Reach_Pinch'] == True)].shape[0] > 0:
-                                all_combinations = make_combinations(deepcopy(combination.copy()),
+                                all_combinations = make_combinations(kb, deepcopy(combination.copy()),
                                                                      deepcopy(all_combinations),
                                                                      hx_delta_T,
                                                                      above_pinch)

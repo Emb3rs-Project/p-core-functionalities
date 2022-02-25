@@ -87,7 +87,7 @@ from copy import deepcopy
 import pandas as pd
 
 
-def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_T, above_pinch):
+def above_and_below_pinch_main(kb, df_streams, pinch_delta_T_min, pinch_T, hx_delta_T, above_pinch):
 
     ################################################################################
     # Init Arrays
@@ -193,7 +193,7 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_
                 df_hx = df_hx_original.copy()
 
                 # 1ST MATCH - streams reaching pinch
-                all_cases_first_match = first_match_reach_pinch(df_streams_in, df_streams_out, df_hx,
+                all_cases_first_match = first_match_reach_pinch(kb, df_streams_in, df_streams_out, df_hx,
                                                                                    hx_delta_T, above_pinch)
 
                 # check all_cases_first_match
@@ -214,14 +214,14 @@ def above_and_below_pinch_main(df_streams, pinch_delta_T_min, pinch_T, hx_delta_
                         df_streams_in, df_streams_out, df_hx = case_check_streams_2
 
                         # REMAINING STREAMS MATCH - WITH Restrictions
-                        df_streams_in, df_streams_out, df_hx = match_remaining_streams_main(df_streams_in,
+                        df_streams_in, df_streams_out, df_hx = match_remaining_streams_main(kb, df_streams_in,
                                                                                             df_streams_out,
                                                                                             df_hx, above_pinch,
                                                                                             hx_delta_T,
                                                                                             restriction=True)
 
                         # REMAINING STREAMS MATCH - NO Restrictions
-                        df_streams_in, df_streams_out, df_hx = match_remaining_streams_main(df_streams_in,
+                        df_streams_in, df_streams_out, df_hx = match_remaining_streams_main(kb, df_streams_in,
                                                                                               df_streams_out,
                                                                                               df_hx, above_pinch,
                                                                                               hx_delta_T,

@@ -42,12 +42,13 @@ RETURN: object with all technology info:
 
 """
 
-from ....KB_General.equipment_details import equipment_details
+from ....utilities.kb import KB
+from ....KB_General.equipment_details import EquipmentDetails
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
 class Add_ORC_Cascaded():
 
-    def __init__(self, orc_cond_temperature_supply, equipment_sub_type, overall_thermal_capacity, electrical_generation, power_fraction):
+    def __init__(self, kb : KB, orc_cond_temperature_supply, equipment_sub_type, overall_thermal_capacity, electrical_generation, power_fraction):
 
         # Defined Vars
         self.object_type = 'equipment'
@@ -61,9 +62,9 @@ class Add_ORC_Cascaded():
 
         # Design Equipment
         # 100% power
-        info_max_power = self.design_equipment(power_fraction=1)
+        info_max_power = self.design_equipment(kb,power_fraction=1)
         # power fraction
-        info_power_fraction = self.design_equipment(power_fraction)
+        info_power_fraction = self.design_equipment(kb,power_fraction)
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
@@ -88,7 +89,7 @@ class Add_ORC_Cascaded():
         }
 
 
-    def design_equipment(self, power_fraction):
+    def design_equipment(self,kb, power_fraction):
 
         # Defined Vars
         hx_efficiency = 0.95
@@ -97,7 +98,9 @@ class Add_ORC_Cascaded():
         overall_thermal_capacity = self.overall_thermal_capacity * power_fraction
         electrical_generation = self.electrical_generation * power_fraction  # electrical supply capacity [kW]
         supply_capacity = (overall_thermal_capacity - electrical_generation) * hx_efficiency  # thermal supply capacity [kW]
-        global_conversion_efficiency_equipment, om_fix_total, turnkey_total = equipment_details(self.equipment_sub_type, electrical_generation)
+
+        equipment_details = EquipmentDetails(kb)
+        global_conversion_efficiency_equipment, om_fix_total, turnkey_total = equipment_details.get_values(self.equipment_sub_type, electrical_generation)
         om_var_total = 0
 
         info = {

@@ -1,7 +1,8 @@
 
 
 from ....Source.simulation.Convert.convert_sources import convert_sources
-
+from ....utilities.kb import KB
+from ....utilities.kb_data import kb
 
 ###################################################
 # JUMP THIS PART
@@ -57,7 +58,7 @@ data['gis-module'] = {
 
 def testConvertSource():
 
-    test = convert_sources(data)
+    test = convert_sources(data, KB(kb))
     print(test)
 
     """

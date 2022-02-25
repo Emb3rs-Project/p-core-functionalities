@@ -24,7 +24,8 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
                     if i == 2:
                         stream_info['below_pinch'].pop(index_below)
 
-
+    print('++++++++++++++++++++++++++++++++++++++++++++')
+    print(streams_info)
     ###########################
     # Defined vars
     dict_for_hx = {}
@@ -436,11 +437,15 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
             dict_temperatures[str(i['HX_Original_Hot_Stream'])][str(i['HX_Hot_Stream'])]['temperature'] = i[
                 'HX_Hot_Stream_T_Cold']
 
+    print('########################')
+    print(streams_info)
+    print(dict_temperatures)
     for stream in streams_info:
         write_temperature = 0
         supply_temperature, target_temperature = stream['temperatures']
         mcp_total = stream['mcp']
         stream_y = dict_for_hx[str(stream['id'])]
+
 
         if str(stream['id']) in dict_temperatures.keys():
             if len(stream['below_pinch']) > 1:
@@ -452,6 +457,7 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
                                    "{:.1f}".format(write_temperature) + 'º', ha='center', va='bottom')
 
                     power_utility = mcp_total * abs(target_temperature - write_temperature)
+
 
                     if power_utility != 0:
                         circle_hot_utility = plt.Circle((x_max-(diagonal_space_hot_stream_out / 2), stream_y), circle_radius,
@@ -485,6 +491,7 @@ def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pin
         elif supply_temperature > target_temperature and pinch_temperature > target_temperature:
 
             power_utility = mcp_total * (pinch_temperature - target_temperature)
+
 
             if power_utility > 0:
                 circle_hot_utility = plt.Circle((x_max - (diagonal_space_hot_stream_out / 2), stream_y), circle_radius,

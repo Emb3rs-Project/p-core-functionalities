@@ -44,25 +44,27 @@ RETURN: object with all technology info:
 
 """
 
+from ....utilities.kb import KB
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
-from ....KB_General.equipment_details import equipment_details
-from ....KB_General.fuel_properties import fuel_properties
+from ....KB_General.equipment_details import EquipmentDetails
+from ....KB_General.fuel_properties import FuelProperties
 from ....KB_General.flowrate_to_power import flowrate_to_power
 from ....General.Auxiliary_General.linearize_values import linearize_values
-from ....KB_General.fluid_material import fluid_material_rho
+from ....KB_General.medium import Medium
 
 
 class Add_Pump():
 
-    def __init__(self, country, consumer_type, fluid, supply_capacity, power_fraction, supply_temperature, return_temperature):
-
+    def __init__(self, kb: KB, country, consumer_type, fluid, supply_capacity, power_fraction, supply_temperature,
+                 return_temperature):
         # Defined Vars
         self.object_type = 'equipment'
         self.equipment_sub_type = 'circulation_pumping'
         self.fuel_type = 'electricity'
 
         # get equipment characteristics
-        self.fuel_properties = fuel_properties(country,self.fuel_type,consumer_type)
+        fuel_properties = FuelProperties(kb)
+        self.fuel_properties = fuel_properties.get_values(country, self.fuel_type, consumer_type)
         self.fluid = fluid
         self.supply_temperature = supply_temperature
         self.return_temperature = return_temperature
@@ -70,9 +72,9 @@ class Add_Pump():
 
         # Design Equipment
         # 100% power
-        info_max_power = self.design_equipment(power_fraction=1)
+        info_max_power = self.design_equipment(kb,power_fraction=1)
         # power fraction
-        info_power_fraction = self.design_equipment(power_fraction)
+        info_power_fraction = self.design_equipment(kb,power_fraction)
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
@@ -89,29 +91,32 @@ class Add_Pump():
             'conversion_efficiency': self.global_conversion_efficiency,  # []
             'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity']),  # [€/year.kW]
             'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity']),  # [€/kWh]
-            'emissions': self.fuel_properties['co2_emissions'] * (info_max_power['om_var'] / self.fuel_properties['price'])
+            'emissions': self.fuel_properties['co2_emissions'] * (
+                        info_max_power['om_var'] / self.fuel_properties['price'])
                          / (info_max_power['supply_capacity'])  # [kg.CO2/kWh]
         }
 
-
-    def design_equipment(self, power_fraction):
-
-        fluid_rho = fluid_material_rho(self.fluid, (self.supply_temperature + self.return_temperature) / 2)  # [kg/m3]
+    def design_equipment(self,kb, power_fraction):
+        medium = Medium(kb)
+        fluid_rho = medium.rho(self.fluid, (self.supply_temperature + self.return_temperature) / 2)  # [kg/m3]
         supply_capacity = self.supply_capacity * power_fraction  # thermal power supplied [kWh]
 
-        flowrate = compute_flow_rate(self.fluid,
+        flowrate = compute_flow_rate(kb,
+                                     self.fluid,
                                      supply_capacity,
                                      self.supply_temperature,
                                      self.return_temperature)  # [kg/h]
 
-        self.global_conversion_efficiency, om_fix_equipment, turnkey_equipment = equipment_details('circulation_pumping', flowrate / fluid_rho)
-        om_var_total = flowrate_to_power(flowrate/ fluid_rho) * self.fuel_properties['price']  # [kW]*[€/kWh] = [€/h]
+        equipment_details = EquipmentDetails(kb)
+        self.global_conversion_efficiency, om_fix_equipment, turnkey_equipment = equipment_details.get_values(
+            'circulation_pumping', flowrate / fluid_rho)
+        om_var_total = flowrate_to_power(flowrate / fluid_rho) * self.fuel_properties['price']  # [kW]*[€/kWh] = [€/h]
 
         info = {
             'supply_capacity': supply_capacity,  # [kW]
             'turnkey': turnkey_equipment,  # [€]
             'om_fix': om_fix_equipment,  # [€/year]
             'om_var': om_var_total  # [€]
-            }
+        }
 
         return info

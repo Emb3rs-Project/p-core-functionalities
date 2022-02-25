@@ -1,7 +1,8 @@
 
 
 from ....Source.characterization.Generate_Equipment.generate_burner import Burner
-
+from ....utilities.kb import KB
+from ....utilities.kb_data import kb
 
 class GenerateBurner():
 
@@ -35,7 +36,7 @@ def testGenerateBurner():
     data = GenerateBurner()
     input_data = {}
     input_data['platform'] = data.__dict__
-    test = Burner(input_data)
+    test = Burner(input_data, KB(kb))
 
 
     print(test.streams[0]['capacity'])

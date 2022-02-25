@@ -42,14 +42,15 @@ OUTPUT: object Burner.
 """
 
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
-from ....General.Auxiliary_General.combustion import combustion_mass_flows, burner_chamber_temperature
+from ....General.Auxiliary_General.combustion import combustion_mass_flows
 from ....General.Auxiliary_General.stream_industry import stream_industry
-from ....KB_General.fluid_material import fluid_material_cp
+from ....KB_General.medium import Medium
+from ....utilities.kb import KB
 
 
 class Burner():
 
-    def __init__(self, in_var):
+    def __init__(self, in_var, kb : KB):
 
 
         ############################################################################################
@@ -60,7 +61,7 @@ class Burner():
         supply_fluid = 'flue_gas'  # Excess heat fluid type
         inflow_fluid = 'air'
         inflow_supply_temperature = 20  # ambient temperature
-
+        medium = Medium(kb)
 
         ############################################################################################
         # INPUT/COMPUTE DATA
@@ -104,19 +105,20 @@ class Burner():
                 self.supply_capacity = 0
 
         # fuel consumption [kg/h]
-        fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(self.supply_capacity,
+        fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(kb,
+                                                                    self.supply_capacity,
                                                                     self.global_conversion_efficiency,
                                                                     self.fuel_type)
 
         # Inflow -----
         inflow_flowrate = m_air
         inflow_target_temperature = 80  # [ºC]
-        inflow_fluid_cp = fluid_material_cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
+        inflow_fluid_cp = medium.cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
         inflow_capacity = inflow_flowrate * ( inflow_target_temperature - inflow_supply_temperature) \
                           * inflow_fluid_cp / 3600  # [kW]
 
         # Excess Heat ---
-        flue_gas_cp = fluid_material_cp(supply_fluid, excess_heat_supply_temperature)
+        flue_gas_cp = medium.cp(supply_fluid, excess_heat_supply_temperature)
         excess_heat_supply_capacity = excess_heat_flowrate * abs(excess_heat_supply_temperature - excess_heat_target_temperature) \
                                       * flue_gas_cp
 

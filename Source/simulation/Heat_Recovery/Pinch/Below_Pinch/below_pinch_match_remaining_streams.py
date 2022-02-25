@@ -34,7 +34,7 @@ from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_stream_
 from module.Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_match_remaining_streams_temperatures import below_pinch_match_remaining_streams_temperatures
 
 
-def below_pinch_match_remaining_streams(hot_stream_index, hot_stream, cold_stream_index, cold_stream, df_cold_streams,
+def below_pinch_match_remaining_streams(kb, hot_stream_index, hot_stream, cold_stream_index, cold_stream, df_cold_streams,
                                         df_hot_streams, hx_delta_T, restriction):
 
     hx_cold_stream_T_cold = -200  # just to run
@@ -55,7 +55,7 @@ def below_pinch_match_remaining_streams(hot_stream_index, hot_stream, cold_strea
                                                       cold_stream_T_hot,cold_stream_min_T_cold, cold_stream_mcp)
 
                     # design HX
-                    new_hx_row = design_hx(hot_stream_index, cold_stream_index, hx_hot_stream_T_hot,
+                    new_hx_row = design_hx(kb, hot_stream_index, cold_stream_index, hx_hot_stream_T_hot,
                                                  hx_hot_stream_T_cold,hot_stream_fluid, hx_cold_stream_T_hot,
                                                  hx_cold_stream_T_cold,cold_stream_fluid, hx_power,
                                                  original_hot_stream_index, original_cold_stream_index)
@@ -70,7 +70,7 @@ def below_pinch_match_remaining_streams(hot_stream_index, hot_stream, cold_strea
                                                                            cold_stream_min_T_cold, cold_stream_mcp,hx_delta_T)
 
                     # Design HX
-                    new_hx_row = design_hx(hot_stream_index, cold_stream_index, hx_hot_stream_T_hot,
+                    new_hx_row = design_hx(kb, hot_stream_index, cold_stream_index, hx_hot_stream_T_hot,
                                                  hx_hot_stream_T_cold, hot_stream_fluid, hx_cold_stream_T_hot,
                                                  hx_cold_stream_T_cold, cold_stream_fluid, hx_power, original_hot_stream_index,
                                                  original_cold_stream_index)

@@ -27,10 +27,7 @@ OUTPUT: all building properties ofr simulation
 
 
 from dataclasses import dataclass
-import json
-import os
 
-from module.utilities import kb_data
 
 
 @dataclass
@@ -40,7 +37,8 @@ class BuildingProperties:
 
     def get_values(self, country, building_type):
 
-        data = self.kb_data["building_properties"]
+        data = self.kb_data.get('building_properties')
+
 
         try:
             if building_type == "residential" or building_type == "hotel":

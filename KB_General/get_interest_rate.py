@@ -19,6 +19,10 @@ import os
 import json
 
 def get_interest_rate(country):
+
+
     interest_rate = 0.1
+
+
     return interest_rate
 

@@ -45,7 +45,7 @@ def solar_collector_climate_api(latitude,longitude):
                                          startyear=None,
                                          endyear=None,
                                          url='https://re.jrc.ec.europa.eu/api/',
-                                         timeout=30)
+                                         timeout=30,map_variables=False)
     climate_df = raw_df[0]
     data = np.zeros((8760, 7))
     data[:, 0] = climate_df['T2m']  # Ambient temperature [ºC]

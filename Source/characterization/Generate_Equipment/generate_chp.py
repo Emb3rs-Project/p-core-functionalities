@@ -47,12 +47,13 @@ OUTPUT: object CHP.
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
 from ....General.Auxiliary_General.combustion import compute_flue_gas_temperature, combustion_mass_flows
 from ....General.Auxiliary_General.stream_industry import stream_industry
-from ....KB_General.fluid_material import fluid_material_cp
+from ....KB_General.medium import Medium
+from ....utilities.kb import KB
 
 
 class Chp():
 
-    def __init__(self, in_var):
+    def __init__(self, in_var,kb : KB):
 
 
         ############################################################################################
@@ -61,6 +62,7 @@ class Chp():
         self.streams = []
         inflow_supply_temperature = 20  # Ambient Temperature [ºC]
         inflow_fluid = 'air'
+        medium = Medium(kb)
 
 
         ############################################################################################
@@ -108,18 +110,18 @@ class Chp():
                 else:
                     self.supply_capacity = 0
 
-        fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(self.supply_capacity,
+        fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(kb, self.supply_capacity,
                                                                     self.global_conversion_efficiency,
                                                                     self.fuel_type)
         thermal_capacity = self.electrical_generation / self.electrical_conversion_efficiency
 
-        excess_heat_supply_temperature, inflow_target_temperature = compute_flue_gas_temperature(self.supply_capacity,
+        excess_heat_supply_temperature, inflow_target_temperature = compute_flue_gas_temperature(kb, self.supply_capacity,
                                                                                                  self.fuel_type,
                                                                                                  fuel_consumption,
                                                                                                  m_flue_gas)
         # Inflow ----
         inflow_flowrate = m_air
-        inflow_fluid_cp = fluid_material_cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
+        inflow_fluid_cp = medium.cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
         inflow_capacity = inflow_flowrate * (
                     inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp / 3600  # [kW]
 

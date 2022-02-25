@@ -32,12 +32,16 @@ RETURN: array info_pinch with dictionaries for each pinch case. It is added a th
 """
 
 import pandas as pd
-from ......KB_General.fuel_properties import fuel_properties
+from ......KB_General.fuel_properties import FuelProperties
+from ......utilities.kb import KB
 
 
-def eco_env_analysis(info_pinch, objects_to_analyze, all_input_objects, country):
+def eco_env_analysis(kb : KB, info_pinch, objects_to_analyze, all_input_objects, country):
 
     for pinch_case in info_pinch:
+
+        # info KB
+        fuel_properties = FuelProperties(kb)
 
         # get pinch case
         df_hx = pinch_case['df_hx']
@@ -69,7 +73,7 @@ def eco_env_analysis(info_pinch, objects_to_analyze, all_input_objects, country)
                     # compute equipment savings
                     if save_object['object_type'] == 'equipment':
 
-                        data = fuel_properties(country, save_object['fuel_type'], 'non-household')
+                        data = fuel_properties.get_values(country, save_object['fuel_type'], 'non-household')
                         co2_emission_per_kw = float(data['co2_emissions'])
                         price = data['price']
                         df_economic = df_economic.append({
@@ -89,7 +93,7 @@ def eco_env_analysis(info_pinch, objects_to_analyze, all_input_objects, country)
                             else:
                                 equipment = 'not found'
 
-                        data = fuel_properties(country, equipment['fuel_type'], 'non-household')
+                        data = fuel_properties.get_values(country, equipment['fuel_type'], 'non-household')
                         price = data['price']
                         co2_emission_per_kw = data['co2_emissions']
 

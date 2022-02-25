@@ -1,7 +1,8 @@
 
 
 from ....Source.characterization.Generate_Equipment.generate_cooling_equipment import Cooling_Equipment
-
+from ....utilities.kb import KB
+from ....utilities.kb_data import kb
 
 class GenerateCoolingEquipment():
 
@@ -29,7 +30,7 @@ def testGenerateCoolingEquipment():
     data = GenerateCoolingEquipment()
     input_data = {}
     input_data['platform'] = data.__dict__
-    test = Cooling_Equipment(input_data)
+    test = Cooling_Equipment(input_data, KB(kb))
 
     print(test.streams[0]['capacity'])
 

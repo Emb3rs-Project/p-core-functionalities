@@ -1,7 +1,8 @@
 
 
 from ....Sink.simulation.Convert.convert_sinks import convert_sinks
-
+from ....utilities.kb import KB
+from ....utilities.kb_data import kb
 
 class ConvertSink():
     def __init__(self):
@@ -37,7 +38,7 @@ def testConvertSink():
     data = ConvertSink()
     input_data = {}
     input_data['platform'] = data.__dict__
-    test = convert_sinks(input_data)
+    test = convert_sinks(input_data, KB(kb))
 
     print(test)
 
