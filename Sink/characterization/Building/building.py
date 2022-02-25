@@ -83,7 +83,9 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
 
 import json
 import math
-from ....KB_General.building_properties import building_properties
+
+from ....utilities.kb import KB
+from ....KB_General.building_properties import BuildingProperties
 from ....Sink.characterization.Building.Auxiliary.building_climate_api import building_climate_api
 from ....Sink.characterization.Building.Auxiliary.wall_area import wall_area
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
@@ -101,8 +103,9 @@ from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data im
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_vertical_surface import ht_radiation_vertical_surface
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_horizontal_surface import ht_radiation_horizontal_surface
 from ....General.Auxiliary_General.get_country import get_country
+from module.KB_General import building_properties
 
-def building(in_var):
+def building(in_var, kb : KB):
 
     ################################################################################################
     # INPUT ----------------------------------------------
@@ -156,7 +159,8 @@ def building(in_var):
 
 
     except:
-        u_wall, u_roof, u_glass, u_floor, tau_glass, alpha_wall, alpha_floor, alpha_glass, cp_wall, cp_floor, cp_roof, air_change_hour = building_properties(country, building_type)
+        building_properties = BuildingProperties(kb)
+        u_wall, u_roof, u_glass, u_floor, tau_glass, alpha_wall, alpha_floor, alpha_glass, cp_wall, cp_floor, cp_roof, air_change_hour = building_properties.get_values(country, building_type)
 
         area_floor = width_floor * length_floor
 

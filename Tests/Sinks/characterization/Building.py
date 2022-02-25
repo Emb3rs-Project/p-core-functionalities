@@ -1,5 +1,6 @@
 from ....Sink.characterization.Building.building import building
-
+from ....utilities.kb import KB
+from ....utilities.kb_data import kb
 class Building():
 
     def __init__(self):
@@ -74,7 +75,7 @@ def testBuilding():
     data_building = Building()
     input_data = {}
     input_data['platform'] = data_building.__dict__
-    test = building(input_data)
+    test = building(input_data, KB(kb))
 
     print(test['streams'][0]['monthly_generation'])
 

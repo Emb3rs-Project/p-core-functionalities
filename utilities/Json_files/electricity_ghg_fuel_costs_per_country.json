@@ -1,0 +1,281 @@
+{
+  "units": {
+    "country": "unit",
+    "electricity_emissions": "gCO2/kWh",
+    "gasoline_cost": "euros/kWh",
+    "diesel_cost": "euros/kWh",
+    "gasoil_cost": "euros/kWh",
+    "fuel_oil_cost": "euros/kWh",
+    "biomass_cost": "euros/kWh"
+  },
+  "Austria": {
+    "country": "Austria",
+    "electricity_emissions": "94",
+    "gasoline_cost": "0.149073718",
+    "diesel_cost": "0.123156222",
+    "gasoil_cost": "0.076297609",
+    "fuel_oil_cost": "0.044467127",
+    "biomass_cost": "0.043199654"
+  },
+  "Belgium": {
+    "country": "Belgium",
+    "electricity_emissions": "174",
+    "gasoline_cost": "0.170026169",
+    "diesel_cost": "0.14808257",
+    "gasoil_cost": "0.065821619",
+    "fuel_oil_cost": "0.036278615",
+    "biomass_cost": "0.043199654"
+  },
+  "Bulgaria": {
+    "country": "Bulgaria",
+    "electricity_emissions": "424",
+    "gasoline_cost": "0.127563224",
+    "diesel_cost": "0.108934236",
+    "gasoil_cost": "0.100589731",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "Croatia": {
+    "country": "Croatia",
+    "electricity_emissions": "167",
+    "gasoline_cost": "0.165133176",
+    "diesel_cost": "0.138720926",
+    "gasoil_cost": "0.069588289",
+    "fuel_oil_cost": "0.053191304",
+    "biomass_cost": "0.043199654"
+  },
+  "Cyprus": {
+    "country": "Cyprus",
+    "electricity_emissions": "642",
+    "gasoline_cost": "0.14591223",
+    "diesel_cost": "0.129051392",
+    "gasoil_cost": "0.0837098",
+    "fuel_oil_cost": "0.063847885",
+    "biomass_cost": "0.043199654"
+  },
+  "Czechia": {
+    "country": "Czechia",
+    "electricity_emissions": "432",
+    "gasoline_cost": "0.150009788",
+    "diesel_cost": "0.123184749",
+    "gasoil_cost": "0.073291882",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "Denmark": {
+    "country": "Denmark",
+    "electricity_emissions": "112",
+    "gasoline_cost": "0.193056653",
+    "diesel_cost": "0.141542109",
+    "gasoil_cost": "0.149280107",
+    "fuel_oil_cost": "0.096695282",
+    "biomass_cost": "0.043199654"
+  },
+  "Estonia": {
+    "country": "Estonia",
+    "electricity_emissions": "746",
+    "gasoline_cost": "0.163137276",
+    "diesel_cost": "0.122270914",
+    "gasoil_cost": "0.088409628",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "Finland": {
+    "country": "Finland",
+    "electricity_emissions": "89",
+    "gasoline_cost": "0.193852087",
+    "diesel_cost": "0.150502412",
+    "gasoil_cost": "0.106213705",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "France": {
+    "country": "France",
+    "electricity_emissions": "56",
+    "gasoline_cost": "0.178378798",
+    "diesel_cost": "0.141818522",
+    "gasoil_cost": "0.09012075",
+    "fuel_oil_cost": "0.053896217",
+    "biomass_cost": "0.043199654"
+  },
+  "Germany": {
+    "country": "Germany",
+    "electricity_emissions": "350",
+    "gasoline_cost": "0.183276292",
+    "diesel_cost": "0.137812993",
+    "gasoil_cost": "0.076695102",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "Greece": {
+    "country": "Greece",
+    "electricity_emissions": "606",
+    "gasoline_cost": "0.19070185",
+    "diesel_cost": "0.137419523",
+    "gasoil_cost": "0",
+    "fuel_oil_cost": "0.047392344",
+    "biomass_cost": "0.043199654"
+  },
+  "Hungary": {
+    "country": "Hungary",
+    "electricity_emissions": "226",
+    "gasoline_cost": "0.1458526",
+    "diesel_cost": "0.126983705",
+    "gasoil_cost": "0.129251272",
+    "fuel_oil_cost": "0.054379537",
+    "biomass_cost": "0.043199654"
+  },
+  "Ireland": {
+    "country": "Ireland",
+    "electricity_emissions": "316",
+    "gasoline_cost": "0.173994343",
+    "diesel_cost": "0.141187002",
+    "gasoil_cost": "0.072620049",
+    "fuel_oil_cost": "0.057295156",
+    "biomass_cost": "0.043199654"
+  },
+  "Italy": {
+    "country": "Italy",
+    "electricity_emissions": "233",
+    "gasoline_cost": "0.186999197",
+    "diesel_cost": "0.148540963",
+    "gasoil_cost": "0.129560655",
+    "fuel_oil_cost": "0.047585148",
+    "biomass_cost": "0.043199654"
+  },
+  "Latvia": {
+    "country": "Latvia",
+    "electricity_emissions": "150",
+    "gasoline_cost": "0.149805023",
+    "diesel_cost": "0.120830813",
+    "gasoil_cost": "0.075418519",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "Lithuania": {
+    "country": "Lithuania",
+    "electricity_emissions": "83",
+    "gasoline_cost": "0.147659486",
+    "diesel_cost": "0.117571894",
+    "gasoil_cost": "0.062879971",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "Luxembourg": {
+    "country": "Luxembourg",
+    "electricity_emissions": "85",
+    "gasoline_cost": "0.154361616",
+    "diesel_cost": "0.121582341",
+    "gasoil_cost": "0.067583804",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "Malta": {
+    "country": "Malta",
+    "electricity_emissions": "357",
+    "gasoline_cost": "0.150761345",
+    "diesel_cost": "0.119024784",
+    "gasoil_cost": "0.100124154",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "Netherlands": {
+    "country": "Netherlands",
+    "electricity_emissions": "390",
+    "gasoline_cost": "0.208140663",
+    "diesel_cost": "0.145584033",
+    "gasoil_cost": "0.133665746",
+    "fuel_oil_cost": "0.048855388",
+    "biomass_cost": "0.043199654"
+  },
+  "Norway": {
+    "country": "Norway",
+    "electricity_emissions": " ",
+    "gasoline_cost": "0",
+    "diesel_cost": "0",
+    "gasoil_cost": "0",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "Poland": {
+    "country": "Poland",
+    "electricity_emissions": "751",
+    "gasoline_cost": "0.143372914",
+    "diesel_cost": "0.120151093",
+    "gasoil_cost": "0.079945132",
+    "fuel_oil_cost": "0.041923157",
+    "biomass_cost": "0.043199654"
+  },
+  "Portugal": {
+    "country": "Portugal",
+    "electricity_emissions": "255",
+    "gasoline_cost": "0.188451681",
+    "diesel_cost": "0.143419946",
+    "gasoil_cost": "0.124454323",
+    "fuel_oil_cost": "0.065911153",
+    "biomass_cost": "0.043199654"
+  },
+  "Romania": {
+    "country": "Romania",
+    "electricity_emissions": "289",
+    "gasoline_cost": "0.135888851",
+    "diesel_cost": "0.115141231",
+    "gasoil_cost": "0.099361208",
+    "fuel_oil_cost": "0.043316408",
+    "biomass_cost": "0.043199654"
+  },
+  "Slovakia": {
+    "country": "Slovakia",
+    "electricity_emissions": "120",
+    "gasoline_cost": "0.159649514",
+    "diesel_cost": "0.124926839",
+    "gasoil_cost": "0",
+    "fuel_oil_cost": "0.051517134",
+    "biomass_cost": "0.043199654"
+  },
+  "Slovenia": {
+    "country": "Slovenia",
+    "electricity_emissions": "241",
+    "gasoline_cost": "0.142081317",
+    "diesel_cost": "0.128855641",
+    "gasoil_cost": "0.103634507",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "Spain": {
+    "country": "Spain",
+    "electricity_emissions": "210",
+    "gasoline_cost": "0.160741971",
+    "diesel_cost": "0.125000615",
+    "gasoil_cost": "0.074530418",
+    "fuel_oil_cost": "0.041258375",
+    "biomass_cost": "0.043199654"
+  },
+  "Sweden": {
+    "country": "Sweden",
+    "electricity_emissions": "12",
+    "gasoline_cost": "0.18557709",
+    "diesel_cost": "0.171280598",
+    "gasoil_cost": "0.118287677",
+    "fuel_oil_cost": "0.0789189",
+    "biomass_cost": "0.043199654"
+  },
+  "United Kingdom": {
+    "country": "United Kingdom",
+    "electricity_emissions": "230",
+    "gasoline_cost": "0",
+    "diesel_cost": "0",
+    "gasoil_cost": "0",
+    "fuel_oil_cost": "0",
+    "biomass_cost": "0.043199654"
+  },
+  "EU 27": {
+    "country": "EU 27",
+    "electricity_emissions": "255",
+    "gasoline_cost": "0.175044047",
+    "diesel_cost": "0.135747274",
+    "gasoil_cost": "0.082025712",
+    "fuel_oil_cost": "0.049596943",
+    "biomass_cost": "0.043199654"
+  }
+}
