@@ -21,6 +21,7 @@ import urllib3
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
 import json
+import pandas as pd
 
 def get_interest_rate(country):
 
@@ -34,4 +35,3 @@ def get_interest_rate(country):
 
     return interest_rate
 
-a = get_interest_rate('Portugal')
