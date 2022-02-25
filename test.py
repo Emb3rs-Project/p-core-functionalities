@@ -1,5 +1,5 @@
 from .Tests.test_lib import defineArguments, processInput
-from .Tests.Sinks.Industry import testIndustry
+from .Tests.Sinks.characterization.Industry import testIndustry
 from .Tests.Sinks.characterization.Building import testBuilding
 from .Tests.Sinks.characterization.Greenhouse import testGreenhouse
 from .Tests.Sinks.simulation.ConvertSink import testConvertSink
