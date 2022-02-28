@@ -24,7 +24,6 @@ from datetime import datetime
 def get_interest_rate(country,kb : KB):
 
     try:
-        country = 'Spain'
         country_acronym = CountryAcronym(kb)
         country_acronym = str(country_acronym.get_values(country))
 
