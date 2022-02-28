@@ -23,26 +23,33 @@ from datetime import datetime
 
 def get_interest_rate(country,kb : KB):
 
-    try:
-        country_acronym = CountryAcronym(kb)
-        country_acronym = str(country_acronym.get_values(country))
+    #     try:
+    #         country = 'Portugal'
+    #         country_acronym = CountryAcronym(kb)
+    #         country_acronym = str(country_acronym.get_values(country))
+    #
+    #         currentMonth = datetime.now().month
+    #
+    #         if currentMonth == 1:
+    #             currentMonth = '12'
+    #             currentYear = str(datetime.now().year -1)
+    #         else:
+    #             currentMonth = '0' + str(currentMonth-1)
+    #             currentYear = str(datetime.now().year)
+    #
+    #         currentYear = str(2012)
+    #         url = 'https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/IRT_LT_MCBY_M?format=JSON&lang=en&freq=M&geo=' + country_acronym + '&time=' + currentYear + '-' + currentMonth
+    #         info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', url).data, "html.parser").text)
+    #         interest_rate = info['value']['0']/100
+    #
+    #         print(country, interest_rate,currentYear)
+    #
+    #     except:
+    #         print('Error getting interest rate. Default: 0.03')
+    #         interest_rate = 0.03
 
-        currentMonth = datetime.now().month
 
-        if currentMonth == 1:
-            currentMonth = '12'
-            currentYear = str(datetime.now().year -1)
-        else:
-            currentMonth = '0' + str(currentMonth-1)
-            currentYear = str(datetime.now().year)
-
-        url = 'https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/IRT_LT_MCBY_M?format=JSON&lang=en&freq=M&geo=' + country_acronym + '&time=' + currentYear + '-' + currentMonth
-        info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', url).data, "html.parser").text)
-        interest_rate = info['value']['0']/100
-
-    except:
-        print('Error getting interest rate. Default: 0.02')
-        interest_rate = 0.02
+    interest_rate = 0.03
 
 
     return interest_rate
