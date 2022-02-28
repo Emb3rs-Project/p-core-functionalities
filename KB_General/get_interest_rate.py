@@ -13,25 +13,38 @@ OUTPUT:
 
 """
 
-import requests
-import ast
-import os
-import json
+
 import urllib3
 from bs4 import BeautifulSoup
-from dataclasses import dataclass
 import json
-import pandas as pd
+from ..utilities.kb import KB
+from ..KB_General.country_acronym import CountryAcronym
+from datetime import datetime
 
-def get_interest_rate(country):
-
-    url = 'https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/TEIMF050?format=JSON&lang=en'
+def get_interest_rate(country,kb : KB):
 
     try:
-        #info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', url).data, "html.parser").text)
-        interest_rate = 0.05
+        country = 'Spain'
+        country_acronym = CountryAcronym(kb)
+        country_acronym = str(country_acronym.get_values(country))
+
+        currentMonth = datetime.now().month
+
+        if currentMonth == 1:
+            currentMonth = '12'
+            currentYear = str(datetime.now().year -1)
+        else:
+            currentMonth = '0' + str(currentMonth-1)
+            currentYear = str(datetime.now().year)
+
+        url = 'https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/IRT_LT_MCBY_M?format=JSON&lang=en&freq=M&geo=' + country_acronym + '&time=' + currentYear + '-' + currentMonth
+        info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', url).data, "html.parser").text)
+        interest_rate = info['value']['0']/100
+
     except:
-        interest_rate = 0.05
+        print('Error getting interest rate. Default: 0.02')
+        interest_rate = 0.02
+
 
     return interest_rate
 

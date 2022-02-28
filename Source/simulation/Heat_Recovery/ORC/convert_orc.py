@@ -114,7 +114,7 @@ def convert_orc(in_var, kb : KB):
     country = get_country(latitude, longitude)
 
     # get interest rate and fuel price
-    interest_rate = get_interest_rate(country)
+    interest_rate = get_interest_rate(country, kb)
     electricity_data = fuel_properties.get_values(country, 'electricity', consumer_type)
 
     # check if streams temperature enough to be converted
