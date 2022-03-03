@@ -123,6 +123,12 @@ def building(in_var, kb : KB):
     building_type = in_var['platform']['building_type']
     building_orientation = in_var['platform']['building_orientation']
 
+    # cooling/heating temperatures set points
+    T_cool_on = in_var['platform']['T_cool_on']  # cooling start temperature working hours [ºC]
+    T_heat_on = in_var['platform']['T_heat_on']  # heating start temperature working hours [ºC]
+    T_off_min = in_var['platform']['T_off_min']  # heating start temperature off peak [ºC]
+    T_off_max = in_var['platform']['T_off_max']  # cooling start temperature off peak [ºC
+
     # get country to obtain building properties
     country = get_country(latitude, longitude)
 
@@ -174,15 +180,9 @@ def building(in_var, kb : KB):
         target_temperature_cool = 7  # Cooling
         supply_temperature_cool = 12
 
-        # cooling/heating temperatures set points
-        T_cool_on = 24  # cooling start temperature working hours [ºC]
-        T_heat_on = 22  # heating start temperature working hours [ºC]
-        T_off_min = 12  # heating start temperature off peak [ºC]
-        T_off_max = 28  # cooling start temperature off peak [ºC
-
         if building_type == 'residential':
             number_person_per_floor = in_var['platform']['number_person_per_floor']
-            Q_gain_per_floor = 5 * area_floor  # occupancy and appliances heat gains [W]
+            Q_gain_per_floor = 4 * area_floor  # occupancy and appliances heat gains [W]
             vol_dhw_set = 0.03 * number_person_per_floor  # daily dwelling DHW consumption per floor [m3]
             renewal_air_per_person = 0  # renewal fresh air [m3/s]
 
@@ -190,14 +190,14 @@ def building(in_var, kb : KB):
             number_rooms = in_var['platform']['number_rooms']
             number_person_per_floor = 2 * number_rooms  # number of rooms per floor
             vol_dhw_set = 0.03 * number_person_per_floor  # daily dwelling DHW consumption [m3]
-            Q_gain_per_floor = 5 * area_floor  # occupancy and appliances heat gains [W]
+            Q_gain_per_floor = 4 * area_floor  # occupancy and appliances heat gains [W]
             renewal_air_per_person = 0  # renewal fresh air [m3/s]
 
         else:
             number_person_per_floor = round(area_floor / 9)  # number of occupants per floor (9m2 per occupant)
             vol_dhw_set = 0
-            Q_gain_per_floor = number_person_per_floor * 108 + (15 + 12) * area_floor  # occupancy and appliances heat gains [W]
-            renewal_air_per_person = 10 * 10 ** (-3)  # [m3/s] per person
+            Q_gain_per_floor = number_person_per_floor * 108 + (18) * area_floor  # occupancy and appliances heat gains [W]
+            renewal_air_per_person = (10 * 10 ** (-3))# [m3/s] per person
 
         emissivity_wall = 0.9
         emissivity_glass = 0.85
@@ -325,12 +325,14 @@ def building(in_var, kb : KB):
     floor_in = {'type': 'wall', 'area': area_floor, 'temperature': T_floor_in}
 
     # Simulation Info
-    time_step = 1000  # time step [s]
+    time_step = 500  # time step [s]
     one_hour = int(3600 / time_step)  # time step number
     max_air_delta_T_per_minute = 1  # 1ºC per min
     max_air_delta_T_allowed = time_step * max_air_delta_T_per_minute / 60
 
     vector_T_interior = []
+    vector_T_out = []
+
 
     for profile_index, profile_operating in enumerate(profile):
 
@@ -339,6 +341,7 @@ def building(in_var, kb : KB):
 
             profile_monthly_heat.append(cumulative_heat_monthly)  # space heating demand [kWh]
             profile_monthly_cool.append(cumulative_cool_monthly)  # space cooling demand [kWh]
+
 
             cumulative_heat_monthly = 0  # reset monthly heating needs
             cumulative_cool_monthly = 0  # reset monthly cooling needs
@@ -549,6 +552,7 @@ def building(in_var, kb : KB):
             # Interior Air
             T_interior = T_interior + (Q_building_floor + Q_heat_required) * time_step / (rho_air * cp_air * volume_floor)  # [ºC]
             vector_T_interior.append(T_interior)
+            vector_T_out.append(T_exterior)
             # Wall
             T_N_wall = explicit_computation_component_temperature(T_N_wall, T_N_wall_in, T_N_wall_out, u_wall,area_N_wall, time_step, c_N_wall)
             T_S_wall = explicit_computation_component_temperature(T_S_wall, T_S_wall_in, T_S_wall_out, u_wall, area_S_wall, time_step, c_S_wall)

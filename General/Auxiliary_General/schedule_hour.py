@@ -25,7 +25,7 @@ import datetime
 
 def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
 
-    # Shutdown Periods FROM USER - e.g. shutdown_periods = [[1/jan/2021,6/jan/2021],[3/aug/2021,10/aug/2021]]
+    # Shutdown Periods FROM USER - e.g. shutdown_periods = [[210,240]]
     shutdown_start_date = []
     shutdown_end_date = []
 
@@ -86,5 +86,5 @@ def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
 
         profile_hour[i] = op
 
-    # OUTPUT
+
     return profile_hour

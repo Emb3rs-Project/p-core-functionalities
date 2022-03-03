@@ -49,7 +49,7 @@ def get_interest_rate(country,kb : KB):
     #         interest_rate = 0.03
 
 
-    interest_rate = 0.03
+    interest_rate = 0.04
 
 
     return interest_rate

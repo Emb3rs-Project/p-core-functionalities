@@ -36,6 +36,8 @@ import numpy as np
 import pvlib
 import datetime
 import pandas as pd
+import matplotlib.pyplot as plt
+import json
 
 def building_climate_api(latitude,longitude):
 
@@ -50,15 +52,37 @@ def building_climate_api(latitude,longitude):
 
     # Get Climate Data from API
     raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30, map_variables=False)
+
+
     climate_df = raw_df[0]
     data = np.zeros((8760,832))
 
-    data[:, 0] = climate_df['T2m']  #Ambient temperature [ºC]
+
+    gatwick = pd.read_csv('C:/Users/alisboa/PycharmProjects/emb3rs/module/Sink/characterization/Building/gatwick_TEMP_RAD_hourly.csv',sep=';')
+    elevation = raw_df[2]["elevation"]
+
+
+    data[:, 0] = climate_df['T2m'] - 0.00356 * elevation  #Ambient temperature [ºC]
+    #data[:, 0] = gatwick['temperature']
+
     data[:, 1] = climate_df['RH'] # Relatitudeive Humidity [%]
+    #data[:, 1] = gatwick['humidity'] # Relatitudeive Humidity [%]
+
+
     data[:, 3] = climate_df['G(h)'] # Global horizontal irradiance [Wh/m2]
+    #data[:, 3] = gatwick['global_horizontal_rad']
+
     data[:, 4] = climate_df['Gb(n)'] # Direct normal irradiance [Wh/m2]
+    #data[:, 4] = gatwick['direct_normal_rad'] # Direct normal irradiance [Wh/m2]
+
+
     data[:, 5] = climate_df['Gd(h)'] # Global diffuse horizontal irradiance [Wh/m2]
+    #data[:, 5] = gatwick['dif_rad_horizontal'] # Global diffuse horizontal irradiance [Wh/m2]
+
+
     data[:, 6] = climate_df['IR(h)'] # Infrared horizontal irradiance [Wh/m2]
+    #data[:, 6] = gatwick['irr_rad'] # Global diffuse horizontal irradiance [Wh/m2]
+
     data[:, 7] = climate_df['WS10m'] # Infrared horizontal irradiance [Wh/m2]
 
 
@@ -148,3 +172,5 @@ def building_climate_api(latitude,longitude):
 
 
     return df_output
+
+
