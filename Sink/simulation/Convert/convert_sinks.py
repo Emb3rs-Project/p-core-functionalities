@@ -157,6 +157,15 @@ def convert_sinks(in_var, kb):
     boiler_efficiency = 0.95
 
 
+    for sink_index,source in enumerate(group_of_sinks):
+        for stream_index,stream in enumerate(source['streams']):
+            hourly_stream_capacity = stream['hourly_generation']
+            break
+        break
+
+    teo_group_of_sinks_demand_factor = [{}] * len(hourly_stream_capacity)
+
+
     ##################################################################################################################
     for sink in group_of_sinks:
         # get grid temperature according to max sink target temperature
@@ -508,6 +517,13 @@ def convert_sinks(in_var, kb):
                 'conversion_technologies': conversion_technologies,  # [€/kW]
             })
 
+            for index, i in enumerate(teo_group_of_sinks_demand_factor):
+                teo_id = 'sink' + str(sink['id']) + 'stream' + str(stream['id'])
+                i[teo_id] = teo_demand_factor[index]
+
+
+
+
         output_sink.append({
             'sink_id': sink['id'],
             'location': [latitude, longitude],
@@ -534,7 +550,9 @@ def convert_sinks(in_var, kb):
 
     all_info = {
         'all_sinks_info': all_sinks_info,
-        'n_demand_list': n_demand_list
+        'n_demand_list': n_demand_list,
+        "teo_demand_factor": teo_group_of_sinks_demand_factor
+
     }
 
 

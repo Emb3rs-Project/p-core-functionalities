@@ -151,6 +151,17 @@ def convert_sources(in_var, kb):
     all_sources_info = []
 
 
+    for source_index,source in enumerate(group_of_sources):
+        for stream_index,stream in enumerate(source['streams']):
+
+            hourly_stream_capacity = stream['hourly_generation']
+            break
+
+        break
+
+    teo_group_of_sources_capacity_factor = [{}] * len(hourly_stream_capacity)
+
+
     ############################################################################################################
     # ROUTINE
     for source_index,source in enumerate(group_of_sources):
@@ -422,6 +433,13 @@ def convert_sources(in_var, kb):
                                 'conversion_technologies': conversion_technologies,  # [€/kW]
                             })
 
+
+
+                            for index,i in enumerate(teo_group_of_sources_capacity_factor):
+                                teo_id = 'source' + str(source['id']) + 'stream' + str(stream['id'])
+                                i[teo_id] = teo_capacity_factor[index]
+
+
         # get conversion for each source
         all_sources_info.append({
             'source_id': source['id'],
@@ -442,6 +460,9 @@ def convert_sources(in_var, kb):
             }
             n_supply_list.append(gis_dict)
 
+
+
+
     all_info = {
         'all_sources_info': all_sources_info,
         'teo_string': 'dhn',
@@ -449,7 +470,8 @@ def convert_sources(in_var, kb):
         "output_fuel": "dh_water_demand",
         "output": 1,
         "input": 1,
-        'n_supply_list': n_supply_list
+        'n_supply_list': n_supply_list,
+        "teo_capacity_factor": teo_group_of_sources_capacity_factor
     }
 
     return all_info
