@@ -423,6 +423,7 @@ def convert_sources(in_var, kb):
 
                             output_converted.append({
                                 'stream_id': stream['id'],
+                                "teo_stream_id": 'source' + str(source['id']) + 'stream' + str(stream['id']),
                                 "input_fuel": None,
                                 "output_fuel": "excess_heat",
                                 "output": 1,
