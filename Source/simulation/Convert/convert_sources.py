@@ -471,7 +471,7 @@ def convert_sources(in_var, kb):
         "output": 1,
         "input": 1,
         'n_supply_list': n_supply_list,
-        "teo_capacity_factor": teo_group_of_sources_capacity_factor
+        "teo_capacity_factor_group": teo_group_of_sources_capacity_factor
     }
 
     return all_info

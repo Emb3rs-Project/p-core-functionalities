@@ -551,7 +551,7 @@ def convert_sinks(in_var, kb):
     all_info = {
         'all_sinks_info': all_sinks_info,
         'n_demand_list': n_demand_list,
-        "teo_demand_factor": teo_group_of_sinks_demand_factor
+        "teo_demand_factor_group": teo_group_of_sinks_demand_factor
 
     }
 
