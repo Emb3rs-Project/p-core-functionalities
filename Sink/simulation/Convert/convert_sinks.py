@@ -163,8 +163,9 @@ def convert_sinks(in_var, kb):
             break
         break
 
-    teo_group_of_sinks_demand_factor = [{}] * len(hourly_stream_capacity)
+    # teo_group_of_sinks_demand_factor = [{}] * len(hourly_stream_capacity)
 
+    teo_group_of_sinks_demand_factor = list({} for i in range(len(hourly_stream_capacity)))
 
     ##################################################################################################################
     for sink in group_of_sinks:
@@ -503,7 +504,7 @@ def convert_sinks(in_var, kb):
                         conversion_technologies.append(info)
 
             yearly_demand = sum(hourly_stream_capacity)
-            teo_demand_factor = [i/yearly_demand for i in hourly_stream_capacity]
+            teo_demand_factor = [float(i/yearly_demand) for i in hourly_stream_capacity]
 
             gis_capacity = conversion_technologies[0]['max_capacity']
 

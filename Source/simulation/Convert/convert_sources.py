@@ -153,13 +153,13 @@ def convert_sources(in_var, kb):
 
     for source_index,source in enumerate(group_of_sources):
         for stream_index,stream in enumerate(source['streams']):
-
             hourly_stream_capacity = stream['hourly_generation']
             break
 
         break
 
-    teo_group_of_sources_capacity_factor = [{}] * len(hourly_stream_capacity)
+
+    teo_group_of_sources_capacity_factor = list({} for i in range(len(hourly_stream_capacity)))
 
 
     ############################################################################################################
