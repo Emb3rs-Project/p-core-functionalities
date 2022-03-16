@@ -156,6 +156,7 @@ class Add_Solar_Thermal():
             P_max = max(matrix[:, 2])
 
         solar_collector_minimum_power = (P_max * 10 ** (-3)) * 0.1  # [kW/m2]
+
         solar_collector_minimum_flowrate = compute_flow_rate(kb, self.supply_fluid,
                                                              solar_collector_minimum_power,
                                                              self.supply_temperature,
@@ -186,7 +187,7 @@ class Add_Solar_Thermal():
 
                 # compute power and flow rate
                 solar_collector_power = Q_rad * eff_solar_collector * 10 ** (-3)  # [kW/m2]
-                solar_collector_flowrate = compute_flow_rate(self.supply_fluid,
+                solar_collector_flowrate = compute_flow_rate(kb,self.supply_fluid,
                                                              solar_collector_power,
                                                              self.supply_temperature,
                                                              self.return_temperature)  # [kg/h.m2]
@@ -194,7 +195,7 @@ class Add_Solar_Thermal():
                 # check if it meets minimum flow rate requirements
                 if solar_collector_flowrate > solar_collector_minimum_flowrate:
                     grid_power = solar_collector_power * hx_efficiency  # [kW/m2]
-                    grid_flowrate = compute_flow_rate(grid_fluid,
+                    grid_flowrate = compute_flow_rate(kb,grid_fluid,
                                                       grid_power,
                                                       grid_supply_temperature,
                                                       grid_return_temperature)  # [kg/h.m2]
