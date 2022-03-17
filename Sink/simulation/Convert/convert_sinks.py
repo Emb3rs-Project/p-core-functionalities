@@ -544,14 +544,17 @@ def convert_sinks(in_var, kb):
 
     n_demand_list = []
     for sink in all_sinks_info['sinks']:
+        total_cap = 0
         for stream in sink['streams']:
-            gis_dict = {
+            total_cap += stream['gis_capacity']
+
+        gis_dict = {
                 'id': sink['sink_id'],
-                'stream_id': stream['stream_id'],
                 'coords': sink['location'],
-                'cap': stream['gis_capacity']  # [kW]
-            }
-            n_demand_list.append(gis_dict)
+                'cap': total_cap  # [kW]
+        }
+
+        n_demand_list.append(gis_dict)
 
     all_info = {
         'all_sinks_info': all_sinks_info,

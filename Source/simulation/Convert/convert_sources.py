@@ -453,14 +453,17 @@ def convert_sources(in_var, kb):
 
     n_supply_list = []
     for source in all_sources_info:
+        total_cap = 0
         for stream in source['streams_converted']:
-            gis_dict = {
+            total_cap += stream['gis_capacity'],  # [kW]
+
+        gis_dict = {
                 'id': source['source_id'],
-                'stream_id': stream['stream_id'],
                 'coords': source['location'],
-                'cap': stream['gis_capacity']  # [kW]
+                'cap': total_cap
             }
-            n_supply_list.append(gis_dict)
+
+        n_supply_list.append(gis_dict)
 
     teo_dhn = {
         "technology": "dhn",

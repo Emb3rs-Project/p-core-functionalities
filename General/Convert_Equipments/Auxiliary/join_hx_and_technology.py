@@ -119,14 +119,14 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
             'input_fuel': input_fuel,
             'output_fuel': output_fuel,
             'equipment': all_equipment,
-            'max_capacity': max_power_available,  # [kW]
-            'turnkey_a': turnkey_a,  # [€/kW]
-            'turnkey_b': turnkey_b,  # [€]
-            'conversion_efficiency': conversion_efficiency,  # []
-            'electrical_conversion_efficiency': electrical_conversion_efficiency,
-            'om_fix': om_fix / max_power_available,  # [€/year.kW]
-            'om_var': om_var / max_power_available,  # [€/kWh]
-            'emissions': emissions / max_power_available,  # [kg.CO2/kWh]
+            'max_capacity': round(max_power_available, 3),  # [kW]
+            'turnkey_a': round(turnkey_a, 3),  # [€/kW]
+            'turnkey_b': round(turnkey_b, 3),  # [€]
+            'conversion_efficiency': round(conversion_efficiency, 3),  # []
+            'electrical_conversion_efficiency': round(electrical_conversion_efficiency, 3),
+            'om_fix': round(om_fix / max_power_available, 3),  # [€/year.kW]
+            'om_var': round(om_var / max_power_available, 3),  # [€/kWh]
+            'emissions': round(emissions / max_power_available, 3),  # [kg.CO2/kWh]
             'technologies': technologies_dict,
         }
     else:
@@ -136,13 +136,13 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
             'input_fuel': input_fuel,
             'output_fuel': output_fuel,
             'equipment': all_equipment,
-            'max_capacity': max_power_available,  # [kW]
-            'turnkey_a': turnkey_a,  # [€/kW]
-            'turnkey_b': turnkey_b,  # [€]
-            'conversion_efficiency': conversion_efficiency,  # []
-            'om_fix': om_fix / max_power_available,  # [€/year.kW]
-            'om_var': om_var / max_power_available,  # [€/kWh]
-            'emissions': emissions / max_power_available,  # [kg.CO2/kWh]
+            'max_capacity': round(max_power_available, 3),  # [kW]
+            'turnkey_a': round(turnkey_a, 3),  # [€/kW]
+            'turnkey_b': round(turnkey_b, 3),  # [€]
+            'conversion_efficiency': round(conversion_efficiency, 3),  # []
+            'om_fix': round(om_fix / max_power_available, 3),  # [€/year.kW]
+            'om_var': round(om_var / max_power_available, 3),  # [€/kWh]
+            'emissions': round(emissions / max_power_available, 3),  # [kg.CO2/kWh]
             'technologies': technologies_dict,
         }
 
