@@ -3,48 +3,21 @@
 from ....Sink.simulation.Convert.convert_sinks import convert_sinks
 from ....utilities.kb import KB
 from ....utilities.kb_data import kb
+import json
+import os
 
-class ConvertSink():
-    def __init__(self):
-
-        stream_1 = {
-            'id': 2,
-            'object_type': 'stream',
-            'stream_type':'inflow',
-            'fluid':'water',
-            'capacity': 263,
-            'supply_temperature': 10,
-            'target_temperature': 80,
-            'schedule': [1,1,1],
-            'hourly_generation':[1000, 1000, 1000]
-        }
-
-        self.group_of_sinks = [{
-                                'id':1,
-                                'consumer_type':'non-household',
-                                'location':[41.14, -8.6],
-                                'streams':[stream_1]
-                            },
-                            {
-                                'id':56,
-                                'consumer_type':'household',
-                                'location':[41.14, -8.6],
-                                'streams':[stream_1]
-                                }]
+script_dir = os.path.dirname(__file__)
+data = json.load(open(os.path.join(script_dir, "sinks_input.json")))
 
 
 def testConvertSink():
-
-    data = ConvertSink()
-    input_data = {}
-    input_data['platform'] = data.__dict__
-    test = convert_sinks(input_data, KB(kb))
+    test = convert_sinks(data, KB(kb))
 
     print(test)
 
     """       
     Expected:
- {'all_sinks_info': {'sink_group_grid_supply_temperature': 100, 'sink_group_grid_return_temperature': 70, 'grid_specific': {'heating': [{'teo_equipment_name': 'sink-grid_specific-grid_specific-ng_boiler_sink', 'output': 1, 'input_fuel': None, 'output_fuel': 'dhn_water', 'equipment': ['hot_water_boiler'], 'max_capacity': 570.7854913764863, 'turnkey_a': 26.210226447766058, 'turnkey_b': 4619.366306192671, 'conversion_efficiency': 0.9215370887082585, 'om_fix': 66.89128926534408, 'om_var': 0.03106451148390813, 'emissions': 0.22779730362698178, 'technologies': [{'object_type': 'equipment', 'equipment_sub_type': 'hot_water_boiler', 'fuel_type': 'natural_gas', 'fuel_properties': {'price': 0.03106451148390813, 'lhv_fuel': 13.1, 'excess_air_fuel': 1.0750000000000002, 'air_to_fuel_ratio': 17.2, 'co2_emissions': 0.209923664, 'density': 0.712}, 'supply_temperature': 100, 'return_temperature': 70, 'supply_capacity': 526, 'global_conversion_efficiency': 0.9215370887082585, 'data_teo': {'equipment': 'hot_water_boiler', 'fuel_type': 'natural_gas', 'max_input_capacity': 570.7854913764863, 'turnkey_a': 26.210226447766054, 'turnkey_b': 4619.366306192673, 'conversion_efficiency': 0.9215370887082585, 'om_fix': 66.89128926534408, 'om_var': 0.03106451148390813, 'emissions': 0.2277973036269818}}]}, {'teo_equipment_name': 'sink-grid_specific-grid_specific-oil_boiler_sink', 'output': 1, 'input_fuel': None, 'output_fuel': 'dhn_water', 'equipment': ['hot_water_boiler'], 'max_capacity': 570.7854913764863, 'turnkey_a': 26.210226447766058, 'turnkey_b': 4619.366306192671, 'conversion_efficiency': 0.9215370887082585, 'om_fix': 66.89128926534408, 'om_var': 0.065911153, 'emissions': 0.28894354037691566, 'technologies': [{'object_type': 'equipment', 'equipment_sub_type': 'hot_water_boiler', 'fuel_type': 'fuel_oil', 'fuel_properties': {'price': 0.065911153, 'lhv_fuel': 11.83, 'excess_air_fuel': 1.15, 'air_to_fuel_ratio': 14.6, 'co2_emissions': 0.266272189, 'density': 850.0}, 'supply_temperature': 100, 'return_temperature': 70, 'supply_capacity': 526, 'global_conversion_efficiency': 0.9215370887082585, 'data_teo': {'equipment': 'hot_water_boiler', 'fuel_type': 'fuel_oil', 'max_input_capacity': 570.7854913764863, 'turnkey_a': 26.210226447766054, 'turnkey_b': 4619.366306192673, 'conversion_efficiency': 0.9215370887082585, 'om_fix': 66.89128926534408, 'om_var': 0.065911153, 'emissions': 0.28894354037691566}}]}, {'teo_equipment_name': 'sink-grid_specific-grid_specific-biomass_boiler_sink', 'output': 1, 'input_fuel': None, 'output_fuel': 'dhn_water', 'equipment': ['hot_water_boiler'], 'max_capacity': 570.7854913764863, 'turnkey_a': 26.210226447766058, 'turnkey_b': 4619.366306192671, 'conversion_efficiency': 0.9215370887082585, 'om_fix': 66.89128926534408, 'om_var': 0.043199654, 'emissions': 0.3971625282201407, 'technologies': [{'object_type': 'equipment', 'equipment_sub_type': 'hot_water_boiler', 'fuel_type': 'biomass', 'fuel_properties': {'price': 0.043199654, 'lhv_fuel': 5.0, 'excess_air_fuel': 1.7, 'air_to_fuel_ratio': 10.76, 'co2_emissions': 0.366, 'density': 700.0}, 'supply_temperature': 100, 'return_temperature': 70, 'supply_capacity': 526, 'global_conversion_efficiency': 0.9215370887082585, 'data_teo': {'equipment': 'hot_water_boiler', 'fuel_type': 'biomass', 'max_input_capacity': 570.7854913764863, 'turnkey_a': 26.210226447766054, 'turnkey_b': 4619.366306192673, 'conversion_efficiency': 0.9215370887082585, 'om_fix': 66.89128926534408, 'om_var': 0.043199654, 'emissions': 0.3971625282201407}}]}, {'teo_equipment_name': 'sink-grid_specific-grid_specific-hp_sink', 'output': 1, 'input_fuel': None, 'output_fuel': 'dhn_water', 'equipment': ['heat_pump'], 'max_capacity': 285.6440596440596, 'turnkey_a': 372.261938286155, 'turnkey_b': 7206.975663369289, 'conversion_efficiency': 1.8414526129317983, 'om_fix': 804.4930677035677, 'om_var': 0.0869, 'emissions': 0.11652236652236651, 'technologies': [{'object_type': 'equipment', 'equipment_sub_type': 'heat_pump', 'fuel_type': 'electricity', 'fuel_properties': {'price': 0.0869, 'lhv_fuel': 'none', 'excess_air_fuel': 'none', 'air_to_fuel_ratio': 'none', 'co2_emissions': 0.255, 'density': 'none'}, 'supply_temperature': 100, 'return_temperature': 70, 'global_conversion_efficiency': 2.188421052631579, 'supply_capacity': 526, 'evap_capacity': 285.6440596440596, 'data_teo': {'equipment': 'heat_pump', 'fuel_type': 'electricity', 'max_input_capacity': 285.6440596440596, 'turnkey_a': 372.26193828615493, 'turnkey_b': 7206.975663369303, 'conversion_efficiency': 2.188421052631579, 'om_fix': 804.4930677035677, 'om_var': 0.0869, 'emissions': 0.11652236652236651}}]}], 'cooling': []}, 'sinks': [{'sink_id': 1, 'location': [41.14, -8.6], 'streams': [{'stream_id': 2, 'gis_capacity': 1052.6315789473686, 'hourly_stream_capacity': [1000, 1000, 1000], 'teo_demand_factor': [0.3333333333333333, 0.3333333333333333, 0.3333333333333333], 'teo_yearly_demand': 3000, 'conversion_technologies': [{'teo_equipment_name': 'sink-1-2-heat_exchanger_sink', 'output': 1, 'input_fuel': 'dhn_water_sink', 'output_fuel': 'sink_1_demand', 'equipment': ['hx_plate', 'circulation_pumping'], 'max_capacity': 1052.6315789473686, 'turnkey_a': 5.130526197232002, 'turnkey_b': 2400.0649533950163, 'conversion_efficiency': 0.9499999999999998, 'om_fix': 0.7410587902957267, 'om_var': 0.00018318802627147375, 'emissions': 0.00021726951953128282, 'technologies': [{'object_type': 'equipment', 'power': 1052.6315789473686, 'available_power': 1000.0000000000001, 'hot_stream_T_hot': 100, 'hot_stream_T_cold': 70, 'cold_stream_T_hot': 80, 'cold_stream_T_cold': 10, 'equipment_sub_type': 'hx_plate', 'u_value': 2000, 'delta_T_lmtd': 36.40956906507349, 'global_conversion_efficiency': 0.95, 'data_teo': {'equipment': 'hx_plate', 'fuel_type': 'none', 'max_input_capacity': 1052.6315789473686, 'turnkey_a': 1.945587131876962, 'turnkey_b': 1976.9518417911759, 'conversion_efficiency': 0.95, 'om_fix': 0.3823691381578579, 'om_var': 0.0, 'emissions': 0}}, {'object_type': 'equipment', 'equipment_sub_type': 'circulation_pumping', 'fuel_type': 'electricity', 'fuel_properties': {'price': 0.215, 'lhv_fuel': 'none', 'excess_air_fuel': 'none', 'air_to_fuel_ratio': 'none', 'co2_emissions': 0.255, 'density': 'none'}, 'fluid': 'water', 'supply_temperature': 100, 'return_temperature': 70, 'supply_capacity': 1052.6315789473686, 'global_conversion_efficiency': 1.0, 'data_teo': {'equipment': 'circulation_pumping', 'fuel_type': 'electricity', 'max_input_capacity': 1052.6315789473686, 'turnkey_a': 3.1849390653550396, 'turnkey_b': 423.11311160384093, 'conversion_efficiency': 1.0, 'om_fix': 0.35868965213786885, 'om_var': 0.00018318802627147375, 'emissions': 0.00021726951953128282}}]}]}]}, {'sink_id': 56, 'location': [41.14, -8.6], 'streams': [{'stream_id': 2, 'gis_capacity': 1052.6315789473686, 'hourly_stream_capacity': [1000, 1000, 1000], 'teo_demand_factor': [0.3333333333333333, 0.3333333333333333, 0.3333333333333333], 'teo_yearly_demand': 3000, 'conversion_technologies': [{'teo_equipment_name': 'sink-56-2-heat_exchanger_sink', 'output': 1, 'input_fuel': 'dhn_water_sink', 'output_fuel': 'sink_56_demand', 'equipment': ['hx_plate', 'circulation_pumping'], 'max_capacity': 1052.6315789473686, 'turnkey_a': 5.130526197232002, 'turnkey_b': 2400.0649533950163, 'conversion_efficiency': 0.9499999999999998, 'om_fix': 0.7410587902957267, 'om_var': 0.00018318802627147375, 'emissions': 0.00021726951953128282, 'technologies': [{'object_type': 'equipment', 'power': 1052.6315789473686, 'available_power': 1000.0000000000001, 'hot_stream_T_hot': 100, 'hot_stream_T_cold': 70, 'cold_stream_T_hot': 80, 'cold_stream_T_cold': 10, 'equipment_sub_type': 'hx_plate', 'u_value': 2000, 'delta_T_lmtd': 36.40956906507349, 'global_conversion_efficiency': 0.95, 'data_teo': {'equipment': 'hx_plate', 'fuel_type': 'none', 'max_input_capacity': 1052.6315789473686, 'turnkey_a': 1.945587131876962, 'turnkey_b': 1976.9518417911759, 'conversion_efficiency': 0.95, 'om_fix': 0.3823691381578579, 'om_var': 0.0, 'emissions': 0}}, {'object_type': 'equipment', 'equipment_sub_type': 'circulation_pumping', 'fuel_type': 'electricity', 'fuel_properties': {'price': 0.215, 'lhv_fuel': 'none', 'excess_air_fuel': 'none', 'air_to_fuel_ratio': 'none', 'co2_emissions': 0.255, 'density': 'none'}, 'fluid': 'water', 'supply_temperature': 100, 'return_temperature': 70, 'supply_capacity': 1052.6315789473686, 'global_conversion_efficiency': 1.0, 'data_teo': {'equipment': 'circulation_pumping', 'fuel_type': 'electricity', 'max_input_capacity': 1052.6315789473686, 'turnkey_a': 3.1849390653550396, 'turnkey_b': 423.11311160384093, 'conversion_efficiency': 1.0, 'om_fix': 0.35868965213786885, 'om_var': 0.00018318802627147375, 'emissions': 0.00021726951953128282}}]}]}]}]}, 'n_demand_list': [{'id': 1, 'stream_id': 2, 'coords': [41.14, -8.6], 'cap': 1052.6315789473686}, {'id': 56, 'stream_id': 2, 'coords': [41.14, -8.6], 'cap': 1052.6315789473686}]}
-    """
+    {'all_sinks_info': {'sink_group_grid_supply_temperature': 100, 'sink_group_grid_return_temperature': 70, 'grid_specific': {'heating': [{'teo_equipment_name': 'sink-grid_specific-grid_specific-ng_boiler_sink', 'output': 1, 'input_fuel': None, 'output_fuel': 'dhn_water_supply', 'equipment': ['hot_water_boiler'], 'max_capacity': 5398.305165783063, 'turnkey_a': 7.4728694961333755, 'turnkey_b': 12456.141503842795, 'conversion_efficiency': 0.9681734141665852, 'om_fix': 19.07155880946723, 'om_var': 0.031234430124559006, 'emissions': 0.21682444583618804, 'technologies': [{'object_type': 'equipment', 'equipment_sub_type': 'hot_water_boiler'    """
 
+    """"""
 

@@ -7,12 +7,16 @@ def coef_solar_thermal_backup(stream_hourly_capacity,solar_thermal_object,heatin
 
     power_provided_by_solar_thermal = 0
     for index,hour_power in enumerate(stream_hourly_capacity):
-        if solar_thermal_hours_production[index] > 0:
-            if hour_power > 0:
-                if hour_power > solar_thermal_hours_production[index]:
-                    power_provided_by_solar_thermal += (hour_power - solar_thermal_hours_production[index])
-                else:
-                    power_provided_by_solar_thermal += hour_power
+
+        try:
+            if solar_thermal_hours_production[index] > 0:
+                if hour_power > 0:
+                    if hour_power > solar_thermal_hours_production[index]:
+                        power_provided_by_solar_thermal += (hour_power - solar_thermal_hours_production[index])
+                    else:
+                        power_provided_by_solar_thermal += hour_power
+        except:
+            power_provided_by_solar_thermal += 0
 
     stream_yearly_power = sum(list(filter(lambda num: num != 0, solar_thermal_hours_production)))
     # update om_var and emissions

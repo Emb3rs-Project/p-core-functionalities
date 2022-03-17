@@ -1,0 +1,5 @@
+﻿ID;name;type;latitude;longitude;supply_temperature;target_temperature;flowrate;fluid_cp;capacity;operating_hours;daily_periods;shutdown_periods;saturday_on;sunday_on;fluid;Include?
+1;Source_1;source;38,758848;-9,107296;280;120;21160;1,4;1316,622;8000;[[0,24]];[[274,300],[335,365]];1;1;flue_gas;yes
+2;Source_2;source;38,773896;-9,111059;90;60;23914;4,2;836,99;7600;[[0,24]];[];1;1;water;yes
+4;Sink_1;sink;39,3859;23;150;500;15660;1,4;2436;8000;[[0,6],[22,24]];[];1;1;steam;yes
+5;Sink_2;sink;39,3923952;23;73;180;13710;2;815;5000;[[6,23]];[[244,300]];0;0;water;yes
