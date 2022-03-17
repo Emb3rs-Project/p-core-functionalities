@@ -455,7 +455,7 @@ def convert_sources(in_var, kb):
     for source in all_sources_info:
         total_cap = 0
         for stream in source['streams_converted']:
-            total_cap += stream['gis_capacity'],  # [kW]
+            total_cap = total_cap + float(stream['gis_capacity']),  # [kW]
 
         gis_dict = {
                 'id': source['source_id'],

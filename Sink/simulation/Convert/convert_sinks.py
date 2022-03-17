@@ -546,7 +546,7 @@ def convert_sinks(in_var, kb):
     for sink in all_sinks_info['sinks']:
         total_cap = 0
         for stream in sink['streams']:
-            total_cap += stream['gis_capacity']
+            total_cap = total_cap + stream['gis_capacity']
 
         gis_dict = {
                 'id': sink['sink_id'],
