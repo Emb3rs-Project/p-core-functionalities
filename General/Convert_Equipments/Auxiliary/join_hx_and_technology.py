@@ -97,7 +97,7 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
     # TEO CHANGES FOR THE NAMES
     if object_type == 'sink':
         if object_id == 'grid_specific':
-            teo_equipment_name = 'grid_specific' + '_' + str(stream_id) + '_' + str(teo_equipment_name)
+            teo_equipment_name = 'grid_specific' + '_' + str(teo_equipment_name)
         else:
             teo_equipment_name = str(object_type) + '_' + str(object_id) + '_' + str(stream_id) + '_' + str(teo_equipment_name)
     else:
@@ -145,5 +145,6 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
             'emissions': emissions / max_power_available,  # [kg.CO2/kWh]
             'technologies': technologies_dict,
         }
+
     return data_teo
 
