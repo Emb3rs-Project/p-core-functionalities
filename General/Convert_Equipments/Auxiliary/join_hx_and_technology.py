@@ -105,6 +105,7 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
 
 
     teo_equipment_name = teo_equipment_name.replace('_','')
+    teo_equipment_name = teo_equipment_name.replace('-','')
 
 
     if 'orc' in teo_equipment_name:
