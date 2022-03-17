@@ -46,27 +46,27 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
 
         if object_id != 'grid_specific':
             if teo_equipment_name.find('hp') == 0 or teo_equipment_name.find('absorption_chiller') == 0 :
-                input_fuel = 'dhn_water_demand' # + electricity
+                input_fuel = 'dhnwaterdemand' # + electricity
             else:
-                input_fuel = 'dhn_water_demand'
+                input_fuel = 'dhnwaterdemand'
         else:
             input_fuel = None
 
         if object_id != 'grid_specific':
-            output_fuel = str(object_id) + '_' + str(stream_id) + '_' + 'demand',
+            output_fuel = str(object_id) + str(stream_id) + 'demand',
         else:
-            output_fuel = 'dhn_water_supply'
+            output_fuel = 'dhnwatersupply'
 
     else:
         if teo_equipment_name.find('hp') == 0:
-            input_fuel = 'excess_heat'  # + electricity
+            input_fuel = 'excessheat'  # + electricity
         else:
-            input_fuel = 'excess_heat'
+            input_fuel = 'excessheat'
 
         if teo_equipment_name.find('orc') == 0 or teo_equipment_name.find('chp') == 0:
-            output_fuel = 'dhn_water_supply' # + electricity
+            output_fuel = 'dhnwatersupply' # + electricity
         else:
-            output_fuel = 'dhn_water_supply'
+            output_fuel = 'dhnwatersupply'
 
 
     for technology in technologies:
@@ -93,7 +93,18 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
     conversion_efficiency = max_power_convertible/max_power_available
     turnkey_a, turnkey_b = linearize_values(turnkey_max_power, turnkey_power_fraction, max_power_available, power_fraction_supply_capacity)
 
-    teo_equipment_name = str(object_type) + '-' + str(object_id) + '-' + str(stream_id) + '-' + str(teo_equipment_name)
+
+    # TEO CHANGES FOR THE NAMES
+    if object_type == 'sink':
+        if object_id == 'grid_specific':
+            teo_equipment_name = 'grid_specific' + '_' + str(stream_id) + '_' + str(teo_equipment_name)
+        else:
+            teo_equipment_name = str(object_type) + '_' + str(object_id) + '_' + str(stream_id) + '_' + str(teo_equipment_name)
+    else:
+        teo_equipment_name = str(object_type) + '_' + str(object_id) + '_' + str(stream_id) + '_' + str(teo_equipment_name)
+
+    teo_equipment_name.replace('_','')
+
 
     if 'orc' in teo_equipment_name:
         for technology in technologies:

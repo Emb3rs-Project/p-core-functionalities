@@ -282,7 +282,7 @@ def convert_sources(in_var, kb):
                                     # add circulation pumping to grid
                                     info_pump_grid = Add_Pump(kb, country, consumer_type,grid_fluid, info_hx_grid.available_power, power_fraction,source_grid_supply_temperature, source_grid_return_temperature)
 
-                                    teo_equipment_name = 'multiple_heat_exchanger'
+                                    teo_equipment_name = 'mhe'
                                     info = join_hx_and_technology(source['id'],[info_hx_intermediate,info_pump_intermediate,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source', teo_equipment_name, stream['id'])
                                     conversion_technologies.append(info)
 
@@ -295,7 +295,7 @@ def convert_sources(in_var, kb):
 
                                     # add circulation pumping to grid
                                     info_pump_grid = Add_Pump(kb, country, consumer_type,grid_fluid, info_hx_grid.available_power, power_fraction, hx_grid_supply_temperature, hx_grid_return_temperature)
-                                    teo_equipment_name = 'single_heat_exchanger'
+                                    teo_equipment_name = 'she'
                                     info = join_hx_and_technology(source['id'],[info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source', teo_equipment_name, stream['id'])
                                     conversion_technologies.append(info)
 
@@ -353,12 +353,13 @@ def convert_sources(in_var, kb):
                                     # add boiler
                                     for fuel in boiler_fuel_type:
                                         info_technology = Add_Boiler(kb, fuel, country, consumer_type,needed_supply_capacity, power_fraction, booster_outlet_temperature, booster_inlet_temperature)
-                                        teo_equipment_name = fuels_teo_nomenclature[info_technology.fuel_type] + '_waste_heat_recovery_' + 'boiler'
+                                        teo_equipment_name = fuels_teo_nomenclature[info_technology.fuel_type] + '_whrb'
 
                                         info = join_hx_and_technology(source['id'],[info_technology,info_hx_grid,info_pump_grid],power_fraction,stream_available_capacity,info_pump_grid.supply_capacity,'source',teo_equipment_name, stream['id'])
                                         conversion_technologies.append(info)
 
                                     # add solar thermal + boiler as backup
+
                                     info_technology_solar_thermal = Add_Solar_Thermal(kb, country, consumer_type, latitude, longitude, needed_supply_capacity, power_fraction, booster_outlet_temperature, booster_inlet_temperature,hx_delta_T,hx_efficiency)
                                     for fuel in boiler_fuel_type:
                                         info_technology_boiler = Add_Boiler(kb, fuel, country, consumer_type, needed_supply_capacity,power_fraction,  booster_outlet_temperature, booster_inlet_temperature)
@@ -425,7 +426,7 @@ def convert_sources(in_var, kb):
                                 'stream_id': stream['id'],
                                 "teo_stream_id": 'source' + str(source['id']) + 'stream' + str(stream['id']),
                                 "input_fuel": None,
-                                "output_fuel": "excess_heat",
+                                "output_fuel": "excessheat",
                                 "output": 1,
                                 'gis_capacity': gis_capacity,  # [kW]
                                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
@@ -461,18 +462,32 @@ def convert_sources(in_var, kb):
             }
             n_supply_list.append(gis_dict)
 
-
-
+    teo_dhn = {
+        "technology": "dhn",
+        "input_fuel": "dhnwatersupply",
+        "output_fuel": "dhnwaterdemand",
+        "output": 1,
+        "input": 1,
+        "max_capacity": 1000000.1,
+        "turnkey_a": 0.1,
+        "conversion_efficiency": 1,
+        "om_fix": 0.1,
+        "om_var": 0.1,
+        "emissions_factor": 0.1,
+        "emissions": "co2",
+        "emission": "co2"
+    }
 
     all_info = {
         'all_sources_info': all_sources_info,
         'teo_string': 'dhn',
-        "input_fuel": "dh_water_supply" ,
-        "output_fuel": "dh_water_demand",
+        "input_fuel": "dhnwatersupply" ,
+        "output_fuel": "dhnwaterdemand",
         "output": 1,
         "input": 1,
         'n_supply_list': n_supply_list,
-        "teo_capacity_factor_group": teo_group_of_sources_capacity_factor
+        "teo_capacity_factor_group": teo_group_of_sources_capacity_factor,
+        "teo_dhn" : teo_dhn
     }
 
     return all_info

@@ -122,6 +122,8 @@ def convert_sinks(in_var, kb):
     group_of_sinks = in_var['platform']['group_of_sinks']  # e.g. building, greenhouse, streams
 
 
+
+
     ##################################################################################################################
     # Initialize array
     output_sink = []
@@ -508,9 +510,11 @@ def convert_sinks(in_var, kb):
 
             gis_capacity = conversion_technologies[0]['max_capacity']
 
+
+
             output_converted.append({
                 'stream_id': stream['id'],
-                'demand_fuel': str(sink['id']) + '_' + str(stream['id']) + '_' + 'demand',
+                'demand_fuel': str(sink['id']) + str(stream['id']) + 'demand',
                 'gis_capacity': gis_capacity,  # [kW]
                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
                 'teo_demand_factor': teo_demand_factor,
@@ -519,7 +523,7 @@ def convert_sinks(in_var, kb):
             })
 
             for index, i in enumerate(teo_group_of_sinks_demand_factor):
-                teo_id = 'sink' + str(sink['id']) + 'stream' + str(stream['id'])
+                teo_id = str(sink['id']) + str(stream['id']) + 'demand'  #'sink' + str(sink['id']) + 'stream' + str(stream['id'])
                 i[teo_id] = teo_demand_factor[index]
 
 
