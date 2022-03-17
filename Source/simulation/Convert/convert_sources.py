@@ -402,7 +402,7 @@ def convert_sources(in_var, kb):
                                 heat_pump_T_evap = stream['target_temperature'] - hx_delta_T
                                 heat_pump_evap_capacity = stream_available_capacity = stream_nominal_capacity
                                 info_technology = Add_Heat_Pump(kb, country, consumer_type, power_fraction, source_grid_supply_temperature,source_grid_return_temperature,heat_pump_T_evap,evap_capacity=heat_pump_evap_capacity)
-                                teo_equipment_name = 'hp'
+                                teo_equipment_name = 'hp_boost'
                                 # add HX to hp
                                 hx_hp_supply_temperature, hx_hp_return_temperature, hx_stream_supply_temperature, hx_stream_target_temperature, = source_get_hx_temperatures(stream['supply_temperature'] - hx_delta_T, stream['target_temperature'] - hx_delta_T,stream['supply_temperature'], stream['target_temperature'], hx_delta_T)
                                 hx_power = stream_nominal_capacity
