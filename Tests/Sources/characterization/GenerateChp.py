@@ -18,7 +18,6 @@ class GenerateChp():
         self.supply_temperature = 180
         self.open_closed_loop = 0  # Open heating circuit? (1-Yes, 0-No)
         self.fuel_type = 'natural_gas'  # Fuel type  (Natural gas, Fuel oil, Biomass)
-        self.equipment_sub_type = 'chp_gas_engine'  # Fuel type  (Natural gas, Fuel oil, Biomass)
         self.global_conversion_efficiency = 0.8406
 
 

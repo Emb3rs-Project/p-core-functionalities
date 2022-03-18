@@ -73,7 +73,7 @@ class Chp():
         sunday_on = in_var['platform']['sunday_on']
         shutdown_periods = in_var['platform']['shutdown_periods']  # e.g: [[59,74],[152,172],[362,365]]
         daily_periods = in_var['platform']['daily_periods']  # e.g: [[8,12],[15,19]]
-        self.equipment_sub_type = in_var['platform']['equipment_sub_type']
+        self.equipment_sub_type = 'chp'
 
         try:
             self.global_conversion_efficiency = in_var['platform']['global_conversion_efficiency']

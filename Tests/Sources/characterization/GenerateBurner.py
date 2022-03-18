@@ -11,6 +11,7 @@ class GenerateBurner():
         ###################
         # MANDATORY INPUT
         self.id = 1000
+        self.equipment_sub_type = 'direct_burner'
         self.saturday_on = 0
         self.sunday_on = 0
         self.shutdown_periods = [[60, 75], [150, 155], [360, 365]]

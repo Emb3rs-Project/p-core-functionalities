@@ -149,7 +149,13 @@ def convert_pinch(in_var, kb : KB):
     ############################################################################################################
     # INPUT
     all_input_objects = in_var['platform']['all_input_objects']  # equipments/processes/isolated streams
-    pinch_delta_T_min = in_var['platform']['pinch_delta_T_min']
+
+    try:
+        pinch_delta_T_min = in_var['platform']['pinch_delta_T_min']
+    except:
+        pinch_delta_T_min = 20
+
+
     latitude, longitude = in_var['platform']['location']
     perform_all_combinations = in_var['platform']['perform_all_combinations']  # parameter to only perform all combinations for isolated streams and processes.
 

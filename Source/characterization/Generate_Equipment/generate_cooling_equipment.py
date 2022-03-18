@@ -8,7 +8,7 @@ INFO: Create Cooling Equipment Object and characterize its streams.
 INPUT: object with:
 
         # id - equipment id
-        # equipment_sub_type - 'co2_chiller', 'cooling_tower', 'air_cooled_chiller', 'water_cooled_chiller'
+        # equipment_sub_type - 'co2_chiller', 'cooling_tower', 'compression_chiller'
         # supply_temperature [ºC]
         # return_temperature [ºC]
         # global_conversion_efficiency - COP

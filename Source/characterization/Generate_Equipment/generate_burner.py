@@ -10,6 +10,7 @@ INFO: Create Direct Burner Object and characterize its streams.
 INPUT: object with:
 
         # id - equipment id
+        # equipment sub type
         # supply_temperature  [ºC]
         # global_conversion_efficiency
         # fuel_type -  fuel type (natural_gas, fuel_oil, biomass, electricity)
@@ -56,15 +57,14 @@ class Burner():
         ############################################################################################
         # Defined Vars
         self.object_type = 'equipment'
-        self.equipment_sub_type = 'burner'  # burner
         self.streams = []
-        supply_fluid = 'flue_gas'  # Excess heat fluid type
         inflow_fluid = 'air'
         inflow_supply_temperature = 20  # ambient temperature
         medium = Medium(kb)
 
         ############################################################################################
         # INPUT/COMPUTE DATA
+        self.equipment_sub_type = in_var['platform']['equipment_sub_type']  # equipment ID
         self.id = in_var['platform']['id']  # equipment ID
         self.fuel_type = in_var['platform']['fuel_type']  # Fuel type  (Natural gas, Fuel oil, Biomass)
         excess_heat_supply_temperature = in_var['platform']['excess_heat_supply_temperature']
@@ -79,10 +79,22 @@ class Burner():
         except:
             self.global_conversion_efficiency = 0.90
 
-        try:
-            excess_heat_target_temperature = in_var['platform']['excess_heat_target_temperature']
-        except:
-            excess_heat_target_temperature = 120
+
+        if self.equipment_sub_type == 'direct_burner':
+            supply_fluid = 'flue_gas'  # Excess heat fluid type
+            try:
+                excess_heat_target_temperature = in_var['platform']['excess_heat_target_temperature']
+            except:
+                excess_heat_target_temperature = 120
+
+        else:
+            supply_fluid = 'air'  # Excess heat fluid type
+            try:
+                excess_heat_target_temperature = in_var['platform']['excess_heat_target_temperature']
+            except:
+                excess_heat_target_temperature = 25
+
+
 
         # schedule
         schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
