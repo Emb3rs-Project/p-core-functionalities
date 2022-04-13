@@ -29,18 +29,14 @@ OUTPUT: df (year hourly profile) with the following keys:
 
 """
 
-
-
 import math
 import numpy as np
 import pvlib
 import datetime
 import pandas as pd
-import matplotlib.pyplot as plt
-import json
+
 
 def building_climate_api(latitude,longitude):
-
 
     # Building data
     N_azimuth = 180
@@ -53,44 +49,25 @@ def building_climate_api(latitude,longitude):
     # Get Climate Data from API
     raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30, map_variables=False)
 
-
     climate_df = raw_df[0]
+
     data = np.zeros((8760,832))
 
-
-    gatwick = pd.read_csv('C:/Users/alisboa/PycharmProjects/emb3rs/module/Sink/characterization/Building/gatwick_TEMP_RAD_hourly.csv',sep=';')
     elevation = raw_df[2]["elevation"]
-
-
     data[:, 0] = climate_df['T2m'] - 0.00356 * elevation  #Ambient temperature [ºC]
-    #data[:, 0] = gatwick['temperature']
-
     data[:, 1] = climate_df['RH'] # Relatitudeive Humidity [%]
-    #data[:, 1] = gatwick['humidity'] # Relatitudeive Humidity [%]
-
-
     data[:, 3] = climate_df['G(h)'] # Global horizontal irradiance [Wh/m2]
-    #data[:, 3] = gatwick['global_horizontal_rad']
-
     data[:, 4] = climate_df['Gb(n)'] # Direct normal irradiance [Wh/m2]
-    #data[:, 4] = gatwick['direct_normal_rad'] # Direct normal irradiance [Wh/m2]
-
-
     data[:, 5] = climate_df['Gd(h)'] # Global diffuse horizontal irradiance [Wh/m2]
-    #data[:, 5] = gatwick['dif_rad_horizontal'] # Global diffuse horizontal irradiance [Wh/m2]
-
-
     data[:, 6] = climate_df['IR(h)'] # Infrared horizontal irradiance [Wh/m2]
-    #data[:, 6] = gatwick['irr_rad'] # Global diffuse horizontal irradiance [Wh/m2]
-
     data[:, 7] = climate_df['WS10m'] # Infrared horizontal irradiance [Wh/m2]
-
 
     # Create Output DF
     df_col_names = ['T_exterior','T_sky','Q_sun_N_facade','Q_sun_S_facade','Q_sun_E_facade', 'Q_sun_W_facade','Q_sun_roof','Q_solar_collector']
     df_output = pd.DataFrame(columns=df_col_names)
 
     for i in range(8760):
+
         T_sky = (data[i,6]/(0.0000000567))**0.25-273
         day = i/24
         GMT = i-np.floor((i)/24)*24+1
@@ -122,7 +99,7 @@ def building_climate_api(latitude,longitude):
             Q_sun_S_facade = 0
             Q_sun_E_facade = 0
             Q_sun_W_facade = 0
-            Q_sun_roof = 0
+            Q_sun_roof = data[i, 3]
             Q_solar_collector = 0
 
         else:
@@ -169,6 +146,7 @@ def building_climate_api(latitude,longitude):
 
         df_output = df_output.append(new_row, ignore_index=True)
 
+    df_output = df_output.append(df_output.tail(n=24), ignore_index=True)
 
 
     return df_output

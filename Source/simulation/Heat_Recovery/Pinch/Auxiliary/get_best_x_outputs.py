@@ -54,7 +54,7 @@ from ......KB_General.get_interest_rate import get_interest_rate
 from ..make_pinch_design_draw import make_pinch_design_draw
 
 
-def get_best_x_outputs(info_pinch,df_optimization,country,lifetime,pinch_delta_T_min,kb):
+def get_best_x_outputs(info_pinch, df_optimization, country, lifetime, pinch_delta_T_min, kb):
 
     best_x_options = []
 
@@ -62,13 +62,12 @@ def get_best_x_outputs(info_pinch,df_optimization,country,lifetime,pinch_delta_T
 
     for index, row in df_optimization.iterrows():
 
-        make_pinch_design_draw(info_pinch[int(df_optimization['index'].loc[index])]['streams'],
+        make_pinch_design_draw(
                                info_pinch[int(df_optimization['index'].loc[index])]['streams_info'],
                                info_pinch[int(df_optimization['index'].loc[index])]['pinch_temperature'],
                                info_pinch[int(df_optimization['index'].loc[index])]['df_hx'].to_dict(orient='records'),
-                              info_pinch[int(df_optimization['index'].loc[index])]['pinch_delta_T_min']
+                               info_pinch[int(df_optimization['index'].loc[index])]['pinch_delta_T_min']
                                )
-
 
         best_x_options.append({
             'ID': info_pinch[int(df_optimization['index'].loc[index])]['ID'],

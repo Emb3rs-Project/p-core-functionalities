@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 
-def make_pinch_design_draw(streams,streams_info,pinch_temperature,pinch_data,pinch_delta_temperature):
+def make_pinch_design_draw(streams_info,pinch_temperature,pinch_data,pinch_delta_temperature):
 
     ################################################################
     # get streams info

@@ -42,9 +42,8 @@ class Medium:
                 data[fluid_name]['specific_heat_c3']) * temperature ** 3
 
         except:
-            print(fluid_name)
-            print('fluid does not exist in db. default: fluid_cp = 1')
-            fluid_cp = 1
+            raise Exception(fluid_name + ' does not exist in the Knowledge Base. '
+                                     'Cp not known.')
 
         return fluid_cp
 
@@ -58,8 +57,9 @@ class Medium:
                   + float(data[fluid_name]['density_c2']) * temperature ** 2 + float(data[fluid_name][
                                                                                          'density_c3']) * temperature ** 3
         except:
-            print('fluid does not exist in db. default: rho = 1')
-            rho = 1
+            raise Exception(fluid_name + ' does not exist in the Knowledge Base. '
+                                         'Density not known.')
+
 
         return rho
 
@@ -72,7 +72,7 @@ class Medium:
             state = data[fluid_name]['fluid_type']
 
         except:
-            print('fluid state does not exist in db. default: state = liquid')
-            state = 'liquid'
+            raise Exception(fluid_name + ' does not exist in the Knowledge Base. '
+                                     'Fluid state (liquid, gas, solid) not known.')
 
         return state

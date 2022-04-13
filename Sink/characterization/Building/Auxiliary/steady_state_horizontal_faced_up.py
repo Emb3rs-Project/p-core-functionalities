@@ -28,14 +28,15 @@ OUTPUT:
 from .....Sink.characterization.Building.Auxiliary.h_convection_horizontal import h_convection_horizontal
 
 
-def steady_state_horizontal_inner_wall(T_wall_in, T_wall, T_interior, u_wall, Q_rad_facade, ratio_wall, area_wall,
+def steady_state_horizontal_face_up(Q_sun_surface,T_surface_up, T_surface, T_interior, u_surface, Q_rad, area_surface,alpha_surface,
                                        interpolation_weight):
 
-    h_horizontal = h_convection_horizontal(T_wall_in, T_interior)
 
-    T_wall_in = (Q_rad_facade * ratio_wall / area_wall
-                 + h_horizontal * T_interior
-                 + u_wall * T_wall) / (h_horizontal + u_wall) * (
-                            1 - interpolation_weight) + T_wall_in * interpolation_weight
+    h_horizontal = h_convection_horizontal(T_surface_up, T_interior)
 
-    return T_wall_in
+    T_surface_up = (Q_sun_surface * alpha_surface / area_surface + Q_rad / area_surface + h_horizontal * T_interior + u_surface * T_surface) / (
+                    h_horizontal + u_surface) * (1 - interpolation_weight) + T_surface_up * interpolation_weight
+
+
+
+    return T_surface_up

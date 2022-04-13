@@ -122,8 +122,6 @@ def convert_sinks(in_var, kb):
     group_of_sinks = in_var['platform']['group_of_sinks']  # e.g. building, greenhouse, streams
 
 
-
-
     ##################################################################################################################
     # Initialize array
     output_sink = []
@@ -227,7 +225,7 @@ def convert_sinks(in_var, kb):
                                                group_of_sinks_grid_specific_power_heating, power_fraction,
                                                grid_supply_temperature, grid_return_temperature)
 
-            teo_equipment_name = fuels_teo_nomenclature[info_technology_group.fuel_type] + '_boiler_sink'
+            teo_equipment_name = fuels_teo_nomenclature[info_technology_group.fuel_type] + '_boiler'
             info = join_hx_and_technology('grid_specific', [info_technology_group], power_fraction,
                                           info_technology_group.data_teo['max_input_capacity'],
                                           group_of_sinks_grid_specific_power_heating, 'sink',
@@ -240,7 +238,7 @@ def convert_sinks(in_var, kb):
                                                  power_fraction, grid_supply_temperature, grid_return_temperature,
                                                  ambient_temperature,supply_capacity=group_of_sinks_grid_specific_power_heating)
 
-        teo_equipment_name = 'hp_sink'
+        teo_equipment_name = 'hp'
         info = join_hx_and_technology('grid_specific', [info_technology_group_hp], power_fraction,
                                       info_technology_group_hp.data_teo['max_input_capacity'],
                                       group_of_sinks_grid_specific_power_heating, 'sink',
@@ -252,7 +250,7 @@ def convert_sinks(in_var, kb):
                                                                 group_of_sinks_grid_specific_power_heating, power_fraction,
                                                                 grid_supply_temperature, grid_return_temperature,hx_delta_T,hx_efficiency)
 
-        teo_equipment_name = 'solar_thermal_' + 'hp_sink'
+        teo_equipment_name = 'st_' + 'hp'
         info = join_hx_and_technology('grid_specific', [info_technology_group_solar_thermal,
                                                         info_technology_group_hp], power_fraction,
                                       group_of_sinks_grid_specific_power_heating,
@@ -300,16 +298,20 @@ def convert_sinks(in_var, kb):
                     if stream['target_temperature'] > 100 - hx_delta_T:
 
                         # add heat pump: evaporator_temperature = grid return temperature - hx_delta_T
+
                         info_technology = Add_Heat_Pump(kb, country, consumer_type, power_fraction,
                                                         stream['target_temperature'], stream['supply_temperature'],
                                                         grid_return_temperature,supply_capacity=stream_nominal_capacity)
 
                         # add circulation pumping to grid
                         power_from_grid = info_technology.evap_capacity
+
                         info_pump_grid = Add_Pump(kb, country, consumer_type, grid_fluid, power_from_grid, power_fraction,
                                                   grid_supply_temperature, grid_return_temperature)
 
-                        teo_equipment_name = 'hp_sink'
+
+
+                        teo_equipment_name = 'hp'
 
                         info = join_hx_and_technology(sink['id'],[info_pump_grid, info_technology], power_fraction,
                                                       info_pump_grid.supply_capacity, stream_nominal_capacity, 'sink',teo_equipment_name, stream['id'])
@@ -343,7 +345,7 @@ def convert_sinks(in_var, kb):
                         needed_supply_capacity = stream_nominal_capacity - hx_power_supply  # [kW]
 
                         if stream['target_temperature'] == hx_sink_target_temperature:
-                            teo_equipment_name = 'heat_exchanger_sink'
+                            teo_equipment_name = 'shex'
 
                             info = join_hx_and_technology(sink['id'],[info_hx_grid, info_pump_grid], power_fraction,
                                                           info_pump_grid.supply_capacity, stream_nominal_capacity, 'sink',teo_equipment_name, stream['id'])
@@ -356,7 +358,7 @@ def convert_sinks(in_var, kb):
                                 info_technology = Add_Boiler(kb, fuel, country, consumer_type, needed_supply_capacity,
                                                              power_fraction, stream['target_temperature'],
                                                              hx_sink_target_temperature)
-                                teo_equipment_name = fuels_teo_nomenclature[info_technology.fuel_type] + '_boiler_sink'
+                                teo_equipment_name = fuels_teo_nomenclature[info_technology.fuel_type] + '_boiler'
                                 info = join_hx_and_technology(sink['id'],[info_hx_grid, info_pump_grid, info_technology],
                                                               power_fraction, info_pump_grid.supply_capacity,
                                                               stream_nominal_capacity, 'sink',teo_equipment_name, stream['id'])
@@ -365,7 +367,7 @@ def convert_sinks(in_var, kb):
                             # add solar thermal + boiler as backup
                             info_technology_solar_thermal = Add_Solar_Thermal(kb, country, consumer_type, latitude, longitude,needed_supply_capacity, power_fraction, stream['target_temperature'], hx_sink_target_temperature,hx_delta_T,hx_efficiency)
                             info_technology_boiler = Add_Boiler(kb, 'natural_gas', country, consumer_type, needed_supply_capacity, power_fraction, stream['target_temperature'],hx_sink_target_temperature)
-                            teo_equipment_name = 'solar_thermal_' + fuels_teo_nomenclature[info_technology_boiler.fuel_type] + '_boiler_sink'
+                            teo_equipment_name = 'st_' + fuels_teo_nomenclature[info_technology_boiler.fuel_type] + '_boiler'
 
                             coef_solar_thermal, info_technology_boiler = coef_solar_thermal_backup(stream['hourly_generation'], info_technology_solar_thermal,info_technology_boiler)
                             info = join_hx_and_technology(sink['id'],[info_hx_grid, info_pump_grid, info_technology_solar_thermal,info_technology_boiler], power_fraction, info_pump_grid.supply_capacity, stream_nominal_capacity, 'sink',teo_equipment_name, stream['id'])
@@ -374,7 +376,7 @@ def convert_sinks(in_var, kb):
 
                             # add solar thermal + heat pump as backup
                             info_technology_heat_pump = Add_Heat_Pump(kb, country, consumer_type, power_fraction,stream['target_temperature'], hx_sink_target_temperature,ambient_temperature,supply_capacity=needed_supply_capacity)
-                            teo_equipment_name = 'solar_thermal_' + 'hp_sink'
+                            teo_equipment_name = 'st_' + 'hp'
                             coef_solar_thermal, info_technology_heat_pump = coef_solar_thermal_backup(stream['hourly_generation'], info_technology_solar_thermal,info_technology_heat_pump)
                             info = join_hx_and_technology(sink['id'],[info_hx_grid, info_pump_grid, info_technology_solar_thermal,info_technology_heat_pump], power_fraction, info_pump_grid.supply_capacity, stream_nominal_capacity, 'sink',teo_equipment_name, stream['id'])
 
@@ -387,7 +389,7 @@ def convert_sinks(in_var, kb):
                             info_technology = Add_Heat_Pump(kb, country, consumer_type, power_fraction,
                                                             hx_sink_target_temperature, hx_sink_supply_temperature,
                                                         grid_return_temperature,supply_capacity=stream_nominal_capacity)
-                            teo_equipment_name = 'hp_sink'
+                            teo_equipment_name = 'hp'
 
                             # heat pump circulation pumping to grid
                             info_pump_grid = Add_Pump(kb, country, consumer_type, grid_fluid, info_technology.evap_capacity,
@@ -459,12 +461,12 @@ def convert_sinks(in_var, kb):
                                                      hx_sink_target_temperature)
 
                             if info_electric_chiller == []:
-                                teo_equipment_name = 'absorption_chiller_' + fuels_teo_nomenclature[info_boiler.fuel_type] + '_boiler_sink'
+                                teo_equipment_name = 'ac_' + fuels_teo_nomenclature[info_boiler.fuel_type] + '_boiler'
                                 info = join_hx_and_technology(sink['id'],[info_hx_grid, info_pump_grid, info_boiler, info_technology],
                                                               power_fraction, info_pump_grid.supply_capacity,
                                                               stream_nominal_capacity, 'sink',teo_equipment_name, stream['id'])
                             else:
-                                teo_equipment_name = 'absorption_chiller_with_electric_chiller_' + fuels_teo_nomenclature[info_boiler.fuel_type] + '_boiler_sink'
+                                teo_equipment_name = 'ac_ec_' + fuels_teo_nomenclature[info_boiler.fuel_type] + '_boiler'
                                 info = join_hx_and_technology(sink['id'],
                                     [info_hx_grid, info_pump_grid, info_boiler, info_technology,info_electric_chiller],
                                     power_fraction, info_pump_grid.supply_capacity,
@@ -477,12 +479,12 @@ def convert_sinks(in_var, kb):
                                                        thermal_chiller_generator_T_hot, hx_sink_target_temperature,
                                                        ambient_temperature)
                         if info_electric_chiller == []:
-                            teo_equipment_name = 'absorption_chiller_' + 'hp_sink'
+                            teo_equipment_name = 'ac_' + 'hp'
                             info = join_hx_and_technology(sink['id'],[info_hx_grid, info_pump_grid, info_heat_pump, info_technology],
                                                       power_fraction, info_pump_grid.supply_capacity,
                                                       stream_nominal_capacity, 'sink', teo_equipment_name, stream['id'])
                         else:
-                            teo_equipment_name = 'absorption_chiller_with_electric_chiller_' + 'hp_sink'
+                            teo_equipment_name = 'ac_ec_' + 'hp'
                             info = join_hx_and_technology(sink['id'],
                                 [info_hx_grid, info_pump_grid, info_heat_pump, info_technology,info_electric_chiller],
                                 power_fraction, info_pump_grid.supply_capacity,
@@ -492,13 +494,13 @@ def convert_sinks(in_var, kb):
 
                     else:
                         if info_electric_chiller == []:
-                            teo_equipment_name = 'absorption_chiller_sink'
+                            teo_equipment_name = 'ac'
 
                             info = join_hx_and_technology(sink['id'],[info_hx_grid, info_pump_grid, info_technology],
                                                           power_fraction, info_pump_grid.supply_capacity,
                                                           stream_nominal_capacity, 'sink',teo_equipment_name, stream['id'])
                         else:
-                            teo_equipment_name = 'absorption_chiller_with_electric_chiller_sink'
+                            teo_equipment_name = 'ac_ec'
                             info = join_hx_and_technology(sink['id'],
                                 [info_hx_grid, info_pump_grid, info_electric_chiller, info_technology], power_fraction,
                                 info_pump_grid.supply_capacity, stream_nominal_capacity, 'sink',teo_equipment_name, stream['id'])
@@ -514,7 +516,7 @@ def convert_sinks(in_var, kb):
 
             output_converted.append({
                 'stream_id': stream['id'],
-                'demand_fuel': str(sink['id']) + str(stream['id']) + 'demand',
+                'demand_fuel': 'sink' + str(sink['id']) + 'str' + str(stream['id']) + 'dem',
                 'gis_capacity': gis_capacity,  # [kW]
                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
                 'teo_demand_factor': teo_demand_factor,
@@ -523,7 +525,7 @@ def convert_sinks(in_var, kb):
             })
 
             for index, i in enumerate(teo_group_of_sinks_demand_factor):
-                teo_id = str(sink['id']) + str(stream['id']) + 'demand'  #'sink' + str(sink['id']) + 'stream' + str(stream['id'])
+                teo_id = 'sink' + str(sink['id']) + 'str' + str(stream['id']) + 'dem'  #'sink' + str(sink['id']) + 'stream' + str(stream['id'])
                 i[teo_id] = teo_demand_factor[index]
 
 

@@ -322,10 +322,14 @@ def make_combinations(kb, combination, all_combinations, hx_delta_T, above_pinch
                             # continue iteration or reach end and save
                             if df_streams_in[
                                 (df_streams_in['Match'] == False) & (df_streams_in['Reach_Pinch'] == True)].shape[0] > 0:
-                                all_combinations = make_combinations(kb, deepcopy(combination.copy()),
-                                                                     deepcopy(all_combinations),
-                                                                     hx_delta_T,
-                                                                     above_pinch)
+
+                                try:
+                                    all_combinations = make_combinations(kb, deepcopy(combination.copy()),
+                                                                         deepcopy(all_combinations),
+                                                                         hx_delta_T,
+                                                                         above_pinch)
+                                except:
+                                    print('A iteration was not feasible')
 
                                 # when iteration goes a step back, last HX designed must be eliminated
                                 df_hx.drop(df_hx.tail(1).index, inplace=True)

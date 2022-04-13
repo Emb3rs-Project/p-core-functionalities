@@ -35,14 +35,16 @@ class HxData:
         try:
             state_1 = data[fluid_1]['fluid_type']
         except:
-            print('fluid does not exist in db. state = liquid')
+            print('Fluid does not exist in the Knowledge Base.'
+                  'Default: fluid state = liquid')
             state_1 = 'liquid'
 
         # get fluid 2 state
         try:
             state_2 = data[fluid_2]['fluid_type']
         except:
-            print('fluid does not exist in db. state = liquid')
+            print('Fluid does not exist in the Knowledge Base.'
+                  'Default: fluid state = liquid')
             state_2 = 'liquid'
 
         # get hx values
@@ -59,7 +61,9 @@ class HxData:
             hx_u_value = 800
 
         else:
-            print('combination of liquids not in db')
+            print('When designing heat exchanger, combination of fluids not found.'
+                  'Default: hx_u_value = 800')
+
             hx_type = 'hx_plate'
             hx_u_value = 800
 

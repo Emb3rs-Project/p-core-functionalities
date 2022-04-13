@@ -7,18 +7,16 @@ import json
 import os
 
 script_dir = os.path.dirname(__file__)
-data = json.load(open(os.path.join(script_dir, "sources_input.json")))
-
+data = json.load(open(os.path.join(script_dir, "convert_sources_input.json")))
 
 def testConvertSource():
 
     test = convert_sources(data, KB(kb))
-    print(test['n_supply_list'])
 
-    """
-    Expected:
-    [{'id': 1, 'stream_id': 15568, 'coords': [38.758848, -9.107296], 'cap': 952.2647966222223}, {'id': 2, 'stream_id': 94990, 'coords': [38.773896, -9.111059], 'cap': 397.68946522584594}]
-    """
+    if test['all_sources_info'][0]['streams_converted'][0]['conversion_technologies'][0]['equipment'] == ['hx_economizer', 'circulation_pumping', 'hx_plate', 'circulation_pumping']:
+        print('Convert Source Test - Everything Correct')
+    else:
+        print('Convert Source Test - Report to CF that something is odd')
 
 
 

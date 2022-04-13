@@ -18,7 +18,7 @@ import datetime
 
 def month_last_hour():
     now = datetime.datetime.now()
-    year = now.year - 1
+    year = 2020  # leap year
 
     jan = datetime.datetime(year, 1, 31, 23,
                             0).timetuple().tm_yday * 24 - 1  # get last month hour (subtract 1 to match profile hour index 0-23)

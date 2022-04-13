@@ -107,11 +107,14 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
     ############################################################################################################
     # PINCH
     # Above Pinch - get HXs and respective storage
+
+
     info_df_hx_above_pinch, above_pinch_analysis_possible = above_and_below_pinch_main(kb, df_streams,
                                                                                        pinch_delta_T_min,
                                                                                        pinch_point_temperature,
                                                                                        hx_delta_T,
                                                                                        above_pinch=True)
+
 
     info_df_hx_above_pinch = design_hx_storage(kb, df_streams_profile,info_df_hx_above_pinch, storage_delta_T=5)
 
@@ -204,7 +207,7 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
                                                     "mcp": split_stream['HX_Hot_Stream_mcp']
                                                    })
 
-                # it was not adding main streams
+                # to add main streams
                 if streams_info[-1]['above_pinch'] == [] and streams_info[-1]['temperatures'][0] > pinch_point_temperature + pinch_delta_T_min:
 
                     streams_info[-1]['above_pinch'].append({
@@ -251,7 +254,7 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
                     })
 
 
-                # it was not adding main streams
+                # to add main streams
                 if streams_info[-1]['above_pinch'] == [] and streams_info[-1]['temperatures'][0] > pinch_point_temperature - pinch_delta_T_min:
 
                     streams_info[-1]['above_pinch'].append({

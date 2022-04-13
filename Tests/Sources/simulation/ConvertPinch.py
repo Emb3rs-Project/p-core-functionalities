@@ -63,11 +63,12 @@ def Option_1():
             # OPTION 1 - TEST 5
             all_input_objects = [
                 stream_industry(1, 'outflow', 'thermal_oil', 349, 183, 0.178 * 3600 / 2, 34.1, [1, 1, 1, 1]),
-                stream_industry(1, 'outflow', 'thermal_oil', 341, 183, 0.1 * 3600 / 2, 16.5,   [1, 1, 1, 1]),
-                stream_industry(1, 'outflow', 'thermal_oil', 268, 183, 0.065 * 3600 / 2, 5.5,  [1, 1, 1, 1]),
-                stream_industry(1, 'outflow', 'thermal_oil', 251, 183, 0.105 * 3600 / 2, 7.2, [1, 1, 1, 1]),
-                stream_industry(1, 'inflow', 'thermal_oil', 163, 194, 0.6 * 3600 / 2, 19.6,  [1, 1, 1, 1]),
-                stream_industry(1, 'inflow', 'thermal_oil', 189, 368, 0.58 * 3600 / 2, 104.8, [1, 1, 0, 1])
+                stream_industry(2, 'outflow', 'thermal_oil', 341, 183, 0.1 * 3600 / 2, 16.5,   [1, 1, 1, 1]),
+                stream_industry(3, 'outflow', 'thermal_oil', 268, 183, 0.065 * 3600 / 2, 5.5,  [1, 1, 1, 1]),
+                stream_industry(4, 'outflow', 'thermal_oil', 251, 183, 0.105 * 3600 / 2, 7.2, [1, 1, 1, 1]),
+                stream_industry(5, 'outflow', 'thermal_oil', 235, 183, 0.008 * 3600 / 2, 7.2, [1, 1, 1, 1]),
+                stream_industry(9, 'inflow', 'thermal_oil', 163, 194, 0.6 * 3600 / 2, 19.6,  [1, 1, 1, 1]),
+                stream_industry(10, 'inflow', 'thermal_oil', 189, 368, 0.58 * 3600 / 2, 104.8, [1, 1, 0, 1])
                 ]
             pinch_delta_T_min = 20
 
@@ -96,19 +97,19 @@ def Option_1():
             # OPTION 1 - TEST 8
             # pag.338
             all_input_objects = [
-                stream_industry(2, 'outflow', 'thermal_oil', 327, 50, 0.1098 * 3600 / 2, 34.1, [1]),
-                stream_industry(5, 'outflow', 'thermal_oil', 495, 307, 0.134 * 3600 / 2, 16.5, [1]),
-                stream_industry(6, 'outflow', 'thermal_oil', 220, 59, 0.2062 * 3600 / 2, 5.5, [1]),
-                stream_industry(9, 'outflow', 'thermal_oil', 222, 67, 0.0739 * 3600 / 2, 7.2, [1]),
-                stream_industry(1, 'inflow', 'thermal_oil', 102, 327, 0.1094 * 3600 / 2, 104.8, [1]),
+                stream_industry(2, 'outflow', 'thermal_oil', 327, 50, 0.1098 * 3600 / 2, 27.1, [1]),
+                stream_industry(5, 'outflow', 'thermal_oil', 495, 307, 0.134 * 3600 / 2, 25.2, [1]),
+                stream_industry(6, 'outflow', 'thermal_oil', 220, 59, 0.1956 * 3600 / 2, 5.5, [1]),
+                stream_industry(9, 'outflow', 'thermal_oil', 222, 67, 0.0703 * 3600 / 2, 7.2, [1]),
+                stream_industry(1, 'inflow', 'thermal_oil', 102, 327, 0.112 * 3600 / 2, 104.8, [1]),
                 stream_industry(3, 'inflow', 'thermal_oil', 35, 164, 0.0698 * 3600 / 2, 104.8, [1]),
-                stream_industry(4, 'inflow', 'thermal_oil', 140, 500, 0.2 * 3600 / 2, 104.8, [1]),
+                stream_industry(4, 'inflow', 'thermal_oil', 140, 500, 0.165 * 3600 / 2, 104.8, [1]),
                 stream_industry(7, 'inflow', 'thermal_oil', 80, 123, 0.0767 * 3600 / 2, 104.8, [1]),
                 stream_industry(8, 'inflow', 'thermal_oil', 59, 169, 0.0618 * 3600 / 2, 104.8, [1]),
                 stream_industry(10, 'inflow', 'thermal_oil', 85, 125, 0.1025 * 3600 / 2, 104.8, [1]),
                 stream_industry(11, 'inflow', 'thermal_oil', 480, 500, 1.625 * 3600 / 2, 104.8, [1]),
             ]
-            pinch_delta_T_min = 20
+            pinch_delta_T_min = 10
 
         # give IDs
         numbers = 1
@@ -195,7 +196,7 @@ def Input_Data_Remaining_Options(all_objects,pinch_delta_T_min=10):
     in_var['platform'] = {}
     in_var['platform']['all_input_objects'] = all_objects
     in_var['platform']['pinch_delta_T_min'] = pinch_delta_T_min
-    in_var['platform']['location'] = [41.13, -8.61]
+    in_var['platform']['location'] = [48.864716, 2.349014]
     in_var['platform']['perform_all_combinations'] = True
     in_var['platform']['number_output_options'] = 3
 

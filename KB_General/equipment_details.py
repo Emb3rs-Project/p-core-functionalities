@@ -53,7 +53,8 @@ class EquipmentDetails:
             electrical_conversion_efficiency = float(data[equipment]['electrical_efficiency_c']) * equipment_char ** float(
                 data[equipment]['electrical_efficiency_n'])
         except:
-            print('equipment not in db. script: equipment_details')
+            raise Exception("Equipment not in the Knowledge Base." )
+
 
         # special case CHP
         if equipment == 'chp_gas_engine' or equipment == 'chp_gas_turbine':

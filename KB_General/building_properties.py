@@ -39,7 +39,6 @@ class BuildingProperties:
 
         data = self.kb_data.get('building_properties')
 
-
         try:
             if building_type == "residential" or building_type == "hotel":
                 u_wall = float(
@@ -76,7 +75,9 @@ class BuildingProperties:
             air_change_hour = float(data[country]["air_change_hour"]) / 3600  # [1/s]
 
         except:
-            print("country does not exist in db. Portugal set as country.")
+            print("Country does not exist in the Knowledge Base. "
+                  "Default: Portugal set as country and respective buildings' characteristics are used.")
+
             country = "Portugal"
 
             if building_type == "residential" or building_type == "hotel":
@@ -99,6 +100,10 @@ class BuildingProperties:
             capacitance_wall = float(data[country]["capacitance_wall"])
             air_change_hour = float(data[country]["air_change_hour"])  # [1/h]
 
+
+        emissivity_wall = 0.9
+        emissivity_glass = 0.85
+
         return (
             u_wall,
             u_roof,
@@ -112,4 +117,6 @@ class BuildingProperties:
             capacitance_floor,
             capacitance_roof,
             air_change_hour,
+            emissivity_wall,
+            emissivity_glass
         )

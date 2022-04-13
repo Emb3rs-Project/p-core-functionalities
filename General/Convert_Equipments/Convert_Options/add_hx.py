@@ -85,6 +85,7 @@ class Add_HX():
                                                 info_power_fraction['supply_capacity']
                                                 )
 
+
         self.data_teo = {
             'equipment': self.equipment_sub_type,
             'fuel_type': 'none',

@@ -14,8 +14,8 @@
             "object_type": "stream",
             "object_id": null,
             "stream_type": "inflow",
-            "supply_temperature": 150,
-            "target_temperature": 500,
+            "supply_temperature": 40,
+            "target_temperature": 150,
             "fluid": "steam",
             "flowrate": 15660,
             "schedule": [

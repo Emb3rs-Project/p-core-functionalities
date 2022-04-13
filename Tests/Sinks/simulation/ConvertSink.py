@@ -7,17 +7,15 @@ import json
 import os
 
 script_dir = os.path.dirname(__file__)
-data = json.load(open(os.path.join(script_dir, "sinks_input.json")))
+data = json.load(open(os.path.join(script_dir, "convert_sinks_input.json")))
 
 
 def testConvertSink():
+
     test = convert_sinks(data, KB(kb))
 
-    print(test)
-
-    """       
-    Expected:
-    {'all_sinks_info': {'sink_group_grid_supply_temperature': 100, 'sink_group_grid_return_temperature': 70, 'grid_specific': {'heating': [{'teo_equipment_name': 'sink-grid_specific-grid_specific-ng_boiler_sink', 'output': 1, 'input_fuel': None, 'output_fuel': 'dhn_water_supply', 'equipment': ['hot_water_boiler'], 'max_capacity': 5398.305165783063, 'turnkey_a': 7.4728694961333755, 'turnkey_b': 12456.141503842795, 'conversion_efficiency': 0.9681734141665852, 'om_fix': 19.07155880946723, 'om_var': 0.031234430124559006, 'emissions': 0.21682444583618804, 'technologies': [{'object_type': 'equipment', 'equipment_sub_type': 'hot_water_boiler'    """
-
-    """"""
+    if test['all_sinks_info']['grid_specific']['heating'][0]['equipment'][0] == 'hot_water_boiler' and test['all_sinks_info']['grid_specific']['heating'][0]['max_capacity'] == 5398.305:
+        print('Convert SINK Test - Everything Correct')
+    else:
+        print('Convert SINK Test - Report to CF that something is odd')
 

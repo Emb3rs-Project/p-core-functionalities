@@ -32,14 +32,7 @@
     "density_c0": "1000.7",
     "density_c1": "-0.076324",
     "density_c2": "-0.0038245",
-    "density_c3": "0.0000039696",
-    "phase_change_temperature_c0": "0",
-    "phase_change_temperature_c1ln_x": "0",
-    "phase_change_enthalpy_c0": "0",
-    "phase_change_enthalpy_c1": "0",
-    "phase_change_enthalpy_c2": "0",
-    "phase_change_enthalpy_c3": "0",
-    "outlet temp compressor": "0"
+    "density_c3": "0.0000039696"
   },
   "steam": {
     "fluid_name": "steam",

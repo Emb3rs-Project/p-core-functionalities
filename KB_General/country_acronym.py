@@ -14,7 +14,9 @@ class CountryAcronym:
         try:
             country_acronym = data_eu_countries[country]
         except:
-            print('Error getting country acronym. Default: PT')
+            print("Error getting country acronym. "
+                  "Default: Portugal set as country")
+
             country_acronym = data_eu_countries['Portugal']
 
         return country_acronym

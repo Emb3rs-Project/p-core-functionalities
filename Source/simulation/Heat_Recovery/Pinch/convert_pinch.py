@@ -155,7 +155,6 @@ def convert_pinch(in_var, kb : KB):
     except:
         pinch_delta_T_min = 20
 
-
     latitude, longitude = in_var['platform']['location']
     perform_all_combinations = in_var['platform']['perform_all_combinations']  # parameter to only perform all combinations for isolated streams and processes.
 
@@ -169,7 +168,6 @@ def convert_pinch(in_var, kb : KB):
     except:
         lifetime = 20
 
-
     # Defined Vars
     country = get_country(latitude, longitude)
     objects_to_analyze = []
@@ -180,32 +178,36 @@ def convert_pinch(in_var, kb : KB):
     # info KB
     fuel_properties = FuelProperties(kb)
     medium = Medium(kb)
+
     ############################################################################################################
     # DATA PRE-TREATMENT
     hx_delta_T = pinch_delta_T_min
     pinch_delta_T_min = pinch_delta_T_min / 2
 
     # analyse processes and isolated streams to build the streams list
-    for object in all_input_objects:
+    try:
+        for object in all_input_objects:
 
-        if object['object_type'] == 'process':  # from processes get streams
-            objects_to_analyze.append(object)
-            for stream in object['streams']:
-                if stream['stream_type'] == 'inflow' or stream['stream_type'] == 'outflow':
-                    streams.append(stream)
-        elif object['object_type'] == 'stream':  # isolated streams
-            streams.append(object)
+            if object['object_type'] == 'process':  # from processes get streams
+                objects_to_analyze.append(object)
+                for stream in object['streams']:
+                    if stream['stream_type'] == 'inflow' or stream['stream_type'] == 'outflow':
+                        streams.append(stream)
+            elif object['object_type'] == 'stream':  # isolated streams
+                streams.append(object)
 
-    # if empty, it means analyse equipment internal heat recovery
-    if streams == []:
-        object = all_input_objects[0]
-        perform_all_combinations = False
-        individual_equipment_optimization = True
-        if object['object_type'] == 'equipment':
-            objects_to_analyze.append(object)
-            for stream in object['streams']:
-                if stream['stream_type'] == 'excess_heat' or stream['stream_type'] == 'inflow':
-                    streams.append(stream)
+        # if empty, it means analyse equipment internal heat recovery
+        if streams == []:
+            object = all_input_objects[0]
+            perform_all_combinations = False
+            individual_equipment_optimization = True
+            if object['object_type'] == 'equipment':
+                objects_to_analyze.append(object)
+                for stream in object['streams']:
+                    if stream['stream_type'] == 'excess_heat' or stream['stream_type'] == 'inflow':
+                        streams.append(stream)
+    except:
+        raise Exception('Convert Pinch - error getting streams to analyse.')
 
 
     # create DF with streams characteristics (df_char) and  DF with only streams profiles (df_profile)
@@ -264,21 +266,24 @@ def convert_pinch(in_var, kb : KB):
                     df_operating = (df_char.copy()).iloc[list(subset)]
                     if df_operating[df_operating['Stream_Type'] == 'Hot'].empty == False and df_operating[
                         df_operating['Stream_Type'] == 'Cold'].empty == False:
-                        df_hx_hourly, design_id = pinch_analysis(kb, df_operating, df_profile, pinch_delta_T_min,
-                                                                 hx_delta_T, design_id)
-                        if df_hx_hourly != []:
-                            for df in df_hx_hourly:
-                                info_pinch.append(df)
+
+                        try:
+                            df_hx_hourly, design_id = pinch_analysis(kb, df_operating, df_profile, pinch_delta_T_min,
+                                                                     hx_delta_T, design_id)
+                            if df_hx_hourly != []:
+                                for df in df_hx_hourly:
+                                    info_pinch.append(df)
+                        except:
+                            print('Covert Pinch, solution not found to the following streams combination:', str(subset))
 
     ############################################################################################################
     # ECONOMIC/CO2 EMISSIONS ANALYSIS
-    all_df = []
     empty_data = None
     empty_df = pd.DataFrame(empty_data, columns=['None'])
 
     # economic and environmental analysis for pinch data
     if objects_to_analyze != []:
-        info_pinch = eco_env_analysis(info_pinch, objects_to_analyze, all_input_objects, country)
+        info_pinch = eco_env_analysis(kb,info_pinch, objects_to_analyze, all_input_objects, country)
     else:
         # isolated streams
         only_isolated_streams = True
@@ -293,7 +298,6 @@ def convert_pinch(in_var, kb : KB):
                                             'energy_investment',
                                             'turnkey'
                                             ])
-
 
     try:
         # perform full analysis
@@ -368,8 +372,7 @@ def convert_pinch(in_var, kb : KB):
         }
 
     except:
-        print('Error in convert_pinch')
-        output = {}
+        raise Exception('Error aggregating techno-economic data.')
 
 
     return output
