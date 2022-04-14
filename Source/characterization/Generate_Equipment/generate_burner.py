@@ -64,7 +64,7 @@ class Burner():
 
         ############################################################################################
         # INPUT/COMPUTE DATA
-        self.equipment_sub_type = 'in_var['platform']['equipment_sub_type']  # direct_burner or indirect_burner
+        self.equipment_sub_type = in_var['platform']['equipment_sub_type']  # direct_burner or indirect_burner
         self.id = in_var['platform']['id']  # equipment ID
         self.fuel_type = in_var['platform']['fuel_type']  # Fuel type  (Natural gas, Fuel oil, Biomass)
         excess_heat_supply_temperature = in_var['platform']['excess_heat_supply_temperature']
