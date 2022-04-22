@@ -75,59 +75,55 @@ from ....Sink.characterization.Building.Auxiliary.h_convection_horizontal import
 from ....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_equation import ht_radiation_equation
 from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
+from ....Error_Handling.error_greenhouse import PlatformGreenhouse
+
+
 
 def greenhouse(in_var):
 
     ##################################################################################################################
     # INPUT ----------------------------------------------
-    latitude = in_var['platform']['latitude']
-    longitude = in_var['platform']['longitude']
-    width = in_var['platform']['width']
-    length = in_var['platform']['length']
-    height = in_var['platform']['height']
-    shutdown_periods = in_var['platform']['shutdown_periods']
-    daily_periods = in_var['platform']['daily_periods']
-    greenhouse_orientation = in_var['platform']['greenhouse_orientation']
-    saturday_on = in_var['platform']['saturday_on']
-    sunday_on = in_var['platform']['sunday_on']
-    lights_on = in_var['platform']['lights_on']  # 1- with lights system ; 0 - no lights system
-    T_cool_on = in_var['platform']['T_cool_on']  # cooling start temperature working hours [ºC]
-    T_heat_on = in_var['platform']['T_heat_on']  # heating start temperature working hours [ºC]
-    thermal_blanket = in_var['platform']['thermal_blanket']  # 1 - yes; 0-no
+    # validate inputs
+    platform_data = PlatformGreenhouse(**in_var['platform'])
 
-    try:
-        f_c = in_var['platform']['f_c']  # Building efficiency - 1=A to 3=F
-        supply_temperature_heat = in_var['platform']['supply_temperature_heat']
-        target_temperature_heat = in_var['platform']['target_temperature_heat']
-        leaf_area_index = in_var['platform']['leaf_area_index']  # ratio of area_plants/area_floor
-        rh_air = in_var['platform']['rh_air']  # controlled interior air RH
-        u_cover = in_var['platform']['u_cover']  # heat transfer coefficient cover [W/m2.K]
-        indoor_air_speed = in_var['platform']['indoor_air_speed']  # indoor_air_speed [m/s]
-        leaf_length = in_var['platform']['leaf_length']  # characteristic leaf length [m]
-        tau_cover_long_wave_radiation = in_var['platform']['tau_cover_long_wave_radiation']  # cover transmissivity long wave radiation
-        emissivity_cover_long_wave_radiation = in_var['platform']['emissivity_cover_long_wave_radiation']  # emissivity long wave radiation
-        tau_cover_solar_radiation = in_var['platform']['tau_cover_solar_radiation']  # cover transmissivity solar radiation
-        power_lights = in_var['platform']['power_lights']  # lighting power per square meter [W/m2]
-    except:
-        target_temperature_heat = 50
-        supply_temperature_heat = 30
-        power_lights = 20  # [W/m2]
-        u_cover = 6  # [W/m2]
-        leaf_area_index = 1
-        rh_air = 0.80  # relative humidity
-        indoor_air_speed = 0.1  # [m/s]
-        leaf_length = 0.027  # [m]
-        tau_cover_long_wave_radiation = 0.3
-        emissivity_cover_long_wave_radiation = 0.2
-        tau_cover_solar_radiation = 0.9
+    # Mandatory
+    latitude, longitude = platform_data.location
+    width = platform_data.width
+    length = platform_data.length
+    height = platform_data.height
+    shutdown_periods = platform_data.shutdown_periods
+    daily_periods = platform_data.daily_periods
+    greenhouse_orientation = platform_data.greenhouse_orientation
+    lights_on = platform_data.lights_on
+    T_cool_on = platform_data.T_cool_on
+    T_heat_on = platform_data.T_heat_on
+    thermal_blanket = platform_data.thermal_blanket
+    greenhouse_efficiency = platform_data.greenhouse_efficiency
+    saturday_on = platform_data.saturday_on
+    sunday_on = platform_data.sunday_on
 
-        greenhouse_efficiency = in_var['platform']['greenhouse_efficiency']
-        if greenhouse_efficiency == 1:
-            f_c = 2.5 * 10 ** (-4) # factor to estimate building infiltrations
-        elif greenhouse_efficiency == 2:
-            f_c = 5 * 10 ** (-4)
-        else:
-            f_c = 15 * 10 ** (-4)
+    # Optional
+    if greenhouse_efficiency == 1:
+        f_c = 2.5 * 10 ** (-4)  # factor to estimate building infiltrations
+    elif greenhouse_efficiency == 2:
+        f_c = 5 * 10 ** (-4)
+    elif greenhouse_efficiency == 3:
+        f_c = 15 * 10 ** (-4)
+    else:
+        f_c = platform_data.f_c
+
+    supply_temperature_heat = platform_data.supply_temperature_heat
+    target_temperature_heat = platform_data.target_temperature_heat
+    leaf_area_index = platform_data.leaf_area_index  # ratio of area_plants/area_floor
+    rh_air = platform_data.rh_air  # controlled interior air RH
+    u_cover = platform_data.u_cover  # heat transfer coefficient cover [W/m2.K]
+    indoor_air_speed = platform_data.indoor_air_speed  # indoor_air_speed [m/s]
+    leaf_length = platform_data.leaf_length  # characteristic leaf length [m]
+    tau_cover_long_wave_radiation = platform_data.tau_cover_long_wave_radiation  # cover transmissivity long wave radiation
+    emissivity_cover_long_wave_radiation = platform_data.emissivity_cover_long_wave_radiation  # emissivity long wave radiation
+    tau_cover_solar_radiation = platform_data.tau_cover_solar_radiation  # cover transmissivity solar radiation
+    power_lights = platform_data.power_lights  # lighting power per square meter [W/m2]
+
 
 
     ##################################################################################################################
@@ -226,7 +222,7 @@ def greenhouse(in_var):
                 cumulative_heat_monthly = 0  # reset monthly heating needs
                 cumulative_cool_monthly = 0  # reset monthly cooling needs
 
-            if profile_index == 8759 :
+            if profile_index == 8759:
                 break  # safety
 
             cumulative_heat_hourly = 0  # reset hourly heating needs
@@ -259,7 +255,7 @@ def greenhouse(in_var):
 
                 # Evapotranspiration
                 vapour_p_plants = (math.exp(20.386 - 5132 / (T_interior + 273.1))) * 0.13  # [kPa]
-                vapour_p_air = (math.exp(20.386 - 5132 / (T_interior + 273.1))) * rh_air * 0.13  # [kPa]
+                vapour_p_air = (math.exp(20.386 - 5132 / (T_interior + 273.1))) * (rh_air/100) * 0.13  # [kPa]
                 w_plant = 0.6219 * vapour_p_plants / (p_atmospheric - vapour_p_plants)  # [kg_water/kg_air]
                 w_air = 0.6219 * vapour_p_air / (p_atmospheric - vapour_p_air)
                 R_aerodynamic = 220 * (leaf_length ** 0.2) / (indoor_air_speed ** 0.8)
@@ -383,15 +379,20 @@ def greenhouse(in_var):
         output = {
             'hot_stream': {
                 'id': 1,
-                'object_type': 'stream',
+                'object_id': None,
+                'object_type': 'stream_building',
                 'fluid': 'water',
                 'stream_type': 'inflow',
+                'capacity': max(profile_hourly_heat),
                 "monthly_generation": profile_monthly_heat,  # [kWh]
                 "hourly_generation": profile_hourly_heat,  # [kWh]
                 "supply_temperature": supply_temperature_heat,  # [ºC]
                 "target_temperature": target_temperature_heat,  # [ºC]
+                "schedule": profile
+
             }
         }
+
 
     except:
         raise Exception("Greenhouse Simulation not feasible. Please, check your inputs")

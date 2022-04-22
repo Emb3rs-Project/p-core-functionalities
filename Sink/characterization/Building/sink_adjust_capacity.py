@@ -18,12 +18,14 @@ OUTPUT: stream with data corrected
 """
 
 
-def adjust_capacity(in_var):
+def sink_adjust_capacity(in_var):
 
     ###############################################################
     # INPUT
+    # error handling platform inputs
+
     user_monthly_capacity = in_var['platform']['user_monthly_capacity']
-    stream = in_var['cf_module']['stream']
+    stream = in_var['cf_module']['stream_building']
 
     ###############################################################
     # COMPUTE
@@ -60,3 +62,5 @@ def adjust_capacity(in_var):
         pass
 
     return stream
+
+

@@ -84,7 +84,10 @@ def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
                 else:
                     op = 0
 
-        profile_hour[i] = op
+        if cycle_start_time == [] and cycle_end_time == []:
+            profile_hour[i] = 0
+        else:
+            profile_hour[i] = op
 
 
     return profile_hour

@@ -134,7 +134,7 @@ class Process:
                                        'none',
                                        0,
                                        0,
-                                       maintenance['capacity'],
+                                       maintenance['maintenance_capacity'],
                                        0,
                                        schedule))
 

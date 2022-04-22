@@ -70,7 +70,7 @@ class Cooling_Equipment():
         ############################################################################################
         # INPUT
         self.id = in_var['platform']['id']  # equipment ID
-        self.equipment_sub_type = in_var['platform']['equipment_sub_type']  # Equipment type (co2_chiller/compression_chiller/cooling_tower)
+        self.equipment_sub_type = in_var['platform']['cooling_equipment_sub_type']  # Equipment type (co2_chiller/compression_chiller/cooling_tower)
         saturday_on = in_var['platform']['saturday_on']
         sunday_on = in_var['platform']['sunday_on']
         shutdown_periods = in_var['platform']['shutdown_periods']  # e.g: [[59,74],[152,172],[362,365]]

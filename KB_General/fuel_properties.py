@@ -50,7 +50,7 @@ class FuelProperties:
             country_acronyms = data_eu_countries['Portugal']
 
         # get price
-        if consumer_type == 'non_household':
+        if consumer_type == 'non-household':
             consumer_type = '1'  # Non Household
         else:
             consumer_type = '0'  # Household

@@ -21,6 +21,8 @@ def testOutflowSimplified():
     industry_data = Industry()
     input_data = {}
     input_data['platform'] = industry_data.__dict__
+
+    print(input_data)
     industry_stream_test = simple_user(input_data)
 
     print(industry_stream_test['streams'][0]['flowrate'])

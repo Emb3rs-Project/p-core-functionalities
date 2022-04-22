@@ -43,28 +43,27 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
 
 
     if object_type == 'sink':
-
-        if object_id != 'grid_specific':
-            if teo_equipment_name.find('hp') == 0 or teo_equipment_name.find('absorption_chiller') == 0 :
-                input_fuel = 'dhnwaterdemand' # + electricity
+        if object_id == 'grid_specific':
+            input_fuel = None
+        else:
+            if teo_equipment_name.find('hp') == 0 or teo_equipment_name.find('absorption_chiller') == 0:
+                input_fuel = 'dhnwaterdemand'  # + electricity
             else:
                 input_fuel = 'dhnwaterdemand'
-        else:
-            input_fuel = None
 
-        if object_id != 'grid_specific':
-            output_fuel = str(object_id) + str(stream_id) + 'demand',
-        else:
+        if object_id == 'grid_specific':
             output_fuel = 'dhnwatersupply'
+        else:
+            output_fuel = 'sink' + str(object_id) + 'str' + str(stream_id) + 'dem'
 
     else:
         if teo_equipment_name.find('hp') == 0:
-            input_fuel = 'excessheat'  # + electricity
+            input_fuel = "eh" + 'str' + str(stream_id) + 'sou' + str(object_id)  # + electricity
         else:
-            input_fuel = 'excessheat'
+            input_fuel = "eh" + 'str' + str(stream_id) + 'sou' + str(object_id)
 
         if teo_equipment_name.find('orc') == 0 or teo_equipment_name.find('chp') == 0:
-            output_fuel = 'dhnwatersupply' # + electricity
+            output_fuel = 'dhnwatersupply'  # + electricity
         else:
             output_fuel = 'dhnwatersupply'
 
@@ -99,9 +98,9 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
         if object_id == 'grid_specific':
             teo_equipment_name = 'grid_specific' + '_' + str(teo_equipment_name)
         else:
-            teo_equipment_name = str(object_type) + '_' + str(object_id) + '_' + str(stream_id) + '_' + str(teo_equipment_name)
+            teo_equipment_name = str(object_type) + '_' + str(object_id) + '_' + 'str' + str(stream_id) + '_' + str(teo_equipment_name)
     else:
-        teo_equipment_name = str(object_type) + '_' + str(object_id) + '_' + str(stream_id) + '_' + str(teo_equipment_name)
+        teo_equipment_name = str(object_type) + '_' + str(object_id) + '_' + 'str' + str(stream_id) + '_' + str(teo_equipment_name)
 
 
     teo_equipment_name = teo_equipment_name.replace('_','')

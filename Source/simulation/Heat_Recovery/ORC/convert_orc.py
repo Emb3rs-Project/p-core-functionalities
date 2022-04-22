@@ -57,11 +57,14 @@ from .....General.Auxiliary_General.get_country import get_country
 from .....KB_General.fuel_properties import FuelProperties
 from .....KB_General.get_interest_rate import get_interest_rate
 from .....utilities.kb import KB
+from .....Error_Handling.error_convert_orc import PlatformConvertORC
 
 def convert_orc(in_var, kb : KB):
 
     #################################################################
     # INPUT
+    PlatformConvertORC(**in_var['platform'])
+
     streams = in_var['platform']['streams']
     consumer_type = in_var['platform']['consumer_type']
     location = in_var['platform']['location']

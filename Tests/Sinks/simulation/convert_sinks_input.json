@@ -4,10 +4,7 @@
       {
         "id": 3,
         "consumer_type": "non-household",
-        "location": [
-          38.718564,
-          -9.160197
-        ],
+        "location": [38.718564, -9.160197],
         "streams": [
           {
             "id": 50169,
@@ -17597,10 +17594,7 @@
       {
         "id": 4,
         "consumer_type": "non-household",
-        "location": [
-          38.730282,
-          -9.162399
-        ],
+        "location": [38.718564, -9.160197],
         "streams": [
           {
             "id": 14803,

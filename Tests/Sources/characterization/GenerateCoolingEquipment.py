@@ -15,7 +15,7 @@ class GenerateCoolingEquipment():
         self.sunday_on = 1
         self.shutdown_periods = [[60, 75], [150, 155], [360, 365]]
         self.daily_periods = [[9, 24]]
-        self.equipment_sub_type = 'compression_chiller'
+        self.cooling_equipment_sub_type = 'compression_chiller'
 
         # DEPENDING ON OTHER VARS
         # If user does not want to put directly the nominal capacity, the processes fed by this boiler must be input - check in TESTS -> Source -> chracterization -> Process.py

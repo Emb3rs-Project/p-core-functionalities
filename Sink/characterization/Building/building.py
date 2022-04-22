@@ -102,13 +102,15 @@ from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data im
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_vertical_surface import ht_radiation_vertical_surface
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_horizontal_surface import ht_radiation_horizontal_surface
 from ....General.Auxiliary_General.get_country import get_country
+from ....Error_Handling.error_building import PlatformBuilding
 
 def building(in_var, kb : KB):
 
     ################################################################################################
     # INPUT ----------------------------------------------
-    latitude = in_var['platform']['latitude']
-    longitude = in_var['platform']['longitude']
+    platform_data = PlatformBuilding(**in_var['platform'])
+
+    latitude, longitude = in_var['platform']['location']
     number_floor = in_var['platform']['number_floor']
     width_floor = in_var['platform']['width_floor']
     length_floor = in_var['platform']['length_floor']
@@ -123,10 +125,21 @@ def building(in_var, kb : KB):
     daily_periods = in_var['platform']['daily_periods']
     building_type = in_var['platform']['building_type']
     building_orientation = in_var['platform']['building_orientation']
+
     T_cool_on = in_var['platform']['T_cool_on']  # cooling start temperature working hours [ºC]
     T_heat_on = in_var['platform']['T_heat_on']  # heating start temperature working hours [ºC]
     T_off_min = in_var['platform']['T_off_min']  # heating start temperature off peak [ºC]
     T_off_max = in_var['platform']['T_off_max']  # cooling start temperature off peak [ºC
+
+    # random non accessible value
+    if T_off_min == None:
+        T_off_min=-1000
+    if T_off_max == None:
+        T_off_max=1000
+    if T_heat_on == None:
+        T_heat_on=-1000
+    if T_cool_on == None:
+        T_cool_on=1000
 
     # get country to obtain building properties
     country = get_country(latitude, longitude)
@@ -137,10 +150,6 @@ def building(in_var, kb : KB):
         target_temperature_heat = in_var['platform']['target_temperature_heat']
         supply_temperature_cool = in_var['platform']['supply_temperature_cool']  # Cooling
         target_temperature_cool = in_var['platform']['target_temperature_cool']
-        T_cool_on = in_var['platform']['T_cool_on']  # cooling start temperature working hours [ºC]
-        T_heat_on = in_var['platform']['T_heat_on']  # heating start temperature working hours [ºC]
-        T_off_min = in_var['platform']['T_off_min']  # heating start temperature off peak [ºC]
-        T_off_max = in_var['platform']['T_off_max']  # cooling start temperature off peak [ºC]
         tau_glass = in_var['platform']['tau_glass']  # Glass transmissivity
         u_wall = in_var['platform']['u_wall']  # Wall heat transfer coefficient [W/m2.K]
         u_roof = in_var['platform']['u_roof']
@@ -265,35 +274,35 @@ def building(in_var, kb : KB):
     profile_hourly_cool = []
     profile_monthly_heat = []
     profile_monthly_cool = []
-    T_interior = copy.copy(T_off_min)  # floor interior air temperature
-    T_N_wall = copy.copy(T_off_min)  # wall temperature
-    T_S_wall = copy.copy(T_off_min)
-    T_E_wall = copy.copy(T_off_min)
-    T_W_wall = copy.copy(T_off_min)
-    T_N_wall_in = copy.copy(T_off_min)  # interior surface wall temperature
-    T_S_wall_in = copy.copy(T_off_min)
-    T_E_wall_in = copy.copy(T_off_min)
-    T_W_wall_in = copy.copy(T_off_min)
-    T_N_wall_out = copy.copy(T_off_min)  # exterior surface wall temperature
-    T_S_wall_out = copy.copy(T_off_min)
-    T_E_wall_out = copy.copy(T_off_min)
-    T_W_wall_out = copy.copy(T_off_min)
-    T_N_glass_out = copy.copy(T_off_min)
-    T_S_glass_out = copy.copy(T_off_min)
-    T_E_glass_out = copy.copy(T_off_min)
-    T_W_glass_out = copy.copy(T_off_min)
-    T_N_glass_in = copy.copy(T_off_min)
-    T_E_glass_in = copy.copy(T_off_min)
-    T_W_glass_in = copy.copy(T_off_min)
-    T_S_glass_in = copy.copy(T_off_min)
-    T_roof = copy.copy(T_off_min)  # last floor. roof temperature
-    T_roof_in = copy.copy(T_off_min)
-    T_roof_out = copy.copy(T_off_min)
-    T_deck = copy.copy(T_off_min)  # deck temperature
-    T_deck_above = copy.copy(T_off_min)  # floor of building floors (above zero floor)
-    T_deck_below = copy.copy(T_off_min)  # deck of building floors larger than 0, except last floor
-    T_floor = copy.copy(T_off_min)  # zero floor, floor temperature
-    T_floor_in = copy.copy(T_off_min)
+    T_interior = copy.copy(15)  # floor interior air temperature
+    T_N_wall = copy.copy(15)  # wall temperature
+    T_S_wall = copy.copy(15)
+    T_E_wall = copy.copy(15)
+    T_W_wall = copy.copy(15)
+    T_N_wall_in = copy.copy(15)  # interior surface wall temperature
+    T_S_wall_in = copy.copy(15)
+    T_E_wall_in = copy.copy(15)
+    T_W_wall_in = copy.copy(15)
+    T_N_wall_out = copy.copy(15)  # exterior surface wall temperature
+    T_S_wall_out = copy.copy(15)
+    T_E_wall_out = copy.copy(15)
+    T_W_wall_out = copy.copy(15)
+    T_N_glass_out = copy.copy(15)
+    T_S_glass_out = copy.copy(15)
+    T_E_glass_out = copy.copy(15)
+    T_W_glass_out = copy.copy(15)
+    T_N_glass_in = copy.copy(15)
+    T_E_glass_in = copy.copy(15)
+    T_W_glass_in = copy.copy(15)
+    T_S_glass_in = copy.copy(15)
+    T_roof = copy.copy(15)  # last floor. roof temperature
+    T_roof_in = copy.copy(15)
+    T_roof_out = copy.copy(15)
+    T_deck = copy.copy(15)  # deck temperature
+    T_deck_above = copy.copy(15)  # floor of building floors (above zero floor)
+    T_deck_below = copy.copy(15)  # deck of building floors larger than 0, except last floor
+    T_floor = copy.copy(15)  # zero floor, floor temperature
+    T_floor_in = copy.copy(15)
     vol_dhw = 0
     cumulative_heat_monthly = 0
     cumulative_cool_monthly = 0
@@ -657,23 +666,29 @@ def building(in_var, kb : KB):
         output = {
             'hot_stream': {
                 'id': 1,
-                'object_type': 'stream',
+                'object_type': 'stream_building',
+                'object_id': None,
                 'fluid': 'water',
                 'stream_type': 'inflow',
+                'capacity': max(profile_hourly_heat),
                 "monthly_generation": profile_monthly_heat,  # [kWh]
                 "hourly_generation": profile_hourly_heat,  # [kWh]
                 "supply_temperature": supply_temperature_heat,  # [ºC]
                 "target_temperature": target_temperature_heat,  # [ºC]
+                "schedule": profile
             },
             'cold_stream': {
                 'id': 2,
-                'object_type': 'stream',
+                'object_type': 'stream_building',
+                'object_id': None,
                 'fluid': 'water',
                 'stream_type': 'inflow',
+                'capacity': max(profile_hourly_cool),
                 "monthly_generation": profile_monthly_cool,  # [kWh]
                 "hourly_generation": profile_hourly_cool,  # [kWh]
                 "supply_temperature": supply_temperature_cool,  # [ºC]
-                "target_temperature": target_temperature_cool  # [ºC]
+                "target_temperature": target_temperature_cool,  # [ºC]
+                "schedule": profile
             }
 
         }

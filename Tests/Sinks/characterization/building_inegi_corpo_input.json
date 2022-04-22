@@ -1,7 +1,6 @@
 {
   "platform": {
-    "latitude": 41.1045,
-    "longitude": -8.3539,
+    "location": [41.1045, -8.3539],
     "building_orientation": "S",
     "building_type": "office",
     "number_floor": 1,
@@ -24,7 +23,7 @@
     "space_heating_type": 1,
     "T_cool_on": 25,
     "T_heat_on": 22,
-    "T_off_min": 0,
-    "T_off_max": 50
+    "T_off_min": null,
+    "T_off_max": null
   }
 }

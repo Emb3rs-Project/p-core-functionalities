@@ -69,7 +69,7 @@ class Boiler():
         # INPUT/COMPUTE DATA
         self.id = in_var['platform']['id']  # equipment ID
         self.fuel_type = in_var['platform']['fuel_type']  # Fuel type  (Natural gas, Fuel oil, Biomass)
-        supply_temperature = in_var['platform']['supply_temperature']
+        supply_temperature = in_var['platform']['equipment_supply_temperature']
         open_closed_loop = in_var['platform']['open_closed_loop']  # Open heating circuit? (1-Yes, 0-No)
         saturday_on = in_var['platform']['saturday_on']
         sunday_on = in_var['platform']['sunday_on']
@@ -86,7 +86,7 @@ class Boiler():
         if open_closed_loop == 1:
             return_temperature = 20  # Ambient Temperature
         else:
-            return_temperature = in_var['platform']['return_temperature']
+            return_temperature = in_var['platform']['equipment_return_temperature']
 
         # schedule
         schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)

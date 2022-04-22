@@ -164,7 +164,7 @@ def convert_pinch(in_var, kb : KB):
         number_output_options = 3
 
     try:
-        lifetime = in_var.lifetime
+        lifetime = in_var['platform']['lifetime']
     except:
         lifetime = 20
 

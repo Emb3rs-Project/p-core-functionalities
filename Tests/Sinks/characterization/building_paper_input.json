@@ -1,7 +1,6 @@
 {
   "platform": {
-    "latitude": 51.153,
-    "longitude": -0.182,
+    "location": [51.153, -0.182],
     "building_orientation": "S",
     "building_type": "office",
     "number_floor": 3,

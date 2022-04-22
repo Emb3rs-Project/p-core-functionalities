@@ -29,8 +29,8 @@ def Option_1():
             all_input_objects = [
                 stream_industry(1, 'outflow', 'thermal_oil', 750, 350, 0.045 * 3600 / 2, 0.045 * 3600 * 2 * (750 - 350),  [1, 1, 1, 1]),
                 stream_industry(1, 'outflow', 'thermal_oil', 550, 250, 0.04 * 3600 / 2, 0.04 * 3600 * 2 * (550 - 250), [1, 1, 1, 1]),
-                stream_industry(1, 'inflow', 'thermal_oil', 300, 900, 0.043 * 3600 / 2, 0.043 * 3600 * 2 * (900 - 300), [1, 1, 0, 1]),
-                stream_industry(1, 'inflow', 'thermal_oil', 200, 550, 0.02 * 3600 / 2, 0.02 * 3600 * 2 * (550 - 200), [1, 1, 1, 0])]
+                stream_industry(1, 'inflow', 'thermal_oil', 300, 900, 0.043 * 3600 / 2, 0.043 * 3600 * 2 * (900 - 300), [1, 1, 1, 1]),
+                stream_industry(1, 'inflow', 'thermal_oil', 200, 550, 0.02 * 3600 / 2, 0.02 * 3600 * 2 * (550 - 200), [1, 1, 1, 1])]
             pinch_delta_T_min = 50
 
         elif test == 3:
@@ -179,10 +179,10 @@ class GenerateBoiler():
         self.sunday_on = 0
         self.shutdown_periods = []
         self.daily_periods = [[0, 24]]
-        self.supply_temperature = 180
+        self.equipment_supply_temperature = 180
         self.open_closed_loop = 0  # Open heating circuit? (1-Yes, 0-No)
         self.fuel_type = 'natural_gas'  # Fuel type  (Natural gas, Fuel oil, Biomass)
-        self.return_temperature = 50
+        self.equipment_return_temperature = 50
         self.supply_capacity = 7500
         self.processes = []
         self.equipment_sub_type = 'steam_boiler'
@@ -197,7 +197,7 @@ def Input_Data_Remaining_Options(all_objects,pinch_delta_T_min=10):
     in_var['platform']['all_input_objects'] = all_objects
     in_var['platform']['pinch_delta_T_min'] = pinch_delta_T_min
     in_var['platform']['location'] = [48.864716, 2.349014]
-    in_var['platform']['perform_all_combinations'] = True
+    in_var['platform']['perform_all_combinations'] = False
     in_var['platform']['number_output_options'] = 3
 
     return in_var

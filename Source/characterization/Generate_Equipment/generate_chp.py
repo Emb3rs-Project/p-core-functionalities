@@ -74,13 +74,12 @@ class Chp():
         shutdown_periods = in_var['platform']['shutdown_periods']  # e.g: [[59,74],[152,172],[362,365]]
         daily_periods = in_var['platform']['daily_periods']  # e.g: [[8,12],[15,19]]
         self.equipment_sub_type = 'chp'
+        self.global_conversion_efficiency = in_var['platform']['global_conversion_efficiency']
 
         try:
-            self.global_conversion_efficiency = in_var['platform']['global_conversion_efficiency']
             self.thermal_conversion_efficiency = in_var['platform']['thermal_conversion_efficiency']
             self.electrical_conversion_efficiency = self.global_conversion_efficiency - self.thermal_conversion_efficiency
         except:
-            self.global_conversion_efficiency = in_var['platform']['global_conversion_efficiency']
             self.electrical_conversion_efficiency = in_var['platform']['electrical_conversion_efficiency']
             self.electrical_conversion_efficiency = self.global_conversion_efficiency - self.electrical_conversion_efficiency
 
@@ -113,7 +112,6 @@ class Chp():
         fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(kb, self.supply_capacity,
                                                                     self.global_conversion_efficiency,
                                                                     self.fuel_type)
-        thermal_capacity = self.electrical_generation / self.electrical_conversion_efficiency
 
         excess_heat_supply_temperature, inflow_target_temperature = compute_flue_gas_temperature(kb, self.supply_capacity,
                                                                                                  self.fuel_type,

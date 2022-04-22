@@ -112,15 +112,16 @@ from ....General.Convert_Equipments.Convert_Options.add_electric_chiller import 
 from ....General.Auxiliary_General.get_country import get_country
 from ....General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import coef_solar_thermal_backup
 import numpy as np
+from ....Error_Handling.error_convert_sinks import PlatformConvertSinks
 
 
 def convert_sinks(in_var, kb):
 
-
     ##################################################################################################################
     # INPUT
-    group_of_sinks = in_var['platform']['group_of_sinks']  # e.g. building, greenhouse, streams
+    PlatformConvertSinks(**in_var['platform'])
 
+    group_of_sinks = in_var['platform']['group_of_sinks']  # e.g. building, greenhouse, streams
 
     ##################################################################################################################
     # Initialize array
@@ -156,9 +157,8 @@ def convert_sinks(in_var, kb):
     thermal_chiller_efficiency = 0.71  # COP
     boiler_efficiency = 0.95
 
-
-    for sink_index,source in enumerate(group_of_sinks):
-        for stream_index,stream in enumerate(source['streams']):
+    for sink_index,sink in enumerate(group_of_sinks):
+        for stream_index,stream in enumerate(sink['streams']):
             hourly_stream_capacity = stream['hourly_generation']
             break
         break

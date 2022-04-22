@@ -1,7 +1,6 @@
 {
   "platform": {
-    "latitude": 41.1045,
-    "longitude": -8.3539,
+    "location": [41.1045, -8.3539],
     "greenhouse_orientation": "S",
     "width": 23,
     "length": 50,
@@ -14,11 +13,9 @@
       ]
     ],
     "lights_on": 0,
-    "T_cool_on": 35,
     "T_heat_on": 18,
+    "T_cool_on": 35,
     "thermal_blanket": 0,
-    "greenhouse_efficiency": 1,
-    "saturday_on": 1,
-    "sunday_on": 1
+    "greenhouse_efficiency": 1
   }
 }
