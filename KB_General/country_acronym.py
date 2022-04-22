@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class CountryAcrohnym:
+class CountryAcronym:
     kb_data: dict
 
     def get_values(self, country):
