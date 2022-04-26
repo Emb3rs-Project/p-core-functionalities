@@ -258,6 +258,8 @@ def convert_orc(in_var, kb : KB):
     except:
         raise Exception("Convert ORC simulation not feasible. Please, check your inputs")
 
-    return best_options
+    output_orc = {'best_options': best_options}
+
+    return output_orc
 
 
