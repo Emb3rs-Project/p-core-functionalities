@@ -102,7 +102,7 @@ from ....General.Convert_Equipments.Auxiliary.join_hx_and_technology import join
 from ....Source.simulation.Auxiliary.design_orc import design_orc
 from ....General.Auxiliary_General.get_country import get_country
 from ....General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import coef_solar_thermal_backup
-from ....Error_Handling.error_convert_sources import PlatformConvertSources, GISConvertSources, CFConvertSources
+from ....Error_Handling.error_convert_sources import MainErrorConvertSources
 
 
 def convert_sources(in_var, kb):
@@ -111,13 +111,11 @@ def convert_sources(in_var, kb):
     ############################################################################################################
     # INPUT
     # error handling
-    PlatformConvertSources(**in_var['platform'])
-    CFConvertSources(**in_var['cf-module'])
+    MainErrorConvertSources(**in_var)
 
     try:
-        GISConvertSources(**in_var['gis-module'])
-        gis_sources_losses = in_var['gis-module']['source_losses']  # vector with losses for each source
-        last_iteration_data = in_var['cf-module']['last_iteration_data']  # data output from this function from first iteration
+        gis_sources_losses = in_var['gis_module']['source_losses']  # vector with losses for each source
+        last_iteration_data = in_var['cf_module']['last_iteration_data']  # data output from this function from first iteration
         sources_to_analyse = [i['source_id'] for i in gis_sources_losses]
 
     except:
@@ -125,8 +123,8 @@ def convert_sources(in_var, kb):
         last_iteration_data = []
 
     group_of_sources = in_var['platform']['group_of_sources']
-    sink_group_grid_supply_temperature = in_var['cf-module']['sink_group_grid_supply_temperature']
-    sink_group_grid_return_temperature = in_var['cf-module']['sink_group_grid_return_temperature']
+    sink_group_grid_supply_temperature = in_var['cf_module']['sink_group_grid_supply_temperature']
+    sink_group_grid_return_temperature = in_var['cf_module']['sink_group_grid_return_temperature']
 
 
     ############################################################################################################

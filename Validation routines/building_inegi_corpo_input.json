@@ -20,10 +20,8 @@
         19
       ]
     ],
-    "space_heating_type": 1,
+    "space_heating_type": "Conventional",
     "T_cool_on": 25,
-    "T_heat_on": 22,
-    "T_off_min": null,
-    "T_off_max": null
+    "T_heat_on": 22
   }
 }

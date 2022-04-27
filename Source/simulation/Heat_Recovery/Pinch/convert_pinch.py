@@ -150,6 +150,7 @@ def convert_pinch(in_var, kb : KB):
     # INPUT
     all_input_objects = in_var['platform']['all_input_objects']  # equipments/processes/isolated streams
 
+
     try:
         pinch_delta_T_min = in_var['platform']['pinch_delta_T_min']
     except:

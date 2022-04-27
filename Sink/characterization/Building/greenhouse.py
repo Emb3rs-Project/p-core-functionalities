@@ -75,7 +75,7 @@ from ....Sink.characterization.Building.Auxiliary.h_convection_horizontal import
 from ....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_equation import ht_radiation_equation
 from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
-from ....Error_Handling.error_greenhouse import PlatformGreenhouse
+from ....Error_Handling.error_greenhouse import error_greenhouse
 
 
 
@@ -84,9 +84,8 @@ def greenhouse(in_var):
     ##################################################################################################################
     # INPUT ----------------------------------------------
     # validate inputs
-    platform_data = PlatformGreenhouse(**in_var['platform'])
+    platform_data = error_greenhouse(in_var['platform'])
 
-    # Mandatory
     latitude, longitude = platform_data.location
     width = platform_data.width
     length = platform_data.length
@@ -98,20 +97,9 @@ def greenhouse(in_var):
     T_cool_on = platform_data.T_cool_on
     T_heat_on = platform_data.T_heat_on
     thermal_blanket = platform_data.thermal_blanket
-    greenhouse_efficiency = platform_data.greenhouse_efficiency
     saturday_on = platform_data.saturday_on
     sunday_on = platform_data.sunday_on
-
-    # Optional
-    if greenhouse_efficiency == 1:
-        f_c = 2.5 * 10 ** (-4)  # factor to estimate building infiltrations
-    elif greenhouse_efficiency == 2:
-        f_c = 5 * 10 ** (-4)
-    elif greenhouse_efficiency == 3:
-        f_c = 15 * 10 ** (-4)
-    else:
-        f_c = platform_data.f_c
-
+    f_c = platform_data.f_c
     supply_temperature_heat = platform_data.supply_temperature_heat
     target_temperature_heat = platform_data.target_temperature_heat
     leaf_area_index = platform_data.leaf_area_index  # ratio of area_plants/area_floor
@@ -123,8 +111,7 @@ def greenhouse(in_var):
     emissivity_cover_long_wave_radiation = platform_data.emissivity_cover_long_wave_radiation  # emissivity long wave radiation
     tau_cover_solar_radiation = platform_data.tau_cover_solar_radiation  # cover transmissivity solar radiation
     power_lights = platform_data.power_lights  # lighting power per square meter [W/m2]
-
-
+    hours_lights_needed = platform_data.hours_lights_needed  # lighting hours in greenhouse (counting with daily iluminance) [h]
 
     ##################################################################################################################
     # DEFINED VARS ----------------------------------------------------------------------------------
@@ -156,13 +143,12 @@ def greenhouse(in_var):
 
     # Guarantee desired minimum plant illumination
     df_climate['turn_on_lights'] = 0
-    save_first_hour = -10  # random value below 0
+    save_first_hour = -10  # random value
     save_last_hour = -10
 
-    if lights_on == 1:
-        hours_lights_needed = in_var['platform']['hours_lights_needed']  # lighting hours in greenhouse (counting with daily iluminance) [h]
-        for index, solar_radiation in enumerate(df_climate['Q_sun_roof']):
 
+    if lights_on == 1:
+        for index, solar_radiation in enumerate(df_climate['Q_sun_roof']):
             if index != 0:
                 if solar_radiation > 0 and df_climate.loc[index-1, 'Q_sun_roof'] == 0:
                     save_first_hour = copy.copy(index-1)
@@ -171,7 +157,6 @@ def greenhouse(in_var):
 
                 if save_first_hour != -10 and save_last_hour != -10 :
                     hours_sun_light = save_last_hour - save_first_hour
-
                     if hours_sun_light < hours_lights_needed:
                         hours_light_missing = round((hours_lights_needed - hours_sun_light)/2)  # hours of artificial light needed
 
@@ -195,7 +180,6 @@ def greenhouse(in_var):
 
     ##################################################################################################################
     # SIMULATION ----------------------------------------------------------------
-
     # Initialize vars
     profile_hourly_heat = []
     profile_monthly_heat = []
@@ -216,6 +200,7 @@ def greenhouse(in_var):
 
     try:
         for profile_index, profile_operating in enumerate(profile):
+
             if (profile_index in month_last_hour_vector) or (profile_index == 8759):
                 profile_monthly_heat.append(cumulative_heat_monthly)  # space heating demand [kWh]
                 profile_monthly_cool.append(cumulative_cool_monthly)  # space cooling demand [kWh]
@@ -223,12 +208,11 @@ def greenhouse(in_var):
                 cumulative_cool_monthly = 0  # reset monthly cooling needs
 
             if profile_index == 8759:
-                break  # safety
+                break
 
             cumulative_heat_hourly = 0  # reset hourly heating needs
 
             for i in range(one_hour):
-
                 # CLIMATE DATA --------------------------------------------------------------------------------------
                 T_exterior, T_sky, Q_sun_N_facade, Q_sun_S_facade, Q_sun_E_facade, Q_sun_W_facade, Q_sun_roof, wind_speed = info_time_step_climate_data(
                     df_climate, profile_index, one_hour, i)
@@ -284,20 +268,17 @@ def greenhouse(in_var):
                     h_vertical = 1
                     coef_vertical = 0
 
-                if Q_sun_greenhouse == 0:
-                    u_horizontal = (1 / u_cover + 1 / u_thermal_cover + 1 / u_exterior + 1 / h_horizontal * coef_horizontal) ** (-1)
-                    u_vertical = (1 / u_cover + 1 / u_thermal_cover + 1 / u_exterior + 1 / h_vertical * coef_vertical) ** (-1)
-                    Q_top = area_floor * u_horizontal * (T_exterior - T_interior)
-                    Q_vertical_wall_small = area_E_wall * u_vertical * (T_exterior - T_interior)
-                    Q_vertical_wall_big = area_N_wall * u_vertical * (T_exterior - T_interior)
-                    Q_lost_exterior = Q_top + 2 * (Q_vertical_wall_small + Q_vertical_wall_big)
+                if Q_sun_greenhouse == 0 and thermal_blanket == 1:
+                    val_thermal_blanket = 1
                 else:
-                    u_horizontal = (1 / u_cover + 1 / u_exterior + 1 / h_horizontal * coef_horizontal) ** (-1)
-                    u_vertical = (1 / u_cover + 1 / u_exterior + 1 / h_vertical * coef_vertical) ** (-1)
-                    Q_top = area_floor * u_horizontal * (T_exterior - T_interior)
-                    Q_vertical_wall_small = area_E_wall * u_vertical * (T_exterior - T_interior)
-                    Q_vertical_wall_big = area_N_wall * u_vertical * (T_exterior - T_interior)
-                    Q_lost_exterior = Q_top + 2 * (Q_vertical_wall_small + Q_vertical_wall_big)
+                    val_thermal_blanket = 0
+
+                u_horizontal = (1 / u_cover + 1 / u_thermal_cover * val_thermal_blanket + 1 / u_exterior + 1 / h_horizontal * coef_horizontal) ** (-1)
+                u_vertical = (1 / u_cover + 1 / u_thermal_cover * val_thermal_blanket + 1 / u_exterior + 1 / h_vertical * coef_vertical) ** (-1)
+                Q_top = area_floor * u_horizontal * (T_exterior - T_interior)
+                Q_vertical_wall_small = area_E_wall * u_vertical * (T_exterior - T_interior)
+                Q_vertical_wall_big = area_N_wall * u_vertical * (T_exterior - T_interior)
+                Q_lost_exterior = Q_top + 2 * (Q_vertical_wall_small + Q_vertical_wall_big)
 
                 # Radiation Losses
                 if Q_sun_greenhouse == 0:
@@ -305,8 +286,10 @@ def greenhouse(in_var):
                 else:
                     view_factor = 1
                     area_sky = total_cover_area
-                    Q_rad_sky = ht_radiation_equation(emissivity_greenhouse, area_sky, T_interior, T_sky, view_factor) * tau_cover_long_wave_radiation
-                    Q_rad_ground = ht_radiation_equation(emissivity_cover_long_wave_radiation, area_sky, T_interior,T_cover, view_factor)
+                    Q_rad_sky = ht_radiation_equation(emissivity_greenhouse, area_sky, T_interior, T_sky,
+                                                      view_factor) * tau_cover_long_wave_radiation
+                    Q_rad_ground = ht_radiation_equation(emissivity_cover_long_wave_radiation, area_sky, T_interior,
+                                                         T_cover, view_factor)
                     Q_rad_lost = (Q_rad_sky + Q_rad_ground)  # [W]
 
                 # Infiltration
@@ -327,12 +310,10 @@ def greenhouse(in_var):
                                Q_plants + \
                                Q_rad_lost
 
-
                 # SPACE HEATING/COOLING ACTUATION
                 # on work time
                 if profile_operating == 1:
-                    T_interior_guess = T_interior + (Q_greenhouse) * time_step / (rho_air * cp_air * volume_greenhouse)
-
+                    T_interior_guess = T_interior + Q_greenhouse * time_step / (rho_air * cp_air * volume_greenhouse)
                     # activating space heating
                     if T_interior < T_heat_on and T_interior_guess < T_heat_on:
                         if Q_greenhouse < 0:
@@ -349,7 +330,6 @@ def greenhouse(in_var):
                             else:
                                 Q_heat_required = 0
 
-                    # activating space heating
                     elif T_interior >= T_heat_on and T_interior_guess < T_heat_on:
                         Q_heat_required = (rho_air * cp_air * volume_greenhouse) * (
                                 T_heat_on - T_interior_guess) / time_step
@@ -360,7 +340,8 @@ def greenhouse(in_var):
                     Q_heat_required = 0
 
                 # COMPUTE INTERIOR TEMPERATURE
-                T_interior = T_interior + (Q_greenhouse + Q_heat_required) * time_step / (rho_air * cp_air * volume_greenhouse)  # [ºC]
+                T_interior = T_interior + (Q_greenhouse + Q_heat_required) * time_step / (
+                            rho_air * cp_air * volume_greenhouse)  # [ºC]
 
                 if T_interior >= T_cool_on and T_cool_on >= T_exterior:
                     T_interior = T_cool_on
@@ -389,7 +370,6 @@ def greenhouse(in_var):
                 "supply_temperature": supply_temperature_heat,  # [ºC]
                 "target_temperature": target_temperature_heat,  # [ºC]
                 "schedule": profile
-
             }
         }
 

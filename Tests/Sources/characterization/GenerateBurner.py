@@ -1,50 +1,17 @@
-
-
+import json
+import os
 from ....Source.characterization.Generate_Equipment.generate_burner import Burner
 from ....utilities.kb import KB
 from ....utilities.kb_data import kb
 
-class GenerateBurner():
-
-    def __init__(self):
-
-        ###################
-        # MANDATORY INPUT
-        self.id = 1000
-        self.burner_equipment_sub_type = 'direct_burner'
-        self.saturday_on = 0
-        self.sunday_on = 0
-        self.shutdown_periods = [[60, 75], [150, 155], [360, 365]]
-        self.daily_periods = [[0, 14]]
-        self.fuel_type = 'biomass'  # Fuel type  (Natural gas, Fuel oil, Biomass)
-        self.burner_excess_heat_supply_temperature = 400  # RECOVERABLE EXCESS HEAT
-        self.burner_excess_heat_target_temperature = 120
-        self.burner_excess_heat_flowrate = 20
-
-        # DEPENDING ON OTHER VARS
-        # If user does not want to put directly the nominal capacity, the processes fed by this equipment must be given
-        self.supply_capacity = 7500
-        self.processes = []
-
-        ###################
-        # Optional/Expert User inputs -  should be shown on the platform as default values
-        self.global_conversion_efficiency = 0.9
-
+script_dir = os.path.dirname(__file__)
+data_test = json.load(open(os.path.join(script_dir, "test_files/generate_burner_test.json")))
 
 
 def testGenerateBurner():
+    test = Burner(data_test, KB(kb))
 
-    data = GenerateBurner()
-    input_data = {}
-    input_data['platform'] = data.__dict__
-    test = Burner(input_data, KB(kb))
-
-
-    print(test.streams[0]['capacity'])
-
-    """
-
-    Expected:
-    511.4306137027777
-    """
-
+    if 500 < test.streams[0]['capacity'] < 600:
+        print('testGenerateBurner - Everything Correct')
+    else:
+        print('testGenerateBurner - Report to CF that something is odd')

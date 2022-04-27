@@ -1,0 +1,1 @@
+{"platform": {"id": 3000, "saturday_on": 1, "sunday_on": 1, "shutdown_periods": [[60, 75], [150, 155], [360, 365]], "daily_periods": [[9, 24]], "cooling_equipment_sub_type": "compression_chiller", "supply_capacity": 7500, "processes": []}}

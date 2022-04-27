@@ -1,5 +1,3 @@
-
-
 from ....Source.simulation.Convert.convert_sources import convert_sources
 from ....utilities.kb import KB
 from ....utilities.kb_data import kb
@@ -7,18 +5,14 @@ import json
 import os
 
 script_dir = os.path.dirname(__file__)
-data = json.load(open(os.path.join(script_dir, "convert_sources_input.json")))
+data = json.load(open(os.path.join(script_dir, "test_files/convert_sources_test.json")))
+
 
 def testConvertSource():
-
     test = convert_sources(data, KB(kb))
 
-    if test['all_sources_info'][0]['streams_converted'][0]['conversion_technologies'][0]['equipment'] == ['hx_economizer', 'circulation_pumping', 'hx_plate', 'circulation_pumping']:
-        print('Convert Source Test - Everything Correct')
+    if test['all_sources_info'][0]['streams_converted'][0]['conversion_technologies'][0][
+        'equipment'] == ['hx_economizer', 'circulation_pumping', 'hx_plate', 'circulation_pumping']:
+        print('testConvertSource - Everything Correct')
     else:
-        print('Convert Source Test - Report to CF that something is odd')
-
-
-
-
-
+        print('testConvertSource - Report to CF that something is odd')

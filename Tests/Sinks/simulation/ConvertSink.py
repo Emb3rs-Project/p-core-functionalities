@@ -7,7 +7,7 @@ import json
 import os
 
 script_dir = os.path.dirname(__file__)
-data = json.load(open(os.path.join(script_dir, "convert_sinks_input.json")))
+data = json.load(open(os.path.join(script_dir, "test_files/convert_sinks_input.json")))
 
 
 def testConvertSink():

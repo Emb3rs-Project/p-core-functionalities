@@ -101,109 +101,54 @@ from ....Sink.characterization.Building.Auxiliary.steady_state_exterior_wall imp
 from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_vertical_surface import ht_radiation_vertical_surface
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_horizontal_surface import ht_radiation_horizontal_surface
-from ....General.Auxiliary_General.get_country import get_country
-from ....Error_Handling.error_building import PlatformBuilding
+from ....Error_Handling.error_building import error_building
 
 def building(in_var, kb : KB):
 
     ################################################################################################
     # INPUT ----------------------------------------------
-    platform_data = PlatformBuilding(**in_var['platform'])
+    platform_data = error_building(in_var['platform'], kb)
 
-    latitude, longitude = in_var['platform']['location']
-    number_floor = in_var['platform']['number_floor']
-    width_floor = in_var['platform']['width_floor']
-    length_floor = in_var['platform']['length_floor']
-    height_floor = in_var['platform']['height_floor']
-    ratio_wall_N = in_var['platform']['ratio_wall_N']
-    ratio_wall_S = in_var['platform']['ratio_wall_S']
-    ratio_wall_E = in_var['platform']['ratio_wall_E']
-    ratio_wall_W = in_var['platform']['ratio_wall_W']
-    saturday_on = in_var['platform']['saturday_on']
-    sunday_on = in_var['platform']['sunday_on']
-    shutdown_periods = in_var['platform']['shutdown_periods']
-    daily_periods = in_var['platform']['daily_periods']
-    building_type = in_var['platform']['building_type']
-    building_orientation = in_var['platform']['building_orientation']
-
-    T_cool_on = in_var['platform']['T_cool_on']  # cooling start temperature working hours [ºC]
-    T_heat_on = in_var['platform']['T_heat_on']  # heating start temperature working hours [ºC]
-    T_off_min = in_var['platform']['T_off_min']  # heating start temperature off peak [ºC]
-    T_off_max = in_var['platform']['T_off_max']  # cooling start temperature off peak [ºC
-
-    # random non accessible value
-    if T_off_min == None:
-        T_off_min=-1000
-    if T_off_max == None:
-        T_off_max=1000
-    if T_heat_on == None:
-        T_heat_on=-1000
-    if T_cool_on == None:
-        T_cool_on=1000
-
-    # get country to obtain building properties
-    country = get_country(latitude, longitude)
-
-    try:
-        number_person_per_floor = in_var['platform']['number_person_per_floor']  # number of occupants per floor
-        supply_temperature_heat = in_var['platform']['supply_temperature_heat']  # Heating
-        target_temperature_heat = in_var['platform']['target_temperature_heat']
-        supply_temperature_cool = in_var['platform']['supply_temperature_cool']  # Cooling
-        target_temperature_cool = in_var['platform']['target_temperature_cool']
-        tau_glass = in_var['platform']['tau_glass']  # Glass transmissivity
-        u_wall = in_var['platform']['u_wall']  # Wall heat transfer coefficient [W/m2.K]
-        u_roof = in_var['platform']['u_roof']
-        u_glass = in_var['platform']['u_glass']
-        u_floor = in_var['platform']['u_floor']
-        alpha_wall = in_var['platform']['alpha_wall']
-        alpha_floor = in_var['platform']['alpha_floor']
-        alpha_glass = in_var['platform']['alpha_glass']
-        cp_floor = in_var['platform']['cp_floor']  #  Specific heat capacitance [J/m2.K]
-        cp_roof = in_var['platform']['cp_roof']
-        cp_wall = in_var['platform']['cp_wall']
-        air_change_hour = in_var['platform']['air_change_hour']  # air changes per hour [1/h]
-        renewal_air_per_person = in_var['platform']['renewal_air_per_person']  # [m3/s.person]
-        vol_dhw_set = in_var['platform']['vol_dhw_set']
-        Q_gain_per_floor = in_var['platform']['Q_gain_per_floor']
-        emissivity_wall = in_var['platform']['emissivity_wall']
-        emissivity_glass = in_var['platform']['emissivity_glass']
-
-    except:
-        # building characteristics
-        building_properties = BuildingProperties(kb)
-        u_wall, u_roof, u_glass, u_floor, tau_glass, alpha_wall, alpha_floor, alpha_glass, cp_wall, cp_floor, cp_roof, air_change_hour,emissivity_wall,emissivity_glass = building_properties.get_values(country, building_type)
-        area_floor = width_floor * length_floor
-
-        # building streams' temperatures
-        space_heating_type = in_var['platform']['space_heating_type']
-        if space_heating_type == 0:
-            target_temperature_heat = 75
-            supply_temperature_heat = 45
-        else:
-            target_temperature_heat = 50
-            supply_temperature_heat = 30
-
-        target_temperature_cool = 7  # Cooling
-        supply_temperature_cool = 12
-
-        # water consumption/ heat gains/ renewal air
-        if building_type == 'residential':
-            number_person_per_floor = in_var['platform']['number_person_per_floor']
-            Q_gain_per_floor = 4 * area_floor  # occupancy and appliances heat gains [W]
-            vol_dhw_set = 0.03 * number_person_per_floor  # daily dwelling DHW consumption per floor [m3]
-            renewal_air_per_person = 0  # renewal fresh air [m3/s]
-        elif building_type == 'hotel':
-            number_rooms = in_var['platform']['number_rooms']
-            number_person_per_floor = 2 * number_rooms  # number of rooms per floor
-            vol_dhw_set = 0.03 * number_person_per_floor  # daily dwelling DHW consumption [m3]
-            Q_gain_per_floor = 4 * area_floor  # occupancy and appliances heat gains [W]
-            renewal_air_per_person = 0  # renewal fresh air [m3/s]
-        else:
-            number_person_per_floor = round(area_floor / 9)  # number of occupants per floor (9m2 per occupant)
-            vol_dhw_set = 0.003 * number_person_per_floor  # daily dwelling DHW consumption [m3]
-            Q_gain_per_floor = number_person_per_floor * 108 + 18 * area_floor  # occupancy and appliances heat gains [W]
-            renewal_air_per_person = 10 * 10 ** (-3)  # [m3/s] per person
-
+    latitude, longitude = platform_data.location
+    number_floor = platform_data.number_floor
+    width_floor = platform_data.width_floor
+    length_floor = platform_data.length_floor
+    height_floor = platform_data.height_floor
+    ratio_wall_N = platform_data.ratio_wall_N
+    ratio_wall_S = platform_data.ratio_wall_S
+    ratio_wall_E = platform_data.ratio_wall_E
+    ratio_wall_W = platform_data.ratio_wall_W
+    saturday_on = platform_data.saturday_on
+    sunday_on = platform_data.sunday_on
+    shutdown_periods = platform_data.shutdown_periods
+    daily_periods = platform_data.daily_periods
+    building_orientation = platform_data.building_orientation
+    T_cool_on = platform_data.T_cool_on  # cooling start temperature working hours [ºC]
+    T_heat_on = platform_data.T_heat_on  # heating start temperature working hours [ºC]
+    T_off_min = platform_data.T_off_min  # heating start temperature off peak [ºC]
+    T_off_max = platform_data.T_off_max  # cooling start temperature off peak [ºC
+    number_person_per_floor = platform_data.number_person_per_floor # number of occupants per floor
+    supply_temperature_heat = platform_data.supply_temperature_heat  # Heating
+    target_temperature_heat = platform_data.target_temperature_heat
+    supply_temperature_cool = platform_data.supply_temperature_cool  # Cooling
+    target_temperature_cool = platform_data.target_temperature_cool
+    tau_glass = platform_data.tau_glass  # Glass transmissivity
+    u_wall = platform_data.u_wall  # Wall heat transfer coefficient [W/m2.K]
+    u_roof = platform_data.u_roof
+    u_glass = platform_data.u_glass
+    u_floor = platform_data.u_floor
+    alpha_wall = platform_data.alpha_wall
+    alpha_floor = platform_data.alpha_floor
+    alpha_glass = platform_data.alpha_glass
+    cp_floor = platform_data.cp_floor  # Specific heat capacitance [J/m2.K]
+    cp_roof = platform_data.cp_roof
+    cp_wall = platform_data.cp_wall
+    air_change_hour = platform_data.air_change_hour  # air changes per hour [1/h]
+    renewal_air_per_person = platform_data.renewal_air_per_person  # [m3/s.person]
+    vol_dhw_set = platform_data.vol_dhw_set
+    Q_gain_per_floor = platform_data.Q_gain_per_floor
+    emissivity_wall = platform_data.emissivity_wall
+    emissivity_glass = platform_data.emissivity_glass
 
     ################################################################################################
     # DEFINED VARS ----------------------------------------------------------------------------------
@@ -274,35 +219,35 @@ def building(in_var, kb : KB):
     profile_hourly_cool = []
     profile_monthly_heat = []
     profile_monthly_cool = []
-    T_interior = copy.copy(15)  # floor interior air temperature
-    T_N_wall = copy.copy(15)  # wall temperature
-    T_S_wall = copy.copy(15)
-    T_E_wall = copy.copy(15)
-    T_W_wall = copy.copy(15)
-    T_N_wall_in = copy.copy(15)  # interior surface wall temperature
-    T_S_wall_in = copy.copy(15)
-    T_E_wall_in = copy.copy(15)
-    T_W_wall_in = copy.copy(15)
-    T_N_wall_out = copy.copy(15)  # exterior surface wall temperature
-    T_S_wall_out = copy.copy(15)
-    T_E_wall_out = copy.copy(15)
-    T_W_wall_out = copy.copy(15)
-    T_N_glass_out = copy.copy(15)
-    T_S_glass_out = copy.copy(15)
-    T_E_glass_out = copy.copy(15)
-    T_W_glass_out = copy.copy(15)
-    T_N_glass_in = copy.copy(15)
-    T_E_glass_in = copy.copy(15)
-    T_W_glass_in = copy.copy(15)
-    T_S_glass_in = copy.copy(15)
-    T_roof = copy.copy(15)  # last floor. roof temperature
-    T_roof_in = copy.copy(15)
-    T_roof_out = copy.copy(15)
-    T_deck = copy.copy(15)  # deck temperature
-    T_deck_above = copy.copy(15)  # floor of building floors (above zero floor)
-    T_deck_below = copy.copy(15)  # deck of building floors larger than 0, except last floor
-    T_floor = copy.copy(15)  # zero floor, floor temperature
-    T_floor_in = copy.copy(15)
+    T_interior = 15  # floor interior air temperature
+    T_N_wall = 15  # wall temperature
+    T_S_wall = 15
+    T_E_wall = 15
+    T_W_wall = 15
+    T_N_wall_in = 15  # interior surface wall temperature
+    T_S_wall_in = 15
+    T_E_wall_in = 15
+    T_W_wall_in = 15
+    T_N_wall_out = 15  # exterior surface wall temperature
+    T_S_wall_out = 15
+    T_E_wall_out = 15
+    T_W_wall_out = 15
+    T_N_glass_out = 15
+    T_S_glass_out = 15
+    T_E_glass_out = 15
+    T_W_glass_out = 15
+    T_N_glass_in = 15
+    T_E_glass_in = 15
+    T_W_glass_in = 15
+    T_S_glass_in = 15
+    T_roof = 15  # last floor. roof temperature
+    T_roof_in = 15
+    T_roof_out = 15
+    T_deck = 15  # deck temperature
+    T_deck_above = 15  # floor of building floors (above zero floor)
+    T_deck_below = 15  # deck of building floors larger than 0, except last floor
+    T_floor = 15  # zero floor, floor temperature
+    T_floor_in = 15
     vol_dhw = 0
     cumulative_heat_monthly = 0
     cumulative_cool_monthly = 0
@@ -326,375 +271,370 @@ def building(in_var, kb : KB):
     max_air_delta_T_per_minute = 1  # 1ºC per min
     max_air_delta_T_allowed = time_step * max_air_delta_T_per_minute / 60
 
+    for profile_index, profile_operating in enumerate(profile):
 
-    try:
-        for profile_index, profile_operating in enumerate(profile):
+        if (profile_index in month_last_hour_vector) or (profile_index == (len(profile) - 1)):
+            profile_monthly_heat.append(cumulative_heat_monthly)  # space heating demand [kWh]
+            profile_monthly_cool.append(cumulative_cool_monthly)  # space cooling demand [kWh]
+            cumulative_heat_monthly = 0  # reset monthly heating needs
+            cumulative_cool_monthly = 0  # reset monthly cooling needs
 
-            if (profile_index in month_last_hour_vector) or (profile_index == (len(profile) - 1)):
-                profile_monthly_heat.append(cumulative_heat_monthly)  # space heating demand [kWh]
-                profile_monthly_cool.append(cumulative_cool_monthly)  # space cooling demand [kWh]
-                cumulative_heat_monthly = 0  # reset monthly heating needs
-                cumulative_cool_monthly = 0  # reset monthly cooling needs
+        cumulative_heat_hourly = 0  # reset hourly heating needs
+        cumulative_cool_hourly = 0  # reset hourly cooling needs
 
-            cumulative_heat_hourly = 0  # reset hourly heating needs
-            cumulative_cool_hourly = 0  # reset hourly cooling needs
+        if profile_index == (len(profile) - 1):
+            break
 
-            if profile_index == (len(profile) - 1):
-                break
+        for i in range(one_hour):
 
-            for i in range(one_hour):
+            # CLIMATE DATA --------------------------------------------------------------------------------------
+            T_exterior, T_sky, Q_sun_N_facade, Q_sun_S_facade, Q_sun_E_facade, Q_sun_W_facade, Q_sun_roof, wind_speed = info_time_step_climate_data(
+                df_climate, profile_index, one_hour, i)
 
-                # CLIMATE DATA --------------------------------------------------------------------------------------
-                T_exterior, T_sky, Q_sun_N_facade, Q_sun_S_facade, Q_sun_E_facade, Q_sun_W_facade, Q_sun_roof, wind_speed = info_time_step_climate_data(
-                    df_climate, profile_index, one_hour, i)
+            # Correct wind speed
+            z_0 = 0.01  # surface roughness
+            wind_speed = wind_speed * (math.log((height_floor * number_floor / 2) / z_0)) / (
+                math.log(10 / z_0))  # correct wind speed of 10m for the average building height [m/s]
+            u_exterior = (5.8 + 3.94 * wind_speed)  # outside heat convection coef. [W/m2.K]
 
-                # Correct wind speed
-                z_0 = 0.01  # surface roughness
-                wind_speed = wind_speed * (math.log((height_floor * number_floor / 2) / z_0)) / (
-                    math.log(10 / z_0))  # correct wind speed of 10m for the average building height [m/s]
-                u_exterior = (5.8 + 3.94 * wind_speed)  # outside heat convection coef. [W/m2.K]
+            # BUILDING  --------------------------------------------------------------------------------------
+            # Solar radiation floor
+            Q_sun_floor = (Q_sun_N_facade * area_N_glass + Q_sun_S_facade * area_S_glass + Q_sun_E_facade * area_E_glass + Q_sun_W_facade * area_W_glass) * tau_glass  # total transmitted radiation by glass to floor/deck [W]
 
-                # BUILDING  --------------------------------------------------------------------------------------
-                # Solar radiation floor
-                Q_sun_floor = (Q_sun_N_facade * area_N_glass + Q_sun_S_facade * area_S_glass + Q_sun_E_facade * area_E_glass + Q_sun_W_facade * area_W_glass) * tau_glass  # total transmitted radiation by glass to floor/deck [W]
+            # Radiation Heat Transfer
+            Q_rad_N_glass = ht_radiation_vertical_surface(glass_in_N, glass_in_E, glass_in_S, glass_in_W, wall_in_E,
+                                                          wall_in_S, wall_in_W, deck_below_in, deck_above_in,
+                                                          emissivity_wall, emissivity_glass)  # North Glass
+            Q_rad_N_wall = ht_radiation_vertical_surface(wall_in_N, glass_in_E, glass_in_S, glass_in_W, wall_in_E,
+                                                         wall_in_S, wall_in_W, deck_below_in, deck_above_in,
+                                                         emissivity_wall, emissivity_glass)  # North Wall
+            Q_rad_E_glass = ht_radiation_vertical_surface(glass_in_E, glass_in_N, glass_in_S, glass_in_W, wall_in_N,
+                                                          wall_in_S, wall_in_W, deck_below_in, deck_above_in,
+                                                          emissivity_wall, emissivity_glass)
+            Q_rad_E_wall = ht_radiation_vertical_surface(wall_in_E, glass_in_N, glass_in_S, glass_in_W, wall_in_N,
+                                                         wall_in_S, wall_in_W, deck_below_in, deck_above_in,
+                                                         emissivity_wall, emissivity_glass)
+            Q_rad_S_glass = ht_radiation_vertical_surface(glass_in_S, glass_in_E, glass_in_N, glass_in_W, wall_in_E,
+                                                          wall_in_N, wall_in_W, deck_below_in, deck_above_in,
+                                                          emissivity_wall, emissivity_glass)
+            Q_rad_S_wall = ht_radiation_vertical_surface(wall_in_S, glass_in_E, glass_in_N, glass_in_W, wall_in_E,
+                                                         wall_in_N, wall_in_W, deck_below_in, deck_above_in,
+                                                         emissivity_wall, emissivity_glass)
+            Q_rad_W_glass = ht_radiation_vertical_surface(glass_in_W, glass_in_E, glass_in_S, glass_in_N, wall_in_E,
+                                                          wall_in_S, wall_in_N, deck_below_in, deck_above_in,
+                                                          emissivity_wall, emissivity_glass)
+            Q_rad_W_wall = ht_radiation_vertical_surface(wall_in_W, glass_in_E, glass_in_S, glass_in_N, wall_in_E,
+                                                         wall_in_S, wall_in_N, deck_below_in, deck_above_in,
+                                                         emissivity_wall, emissivity_glass)
+            Q_rad_deck_below = ht_radiation_horizontal_surface(deck_below_in, wall_in_W, glass_in_W, glass_in_E,
+                                                               glass_in_S, glass_in_N, wall_in_E, wall_in_S, wall_in_N,
+                                                               deck_above_in, emissivity_wall, emissivity_glass)
+            Q_rad_deck_above = ht_radiation_horizontal_surface(deck_above_in, wall_in_W, glass_in_W, glass_in_E,
+                                                               glass_in_S, glass_in_N, wall_in_E, wall_in_S, wall_in_N,
+                                                               deck_below_in, emissivity_wall, emissivity_glass)
+            Q_rad_roof = ht_radiation_horizontal_surface(roof_in, wall_in_W, glass_in_W, glass_in_E, glass_in_S,
+                                                         glass_in_N, wall_in_E, wall_in_S, wall_in_N, deck_above_in,
+                                                         emissivity_wall, emissivity_glass)
+            Q_rad_floor = ht_radiation_horizontal_surface(floor_in, wall_in_W, glass_in_W, glass_in_E, glass_in_S,
+                                                          glass_in_N, wall_in_E, wall_in_S, wall_in_N, deck_below_in,
+                                                          emissivity_wall, emissivity_glass)
 
-                # Radiation Heat Transfer
-                Q_rad_N_glass = ht_radiation_vertical_surface(glass_in_N, glass_in_E, glass_in_S, glass_in_W, wall_in_E,
-                                                              wall_in_S, wall_in_W, deck_below_in, deck_above_in,
-                                                              emissivity_wall, emissivity_glass)  # North Glass
-                Q_rad_N_wall = ht_radiation_vertical_surface(wall_in_N, glass_in_E, glass_in_S, glass_in_W, wall_in_E,
-                                                             wall_in_S, wall_in_W, deck_below_in, deck_above_in,
-                                                             emissivity_wall, emissivity_glass)  # North Wall
-                Q_rad_E_glass = ht_radiation_vertical_surface(glass_in_E, glass_in_N, glass_in_S, glass_in_W, wall_in_N,
-                                                              wall_in_S, wall_in_W, deck_below_in, deck_above_in,
-                                                              emissivity_wall, emissivity_glass)
-                Q_rad_E_wall = ht_radiation_vertical_surface(wall_in_E, glass_in_N, glass_in_S, glass_in_W, wall_in_N,
-                                                             wall_in_S, wall_in_W, deck_below_in, deck_above_in,
-                                                             emissivity_wall, emissivity_glass)
-                Q_rad_S_glass = ht_radiation_vertical_surface(glass_in_S, glass_in_E, glass_in_N, glass_in_W, wall_in_E,
-                                                              wall_in_N, wall_in_W, deck_below_in, deck_above_in,
-                                                              emissivity_wall, emissivity_glass)
-                Q_rad_S_wall = ht_radiation_vertical_surface(wall_in_S, glass_in_E, glass_in_N, glass_in_W, wall_in_E,
-                                                             wall_in_N, wall_in_W, deck_below_in, deck_above_in,
-                                                             emissivity_wall, emissivity_glass)
-                Q_rad_W_glass = ht_radiation_vertical_surface(glass_in_W, glass_in_E, glass_in_S, glass_in_N, wall_in_E,
-                                                              wall_in_S, wall_in_N, deck_below_in, deck_above_in,
-                                                              emissivity_wall, emissivity_glass)
-                Q_rad_W_wall = ht_radiation_vertical_surface(wall_in_W, glass_in_E, glass_in_S, glass_in_N, wall_in_E,
-                                                             wall_in_S, wall_in_N, deck_below_in, deck_above_in,
-                                                             emissivity_wall, emissivity_glass)
-                Q_rad_deck_below = ht_radiation_horizontal_surface(deck_below_in, wall_in_W, glass_in_W, glass_in_E,
-                                                                   glass_in_S, glass_in_N, wall_in_E, wall_in_S, wall_in_N,
-                                                                   deck_above_in, emissivity_wall, emissivity_glass)
-                Q_rad_deck_above = ht_radiation_horizontal_surface(deck_above_in, wall_in_W, glass_in_W, glass_in_E,
-                                                                   glass_in_S, glass_in_N, wall_in_E, wall_in_S, wall_in_N,
-                                                                   deck_below_in, emissivity_wall, emissivity_glass)
-                Q_rad_roof = ht_radiation_horizontal_surface(roof_in, wall_in_W, glass_in_W, glass_in_E, glass_in_S,
-                                                             glass_in_N, wall_in_E, wall_in_S, wall_in_N, deck_above_in,
-                                                             emissivity_wall, emissivity_glass)
-                Q_rad_floor = ht_radiation_horizontal_surface(floor_in, wall_in_W, glass_in_W, glass_in_E, glass_in_S,
-                                                              glass_in_N, wall_in_E, wall_in_S, wall_in_N, deck_below_in,
-                                                              emissivity_wall, emissivity_glass)
+            # Sky Radiation Heat Losses
+            Q_infra_N_outer_wall = surface_outside_rad_heat_loss(emissivity_wall, T_N_wall_out, T_sky, T_exterior,
+                                                                 math.pi / 2)  # Radiation heat loss [W/m2]
+            Q_infra_S_outer_wall = surface_outside_rad_heat_loss(emissivity_wall, T_S_wall_out, T_sky, T_exterior,
+                                                                 math.pi / 2)
+            Q_infra_E_outer_wall = surface_outside_rad_heat_loss(emissivity_wall, T_E_wall_out, T_sky, T_exterior,
+                                                                 math.pi / 2)
+            Q_infra_W_outer_wall = surface_outside_rad_heat_loss(emissivity_wall, T_W_wall_out, T_sky, T_exterior,
+                                                                 math.pi / 2)
+            Q_infra_N_outer_glass = surface_outside_rad_heat_loss(emissivity_glass, T_N_glass_out, T_sky, T_exterior,
+                                                                  math.pi / 2)
+            Q_infra_S_outer_glass = surface_outside_rad_heat_loss(emissivity_glass, T_S_glass_out, T_sky, T_exterior,
+                                                                  math.pi / 2)
+            Q_infra_E_outer_glass = surface_outside_rad_heat_loss(emissivity_glass, T_E_glass_out, T_sky, T_exterior,
+                                                                  math.pi / 2)
+            Q_infra_W_outer_glass = surface_outside_rad_heat_loss(emissivity_glass, T_W_glass_out, T_sky, T_exterior,
+                                                                  math.pi / 2)
+            Q_infra_roof_out = surface_outside_rad_heat_loss(emissivity_wall, T_roof_out, T_sky, T_exterior, 0)
 
-                # Sky Radiation Heat Losses
-                Q_infra_N_outer_wall = surface_outside_rad_heat_loss(emissivity_wall, T_N_wall_out, T_sky, T_exterior,
-                                                                     math.pi / 2)  # Radiation heat loss [W/m2]
-                Q_infra_S_outer_wall = surface_outside_rad_heat_loss(emissivity_wall, T_S_wall_out, T_sky, T_exterior,
-                                                                     math.pi / 2)
-                Q_infra_E_outer_wall = surface_outside_rad_heat_loss(emissivity_wall, T_E_wall_out, T_sky, T_exterior,
-                                                                     math.pi / 2)
-                Q_infra_W_outer_wall = surface_outside_rad_heat_loss(emissivity_wall, T_W_wall_out, T_sky, T_exterior,
-                                                                     math.pi / 2)
-                Q_infra_N_outer_glass = surface_outside_rad_heat_loss(emissivity_glass, T_N_glass_out, T_sky, T_exterior,
-                                                                      math.pi / 2)
-                Q_infra_S_outer_glass = surface_outside_rad_heat_loss(emissivity_glass, T_S_glass_out, T_sky, T_exterior,
-                                                                      math.pi / 2)
-                Q_infra_E_outer_glass = surface_outside_rad_heat_loss(emissivity_glass, T_E_glass_out, T_sky, T_exterior,
-                                                                      math.pi / 2)
-                Q_infra_W_outer_glass = surface_outside_rad_heat_loss(emissivity_glass, T_W_glass_out, T_sky, T_exterior,
-                                                                      math.pi / 2)
-                Q_infra_roof_out = surface_outside_rad_heat_loss(emissivity_wall, T_roof_out, T_sky, T_exterior, 0)
+            # Each floor Heat balance of indoor temperature [W]
+            surfaces_vertical = [glass_in_N, glass_in_E, glass_in_S, glass_in_W, wall_in_E, wall_in_S, wall_in_W,
+                                 wall_in_N]
+            if number_floor > 1:
+                surfaces_horizontal = [roof_in, deck_above_in]
+                top_floor = ht_indoor_air(T_interior, surfaces_horizontal, surfaces_vertical)
+                surfaces_horizontal = [deck_above_in, deck_below_in]
+                middle_floor = ht_indoor_air(T_interior, surfaces_horizontal, surfaces_vertical)
+                surfaces_horizontal = [deck_below_in, floor_in]
+                bottom_floor = ht_indoor_air(T_interior, surfaces_horizontal, surfaces_vertical)
+            else:
+                surfaces_horizontal = [roof_in, floor_in]
+                zero_floor = ht_indoor_air(T_interior, surfaces_horizontal, surfaces_vertical)
 
-                # Each floor Heat balance of indoor temperature [W]
-                surfaces_vertical = [glass_in_N, glass_in_E, glass_in_S, glass_in_W, wall_in_E, wall_in_S, wall_in_W,
-                                     wall_in_N]
-                if number_floor > 1:
-                    surfaces_horizontal = [roof_in, deck_above_in]
-                    top_floor = ht_indoor_air(T_interior, surfaces_horizontal, surfaces_vertical)
-                    surfaces_horizontal = [deck_above_in, deck_below_in]
-                    middle_floor = ht_indoor_air(T_interior, surfaces_horizontal, surfaces_vertical)
-                    surfaces_horizontal = [deck_below_in, floor_in]
-                    bottom_floor = ht_indoor_air(T_interior, surfaces_horizontal, surfaces_vertical)
-                else:
-                    surfaces_horizontal = [roof_in, floor_in]
-                    zero_floor = ht_indoor_air(T_interior, surfaces_horizontal, surfaces_vertical)
+            # Average floor Heat balance before space heating/cooling
+            if number_floor == 1:
+                Q_building_floor = (rho_air * cp_air * renewal_air_per_person * number_person_per_floor) * (
+                        T_exterior - T_interior) * profile_operating \
+                                   + rho_air * cp_air * air_change_second * (T_exterior - T_interior) \
+                                   + Q_gain_per_floor * profile_operating \
+                                   + zero_floor  # [W]
+            else:
+                Q_building_floor = (rho_air * cp_air * renewal_air_per_person * number_person_per_floor) * (
+                        T_exterior - T_interior) * profile_operating \
+                                   + rho_air * cp_air * air_change_second * (T_exterior - T_interior) \
+                                   + Q_gain_per_floor * profile_operating \
+                                   + (top_floor + middle_floor * (number_floor - 2) + bottom_floor) / number_floor
 
-                # Average floor Heat balance before space heating/cooling
-                if number_floor == 1:
-                    Q_building_floor = (rho_air * cp_air * renewal_air_per_person * number_person_per_floor) * (
-                                T_exterior - T_interior) * profile_operating \
-                                       + rho_air * cp_air * air_change_second * (T_exterior - T_interior) \
-                                       + Q_gain_per_floor * profile_operating \
-                                       + zero_floor  # [W]
-                else:
-                    Q_building_floor = (rho_air * cp_air * renewal_air_per_person * number_person_per_floor) * (
-                                T_exterior - T_interior) * profile_operating \
-                                       + rho_air * cp_air * air_change_second * (T_exterior - T_interior) \
-                                       + Q_gain_per_floor * profile_operating \
-                                       + (top_floor + middle_floor * (number_floor - 2) + bottom_floor) / number_floor
+            # SPACE HEATING/COOLING ACTUATION --------------------------------------------------------
+            # off work time
+            if profile_operating == 0:
+                T_interior_guess = T_interior + (Q_building_floor) * time_step / (
+                        rho_air * cp_air * volume_floor)  # [ºC]
 
-                # SPACE HEATING/COOLING ACTUATION --------------------------------------------------------
-                # off work time
-                if profile_operating == 0:
-                    T_interior_guess = T_interior + (Q_building_floor) * time_step / (
-                                rho_air * cp_air * volume_floor)  # [ºC]
-
-                    # outside temperature interval - activating space heating
-                    if T_interior < T_off_min and T_interior_guess < T_off_min:
-                        if Q_building_floor < 0:
-                            if T_off_min - T_interior < max_air_delta_T_allowed:
-                                Q_heat_required = abs(Q_building_floor) + (rho_air * cp_air * volume_floor) * (
-                                            T_off_min - T_interior) / time_step  # [W]
-                            else:
-                                Q_heat_required = abs(Q_building_floor) + (
-                                            rho_air * cp_air * volume_floor) * max_air_delta_T_allowed / time_step
+                # outside temperature interval - activating space heating
+                if T_interior < T_off_min and T_interior_guess < T_off_min:
+                    if Q_building_floor < 0:
+                        if T_off_min - T_interior < max_air_delta_T_allowed:
+                            Q_heat_required = abs(Q_building_floor) + (rho_air * cp_air * volume_floor) * (
+                                    T_off_min - T_interior) / time_step  # [W]
                         else:
-                            if T_interior_guess - T_interior < max_air_delta_T_allowed:
-                                Q_heat_required = (rho_air * cp_air * volume_floor) * (
-                                            max_air_delta_T_allowed - (T_interior_guess - T_interior)) / time_step
-                            else:
-                                Q_heat_required = 0
-
-                    # inside temperature interval - activating space heating
-                    elif T_interior >= T_off_min and T_interior_guess < T_off_min:
-                        Q_heat_required = (rho_air * cp_air * volume_floor) * (T_off_min - T_interior_guess) / time_step
-
-                    # inside temperature interval - activating space cooling
-                    elif T_interior <= T_off_max and T_interior_guess > T_off_max:  # above temperature range
-                        Q_heat_required = (rho_air * cp_air * volume_floor) * (T_off_max - T_interior_guess) / time_step
-
-                    # outside temperature interval - activating space cooling
-                    elif T_interior > T_off_max and T_interior_guess > T_off_max:
-                        if Q_building_floor > 0:
-                            if T_interior - T_off_max < max_air_delta_T_allowed:
-                                Q_heat_required = -Q_building_floor - (rho_air * cp_air * volume_floor) * (
-                                            max_air_delta_T_allowed - (T_interior - T_off_max)) / time_step
-                            else:
-                                Q_heat_required = -Q_building_floor - (rho_air * cp_air * volume_floor) * (
-                                    max_air_delta_T_allowed) / time_step
-                        else:
-                            if T_interior - T_interior_guess < max_air_delta_T_allowed:
-                                Q_heat_required = - (rho_air * cp_air * volume_floor) * (
-                                            max_air_delta_T_allowed - (T_interior - T_interior_guess)) / time_step
-                            else:
-                                Q_heat_required = 0
+                            Q_heat_required = abs(Q_building_floor) + (
+                                    rho_air * cp_air * volume_floor) * max_air_delta_T_allowed / time_step
                     else:
-                        Q_heat_required = 0
-
-                # on work time
-                else:
-                    T_interior_guess = T_interior + (Q_building_floor) * time_step / (rho_air * cp_air * volume_floor)
-
-                    # activating space heating
-                    if T_interior < T_heat_on and T_interior_guess < T_heat_on:
-                        if Q_building_floor < 0:
-                            if T_heat_on - T_interior < max_air_delta_T_allowed:
-                                Q_heat_required = abs(Q_building_floor) + (rho_air * cp_air * volume_floor) * (
-                                            T_heat_on - T_interior) / time_step
-                            else:
-                                Q_heat_required = abs(Q_building_floor) + (
-                                            rho_air * cp_air * volume_floor) * max_air_delta_T_allowed / time_step
+                        if T_interior_guess - T_interior < max_air_delta_T_allowed:
+                            Q_heat_required = (rho_air * cp_air * volume_floor) * (
+                                    max_air_delta_T_allowed - (T_interior_guess - T_interior)) / time_step
                         else:
-                            if T_interior_guess - T_interior < max_air_delta_T_allowed:
-                                Q_heat_required = (rho_air * cp_air * volume_floor) * (
-                                            max_air_delta_T_allowed - (T_interior_guess - T_interior)) / time_step
-                            else:
-                                Q_heat_required = 0
+                            Q_heat_required = 0
 
-                    # activating space heating
-                    elif T_interior >= T_heat_on and T_interior_guess < T_heat_on:
-                        Q_heat_required = (rho_air * cp_air * volume_floor) * (T_heat_on - T_interior_guess) / time_step
+                # inside temperature interval - activating space heating
+                elif T_interior >= T_off_min and T_interior_guess < T_off_min:
+                    Q_heat_required = (rho_air * cp_air * volume_floor) * (T_off_min - T_interior_guess) / time_step
 
-                    # activating space cooling
-                    elif T_interior <= T_cool_on and T_interior_guess > T_cool_on:  # above temperature range
-                        Q_heat_required = (rho_air * cp_air * volume_floor) * (T_cool_on - T_interior_guess) / time_step
+                # inside temperature interval - activating space cooling
+                elif T_interior <= T_off_max and T_interior_guess > T_off_max:  # above temperature range
+                    Q_heat_required = (rho_air * cp_air * volume_floor) * (T_off_max - T_interior_guess) / time_step
 
-                    elif T_interior == T_cool_on and T_interior_guess >= T_cool_on:  # above temperature range
-                        Q_heat_required = -Q_building_floor
-
-                    # activating space cooling
-                    elif T_interior > T_cool_on and T_interior_guess > T_cool_on:
-                        if Q_building_floor > 0:
-                            if T_interior - T_cool_on < max_air_delta_T_allowed:
-                                Q_heat_required = -Q_building_floor - (rho_air * cp_air * volume_floor) * (
-                                            T_interior - T_cool_on) / time_step
-                            else:
-                                Q_heat_required = -Q_building_floor - (rho_air * cp_air * volume_floor) * (
-                                    max_air_delta_T_allowed) / time_step
+                # outside temperature interval - activating space cooling
+                elif T_interior > T_off_max and T_interior_guess > T_off_max:
+                    if Q_building_floor > 0:
+                        if T_interior - T_off_max < max_air_delta_T_allowed:
+                            Q_heat_required = -Q_building_floor - (rho_air * cp_air * volume_floor) * (
+                                    max_air_delta_T_allowed - (T_interior - T_off_max)) / time_step
                         else:
-                            if T_interior - T_interior_guess < max_air_delta_T_allowed:
-                                Q_heat_required = - (rho_air * cp_air * volume_floor) * (
-                                            max_air_delta_T_allowed - (T_interior - T_interior_guess)) / time_step
-                            else:
-                                Q_heat_required = 0
+                            Q_heat_required = -Q_building_floor - (rho_air * cp_air * volume_floor) * (
+                                max_air_delta_T_allowed) / time_step
                     else:
-                        Q_heat_required = 0
-
-                # HOT WATER CONSUMPTION -------------------------------------------------------------------------
-                flowrate_dhw, vol_dhw = building_dhw(profile_index, vol_dhw_set, vol_dhw, flowrate_dhw_set,
-                                                     time_step)  # [m3/s]; [m3]
-                Q_dwh = rho_water * cp_water * flowrate_dhw * (T_dhw - T_net)  # [W]
-
-                # COMPUTE TEMPERATURES  -------------------------------------------------------------------------
-                # Steady State Heat Balances
-                # Inner Surfaces
-                T_deck_above = steady_state_horizontal_face_up(Q_sun_floor, T_deck_above, T_deck, T_interior, u_deck,
-                                                               Q_rad_deck_above, area_floor, alpha_floor,
-                                                               interpolation_weight)
-                T_deck_below = steady_state_horizontal_face_down(T_deck_below, T_deck, T_interior, u_deck, Q_rad_deck_below,
-                                                                 area_floor, interpolation_weight)
-                T_N_wall_in = steady_state_vertical_inner_wall(T_N_wall_in, T_N_wall, T_interior, u_wall, Q_rad_N_wall,
-                                                               area_N_wall, interpolation_weight)
-                T_S_wall_in = steady_state_vertical_inner_wall(T_S_wall_in, T_S_wall, T_interior, u_wall, Q_rad_S_wall,
-                                                               area_S_wall, interpolation_weight)
-                T_E_wall_in = steady_state_vertical_inner_wall(T_E_wall_in, T_E_wall, T_interior, u_wall, Q_rad_E_wall,
-                                                               area_E_wall, interpolation_weight)
-                T_W_wall_in = steady_state_vertical_inner_wall(T_W_wall_in, T_W_wall, T_interior, u_wall, Q_rad_W_wall,
-                                                               area_W_wall, interpolation_weight)
-                T_N_glass_in = steady_state_vertical_inner_glass(Q_sun_N_facade, alpha_glass, T_N_glass_in, T_N_glass_out,
-                                                                 T_interior, u_glass, Q_rad_N_glass, area_N_glass,
-                                                                 interpolation_weight)
-                T_S_glass_in = steady_state_vertical_inner_glass(Q_sun_S_facade, alpha_glass, T_S_glass_in, T_S_glass_out,
-                                                                 T_interior, u_glass, Q_rad_S_glass, area_S_glass,
-                                                                 interpolation_weight)
-
-
-                T_E_glass_in = steady_state_vertical_inner_glass(Q_sun_E_facade, alpha_glass, T_E_glass_in, T_E_glass_out,
-                                                                 T_interior, u_glass, Q_rad_E_glass, area_E_glass,
-                                                                 interpolation_weight)
-                T_W_glass_in = steady_state_vertical_inner_glass(Q_sun_W_facade, alpha_glass, T_W_glass_in, T_W_glass_out,
-                                                                 T_interior, u_glass, Q_rad_W_glass, area_W_glass,
-                                                                 interpolation_weight)
-                T_roof_in = steady_state_horizontal_face_down(T_roof_in, T_roof, T_interior, u_roof, Q_rad_roof, area_floor,
-                                                              interpolation_weight)
-                T_floor_in = steady_state_horizontal_face_up(Q_sun_floor, T_floor_in, T_floor, T_interior, u_floor,
-                                                             Q_rad_floor, area_floor, alpha_floor, interpolation_weight)
-
-                # Outer Surfaces
-                T_roof_out = steady_state_exterior_wall(T_roof_out, T_roof, T_exterior, u_wall, Q_sun_roof,
-                                                        Q_infra_roof_out, alpha_roof, u_exterior, interpolation_weight)
-                T_N_wall_out = steady_state_exterior_wall(T_N_wall_out, T_N_wall, T_exterior, u_wall, Q_sun_N_facade,
-                                                          Q_infra_N_outer_wall, alpha_wall, u_exterior,
-                                                          interpolation_weight)
-                T_S_wall_out = steady_state_exterior_wall(T_S_wall_out, T_S_wall, T_exterior, u_wall, Q_sun_S_facade,
-                                                          Q_infra_S_outer_wall, alpha_wall, u_exterior,
-                                                          interpolation_weight)
-                T_E_wall_out = steady_state_exterior_wall(T_E_wall_out, T_E_wall, T_exterior, u_wall, Q_sun_E_facade,
-                                                          Q_infra_E_outer_wall, alpha_wall, u_exterior,
-                                                          interpolation_weight)
-                T_W_wall_out = steady_state_exterior_wall(T_W_wall_out, T_W_wall, T_exterior, u_wall, Q_sun_W_facade,
-                                                          Q_infra_W_outer_wall, alpha_wall, u_exterior,
-                                                          interpolation_weight)
-                T_N_glass_out = steady_state_exterior_wall(T_N_glass_out, T_N_glass_in, T_exterior, u_glass, Q_sun_N_facade,
-                                                           Q_infra_N_outer_glass, alpha_glass, u_exterior,
-                                                           interpolation_weight)
-                T_S_glass_out = steady_state_exterior_wall(T_S_glass_out, T_S_glass_in, T_exterior, u_glass, Q_sun_S_facade,
-                                                           Q_infra_S_outer_glass, alpha_glass, u_exterior,
-                                                           interpolation_weight)
-                T_E_glass_out = steady_state_exterior_wall(T_E_glass_out, T_E_glass_in, T_exterior, u_glass, Q_sun_E_facade,
-                                                           Q_infra_E_outer_glass, alpha_glass, u_exterior,
-                                                           interpolation_weight)
-                T_W_glass_out = steady_state_exterior_wall(T_W_glass_out, T_W_glass_in, T_exterior, u_glass, Q_sun_W_facade,
-                                                           Q_infra_W_outer_glass, alpha_glass, u_exterior,
-                                                           interpolation_weight)
-
-                # Explicit Heat Balances
-                # Interior Air
-                T_interior = T_interior + (Q_building_floor + Q_heat_required) * time_step / (
-                            rho_air * cp_air * volume_floor)  # [ºC]
-
-                # Wall
-                T_N_wall = explicit_computation_component_temperature(T_N_wall, T_N_wall_in, T_N_wall_out, u_wall,
-                                                                      area_N_wall, time_step, c_N_wall)
-                T_S_wall = explicit_computation_component_temperature(T_S_wall, T_S_wall_in, T_S_wall_out, u_wall,
-                                                                      area_S_wall, time_step, c_S_wall)
-                T_E_wall = explicit_computation_component_temperature(T_E_wall, T_E_wall_in, T_E_wall_out, u_wall,
-                                                                      area_E_wall, time_step, c_E_wall)
-                T_W_wall = explicit_computation_component_temperature(T_W_wall, T_W_wall_in, T_W_wall_out, u_wall,
-                                                                      area_W_wall, time_step, c_W_wall)
-                T_roof = explicit_computation_component_temperature(T_roof, T_roof_in, T_roof_out, u_roof, area_floor,
-                                                                    time_step, c_roof)
-                T_floor = explicit_computation_component_temperature(T_floor, T_floor_in, T_ground, u_floor, area_floor,
-                                                                     time_step, c_floor)
-                T_deck = explicit_computation_component_temperature(T_deck, T_deck_above, T_deck_below, u_deck, area_floor,
-                                                                    time_step, c_deck)
-
-                # Generate Profiles Data
-                if Q_heat_required > 0:
-                    cumulative_heat_monthly += ( Q_heat_required + Q_dwh) * time_step / 3600000  # [kWh]
-                    cumulative_heat_hourly += (Q_heat_required + Q_dwh) * time_step / 3600000
-
+                        if T_interior - T_interior_guess < max_air_delta_T_allowed:
+                            Q_heat_required = - (rho_air * cp_air * volume_floor) * (
+                                    max_air_delta_T_allowed - (T_interior - T_interior_guess)) / time_step
+                        else:
+                            Q_heat_required = 0
                 else:
-                    cumulative_cool_monthly += (abs(Q_heat_required) * time_step / 3600000)
-                    cumulative_cool_hourly += (abs(Q_heat_required) * time_step / 3600000)
+                    Q_heat_required = 0
 
-                # Update Info
-                glass_in_N['temperature'] = T_N_glass_in
-                glass_in_E['temperature'] = T_E_glass_in
-                glass_in_S['temperature'] = T_S_glass_in
-                glass_in_W['temperature'] = T_W_glass_in
-                wall_in_N['temperature'] = T_N_wall_in
-                wall_in_E['temperature'] = T_E_wall_in
-                wall_in_S['temperature'] = T_S_wall_in
-                wall_in_W['temperature'] = T_W_wall_in
-                deck_below_in['temperature'] = T_deck_below
-                deck_above_in['temperature'] = T_deck_above
-                roof_in['temperature'] = T_roof_in
-                floor_in['temperature'] = T_floor_in
+            # on work time
+            else:
+                T_interior_guess = T_interior + (Q_building_floor) * time_step / (rho_air * cp_air * volume_floor)
 
-            # Hourly Profiles
-            profile_hourly_heat.append(cumulative_heat_hourly)  # hourly space heating demand [kWh]
-            profile_hourly_cool.append(cumulative_cool_hourly)  # hourly space cooling demand [kWh]
+                # activating space heating
+                if T_interior < T_heat_on and T_interior_guess < T_heat_on:
+                    if Q_building_floor < 0:
+                        if T_heat_on - T_interior < max_air_delta_T_allowed:
+                            Q_heat_required = abs(Q_building_floor) + (rho_air * cp_air * volume_floor) * (
+                                    T_heat_on - T_interior) / time_step
+                        else:
+                            Q_heat_required = abs(Q_building_floor) + (
+                                    rho_air * cp_air * volume_floor) * max_air_delta_T_allowed / time_step
+                    else:
+                        if T_interior_guess - T_interior < max_air_delta_T_allowed:
+                            Q_heat_required = (rho_air * cp_air * volume_floor) * (
+                                    max_air_delta_T_allowed - (T_interior_guess - T_interior)) / time_step
+                        else:
+                            Q_heat_required = 0
 
-        # OUTPUT -------------
-        profile_monthly_heat = [i * number_floor for i in profile_monthly_heat]
-        profile_monthly_cool = [i * number_floor for i in profile_monthly_cool]
-        profile_hourly_heat = [i * number_floor for i in profile_hourly_heat]
-        profile_hourly_cool = [i * number_floor for i in profile_hourly_cool]
+                # activating space heating
+                elif T_interior >= T_heat_on and T_interior_guess < T_heat_on:
+                    Q_heat_required = (rho_air * cp_air * volume_floor) * (T_heat_on - T_interior_guess) / time_step
 
-        # OUTPUT -------
-        output = {
-            'hot_stream': {
-                'id': 1,
-                'object_type': 'stream_building',
-                'object_id': None,
-                'fluid': 'water',
-                'stream_type': 'inflow',
-                'capacity': max(profile_hourly_heat),
-                "monthly_generation": profile_monthly_heat,  # [kWh]
-                "hourly_generation": profile_hourly_heat,  # [kWh]
-                "supply_temperature": supply_temperature_heat,  # [ºC]
-                "target_temperature": target_temperature_heat,  # [ºC]
-                "schedule": profile
-            },
-            'cold_stream': {
-                'id': 2,
-                'object_type': 'stream_building',
-                'object_id': None,
-                'fluid': 'water',
-                'stream_type': 'inflow',
-                'capacity': max(profile_hourly_cool),
-                "monthly_generation": profile_monthly_cool,  # [kWh]
-                "hourly_generation": profile_hourly_cool,  # [kWh]
-                "supply_temperature": supply_temperature_cool,  # [ºC]
-                "target_temperature": target_temperature_cool,  # [ºC]
-                "schedule": profile
-            }
+                # activating space cooling
+                elif T_interior <= T_cool_on and T_interior_guess > T_cool_on:  # above temperature range
+                    Q_heat_required = (rho_air * cp_air * volume_floor) * (T_cool_on - T_interior_guess) / time_step
 
+                elif T_interior == T_cool_on and T_interior_guess >= T_cool_on:  # above temperature range
+                    Q_heat_required = -Q_building_floor
+
+                # activating space cooling
+                elif T_interior > T_cool_on and T_interior_guess > T_cool_on:
+                    if Q_building_floor > 0:
+                        if T_interior - T_cool_on < max_air_delta_T_allowed:
+                            Q_heat_required = -Q_building_floor - (rho_air * cp_air * volume_floor) * (
+                                    T_interior - T_cool_on) / time_step
+                        else:
+                            Q_heat_required = -Q_building_floor - (rho_air * cp_air * volume_floor) * (
+                                max_air_delta_T_allowed) / time_step
+                    else:
+                        if T_interior - T_interior_guess < max_air_delta_T_allowed:
+                            Q_heat_required = - (rho_air * cp_air * volume_floor) * (
+                                    max_air_delta_T_allowed - (T_interior - T_interior_guess)) / time_step
+                        else:
+                            Q_heat_required = 0
+                else:
+                    Q_heat_required = 0
+
+            # HOT WATER CONSUMPTION -------------------------------------------------------------------------
+            flowrate_dhw, vol_dhw = building_dhw(profile_index, vol_dhw_set, vol_dhw, flowrate_dhw_set,
+                                                 time_step)  # [m3/s]; [m3]
+            Q_dwh = rho_water * cp_water * flowrate_dhw * (T_dhw - T_net)  # [W]
+
+            # COMPUTE TEMPERATURES  -------------------------------------------------------------------------
+            # Steady State Heat Balances
+            # Inner Surfaces
+            T_deck_above = steady_state_horizontal_face_up(Q_sun_floor, T_deck_above, T_deck, T_interior, u_deck,
+                                                           Q_rad_deck_above, area_floor, alpha_floor,
+                                                           interpolation_weight)
+            T_deck_below = steady_state_horizontal_face_down(T_deck_below, T_deck, T_interior, u_deck, Q_rad_deck_below,
+                                                             area_floor, interpolation_weight)
+            T_N_wall_in = steady_state_vertical_inner_wall(T_N_wall_in, T_N_wall, T_interior, u_wall, Q_rad_N_wall,
+                                                           area_N_wall, interpolation_weight)
+            T_S_wall_in = steady_state_vertical_inner_wall(T_S_wall_in, T_S_wall, T_interior, u_wall, Q_rad_S_wall,
+                                                           area_S_wall, interpolation_weight)
+            T_E_wall_in = steady_state_vertical_inner_wall(T_E_wall_in, T_E_wall, T_interior, u_wall, Q_rad_E_wall,
+                                                           area_E_wall, interpolation_weight)
+            T_W_wall_in = steady_state_vertical_inner_wall(T_W_wall_in, T_W_wall, T_interior, u_wall, Q_rad_W_wall,
+                                                           area_W_wall, interpolation_weight)
+            T_N_glass_in = steady_state_vertical_inner_glass(Q_sun_N_facade, alpha_glass, T_N_glass_in, T_N_glass_out,
+                                                             T_interior, u_glass, Q_rad_N_glass, area_N_glass,
+                                                             interpolation_weight)
+            T_S_glass_in = steady_state_vertical_inner_glass(Q_sun_S_facade, alpha_glass, T_S_glass_in, T_S_glass_out,
+                                                             T_interior, u_glass, Q_rad_S_glass, area_S_glass,
+                                                             interpolation_weight)
+
+            T_E_glass_in = steady_state_vertical_inner_glass(Q_sun_E_facade, alpha_glass, T_E_glass_in, T_E_glass_out,
+                                                             T_interior, u_glass, Q_rad_E_glass, area_E_glass,
+                                                             interpolation_weight)
+            T_W_glass_in = steady_state_vertical_inner_glass(Q_sun_W_facade, alpha_glass, T_W_glass_in, T_W_glass_out,
+                                                             T_interior, u_glass, Q_rad_W_glass, area_W_glass,
+                                                             interpolation_weight)
+            T_roof_in = steady_state_horizontal_face_down(T_roof_in, T_roof, T_interior, u_roof, Q_rad_roof, area_floor,
+                                                          interpolation_weight)
+            T_floor_in = steady_state_horizontal_face_up(Q_sun_floor, T_floor_in, T_floor, T_interior, u_floor,
+                                                         Q_rad_floor, area_floor, alpha_floor, interpolation_weight)
+
+            # Outer Surfaces
+            T_roof_out = steady_state_exterior_wall(T_roof_out, T_roof, T_exterior, u_wall, Q_sun_roof,
+                                                    Q_infra_roof_out, alpha_roof, u_exterior, interpolation_weight)
+            T_N_wall_out = steady_state_exterior_wall(T_N_wall_out, T_N_wall, T_exterior, u_wall, Q_sun_N_facade,
+                                                      Q_infra_N_outer_wall, alpha_wall, u_exterior,
+                                                      interpolation_weight)
+            T_S_wall_out = steady_state_exterior_wall(T_S_wall_out, T_S_wall, T_exterior, u_wall, Q_sun_S_facade,
+                                                      Q_infra_S_outer_wall, alpha_wall, u_exterior,
+                                                      interpolation_weight)
+            T_E_wall_out = steady_state_exterior_wall(T_E_wall_out, T_E_wall, T_exterior, u_wall, Q_sun_E_facade,
+                                                      Q_infra_E_outer_wall, alpha_wall, u_exterior,
+                                                      interpolation_weight)
+            T_W_wall_out = steady_state_exterior_wall(T_W_wall_out, T_W_wall, T_exterior, u_wall, Q_sun_W_facade,
+                                                      Q_infra_W_outer_wall, alpha_wall, u_exterior,
+                                                      interpolation_weight)
+            T_N_glass_out = steady_state_exterior_wall(T_N_glass_out, T_N_glass_in, T_exterior, u_glass, Q_sun_N_facade,
+                                                       Q_infra_N_outer_glass, alpha_glass, u_exterior,
+                                                       interpolation_weight)
+            T_S_glass_out = steady_state_exterior_wall(T_S_glass_out, T_S_glass_in, T_exterior, u_glass, Q_sun_S_facade,
+                                                       Q_infra_S_outer_glass, alpha_glass, u_exterior,
+                                                       interpolation_weight)
+            T_E_glass_out = steady_state_exterior_wall(T_E_glass_out, T_E_glass_in, T_exterior, u_glass, Q_sun_E_facade,
+                                                       Q_infra_E_outer_glass, alpha_glass, u_exterior,
+                                                       interpolation_weight)
+            T_W_glass_out = steady_state_exterior_wall(T_W_glass_out, T_W_glass_in, T_exterior, u_glass, Q_sun_W_facade,
+                                                       Q_infra_W_outer_glass, alpha_glass, u_exterior,
+                                                       interpolation_weight)
+
+            # Explicit Heat Balances
+            # Interior Air
+            T_interior = T_interior + (Q_building_floor + Q_heat_required) * time_step / (
+                    rho_air * cp_air * volume_floor)  # [ºC]
+
+            # Wall
+            T_N_wall = explicit_computation_component_temperature(T_N_wall, T_N_wall_in, T_N_wall_out, u_wall,
+                                                                  area_N_wall, time_step, c_N_wall)
+            T_S_wall = explicit_computation_component_temperature(T_S_wall, T_S_wall_in, T_S_wall_out, u_wall,
+                                                                  area_S_wall, time_step, c_S_wall)
+            T_E_wall = explicit_computation_component_temperature(T_E_wall, T_E_wall_in, T_E_wall_out, u_wall,
+                                                                  area_E_wall, time_step, c_E_wall)
+            T_W_wall = explicit_computation_component_temperature(T_W_wall, T_W_wall_in, T_W_wall_out, u_wall,
+                                                                  area_W_wall, time_step, c_W_wall)
+            T_roof = explicit_computation_component_temperature(T_roof, T_roof_in, T_roof_out, u_roof, area_floor,
+                                                                time_step, c_roof)
+            T_floor = explicit_computation_component_temperature(T_floor, T_floor_in, T_ground, u_floor, area_floor,
+                                                                 time_step, c_floor)
+            T_deck = explicit_computation_component_temperature(T_deck, T_deck_above, T_deck_below, u_deck, area_floor,
+                                                                time_step, c_deck)
+
+            # Generate Profiles Data
+            if Q_heat_required > 0:
+                cumulative_heat_monthly += (Q_heat_required + Q_dwh) * time_step / 3600000  # [kWh]
+                cumulative_heat_hourly += (Q_heat_required + Q_dwh) * time_step / 3600000
+
+            else:
+                cumulative_cool_monthly += (abs(Q_heat_required) * time_step / 3600000)
+                cumulative_cool_hourly += (abs(Q_heat_required) * time_step / 3600000)
+
+            # Update Info
+            glass_in_N['temperature'] = T_N_glass_in
+            glass_in_E['temperature'] = T_E_glass_in
+            glass_in_S['temperature'] = T_S_glass_in
+            glass_in_W['temperature'] = T_W_glass_in
+            wall_in_N['temperature'] = T_N_wall_in
+            wall_in_E['temperature'] = T_E_wall_in
+            wall_in_S['temperature'] = T_S_wall_in
+            wall_in_W['temperature'] = T_W_wall_in
+            deck_below_in['temperature'] = T_deck_below
+            deck_above_in['temperature'] = T_deck_above
+            roof_in['temperature'] = T_roof_in
+            floor_in['temperature'] = T_floor_in
+
+        # Hourly Profiles
+        profile_hourly_heat.append(cumulative_heat_hourly)  # hourly space heating demand [kWh]
+        profile_hourly_cool.append(cumulative_cool_hourly)  # hourly space cooling demand [kWh]
+
+    # OUTPUT -------------
+    profile_monthly_heat = [i * number_floor for i in profile_monthly_heat]
+    profile_monthly_cool = [i * number_floor for i in profile_monthly_cool]
+    profile_hourly_heat = [i * number_floor for i in profile_hourly_heat]
+    profile_hourly_cool = [i * number_floor for i in profile_hourly_cool]
+
+    # OUTPUT -------
+    output = {
+        'hot_stream': {
+            'id': 1,
+            'object_type': 'stream_building',
+            'object_id': None,
+            'fluid': 'water',
+            'stream_type': 'inflow',
+            'capacity': max(profile_hourly_heat),
+            "monthly_generation": profile_monthly_heat,  # [kWh]
+            "hourly_generation": profile_hourly_heat,  # [kWh]
+            "supply_temperature": supply_temperature_heat,  # [ºC]
+            "target_temperature": target_temperature_heat,  # [ºC]
+            "schedule": profile
+        },
+        'cold_stream': {
+            'id': 2,
+            'object_type': 'stream_building',
+            'object_id': None,
+            'fluid': 'water',
+            'stream_type': 'inflow',
+            'capacity': max(profile_hourly_cool),
+            "monthly_generation": profile_monthly_cool,  # [kWh]
+            "hourly_generation": profile_hourly_cool,  # [kWh]
+            "supply_temperature": supply_temperature_cool,  # [ºC]
+            "target_temperature": target_temperature_cool,  # [ºC]
+            "schedule": profile
         }
 
-    except:
-        raise Exception("Building Simulation not feasible. Please, check your inputs")
+    }
+
 
     return output
 

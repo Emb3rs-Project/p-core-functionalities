@@ -1,0 +1,34 @@
+{
+  "platform": {
+    "id": 1000,
+    "saturday_on": 0,
+    "sunday_on": 0,
+    "shutdown_periods": [
+      [
+        60,
+        75
+      ],
+      [
+        150,
+        155
+      ],
+      [
+        360,
+        365
+      ]
+    ],
+    "daily_periods": [
+      [
+        0,
+        14
+      ]
+    ],
+    "equipment_supply_temperature": 180,
+    "open_closed_loop": 0,
+    "fuel_type": "natural_gas",
+    "equipment_return_temperature": 50,
+    "supply_capacity": 7500,
+    "processes": [],
+    "global_conversion_efficiency": 0.88
+  }
+}

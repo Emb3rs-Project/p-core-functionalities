@@ -21,8 +21,8 @@
       ]
     ],
     "space_heating_type": 1,
-    "T_cool_on": 24,
     "T_heat_on": 22,
+    "T_cool_on": 24,
     "T_off_min": 12,
     "T_off_max": 28
   }

@@ -15,7 +15,7 @@
     "lights_on": 0,
     "T_heat_on": 18,
     "T_cool_on": 35,
-    "thermal_blanket": 0,
+    "thermal_blanket": 1,
     "greenhouse_efficiency": 1
   }
 }

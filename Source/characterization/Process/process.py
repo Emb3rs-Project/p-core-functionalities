@@ -70,6 +70,8 @@ class Process:
         self.daily_periods = in_var['platform']['daily_periods']  # e.g: [[8,12],[15,19]]
         self.schedule_type = in_var['platform']['schedule_type']  # 0-Continuous, 1-Batch
 
+
+
         try:
             self.cycle_time_percentage = in_var['platform']['cycle_time_percentage']  # Cycle percentage for Startup and Outflow (when in Batch)
             if self.cycle_time_percentage >= 1 or self.cycle_time_percentage <= 0:

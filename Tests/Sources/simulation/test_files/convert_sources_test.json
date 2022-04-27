@@ -35189,8 +35189,8 @@
       }
     ]
   },
-  "cf-module": {
-    "sink_group_grid_supply_temperature": 100,
+  "cf_module": {
+    "sink_group_grid_supply_temperature": 95,
     "sink_group_grid_return_temperature": 70
   }
 }

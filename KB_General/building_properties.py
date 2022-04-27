@@ -35,6 +35,7 @@ class BuildingProperties:
 
     kb_data: dict
 
+
     def get_values(self, country, building_type):
 
         data = self.kb_data.get('building_properties')

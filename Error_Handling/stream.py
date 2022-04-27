@@ -33,5 +33,5 @@ class Stream(BaseModel):
         _v = list(filter(lambda num: num != 1, _v))
 
         if len(_v) > 0:
-            raise ValueError('var:schedule values not valid (only 0 an 1]')
+            raise ValueError('Values not valid found (only 0 or 1)')
         return v

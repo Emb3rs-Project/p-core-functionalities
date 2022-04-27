@@ -5,7 +5,7 @@ from .Tests.Sinks.characterization.Greenhouse import testGreenhouse
 from .Tests.Sinks.simulation.ConvertSink import testConvertSink
 from .Tests.Sources.characterization.GenerateBoiler import testGenerateBoiler
 from .Tests.Sources.characterization.GenerateChp import testGenerateChp
-from .Tests.Sources.characterization.OutflowSimplified import testOutflowSimplified
+from .Tests.Sources.characterization.SourceSimpleUser import testSourceSimpleUser
 from .Tests.Sources.characterization.GenerateCoolingEquipment import (
     testGenerateCoolingEquipment,
 )
@@ -27,7 +27,7 @@ availableTests = {
     "source_detailed:boiler": testGenerateBoiler,
     "source_detailed:chp": testGenerateChp,
     "source_detailed:process": testProcess,
-    "source:outflow_simplified": testOutflowSimplified,
+    "source:outflow_simplified": testSourceSimpleUser,
     "source:convert_sources": testConvertSource,
     "source:convert_orc": testConvertORC,
     "source:convert_pinch": testConvertPinch,
