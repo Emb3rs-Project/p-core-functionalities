@@ -1,6 +1,6 @@
 from pydantic import BaseModel, validator
 from typing import List
-from .source_or_sink import SourceOrSink
+from .Convert_Source_Sink.source_or_sink import SourceOrSink
 
 class PlatformConvertSinks(BaseModel):
 

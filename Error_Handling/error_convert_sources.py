@@ -1,7 +1,7 @@
-from pydantic import BaseModel, validator, PositiveFloat, confloat
+from pydantic import BaseModel, validator, confloat
 from typing import List, Optional
-from .source_or_sink import SourceOrSink
-from .gis_source_losses import GISSourceLosses
+from .Convert_Source_Sink.source_or_sink import SourceOrSink
+from .Convert_Source_Sink.gis_source_losses import GISSourceLosses
 
 
 class MainErrorConvertSources(BaseModel):

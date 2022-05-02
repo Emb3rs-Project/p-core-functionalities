@@ -215,18 +215,20 @@ def testConvertPinch():
     option = 1
 
     # create process
-    process_data = Process_data()
-    input_process_data = {}
-    input_process_data['platform'] = process_data.__dict__
-    process = Process(input_process_data,KB(kb))
+    do_this = 0
+    if do_this == 1:
+        process_data = Process_data()
+        input_process_data = {}
+        input_process_data['platform'] = process_data.__dict__
+        process = Process(input_process_data,KB(kb))
 
-    # create equipment
-    equipment_data = GenerateBoiler()
-    input_equipment_data = {}
-    input_equipment_data['platform'] = equipment_data.__dict__
-    equipment = Boiler(input_equipment_data,KB(kb))
-    # create isolated stream
-    isolated_stream = stream_industry(11, 'inflow', 'thermal_oil', 480, 500, 1.625 * 3600 / 2, 104.8,[1, 0, 1, 0, 0, 1, 1])
+        # create equipment
+        equipment_data = GenerateBoiler()
+        input_equipment_data = {}
+        input_equipment_data['platform'] = equipment_data.__dict__
+        equipment = Boiler(input_equipment_data,KB(kb))
+        # create isolated stream
+        isolated_stream = stream_industry(11, 'inflow', 'thermal_oil', 480, 500, 1.625 * 3600 / 2, 104.8,[1, 0, 1, 0, 0, 1, 1])
 
     # OPTION 1 - test isolated streams
     if option == 1:

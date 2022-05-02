@@ -1,8 +1,8 @@
 from pydantic import validator, PositiveInt
 from typing import List, Optional
-from .stream import Stream
-from .location import Location
-from .consumer_type_options import ConsumerTypeOptions
+from .General.stream import Stream
+from .General.location import Location
+from .General.consumer_type_options import ConsumerTypeOptions
 
 
 class PlatformConvertORC(Location):

@@ -1,33 +1,23 @@
 from .Tests.test_lib import defineArguments, processInput
-from .Tests.Sinks.characterization.Industry import testIndustry
+from .Tests.Sinks.characterization.SinkSimpleUser import testIndustry
 from .Tests.Sinks.characterization.Building import testBuilding
 from .Tests.Sinks.characterization.Greenhouse import testGreenhouse
 from .Tests.Sinks.simulation.ConvertSink import testConvertSink
-from .Tests.Sources.characterization.GenerateBoiler import testGenerateBoiler
-from .Tests.Sources.characterization.GenerateChp import testGenerateChp
 from .Tests.Sources.characterization.SourceSimpleUser import testSourceSimpleUser
-from .Tests.Sources.characterization.GenerateCoolingEquipment import (
-    testGenerateCoolingEquipment,
-)
-from .Tests.Sources.characterization.GenerateBurner import testGenerateBurner
-from .Tests.Sources.characterization.Process import testProcess
 from .Tests.Sources.simulation.ConvertSources import testConvertSource
 from .Tests.Sources.simulation.ConvertOrc import testConvertORC
 from .Tests.Sources.simulation.ConvertPinch import testConvertPinch
+from .Tests.Sources.characterization.SourceDetailed import testSourceDetailedUser
 
 
 # Write Here all the available tests you want to run
 availableTests = {
-    "sink:industry": testIndustry,
+    "sink:simple_user": testIndustry,
     "sink:building": testBuilding,
     "sink:greenhouse": testGreenhouse,
     "sink:convert_sinks": testConvertSink,
-    "source_detailed:cooling_equipment": testGenerateCoolingEquipment,
-    "source_detailed:burner": testGenerateBurner,
-    "source_detailed:boiler": testGenerateBoiler,
-    "source_detailed:chp": testGenerateChp,
-    "source_detailed:process": testProcess,
-    "source:outflow_simplified": testSourceSimpleUser,
+    "source:source_detailed": testSourceDetailedUser,
+    "source:simple_user": testSourceSimpleUser,
     "source:convert_sources": testConvertSource,
     "source:convert_orc": testConvertORC,
     "source:convert_pinch": testConvertPinch,

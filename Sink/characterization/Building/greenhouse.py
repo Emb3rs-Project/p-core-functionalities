@@ -75,7 +75,7 @@ from ....Sink.characterization.Building.Auxiliary.h_convection_horizontal import
 from ....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
 from ....Sink.characterization.Building.Auxiliary.ht_radiation_equation import ht_radiation_equation
 from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
-from ....Error_Handling.error_greenhouse import error_greenhouse
+from ....Error_Handling.error_greenhouse import PlatformGreenhouse
 
 
 
@@ -84,7 +84,7 @@ def greenhouse(in_var):
     ##################################################################################################################
     # INPUT ----------------------------------------------
     # validate inputs
-    platform_data = error_greenhouse(in_var['platform'])
+    platform_data = PlatformGreenhouse(**in_var['platform'])
 
     latitude, longitude = platform_data.location
     width = platform_data.width

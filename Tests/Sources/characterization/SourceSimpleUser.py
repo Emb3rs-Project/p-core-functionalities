@@ -7,12 +7,11 @@ data_test = json.load(open(os.path.join(script_dir, "test_files/source_simple_in
 
 
 def testSourceSimpleUser():
-    industry_stream_test = simple_user(data_test)
+    test = simple_user(data_test)
 
-    if industry_stream_test['streams'][0]['flowrate'] == 10:
+    if test['streams'][0]['flowrate'] == 10:
         print('testSourceSimpleUser - Everything Correct')
     else:
         print('testSourceSimpleUser - Report to CF that something is odd')
 
 
-testSourceSimpleUser()

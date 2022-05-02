@@ -1,1 +1,0 @@
-{"platform": {"id": 3000, "saturday_on": 1, "sunday_on": 1, "shutdown_periods": [[60, 75], [150, 155], [360, 365]], "daily_periods": [[9, 24]], "supply_temperature": 180, "open_closed_loop": 0, "fuel_type": "natural_gas", "global_conversion_efficiency": 0.8406, "supply_capacity": 7500, "processes": [], "thermal_conversion_efficiency": 0.1, "electrical_generation": 500}}

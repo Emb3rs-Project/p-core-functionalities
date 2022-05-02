@@ -25,13 +25,14 @@ import datetime
 
 def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
 
-    # Shutdown Periods FROM USER - e.g. shutdown_periods = [[210,240]]
+    # Shutdown Periods FROM USER - e.g. shutdown_periods = [[210,240], [255,290]]
     shutdown_start_date = []
     shutdown_end_date = []
 
     for period in shutdown_periods:
         shutdown_start_date.append(period[0])
         shutdown_end_date.append(period[-1])
+
 
     # Daily Working Periods FROM USER - e.g. daily_periods = [[8,12],[14,18]]
     cycle_start_time = []
@@ -40,6 +41,8 @@ def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
     for period in daily_periods:
         cycle_start_time.append(period[0])
         cycle_end_time.append(period[-1])
+
+
 
     # Initialize Arrays
     last_year = 2024

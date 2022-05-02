@@ -1,0 +1,194 @@
+{
+  "platform": {
+    "all_objects_info": [
+      {
+        "object_type": "boiler",
+        "id": 1000,
+        "saturday_on": 0,
+        "sunday_on": 0,
+        "shutdown_periods": [
+          [
+            60,
+            75
+          ],
+          [
+            150,
+            155
+          ],
+          [
+            360,
+            365
+          ]
+        ],
+        "daily_periods": [
+          [
+            0,
+            14
+          ]
+        ],
+        "equipment_supply_temperature": 180,
+        "open_closed_loop": 0,
+        "fuel_type": "natural_gas",
+        "equipment_return_temperature": 20,
+        "supply_capacity": 7500,
+        "global_conversion_efficiency": 0.88
+      },
+      {
+        "object_type": "process",
+        "id": 55,
+        "equipment_id": 1000,
+        "saturday_on": 1,
+        "sunday_on": 1,
+        "shutdown_periods": [],
+        "daily_periods": [
+          [
+            0,
+            2
+          ],
+          [
+            8,
+            12
+          ],
+          [
+            15,
+            20
+          ]
+        ],
+        "operation_temperature": 150,
+        "schedule_type": 0,
+        "cycle_time_percentage": 0.1,
+        "startup_data": [
+          {
+            "mass": 100,
+            "fluid_cp": 4.2,
+            "fluid": "water",
+            "supply_temperature": 20
+          }
+        ],
+        "maintenance_data": [
+          {
+            "maintenance_capacity": 100
+          }
+        ],
+        "inflow_data": [
+          {
+            "flowrate": 100,
+            "fluid": "oil",
+            "fluid_cp": 2,
+            "supply_temperature": 10
+          },
+          {
+            "flowrate": 100,
+            "fluid": "oil",
+            "fluid_cp": 2,
+            "supply_temperature": 10
+          }
+        ],
+        "outflow_data": [
+          {
+            "flowrate": 100,
+            "fluid_cp": 2,
+            "fluid": "oil",
+            "target_temperature": 45
+          }
+        ]
+      },
+      {
+        "object_type": "cooling_equipment",
+        "id": 3000,
+        "saturday_on": 1,
+        "sunday_on": 1,
+        "shutdown_periods": [
+          [
+            60,
+            75
+          ],
+          [
+            150,
+            155
+          ],
+          [
+            360,
+            365
+          ]
+        ],
+        "daily_periods": [
+          [
+            9,
+            24
+          ]
+        ],
+        "cooling_equipment_sub_type": "compression_chiller",
+        "supply_capacity": 7500
+      },
+      {
+        "object_type": "chp",
+        "id": 300,
+        "saturday_on": 1,
+        "sunday_on": 1,
+        "shutdown_periods": [
+          [
+            60,
+            75
+          ],
+          [
+            150,
+            155
+          ],
+          [
+            360,
+            365
+          ]
+        ],
+        "daily_periods": [
+          [
+            9,
+            24
+          ]
+        ],
+        "supply_temperature": 180,
+        "open_closed_loop": 0,
+        "fuel_type": "natural_gas",
+        "global_conversion_efficiency": 0.8406,
+        "supply_capacity": 7500,
+        "processes": [],
+        "thermal_conversion_efficiency": 0.1,
+        "electrical_generation": 500
+      },
+      {
+        "object_type": "burner",
+        "id": 10,
+        "burner_equipment_sub_type": "direct_burner",
+        "saturday_on": 0,
+        "sunday_on": 0,
+        "shutdown_periods": [
+          [
+            60,
+            75
+          ],
+          [
+            150,
+            155
+          ],
+          [
+            360,
+            365
+          ]
+        ],
+        "daily_periods": [
+          [
+            0,
+            14
+          ]
+        ],
+        "fuel_type": "biomass",
+        "burner_excess_heat_supply_temperature": 400,
+        "burner_excess_heat_target_temperature": 120,
+        "burner_excess_heat_flowrate": 20,
+        "supply_capacity": 7500,
+        "processes": [],
+        "global_conversion_efficiency": 0.9
+      }
+    ]
+  }
+}

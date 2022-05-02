@@ -1,11 +1,11 @@
-from pydantic import BaseModel, validator, confloat, PositiveFloat, conint, PositiveInt, Required
-from typing import Optional, List
-from .schedule import Schedule
-from.location import Location
+from pydantic import validator, confloat, PositiveFloat, PositiveInt
+from typing import Optional
+from .General.schedule import Schedule
+from .General.location import Location
 from enum import Enum
 from ..KB_General.building_properties import BuildingProperties
 from ..General.Auxiliary_General.get_country import get_country
-from .building_orientation import BuildingOrientation
+from .General.building_orientation import BuildingOrientation
 
 
 def error_building(platform_data,kb):
@@ -13,32 +13,24 @@ def error_building(platform_data,kb):
     building_properties = BuildingProperties(kb)
 
     class BuildingType(str, Enum):
-        value_1 = 'office'
-        value_2 = 'hotel'
-        value_3 = 'residential'
+        office = 'office'
+        hotel = 'hotel'
+        residential = 'residential'
+
+    class SpaceHeatingType(int, Enum):
+        conventional = 1
+        low_temperature = 2
+        user_input = 3
 
     class PlatformBuildingInitial(Location):
         building_type: BuildingType
         width_floor: PositiveFloat
         length_floor: PositiveFloat
-        space_heating_type: int
-        number_rooms: Optional[PositiveInt] = None
-        number_person_per_floor: Optional[PositiveInt] = None
-        supply_temperature_heat: Optional[PositiveFloat] = None
-        target_temperature_heat: Optional[PositiveFloat] = None
-
-        @validator("space_heating_type", pre=True)
-        def _space_heating_type(cls, v):
-            options = [1,2,3]
-
-            if v not in options:
-                raise ValueError("Must be an integer corresponding to one of the following options, with the heaters fluid working at:"
-                                 "\n 1) Conventional: 45ºC - 75ºC"
-                                 "\n 2) Low temperature: 30ºC - 50ºC"
-                                 "\n 3) Specify temperatures - Advanced Parameters\n"
-                                 )
-            else:
-                return v
+        space_heating_type: SpaceHeatingType
+        number_rooms: Optional[PositiveInt]
+        number_person_per_floor: Optional[PositiveInt]
+        supply_temperature_heat: Optional[PositiveFloat]
+        target_temperature_heat: Optional[PositiveFloat]
 
 
         @validator('building_type')
@@ -114,7 +106,7 @@ def error_building(platform_data,kb):
         T_cool_on: Optional[PositiveFloat] = 1000
         T_off_min: Optional[PositiveFloat] = -1000
         T_off_max: Optional[PositiveFloat] = 1000
-        space_heating_type: int
+        space_heating_type: SpaceHeatingType
         number_rooms: Optional[PositiveInt] = val_number_rooms
         number_person_per_floor: Optional[PositiveInt] = val_number_person_per_floor
         target_temperature_heat: PositiveFloat

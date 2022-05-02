@@ -61,19 +61,18 @@ class Process:
         self.streams = []
 
         # INPUT
-        self.id = in_var['platform']['id']  # process ID
-        self.equipment = in_var['platform']['equipment']  # heat/cool equipment id associated to
-        self.operation_temperature = in_var['platform']['operation_temperature']
-        self.saturday_on = in_var['platform']['saturday_on']
-        self.sunday_on = in_var['platform']['sunday_on']
-        self.shutdown_periods = in_var['platform']['shutdown_periods']  # e.g: [[59,74],[152,172],[362,365]]
-        self.daily_periods = in_var['platform']['daily_periods']  # e.g: [[8,12],[15,19]]
-        self.schedule_type = in_var['platform']['schedule_type']  # 0-Continuous, 1-Batch
-
+        self.id = in_var['id']  # process ID
+        self.equipment_id = in_var['equipment_id']  # heat/cool equipment id associated to
+        self.operation_temperature = in_var['operation_temperature']
+        self.saturday_on = in_var['saturday_on']
+        self.sunday_on = in_var['sunday_on']
+        self.shutdown_periods = in_var['shutdown_periods']  # e.g: [[59,74],[152,172],[362,365]]
+        self.daily_periods = in_var['daily_periods']  # e.g: [[8,12],[15,19]]
+        self.schedule_type = in_var['schedule_type']  # 0-Continuous, 1-Batch
 
 
         try:
-            self.cycle_time_percentage = in_var['platform']['cycle_time_percentage']  # Cycle percentage for Startup and Outflow (when in Batch)
+            self.cycle_time_percentage = in_var['cycle_time_percentage']  # Cycle percentage for Startup and Outflow (when in Batch)
             if self.cycle_time_percentage >= 1 or self.cycle_time_percentage <= 0:
                 self.cycle_time_percentage = 0.1
         except:
@@ -81,28 +80,28 @@ class Process:
 
         # Startup
         try:
-            startup_data = in_var['platform']['startup_data']
+            startup_data = in_var['startup_data']
             self.generate_process_startup(startup_data)
         except:
             pass
 
         # Maintenance
         try:
-            maintenance_data = in_var['platform']['maintenance_data']
+            maintenance_data = in_var['maintenance_data']
             self.generate_process_maintenance(maintenance_data)
         except:
             pass
 
         # Inflows
         try:
-            inflow_data = in_var['platform']['inflow_data']
+            inflow_data = in_var['inflow_data']
             self.generate_process_inflow(inflow_data)
         except:
             pass
 
         # Outflows
         try:
-            outflow_data = in_var['platform']['outflow_data']
+            outflow_data = in_var['outflow_data']
             self.generate_process_outflow(outflow_data)
         except:
             pass

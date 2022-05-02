@@ -52,14 +52,10 @@ def simple_user(in_var):
     ##########################################################################################
     # INPUT
     object_id = in_var['platform']['object_id']
-    type_of_object = in_var['platform']['type_of_object']
     streams = in_var['platform']['streams']
 
     # Defined vars
-
-
     streams_output = []
-
 
     ##########################################################################################
     # COMPUTE

@@ -1,8 +1,8 @@
-from pydantic import BaseModel, validator, confloat
+from pydantic import validator
 from typing import List
-from .consumer_type_options import ConsumerTypeOptions
-from .stream import Stream
-from .location import Location
+from ..General.consumer_type_options import ConsumerTypeOptions
+from ..General.stream import Stream
+from ..General.location import Location
 
 class SourceOrSink(Location):
 
