@@ -56,10 +56,7 @@ def simple_user(in_var):
     streams = in_var['platform']['streams']
 
     # Defined vars
-    if type_of_object == "sink":
-        stream_type = "inflow"
-    else:
-        stream_type = "excess_heat"
+
 
     streams_output = []
 
@@ -74,6 +71,12 @@ def simple_user(in_var):
                 * abs((stream["supply_temperature"] - stream["target_temperature"]))
                 / 3600
         )  # [kW]
+
+        if stream["supply_temperature"] < stream["target_temperature"]:
+            stream_type = "inflow"
+        else:
+            stream_type = "excess_heat"
+
         schedule = schedule_hour(
             stream["saturday_on"],
             stream["sunday_on"],
