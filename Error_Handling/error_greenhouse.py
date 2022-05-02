@@ -14,8 +14,8 @@ class GreenhouseEfficiency(int, Enum):
 
 
 class ArtificalLights_and_ThermalBlanket(int, Enum):
-    yes = 1
-    no = 0
+    has = 1
+    does_not_have = 0
 
 
 class PlatformGreenhouse(Schedule, Location):
