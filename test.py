@@ -1,5 +1,5 @@
 from .Tests.test_lib import defineArguments, processInput
-from .Tests.Sinks.characterization.SinkSimpleUser import testIndustry
+from .Tests.Sinks.characterization.SinkSimpleUser import testSinkSimpleUser
 from .Tests.Sinks.characterization.Building import testBuilding
 from .Tests.Sinks.characterization.Greenhouse import testGreenhouse
 from .Tests.Sinks.simulation.ConvertSink import testConvertSink
@@ -12,7 +12,7 @@ from .Tests.Sources.characterization.SourceDetailed import testSourceDetailedUse
 
 # Write Here all the available tests you want to run
 availableTests = {
-    "sink:simple_user": testIndustry,
+    "sink:simple_user": testSinkSimpleUser,
     "sink:building": testBuilding,
     "sink:greenhouse": testGreenhouse,
     "sink:convert_sinks": testConvertSink,
