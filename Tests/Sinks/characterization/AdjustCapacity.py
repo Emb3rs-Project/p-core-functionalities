@@ -1,17 +1,28 @@
+import os
+import json
+from ....Sink.characterization.Building.adjust_capacity import adjust_capacity
+
+script_dir = os.path.dirname(__file__)
+data_hot_stream = json.load(open(os.path.join(script_dir, "test_files/adjust_cap_hot_stream.json")))
+data_cold_stream = json.load(open(os.path.join(script_dir, "test_files/adjust_cap_cold_stream.json")))
+
+def testAdjustCapacity():
+
+    # Adjust Capacity
+    # hot stream
+    test = adjust_capacity(data_hot_stream)
+    if sum(test['monthly_generation']) == 66945.80266101885:
+        print('testAdjustCapacity hot stream- Everything Correct')
+    else:
+        print('testAdjustCapacity hot stream- Report to CF that something is odd')
+
+    # cold stream
+    test = adjust_capacity(data_cold_stream)
+
+    if sum(test['monthly_generation']) == 50000:
+        print('testAdjustCapacity cold stream - Everything Correct')
+    else:
+        print('testAdjustCapacity cold stream - Report to CF that something is odd')
 
 
-from module.Sink.characterization.Building.sink_adjust_capacity import sink_adjust_capacity
 
-input_data = {}
-input_data['platform'] = {}
-input_data['platform']['user_monthly_capacity'] = [120,120,120,120,120,120,120,120,120,120,120,120]
-
-input_data['cf_module'] = {}
-
-stream = {'monthly_generation': [140,140,140,140,140,140,140,140,140,140,140,140]
-
-}
-
-input_data['cf_module']['stream_building'] = stream
-
-a = sink_adjust_capacity(input_data)
