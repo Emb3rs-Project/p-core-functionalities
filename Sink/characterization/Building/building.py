@@ -608,7 +608,7 @@ def building(in_var, kb : KB):
     output = {
         'hot_stream': {
             'id': 1,
-            'object_type': 'stream_building',
+            'object_type': 'stream',
             'object_id': None,
             'fluid': 'water',
             'stream_type': 'inflow',
@@ -621,7 +621,7 @@ def building(in_var, kb : KB):
         },
         'cold_stream': {
             'id': 2,
-            'object_type': 'stream_building',
+            'object_type': 'stream',
             'object_id': None,
             'fluid': 'water',
             'stream_type': 'inflow',
