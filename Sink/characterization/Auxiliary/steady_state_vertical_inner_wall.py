@@ -25,7 +25,7 @@ OUTPUT:
 
 """
 
-from .....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
+from .h_convection_vertical import h_convection_vertical
 
 
 def steady_state_vertical_inner_wall(T_wall_in, T_wall, T_interior, u_wall, Q_rad_inner_facade, area_wall,

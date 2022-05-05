@@ -1,7 +1,7 @@
 from pydantic import BaseModel, PositiveInt
 from typing import List
 from enum import Enum
-from .General.stream import Stream
+from .General.simple_industry_stream_data_input import SimpleIndustryStreamDataInput
 
 class TypeofObject(str, Enum):
     source = "source"
@@ -11,5 +11,5 @@ class PlatformSimpleIndustry(BaseModel):
 
     object_id: PositiveInt
     type_of_object: TypeofObject
-    streams: List[Stream]
+    streams: List[SimpleIndustryStreamDataInput]
 

@@ -17,7 +17,8 @@ OUTPUT: stream with data corrected
 
 """
 
-from ....Error_Handling.error_adjust_capacity import PlatformAdjustCapacity
+from ...Error_Handling.error_adjust_capacity import PlatformAdjustCapacity
+from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 months = [
     "january"
@@ -53,21 +54,28 @@ def adjust_capacity(in_var):
     # COMPUTE
     months_coef = {}
 
-    if user_monthly_capacity is not None:
-        for index, month_capacity in enumerate(stream['monthly_generation']):
-            if user_monthly_capacity[str(months[index])] is None:
-                months_coef[months[index]] = 1
-            else:
-                months_coef[months[index]] = user_monthly_capacity[str(months[index])] / month_capacity
+    try:
+        if user_monthly_capacity is not None:
+            for index, month_capacity in enumerate(stream['monthly_generation']):
+                if user_monthly_capacity[str(months[index])] is None:
+                    months_coef[months[index]] = 1
+                else:
+                    months_coef[months[index]] = user_monthly_capacity[str(months[index])] / month_capacity
+            stream = monthly_adjust(stream, months_coef)
 
-        stream = monthly_adjust(stream, months_coef)
+        else:
+            for index, month_capacity in enumerate(stream['monthly_generation']):
+                months_coef[months[index]] = user_yearly_capacity / sum(stream['monthly_generation'])
 
-    else:
+            stream = monthly_adjust(stream, months_coef)
 
-        for index, month_capacity in enumerate(stream['monthly_generation']):
-            months_coef[months[index]] = user_yearly_capacity / sum(stream['monthly_generation'])
-
-        stream = monthly_adjust(stream, months_coef)
+    except:
+        raise ModuleRuntimeException(
+            code="1",
+            type="adjust_capacity.py",
+            msg="Adjusting the capacities was infeasible. Please check your inputs. \n "
+                "If all inputs are correct report to the platform."
+        )
 
     return stream
 
@@ -88,14 +96,14 @@ def monthly_adjust(stream, months_coef):
         final = hour_new_month + number_days * 24
 
         if month != 'december':
-            stream["hourly_generation"][initial:final] = [i * monthly_coef for i in
+            stream["hourly_generation"][initial:final] = [round(i * monthly_coef,2) for i in
                                                           stream["hourly_generation"][initial:final]]
         else:
-            stream["hourly_generation"][initial:] = [i * monthly_coef for i in
+            stream["hourly_generation"][initial:] = [round(i * monthly_coef, 2)for i in
                                                      stream["hourly_generation"][initial:]]
         hour_new_month = final
 
-        stream['monthly_generation'][index] = stream['monthly_generation'][index] * monthly_coef
+        stream['monthly_generation'][index] = round(stream['monthly_generation'][index] * monthly_coef, 2)
 
 
     return stream

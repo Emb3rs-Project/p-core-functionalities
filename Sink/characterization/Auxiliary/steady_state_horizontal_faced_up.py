@@ -25,7 +25,7 @@ OUTPUT:
 
 """
 
-from .....Sink.characterization.Building.Auxiliary.h_convection_horizontal import h_convection_horizontal
+from .h_convection_horizontal import h_convection_horizontal
 
 
 def steady_state_horizontal_face_up(Q_sun_surface,T_surface_up, T_surface, T_interior, u_surface, Q_rad, area_surface,alpha_surface,

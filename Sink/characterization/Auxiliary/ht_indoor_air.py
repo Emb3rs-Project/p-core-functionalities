@@ -24,8 +24,8 @@ OUTPUT:
 
 """
 
-from .....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
-from .....Sink.characterization.Building.Auxiliary.h_convection_horizontal import h_convection_horizontal
+from .h_convection_vertical import h_convection_vertical
+from .h_convection_horizontal import h_convection_horizontal
 
 
 def ht_indoor_air(T_interior, horizontal_surfaces, vertical_surfaces):

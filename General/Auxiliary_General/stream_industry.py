@@ -34,7 +34,12 @@ from random import randint
 
 
 def stream_industry(object_id, stream_type, fluid, supply_temperature, target_temperature, mass_flowrate, capacity,
-                    schedule):
+                    schedule=None, hourly_generation=None):
+
+    if hourly_generation is None:
+        hourly_generation = [i * capacity for i in schedule]
+    else:
+        schedule = list(map(lambda x: 1 if x > 0 else 0, hourly_generation))
 
     stream_data = {
         'id': randint(0, 10 ** 5),
@@ -46,7 +51,7 @@ def stream_industry(object_id, stream_type, fluid, supply_temperature, target_te
         'fluid': fluid,
         'flowrate': mass_flowrate,  # [kg/h]
         'schedule': schedule,  # array with 1 and 0
-        'hourly_generation': [i * capacity for i in schedule],  # [kWh]
+        'hourly_generation': hourly_generation,  # [kWh]
         'capacity': capacity  # [kW]
     }
 

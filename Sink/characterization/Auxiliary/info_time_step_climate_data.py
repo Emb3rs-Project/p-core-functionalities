@@ -28,7 +28,7 @@ OUTPUT:
 
 """
 
-from .....General.Auxiliary_General.interpolation import interpolation
+from ....General.Auxiliary_General.interpolation import interpolation
 
 
 def info_time_step_climate_data(df_climate, profile_index, one_hour, time_instant):

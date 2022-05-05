@@ -44,23 +44,25 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
 
 from ...General.Auxiliary_General.stream_industry import stream_industry
 from ...General.Auxiliary_General.schedule_hour import schedule_hour
-
+from ...Error_Handling.error_simple_industry import PlatformSimpleIndustry
 
 def simple_user(in_var):
 
 
     ##########################################################################################
     # INPUT
-    object_id = in_var['platform']['object_id']
-    streams = in_var['platform']['streams']
+    platform_data = PlatformSimpleIndustry(**in_var['platform'])
 
-    # Defined vars
-    streams_output = []
+    object_id = platform_data.object_id
+    streams = platform_data.streams
+    streams = [vars(stream) for stream in streams]
 
     ##########################################################################################
     # COMPUTE
+    streams_output = []
 
     for stream in streams:
+
         capacity = (
                 stream["flowrate"]
                 * stream["fluid_cp"]
@@ -73,12 +75,17 @@ def simple_user(in_var):
         else:
             stream_type = "excess_heat"
 
-        schedule = schedule_hour(
-            stream["saturday_on"],
-            stream["sunday_on"],
-            stream["shutdown_periods"],
-            stream["daily_periods"],
-        )
+        if stream['hourly_generation'] is None:
+            schedule = schedule_hour(
+                stream["saturday_on"],
+                stream["sunday_on"],
+                stream["shutdown_periods"],
+                stream["daily_periods"],
+            )
+            hourly_generation = None
+        else:
+            schedule = None
+            hourly_generation = stream['hourly_generation']
 
         info_stream = stream_industry(
             object_id,
@@ -88,7 +95,8 @@ def simple_user(in_var):
             stream["target_temperature"],
             stream["flowrate"],
             capacity,
-            schedule,
+            schedule=schedule,
+            hourly_generation=hourly_generation
         )
 
         streams_output.append(info_stream)

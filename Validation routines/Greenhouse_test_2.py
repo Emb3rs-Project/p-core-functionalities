@@ -1,5 +1,5 @@
 
-from module.Sink.characterization.Building.greenhouse import greenhouse
+from module.Sink.characterization.greenhouse import greenhouse
 
 class Greenhouse_2:
     def __init__(self):
@@ -32,8 +32,6 @@ def testGreenhouse_2():
 
     print(test['hot_stream']['hourly_generation'])
 
-
-    import matplotlib.pyplot as plt
     import pandas as pd
     import matplotlib.pyplot as plt
     plt.rcParams.update({'font.size': 20})

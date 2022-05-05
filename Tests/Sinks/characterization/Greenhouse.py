@@ -1,4 +1,4 @@
-from ....Sink.characterization.Building.greenhouse import greenhouse
+from module.Sink.characterization.greenhouse import greenhouse
 import json
 import os
 

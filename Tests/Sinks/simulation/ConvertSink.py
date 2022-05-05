@@ -1,6 +1,6 @@
 
 
-from ....Sink.simulation.Convert.convert_sinks import convert_sinks
+from module.Sink.simulation.convert_sinks import convert_sinks
 from ....utilities.kb import KB
 from ....utilities.kb_data import kb
 import json

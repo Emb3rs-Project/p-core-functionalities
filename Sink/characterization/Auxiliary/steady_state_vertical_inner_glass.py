@@ -25,7 +25,7 @@ OUTPUT:
 
 """
 
-from .....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
+from .h_convection_vertical import h_convection_vertical
 
 
 def steady_state_vertical_inner_glass(Q_sun, alpha_glass, T_glass_in, T_glass_out, T_interior, u_glass, Q_rad, area_glass,

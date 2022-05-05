@@ -20,6 +20,7 @@ from .Generate_Equipment.generate_boiler import Boiler
 from .Generate_Equipment.generate_burner import Burner
 from ...utilities.kb import KB
 from ...Error_Handling.error_source_detailed import error_source_detailed
+from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 def source_detailed(in_var, kb: KB):
     #################
@@ -33,35 +34,48 @@ def source_detailed(in_var, kb: KB):
     processes_data = {}
 
     # create processes
-    for index, object_info in enumerate(platform_data):
-        if object_info['object_type'] == 'process':
-            new_process = Process(object_info, kb)
-            objects_list.append(new_process)
-            processes_data[str(new_process.id)] = new_process
-            platform_data.pop(index)
-
-
-
+    try:
+        for index, object_info in enumerate(platform_data):
+            if object_info['object_type'] == 'process':
+                new_process = Process(object_info, kb)
+                objects_list.append(new_process)
+                processes_data[str(new_process.id)] = new_process
+                platform_data.pop(index)
+    except:
+        raise ModuleRuntimeException(
+            code="1",
+            type="source_detailed.py",
+            msg="Process object creation infeasible. Please check your inputs. \n "
+                "If all inputs are correct report to the platform.")
 
     # create equipment
-    for index, equipment_info in enumerate(platform_data):
+    try:
+        for index, equipment_info in enumerate(platform_data):
 
-        equipment_info['processes'] = []
+            equipment_info['processes'] = []
 
-        if equipment_info['processes_id'] is not None:
-            for process_id in equipment_info['processes_id']:
-                equipment_info['processes'].append(processes_data[str(process_id)])
+            if equipment_info['processes_id'] is not None:
+                for process_id in equipment_info['processes_id']:
+                    equipment_info['processes'].append(processes_data[str(process_id)])
 
 
-        if equipment_info['object_type'] == 'boiler':
-            new_equipment = Boiler(equipment_info, kb)
-        elif equipment_info['object_type'] == 'chp':
-            new_equipment = Chp(equipment_info, kb)
-        elif equipment_info['object_type'] == 'burner':
-            new_equipment = Burner(equipment_info, kb)
-        elif equipment_info['object_type'] == 'cooling_equipment':
-            new_equipment = Cooling_Equipment(equipment_info, kb)
+            if equipment_info['object_type'] == 'boiler':
+                new_equipment = Boiler(equipment_info, kb)
+            elif equipment_info['object_type'] == 'chp':
+                new_equipment = Chp(equipment_info, kb)
+            elif equipment_info['object_type'] == 'burner':
+                new_equipment = Burner(equipment_info, kb)
+            elif equipment_info['object_type'] == 'cooling_equipment':
+                new_equipment = Cooling_Equipment(equipment_info, kb)
 
-        objects_list.append(new_equipment)
+            objects_list.append(new_equipment)
+
+    except:
+        raise ModuleRuntimeException(
+            code="2",
+            type="source_detailed.py",
+            msg="Equipment object creation infeasible. Please check your inputs. \n "
+                "If all inputs are correct report to the platform."
+        )
 
     return objects_list

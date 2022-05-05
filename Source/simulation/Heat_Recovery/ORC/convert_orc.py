@@ -58,57 +58,44 @@ from .....KB_General.fuel_properties import FuelProperties
 from .....KB_General.get_interest_rate import get_interest_rate
 from .....utilities.kb import KB
 from .....Error_Handling.error_convert_orc import PlatformConvertORC
+from .....Error_Handling.runtime_error import ModuleRuntimeException
 
-def convert_orc(in_var, kb : KB):
+
+def convert_orc(in_var, kb: KB):
 
     #################################################################
     # INPUT
-    PlatformConvertORC(**in_var['platform'])
+    platform_data = PlatformConvertORC(**in_var['platform'])
 
-    streams = in_var['platform']['streams']
-    consumer_type = in_var['platform']['consumer_type']
-    location = in_var['platform']['location']
-
-    try:
-        get_best_number = in_var['platform']['get_best_number']
-    except:
-        get_best_number = 3
-
-    try:
-        orc_years_working = in_var['platform']['orc_years_working']
-    except:
-        orc_years_working = 25
-
+    streams = platform_data.streams
+    streams = [vars(stream) for stream in streams]
+    consumer_type = platform_data.consumer_type
+    location = platform_data.location
+    get_best_number = platform_data.get_best_number
+    orc_years_working = platform_data.orc_years_working
+    orc_T_evap = platform_data.orc_T_evap
+    orc_T_cond = platform_data.orc_T_cond
 
     #################################################################
+    # KB
     fuel_properties = FuelProperties(kb)
     equipment_details = EquipmentDetails(kb)
 
     # Initialize Arrays
     convert_info = []
+    stream_combination_not_feasible = []
 
-    # Defined vars
+    # ORC characteristics
     minimum_orc_power = 100  # [kW] - minimum power ORC designed
     hx_delta_T = 5
     hx_efficiency = 0.95
     power_fraction = 0.05
-
-    # ORC Characteristics
-    try:
-        orc_T_evap = in_var['platform']['orc_T_evap']
-        orc_T_cond = in_var['platform']['orc_T_cond']
-    except:
-        orc_T_evap = 110  # [ºC]
-        orc_T_cond = 35   # [ºC]
-
-
     carnot_correction_factor = 0.44
     eff_carnot = (1 - (orc_T_cond + 273.15) / (orc_T_evap + 273.15)) * carnot_correction_factor
     min_orc_supply_temperature = orc_T_evap + hx_delta_T
 
     # Intermediate Circuit Characteristics
     intermediate_fluid = 'water'
-
 
     #################################################################
     # COMPUTE
@@ -126,13 +113,12 @@ def convert_orc(in_var, kb : KB):
     df_streams = df_streams.drop(df_streams[df_streams['capacity'] < minimum_orc_power].index)
 
     try:
-        # get best
         if df_streams.empty == False:
             df_streams['sum_hourly_generation'] = df_streams.apply(lambda x: sum(x['hourly_generation']), axis=1)
             df_streams_best_five = df_streams.sort_values('hourly_generation', ascending=False).head(n=get_best_number)
             streams_best_five_index = df_streams_best_five.index.tolist()
 
-            # do all possible combinations between the 5 streams
+            # do all possible combinations between the streams
             combinations = []
             for L in range(0, len(streams_best_five_index) + 1):
                 for subset in itertools.combinations(streams_best_five_index, L):
@@ -167,7 +153,6 @@ def convert_orc(in_var, kb : KB):
                 om_fix_intermediate = 0
                 turnkey_intermediate = 0
                 om_var_intermediate = 0
-                electrical_generation_nominal = 0
                 stream_thermal_capacity_total = 0
                 combo = []
                 combination_streams_id = []
@@ -215,10 +200,8 @@ def convert_orc(in_var, kb : KB):
                     om_fix_total = om_fix_orc + om_fix_intermediate
                     total_turnkey = turnkey_orc + turnkey_intermediate
 
-
+                    # all convert options
                     if electrical_generation_nominal_total != 0:
-
-                        # all convert options
                         convert_info.append({
                             'ID': new_id,
                             'streams_id': combination_streams_id[0],
@@ -237,12 +220,11 @@ def convert_orc(in_var, kb : KB):
                         new_id += 1
 
                 except:
-                    print('Covert ORC, solution not found to the following streams combination:', str(combination))
+                    stream_combination_not_feasible.append(str(combination))
 
             df_data = pd.DataFrame()
             for dict in convert_info:
                 df_data = df_data.append(dict,ignore_index=True)
-
 
             # update columns for Business Module
             df_data['discount_rate'] = interest_rate
@@ -255,9 +237,17 @@ def convert_orc(in_var, kb : KB):
                 best_options = []
         else:
             best_options = []
-    except:
-        raise Exception("Convert ORC simulation not feasible. Please, check your inputs")
 
+    except:
+        raise ModuleRuntimeException(
+            code="1",
+            type="convert_orc.py",
+            msg="ORC design to source' streams infeasible. Check sources' streams. \n "
+                "If all inputs are correct report to the platform."
+        )
+
+    ##############################
+    # OUTPUT
     output_orc = {'best_options': best_options}
 
     return output_orc

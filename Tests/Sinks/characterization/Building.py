@@ -1,4 +1,4 @@
-from ....Sink.characterization.Building.building import building
+from module.Sink.characterization.building import building
 from ....utilities.kb import KB
 from ....utilities.kb_data import kb
 import json
@@ -14,6 +14,11 @@ def testBuilding():
 
     value_heat = int(sum(test['hot_stream']['monthly_generation'])/(data_1['platform']['number_floor'] * data_1['platform']['length_floor'] * data_1['platform']['width_floor']))
     value_cool = int(sum(test['cold_stream']['monthly_generation'])/(data_1['platform']['number_floor'] * data_1['platform']['length_floor'] * data_1['platform']['width_floor']))
+
+    with open("sample.json", "w") as outfile:
+        json.dump(test['cold_stream'], outfile)
+
+
 
 
     if int(value_heat) == 35 and int(value_cool) == 20:

@@ -1,4 +1,4 @@
-from module.Sink.characterization.Building.building import building
+from module.Sink.characterization.building import building
 from module.utilities.kb import KB
 from module.utilities.kb_data import kb
 import json

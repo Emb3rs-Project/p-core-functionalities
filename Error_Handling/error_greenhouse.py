@@ -25,7 +25,7 @@ class PlatformGreenhouse(Schedule, Location):
     length: PositiveFloat
     height: PositiveFloat
     greenhouse_orientation: BuildingOrientation
-    lights_on: ArtificalLights_and_ThermalBlanket
+    artificial_lights_system: ArtificalLights_and_ThermalBlanket
     T_heat_on: PositiveFloat
     T_cool_on: PositiveFloat = 35
     thermal_blanket: ArtificalLights_and_ThermalBlanket

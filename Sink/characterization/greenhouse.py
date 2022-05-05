@@ -20,7 +20,7 @@ INPUT: dictionary with:
             # sunday_on - 1 (yes)  or 0 (no)
             # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
             # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
-            # lights_on - 1=with lights system ; 0=no lights system
+            # artificial_lights_system - 1=with lights system ; 0=no lights system
             # hours_lights_needed - lighting hours in greenhouse (counting with daily illuminance) [h]
             # thermal_blanket - 1=with ; 0=no without thermal blanket
 
@@ -67,20 +67,19 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
 
 import math
 import copy
-from ....Sink.characterization.Building.Auxiliary.building_climate_api import building_climate_api
-from ....Sink.characterization.Building.Auxiliary.wall_area import wall_area
-from ....General.Auxiliary_General.schedule_hour import schedule_hour
-from ....General.Auxiliary_General.month_last_hour import month_last_hour
-from ....Sink.characterization.Building.Auxiliary.h_convection_horizontal import h_convection_horizontal
-from ....Sink.characterization.Building.Auxiliary.h_convection_vertical import h_convection_vertical
-from ....Sink.characterization.Building.Auxiliary.ht_radiation_equation import ht_radiation_equation
-from ....Sink.characterization.Building.Auxiliary.info_time_step_climate_data import info_time_step_climate_data
-from ....Error_Handling.error_greenhouse import PlatformGreenhouse
-
+from .Auxiliary.building_climate_api import building_climate_api
+from .Auxiliary.wall_area import wall_area
+from ...General.Auxiliary_General.schedule_hour import schedule_hour
+from ...General.Auxiliary_General.month_last_hour import month_last_hour
+from .Auxiliary.h_convection_horizontal import h_convection_horizontal
+from .Auxiliary.h_convection_vertical import h_convection_vertical
+from .Auxiliary.ht_radiation_equation import ht_radiation_equation
+from .Auxiliary.info_time_step_climate_data import info_time_step_climate_data
+from ...Error_Handling.error_greenhouse import PlatformGreenhouse
+from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 
 def greenhouse(in_var):
-
     ##################################################################################################################
     # INPUT ----------------------------------------------
     # validate inputs
@@ -93,7 +92,7 @@ def greenhouse(in_var):
     shutdown_periods = platform_data.shutdown_periods
     daily_periods = platform_data.daily_periods
     greenhouse_orientation = platform_data.greenhouse_orientation
-    lights_on = platform_data.lights_on
+    artificial_lights_system = platform_data.artificial_lights_system
     T_cool_on = platform_data.T_cool_on
     T_heat_on = platform_data.T_heat_on
     thermal_blanket = platform_data.thermal_blanket
@@ -122,43 +121,49 @@ def greenhouse(in_var):
     T_ground = 15  # ground temperature [ºC]
     L_ground = 3  # [m]
     k_ground = 1.4  # [W/m.K]
-    u_ground = k_ground/L_ground  # [W/m2.K]
+    u_ground = k_ground / L_ground  # [W/m2.K]
     u_thermal_cover = 0.75
 
     # Fluids Properties
-    p_atmospheric = 101  # atmospheric p [kPa]
+    p_atmospheric = 101  # atmospheric pressure [kPa]
     rho_air = 1.225  # [kg/m3]
     cp_air = 1005  # [J/kg.K]
     latent_heat_water = 2450 * 1000  # [J/kg]
 
-
     ##################################################################################################################
     # COMPUTE ----------------------------------------------------------------------------------
     # Schedule
-    profile = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)  # vector: [0,1,1,0,..]; 0-on 1-off
+    profile = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
     month_last_hour_vector = month_last_hour()
 
     # Climate data
-    df_climate = building_climate_api(latitude, longitude)
+    try:
+        df_climate = building_climate_api(latitude, longitude)
+    except:
+        raise ModuleRuntimeException(
+            code="1",
+            type="greenhouse.py",
+            msg="Greenhouse characterization infeasible. Climate data not possible to obtain, change location or try later."
+        )
 
     # Guarantee desired minimum plant illumination
     df_climate['turn_on_lights'] = 0
     save_first_hour = -10  # random value
     save_last_hour = -10
 
-
-    if lights_on == 1:
+    if artificial_lights_system == 1:
         for index, solar_radiation in enumerate(df_climate['Q_sun_roof']):
             if index != 0:
-                if solar_radiation > 0 and df_climate.loc[index-1, 'Q_sun_roof'] == 0:
-                    save_first_hour = copy.copy(index-1)
+                if solar_radiation > 0 and df_climate.loc[index - 1, 'Q_sun_roof'] == 0:
+                    save_first_hour = copy.copy(index - 1)
                 elif solar_radiation == 0 and df_climate.loc[index - 1, 'Q_sun_roof'] > 0:
                     save_last_hour = copy.copy(index)
 
-                if save_first_hour != -10 and save_last_hour != -10 :
+                if save_first_hour != -10 and save_last_hour != -10:
                     hours_sun_light = save_last_hour - save_first_hour
                     if hours_sun_light < hours_lights_needed:
-                        hours_light_missing = round((hours_lights_needed - hours_sun_light)/2)  # hours of artificial light needed
+                        hours_light_missing = round(
+                            (hours_lights_needed - hours_sun_light) / 2)  # hours of artificial light needed
 
                         for i in range(hours_light_missing):
                             df_climate.loc[save_first_hour - i, 'turn_on_lights'] = 1
@@ -177,7 +182,6 @@ def greenhouse(in_var):
     volume_greenhouse = area_floor * height  # indoor air volume per floor [m3]
     total_cover_area = (area_W_wall + area_N_wall + area_S_wall + area_E_wall + area_floor)
 
-
     ##################################################################################################################
     # SIMULATION ----------------------------------------------------------------
     # Initialize vars
@@ -193,27 +197,26 @@ def greenhouse(in_var):
     T_interior = copy.copy(T_initial)  # floor interior air temperature
 
     # Simulation Info
-    time_step = 60*15  # time step [s]
+    time_step = 60 * 15  # time step [s]
     one_hour = int(3600 / time_step)  # time step number
     max_air_delta_T_per_minute = 1  # 1ºC per min
     max_air_delta_T_allowed = time_step * max_air_delta_T_per_minute / 60
 
     try:
         for profile_index, profile_operating in enumerate(profile):
-
-            if (profile_index in month_last_hour_vector) or (profile_index == 8759):
-                profile_monthly_heat.append(cumulative_heat_monthly)  # space heating demand [kWh]
-                profile_monthly_cool.append(cumulative_cool_monthly)  # space cooling demand [kWh]
+            if (profile_index in month_last_hour_vector) or (profile_index == (len(profile) - 1)):
+                profile_monthly_heat.append(round(cumulative_heat_monthly, 2))  # space heating demand [kWh]
+                profile_monthly_cool.append(round(cumulative_cool_monthly, 2))  # space cooling demand [kWh]
                 cumulative_heat_monthly = 0  # reset monthly heating needs
                 cumulative_cool_monthly = 0  # reset monthly cooling needs
 
-            if profile_index == 8759:
-                break
-
             cumulative_heat_hourly = 0  # reset hourly heating needs
 
+            if profile_index == (len(profile) - 1):
+                break
+
             for i in range(one_hour):
-                # CLIMATE DATA --------------------------------------------------------------------------------------
+                # Climate data
                 T_exterior, T_sky, Q_sun_N_facade, Q_sun_S_facade, Q_sun_E_facade, Q_sun_W_facade, Q_sun_roof, wind_speed = info_time_step_climate_data(
                     df_climate, profile_index, one_hour, i)
 
@@ -222,11 +225,11 @@ def greenhouse(in_var):
                         Q_sun_roof = 0
 
                 # Correct wind speed
-                z_0 = 0.01 # surface roughness
-                wind_speed = wind_speed * (math.log((height/2) / z_0)) / (math.log(10 / z_0))
+                z_0 = 0.01  # surface roughness
+                wind_speed = wind_speed * (math.log((height / 2) / z_0)) / (math.log(10 / z_0))
                 u_exterior = (5.8 + 3.94 * wind_speed)  # outside heat convection coef. [W/m2.K]
 
-                # GREENHOUSE Heat balance --------------------------------------------------------------------------------
+                # GREENHOUSE HEAT GAINS/LOSSES
                 # Solar radiation
                 Q_sun_greenhouse = (Q_sun_roof * area_floor) * alpha_greenhouse
 
@@ -239,7 +242,7 @@ def greenhouse(in_var):
 
                 # Evapotranspiration
                 vapour_p_plants = (math.exp(20.386 - 5132 / (T_interior + 273.1))) * 0.13  # [kPa]
-                vapour_p_air = (math.exp(20.386 - 5132 / (T_interior + 273.1))) * (rh_air/100) * 0.13  # [kPa]
+                vapour_p_air = (math.exp(20.386 - 5132 / (T_interior + 273.1))) * (rh_air / 100) * 0.13  # [kPa]
                 w_plant = 0.6219 * vapour_p_plants / (p_atmospheric - vapour_p_plants)  # [kg_water/kg_air]
                 w_air = 0.6219 * vapour_p_air / (p_atmospheric - vapour_p_air)
                 R_aerodynamic = 220 * (leaf_length ** 0.2) / (indoor_air_speed ** 0.8)
@@ -273,8 +276,10 @@ def greenhouse(in_var):
                 else:
                     val_thermal_blanket = 0
 
-                u_horizontal = (1 / u_cover + 1 / u_thermal_cover * val_thermal_blanket + 1 / u_exterior + 1 / h_horizontal * coef_horizontal) ** (-1)
-                u_vertical = (1 / u_cover + 1 / u_thermal_cover * val_thermal_blanket + 1 / u_exterior + 1 / h_vertical * coef_vertical) ** (-1)
+                u_horizontal = (1 / u_cover + 1 / u_thermal_cover * val_thermal_blanket + 1 / u_exterior + 1 / h_horizontal * coef_horizontal) ** (
+                                   -1)
+                u_vertical = (1 / u_cover + 1 / u_thermal_cover * val_thermal_blanket + 1 / u_exterior + 1 / h_vertical * coef_vertical) ** (
+                                 -1)
                 Q_top = area_floor * u_horizontal * (T_exterior - T_interior)
                 Q_vertical_wall_small = area_E_wall * u_vertical * (T_exterior - T_interior)
                 Q_vertical_wall_big = area_N_wall * u_vertical * (T_exterior - T_interior)
@@ -341,27 +346,27 @@ def greenhouse(in_var):
 
                 # COMPUTE INTERIOR TEMPERATURE
                 T_interior = T_interior + (Q_greenhouse + Q_heat_required) * time_step / (
-                            rho_air * cp_air * volume_greenhouse)  # [ºC]
+                        rho_air * cp_air * volume_greenhouse)  # [ºC]
 
                 if T_interior >= T_cool_on and T_cool_on >= T_exterior:
                     T_interior = T_cool_on
                 elif T_interior >= T_cool_on and T_exterior >= T_cool_on:
                     T_interior = T_exterior
 
-                # Data Profiles
                 if Q_heat_required > 0:
                     cumulative_heat_monthly += Q_heat_required * time_step / 3600000  # [kW]
                     cumulative_heat_hourly += Q_heat_required * time_step / 3600000
 
             # Hourly Profiles
-            profile_hourly_heat.append(cumulative_heat_hourly)  # space heating demand [kWh]
+            profile_hourly_heat.append(round(cumulative_heat_hourly, 2))  # space heating demand [kWh]
 
-        # OUTPUT -------------
-        output = {
+        ##############################
+        # OUTPUT
+        streams = {
             'hot_stream': {
                 'id': 1,
                 'object_id': None,
-                'object_type': 'stream_building',
+                'object_type': 'stream',
                 'fluid': 'water',
                 'stream_type': 'inflow',
                 'capacity': max(profile_hourly_heat),
@@ -373,13 +378,12 @@ def greenhouse(in_var):
             }
         }
 
-
     except:
-        raise Exception("Greenhouse Simulation not feasible. Please, check your inputs")
+        raise ModuleRuntimeException(
+            code="2",
+            type="greenhouse.py",
+            msg="Greenhouse characterization infeasible. Please check your inputs. \n "
+                "If all inputs are correct report to the platform."
+        )
 
-
-    return output
-
-
-
-
+    return streams

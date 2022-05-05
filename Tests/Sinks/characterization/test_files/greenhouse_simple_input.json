@@ -12,7 +12,7 @@
         24
       ]
     ],
-    "lights_on": 0,
+    "artificial_lights_system": 0,
     "T_heat_on": 18,
     "T_cool_on": 35,
     "thermal_blanket": 1,
