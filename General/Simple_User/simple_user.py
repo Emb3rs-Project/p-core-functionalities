@@ -56,10 +56,16 @@ def simple_user(in_var):
     object_id = platform_data.object_id
     streams = platform_data.streams
     streams = [vars(stream) for stream in streams]
+    type_of_object = platform_data.type_of_object
 
     ##########################################################################################
     # COMPUTE
     streams_output = []
+
+    if type_of_object == 'sink':
+        stream_type = "inflow"
+    else:
+        stream_type = "excess_heat"
 
     for stream in streams:
 
@@ -70,10 +76,7 @@ def simple_user(in_var):
                 / 3600
         )  # [kW]
 
-        if stream["supply_temperature"] < stream["target_temperature"]:
-            stream_type = "inflow"
-        else:
-            stream_type = "excess_heat"
+
 
         if stream['hourly_generation'] is None:
             schedule = schedule_hour(
