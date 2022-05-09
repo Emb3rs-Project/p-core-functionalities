@@ -745,10 +745,6 @@ def convert_sinks(in_var, kb):
             yearly_demand = sum(hourly_stream_capacity)
             teo_demand_factor = [float(i / yearly_demand) for i in hourly_stream_capacity]
 
-            print('####################################################################################################################')
-            print('####################################################################################################################')
-            print(stream)
-            print(conversion_technologies)
 
             gis_capacity = conversion_technologies[0]['max_capacity']
 
