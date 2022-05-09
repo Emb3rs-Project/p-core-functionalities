@@ -1,5 +1,5 @@
 from pydantic import BaseModel, validator, conlist, PositiveFloat, NonNegativeFloat, StrictStr
-from typing import Optional
+from typing import Optional, Union
 from enum import Enum
 
 class StreamType(str, Enum):
@@ -8,6 +8,8 @@ class StreamType(str, Enum):
     outflow = 'outflow'
     excess_heat = 'excess_heat'
     supply_heat = 'supply_heat'
+    hot_stream = "hot_stream"
+    cold_stream = "cold_stream"
 
 
 class Stream(BaseModel):
@@ -18,12 +20,12 @@ class Stream(BaseModel):
     supply_temperature: PositiveFloat
     target_temperature: PositiveFloat
     fluid: StrictStr
-    flowrate: PositiveFloat
+    flowrate: Union[PositiveFloat, None]
     schedule: conlist(int)
     hourly_generation: conlist(NonNegativeFloat)
     capacity: PositiveFloat
 
-    object_id: Optional[float]
+    object_linked_id: Optional[float] = None
 
 
     @validator('schedule')
