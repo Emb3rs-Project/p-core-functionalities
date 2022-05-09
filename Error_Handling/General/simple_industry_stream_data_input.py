@@ -22,6 +22,7 @@ class SimpleIndustryStreamDataInput(BaseModel):
     saturday_on: Optional[ScheduleInfo]
     sunday_on: Optional[ScheduleInfo]
 
+    capacity: Optional[PositiveFloat] = None
     hourly_generation: Optional[conlist(NonNegativeFloat, min_items=8784, max_items=8784)]
 
 
@@ -65,3 +66,13 @@ class SimpleIndustryStreamDataInput(BaseModel):
                         raise ValueError(
                             'Second value of the shutdown period must be larger than the first. Example: [[220,250]]')
         return v
+
+
+    @validator('capacity', always=True)
+    def give_capacity_for_steam(cls, capacity, values, **kwargs):
+
+        if values["fluid"] == 'steam' and capacity == None:
+            raise Exception('When introducing steam as a fluid, introduce the capacity.')
+        else:
+            return capacity
+

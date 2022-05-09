@@ -88,7 +88,7 @@ def eco_env_analysis(kb : KB, info_pinch, objects_to_analyze, all_input_objects,
                     elif save_object['object_type'] == 'process':  # object.type = 'process'
 
                         for equipment in all_input_objects:
-                            if save_object['equipment'] == equipment['id']:  # find equipment that supplies process
+                            if save_object['equipment_id'] == equipment['id']:  # find equipment that supplies process
                                 break
                             else:
                                 equipment = 'not found'
@@ -98,7 +98,7 @@ def eco_env_analysis(kb : KB, info_pinch, objects_to_analyze, all_input_objects,
                         co2_emission_per_kw = data['co2_emissions']
 
                         df_economic = df_economic.append({
-                            'Equipment_ID': save_object['equipment'],
+                            'Equipment_ID': save_object['equipment_id'],
                             'CO2_Savings_Year': row['Recovered_Energy'] * co2_emission_per_kw,
                             'Recovered_Energy': row['Recovered_Energy'],
                             'Savings_Year': row['Recovered_Energy'] * price,

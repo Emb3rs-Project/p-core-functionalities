@@ -115,13 +115,13 @@ class Process:
             capacity = startup['mass']/self.cycle_time_percentage * startup['fluid_cp'] * (self.operation_temperature - startup['supply_temperature'])  # [kW]
 
             self.streams.append(stream_industry(self.id,
-                                       'startup',
-                                       startup['fluid'],
-                                       startup['supply_temperature'],
-                                       self.operation_temperature,
-                                       startup['mass']/self.cycle_time_percentage,
-                                       capacity,
-                                       schedule))
+                                                'startup',
+                                                startup['fluid'],
+                                                startup['supply_temperature'],
+                                                self.operation_temperature,
+                                                startup['mass'] / self.cycle_time_percentage,
+                                                capacity,
+                                                schedule))
 
 
     def generate_process_maintenance(self,data):
@@ -131,13 +131,13 @@ class Process:
             schedule = self.schedule('maintenance')
 
             self.streams.append(stream_industry(self.id,
-                                       'maintenance',
-                                       'none',
-                                       0,
-                                       0,
-                                       maintenance['maintenance_capacity'],
-                                       0,
-                                       schedule))
+                                                'maintenance',
+                                                'none',
+                                                0,
+                                                0,
+                                                maintenance['maintenance_capacity'],
+                                                0,
+                                                schedule))
 
 
     def generate_process_inflow(self,data):
@@ -146,14 +146,15 @@ class Process:
 
         for inflow in data:
             capacity = inflow['flowrate'] * inflow['fluid_cp'] * (self.operation_temperature - inflow['supply_temperature'])/3600  # [kW]
+
             self.streams.append(stream_industry(self.id,
-                                       'inflow',
-                                       inflow['fluid'],
-                                       inflow['supply_temperature'],
-                                       self.operation_temperature,
-                                       inflow['flowrate'],
-                                       capacity,
-                                       schedule))
+                                                'inflow',
+                                                inflow['fluid'],
+                                                inflow['supply_temperature'],
+                                                self.operation_temperature,
+                                                inflow['flowrate'],
+                                                capacity,
+                                                schedule))
 
 
     def generate_process_outflow(self,outflow_data):
@@ -163,13 +164,14 @@ class Process:
         for outflow in outflow_data:
             capacity = outflow['flowrate'] * outflow['fluid_cp'] * (self.operation_temperature - outflow['target_temperature'])/3600  # [kW]
 
-            self.streams.append(stream_industry(self.id,'outflow',
-                                       outflow['fluid'],
-                                       self.operation_temperature,
-                                       outflow['target_temperature'],
-                                       outflow['flowrate'],
-                                       capacity,
-                                       schedule))
+            self.streams.append(stream_industry(self.id,
+                                                'outflow',
+                                                outflow['fluid'],
+                                                self.operation_temperature,
+                                                outflow['target_temperature'],
+                                                outflow['flowrate'],
+                                                capacity,
+                                                schedule))
 
 
     def schedule(self,stream_type):

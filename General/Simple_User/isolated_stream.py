@@ -5,9 +5,6 @@ INFO: Simple User streams characterization. Receives user's streams data from th
 
 ##############################
 INPUT: object with:
-
-        # id
-        # type_of_object - 'sink' or 'source'
         # streams - array with dictionaries
 
         Where in streams:
@@ -44,26 +41,20 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
 
 from ...General.Auxiliary_General.stream_industry import stream_industry
 from ...General.Auxiliary_General.schedule_hour import schedule_hour
-from ...Error_Handling.error_simple_industry import PlatformSimpleIndustry
+from ...Error_Handling.error_isolated_stream import PlatformIsolatedStream
 
 
-def simple_user(in_var):
+def isolated_stream(in_var):
     ##########################################################################################
     # INPUT
-    platform_data = PlatformSimpleIndustry(**in_var['platform'])
+    platform_data = PlatformIsolatedStream(**in_var['platform'])
 
     streams = platform_data.streams
     streams = [vars(stream) for stream in streams]
-    type_of_object = platform_data.type_of_object
 
     ##########################################################################################
     # COMPUTE
     streams_output = []
-
-    if type_of_object == 'sink':
-        stream_type = "inflow"
-    else:
-        stream_type = "excess_heat"
 
     for stream in streams:
         if stream['capacity'] == None:
@@ -88,6 +79,12 @@ def simple_user(in_var):
         else:
             schedule = None
             hourly_generation = stream['hourly_generation']
+
+        if stream['target_temperature'] > stream["supply_temperature"]:
+            stream_type = 'hot_stream'
+        else:
+            stream_type = 'cold_stream'
+
 
         info_stream = stream_industry(
             None,

@@ -617,7 +617,6 @@ def building(in_var, kb : KB):
             'hot_stream': {
                 'id': 1,
                 'object_type': 'stream',
-                'object_id': None,
                 'fluid': 'water',
                 'stream_type': 'inflow',
                 'capacity': max(profile_hourly_heat),
@@ -630,7 +629,6 @@ def building(in_var, kb : KB):
             'cold_stream': {
                 'id': 2,
                 'object_type': 'stream',
-                'object_id': None,
                 'fluid': 'water',
                 'stream_type': 'inflow',
                 'capacity': max(profile_hourly_cool),

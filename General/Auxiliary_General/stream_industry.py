@@ -3,7 +3,7 @@
 INFO: 'Template' to create stream.
 
 ##############################
-INPUT:  object_id - Object ID associated; e.g. process or equipment ID
+INPUT:  object_linked_id - Object ID associated; e.g. process or equipment ID
         stream_type - e.g. inflow, supply_heat, excess_heat
         fluid - fluid
         supply_temperature [ºC]
@@ -17,7 +17,7 @@ OUTPUT:  stream dictionary, as below:
             #  stream_data = {
             #         'id',
             #         'object_type' - e.g. 'stream',
-            #         'object_id' - Object ID associated; e.g. process or equipment ID
+            #         'object_linked_id' - Object ID associated; e.g. process or equipment ID
             #         'stream_type',  - e.g. inflow, supply_heat, excess_heat
             #         'supply_temperature',  [ºC]
             #         'target_temperature',  [ºC]
@@ -33,7 +33,7 @@ OUTPUT:  stream dictionary, as below:
 from random import randint
 
 
-def stream_industry(object_id, stream_type, fluid, supply_temperature, target_temperature, mass_flowrate, capacity,
+def stream_industry(object_linked_id, stream_type, fluid, supply_temperature, target_temperature, mass_flowrate, capacity,
                     schedule=None, hourly_generation=None):
 
     if hourly_generation is None:
@@ -44,7 +44,7 @@ def stream_industry(object_id, stream_type, fluid, supply_temperature, target_te
     stream_data = {
         'id': randint(0, 10 ** 5),
         'object_type': 'stream',
-        'object_id': object_id,  # Object ID associated; e.g. process or equipment ID
+        'object_linked_id': object_linked_id,  # Object ID associated; e.g. process or equipment ID
         'stream_type': stream_type,  # e.g. inflow, supply_heat, excess_heat
         'supply_temperature': supply_temperature,  # T_in  # [ºC]
         'target_temperature': target_temperature,  # T_out  # [ºC]

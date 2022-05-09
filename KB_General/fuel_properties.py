@@ -113,6 +113,9 @@ class FuelProperties:
         else:
             raise Exception("Fuel data not in the Knowledge Base.")
 
+        print('#######################')
+        print(fuel_type, co2_emissions)
+
         fuel_data = {
             'price': price,  # [€/kWh]
             'lhv_fuel': lhv_fuel,  # [kWh/kg]

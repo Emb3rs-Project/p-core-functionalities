@@ -30,7 +30,7 @@
     "parameter": "biomass",
     "density": "700",
     "lhv": "3500",
-    "co2_emissions": "0.366",
+    "co2_emissions": "0.0108",
     "air_to_fuel_ratio": "10.76",
     "excess_air_ratio_min": "1.4",
     "excess_air_ratio_max": "2"

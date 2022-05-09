@@ -365,7 +365,6 @@ def greenhouse(in_var):
         streams = {
             'hot_stream': {
                 'id': 1,
-                'object_id': None,
                 'object_type': 'stream',
                 'fluid': 'water',
                 'stream_type': 'inflow',

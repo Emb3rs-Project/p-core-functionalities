@@ -1,0 +1,59 @@
+
+{
+  "platform": {
+    "streams": [
+      {
+        "supply_temperature": 150,
+        "target_temperature": 100,
+        "fluid": "thermal_oil",
+        "fluid_cp": 2,
+        "flowrate": 900,
+        "saturday_on": 1,
+        "sunday_on": 1,
+        "shutdown_periods": [],
+        "daily_periods": [
+          [
+            0,
+            24
+          ]
+        ]
+      },
+      {
+        "supply_temperature": 90,
+        "target_temperature": 70,
+        "fluid": "thermal_oil",
+        "fluid_cp": 2,
+        "flowrate": 360,
+        "saturday_on": 1,
+        "sunday_on": 1,
+        "shutdown_periods": [],
+        "daily_periods": [
+          [
+            0,
+            24
+          ]
+        ]
+      },
+            {
+        "supply_temperature": 90,
+        "target_temperature": 140,
+        "fluid": "thermal_oil",
+        "fluid_cp": 2,
+        "flowrate": 720,
+        "saturday_on": 1,
+        "sunday_on": 1,
+        "shutdown_periods": [],
+        "daily_periods": [
+          [
+            0,
+            24
+          ]
+        ]
+      }]
+  }
+}
+
+
+
+
+

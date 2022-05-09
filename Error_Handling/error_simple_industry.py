@@ -9,7 +9,6 @@ class TypeofObject(str, Enum):
 
 class PlatformSimpleIndustry(BaseModel):
 
-    object_id: NonNegativeInt
     type_of_object: TypeofObject
     streams: List[SimpleIndustryStreamDataInput]
 
