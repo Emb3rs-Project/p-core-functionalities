@@ -117,7 +117,7 @@ def convert_sources(in_var, kb):
     sink_group_grid_return_temperature = in_var['cf_module']['sink_group_grid_return_temperature']
 
     try:
-        gis_sources_losses = in_var['gis_module']['source_losses']  # vector with losses for each source
+        gis_sources_losses = in_var['gis_module']['cf_losses']
         sources_to_analyse = [source['source_id'] for source in gis_sources_losses]
     except:
         gis_sources_losses = []
@@ -174,82 +174,83 @@ def convert_sources(in_var, kb):
             consumer_type = source['consumer_type']
 
             if gis_sources_losses == []:
-                analyse_source = True
+                analyse_source = True  # first iteration analyse all sources
             else:
                 if source['id'] in sources_to_analyse:
                     analyse_source = True
 
                     for i in gis_sources_losses:
                         if i['source_id'] == source['id']:
-                            sources_loss = i['losses_total']
+                            source_loss = i['losses_total']
                             break
                 else:
                     analyse_source = False
 
+
             if analyse_source == True:
+
+                # first iteration - grid losses not considered
+                if gis_sources_losses == []:
+                    delta_T_supply = 0
+                    delta_T_return = 0
+
+                # other iterations - grid losses considered
+                else:
+                    # get source max power supplied on last iteration
+                    for cap_source in last_iteration_data["n_supply_list"]:
+                        if cap_source['id'] == source['id']:
+                            power_last_iteration = cap_source['cap']
+                            break
+
+                    # 1st step - Compute grid supply/return at source correction coefficients, considering average pipe supply/return temperatures as sink supply/return temperatures
+                    hot_pipe_delta_T = sink_group_grid_supply_temperature - ambient_temperature  # delta T, grid supply temperature pipe
+                    cold_pipe_delta_T = sink_group_grid_return_temperature - ambient_temperature  # delta T, grid return temperature pipe
+
+                    supply_coef = hot_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)  # correction coefficient
+                    return_coef = cold_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)
+
+
+                    # 2nd step - Compute and converge temperatures of grid supply/return at source
+                    add_delta_T = (grid_delta_T) / (1 - source_loss / power_last_iteration) - grid_delta_T
+                    delta_T_supply = add_delta_T * supply_coef
+                    delta_T_return = add_delta_T * return_coef
+
+                    converge = False
+                    while converge == False:
+                        hot_pipe_T_average = ((sink_group_grid_supply_temperature + delta_T_supply) + sink_group_grid_supply_temperature) / 2
+                        cold_pipe_T_average = ((sink_group_grid_return_temperature - delta_T_return) + sink_group_grid_return_temperature) / 2
+
+                        hot_pipe_delta_T = hot_pipe_T_average - ambient_temperature  # grid supply temperature pipe
+                        cold_pipe_delta_T = cold_pipe_T_average - ambient_temperature  # grid return temperature pipe
+
+                        supply_coef = hot_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)
+                        return_coef = cold_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)
+
+                        add_delta_T = (grid_delta_T) / (1 - source_loss / power_last_iteration) - grid_delta_T
+                        new_delta_T_supply = add_delta_T * supply_coef
+                        new_delta_T_return = add_delta_T * return_coef
+
+                        if abs(new_delta_T_supply - delta_T_supply) < 0.001 and abs(
+                                new_delta_T_supply - delta_T_supply) < 0.001:
+                            delta_T_supply = copy(new_delta_T_supply)
+                            delta_T_return = copy(new_delta_T_return)
+                            converge = True
+
+                        else:
+                            delta_T_supply = copy(new_delta_T_supply)
+                            delta_T_return = copy(new_delta_T_return)
+
+                #####################################################################################
+                #####################################################################################
+                source_grid_return_temperature = sink_group_grid_return_temperature - delta_T_return
+                source_grid_supply_temperature = sink_group_grid_supply_temperature + delta_T_supply
+                #####################################################################################
+                #####################################################################################
+
+
                 # get conversion technologies for each stream
                 for stream_index, stream in enumerate(source['streams']):
                     conversion_technologies = []
-
-                    # first iteration - grid losses not considered
-                    if gis_sources_losses == []:
-                        delta_T_supply = 0
-                        delta_T_return = 0
-
-                    # other iterations - grid losses considered
-                    else:
-                        # get source grid losses
-                        stream_loss = sources_loss * stream['capacity'] / sum([i['capacity'] for i in source['streams']])
-
-                        # 1st step - Compute grid supply/return at source correction coefficients, considering average pipe supply/return temperatures as sink supply/return temperatures
-                        hot_pipe_delta_T = sink_group_grid_supply_temperature - ambient_temperature  # delta T, grid supply temperature pipe
-                        cold_pipe_delta_T = sink_group_grid_return_temperature - ambient_temperature  # delta T, grid return temperature pipe
-
-                        supply_coef = hot_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)  # correction coefficient
-                        return_coef = cold_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)
-
-                        # get source max power supplied on last iteration
-                        power_last_iteration = last_iteration_data[source_index]['streams_converted'][stream_index]['conversion_technologies'][0]['max_capacity'] * \
-                        last_iteration_data[source_index]['streams_converted'][stream_index]['conversion_technologies'][0]['conversion_efficiency']
-
-                        # 2nd step - Compute and converge temperatures of grid supply/return at source
-                        add_delta_T = (grid_delta_T) / (1 - stream_loss / power_last_iteration) - grid_delta_T
-                        delta_T_supply = add_delta_T * supply_coef
-                        delta_T_return = add_delta_T * return_coef
-
-                        converge = False
-                        while converge == False:
-                            hot_pipe_T_average = ((sink_group_grid_supply_temperature + delta_T_supply) + sink_group_grid_supply_temperature) / 2
-                            cold_pipe_T_average = ((sink_group_grid_return_temperature - delta_T_return) + sink_group_grid_return_temperature) / 2
-
-                            hot_pipe_delta_T = hot_pipe_T_average - ambient_temperature  # grid supply temperature pipe
-                            cold_pipe_delta_T = cold_pipe_T_average - ambient_temperature  # grid return temperature pipe
-
-                            supply_coef = hot_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)
-                            return_coef = cold_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)
-
-                            add_delta_T = (grid_delta_T) / (1 - stream_loss / power_last_iteration) - grid_delta_T
-                            new_delta_T_supply = add_delta_T * supply_coef
-                            new_delta_T_return = add_delta_T * return_coef
-
-                            if abs(new_delta_T_supply - delta_T_supply) < 0.001 and abs(
-                                    new_delta_T_supply - delta_T_supply) < 0.001:
-                                delta_T_supply = copy(new_delta_T_supply)
-                                delta_T_return = copy(new_delta_T_return)
-                                converge = True
-
-                            else:
-                                delta_T_supply = copy(new_delta_T_supply)
-                                delta_T_return = copy(new_delta_T_return)
-
-                    #####################################################################################
-                    #####################################################################################
-
-                    source_grid_return_temperature = sink_group_grid_return_temperature - delta_T_return
-                    source_grid_supply_temperature = sink_group_grid_supply_temperature + delta_T_supply
-
-                    #####################################################################################
-                    #####################################################################################
 
                     # only convert sources where grid supply temperature is inferior to max_grid_temperature
                     if source_grid_supply_temperature <= max_grid_temperature:
@@ -771,5 +772,6 @@ def convert_sources(in_var, kb):
         "teo_capacity_factor_group": teo_group_of_sources_capacity_factor,
         "teo_dhn": teo_dhn
     }
+
 
     return all_info

@@ -108,7 +108,6 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
     # PINCH
     # Above Pinch - get HXs and respective storage
 
-    print(pinch_delta_T_min,hx_delta_T)
     info_df_hx_above_pinch, above_pinch_analysis_possible = above_and_below_pinch_main(kb, df_streams,
                                                                                        pinch_delta_T_min,
                                                                                        pinch_point_temperature,

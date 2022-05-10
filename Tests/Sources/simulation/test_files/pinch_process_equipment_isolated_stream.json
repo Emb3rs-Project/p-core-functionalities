@@ -175663,6 +175663,7 @@
 
     ],
     "pinch_delta_T_min": 20,
+    "perform_all_combinations": 1,
     "location": [
       48.864716,
       2.349014

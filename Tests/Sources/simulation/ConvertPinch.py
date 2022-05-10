@@ -34,9 +34,6 @@ def equipment_and_processes():
 def equipment():
     return json.load(open(os.path.join(script_dir, "test_files/pinch_equipment.json")))
 
-def process():
-    return json.load(open(os.path.join(script_dir, "test_files/pinch_process.json")))
-
 def equipment_process_isolated_stream():
     return json.load(open(os.path.join(script_dir, "test_files/pinch_process_equipment_isolated_stream.json")))
 
@@ -46,7 +43,7 @@ def testConvertPinch():
     import time
     t0 = time.time()
 
-    option = 5
+    option = 3
 
     # OPTION 1 - test isolated streams
     if option == 1:

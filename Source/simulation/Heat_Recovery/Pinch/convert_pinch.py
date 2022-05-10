@@ -212,7 +212,6 @@ def convert_pinch(in_var, kb : KB):
     df_char = pd.DataFrame(columns=['ID', 'Fluid', 'Flowrate', 'Supply_Temperature', 'Target_Temperature'])
     df_profile_data = []
 
-
     for stream in streams:
         df_profile_data.append(stream['schedule'])
         df_char = df_char.append({
@@ -304,7 +303,6 @@ def convert_pinch(in_var, kb : KB):
     try:
         # perform full analysis
         if individual_equipment_optimization is False and only_isolated_streams is False:
-
             for index, info in enumerate(info_pinch):
                 if info['analysis_state'] == 'performed':
                     pinch_data = info['df_hx']
@@ -381,6 +379,7 @@ def convert_pinch(in_var, kb : KB):
             msg="Error aggregating pinch analysis solutions techno-economic data. Check your inputs."
                 "If all inputs are correct report to the platform."
         )
+
 
     return output
 
