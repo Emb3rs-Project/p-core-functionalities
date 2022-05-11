@@ -35,7 +35,7 @@ class MainErrorConvertSources(BaseModel):
         class PlatformConvertSources(BaseModel):
 
             group_of_sources: List[SourceOrSink]
-            existing_grid_link_point_data: ExistingGridLinkPointData = None
+            existing_grid_data: ExistingGridLinkPointData = None
 
             @validator('group_of_sources')
             def check_if_there_are_sources(cls, v):

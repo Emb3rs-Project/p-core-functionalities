@@ -753,7 +753,8 @@ def convert_sources(in_var, kb):
                       "emissions": levelized_co2_emissions,
                       "technologies": []
             }
-
+    else:
+        ex_grid = []
 
     ##############################
     # OUTPUT

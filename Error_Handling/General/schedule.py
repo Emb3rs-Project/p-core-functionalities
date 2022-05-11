@@ -10,7 +10,7 @@ class ScheduleInfo(int, Enum):
 class Schedule(BaseModel):
 
     daily_periods: conlist(conlist(conint(ge=0, le=24), min_items=2, max_items=2), min_items=0)
-    shutdown_periods: conlist(conlist(conint(ge=0, le=366), min_items=2, max_items=2), min_items=0)
+    shutdown_periods: conlist(conlist(conint(ge=0, le=365), min_items=2, max_items=2), min_items=0)
     saturday_on: ScheduleInfo
     sunday_on: ScheduleInfo
 
