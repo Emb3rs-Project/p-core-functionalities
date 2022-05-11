@@ -45,7 +45,7 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
 from ...General.Auxiliary_General.stream_industry import stream_industry
 from ...General.Auxiliary_General.schedule_hour import schedule_hour
 from ...Error_Handling.error_simple_industry import PlatformSimpleIndustry
-
+import math
 
 def simple_user(in_var):
     ##########################################################################################
@@ -66,16 +66,24 @@ def simple_user(in_var):
         stream_type = "excess_heat"
 
     for stream in streams:
-        if stream['capacity'] == None:
-            capacity = ( stream["flowrate"] * stream["fluid_cp"] * abs((stream["supply_temperature"] - stream["target_temperature"]))/ 3600)
-            flowrate = stream['flowrate']
 
+        # check if capacity or flowrate given
+        if stream['capacity'] == None:
+            try:
+                capacity = (stream["flowrate"] * stream["fluid_cp"] * abs((stream["supply_temperature"] - stream["target_temperature"]))/ 3600)
+                flowrate = stream['flowrate']
+            except:
+                pass
         else:
             capacity = stream["capacity"]
             if stream['fluid'] == "steam":
                 flowrate = None
             else:
-                flowrate = stream['flowrate']
+                try:
+                    flowrate = stream['flowrate']
+                except:
+                    flowrate = capacity * 3600 /(abs(stream["supply_temperature"] - stream["target_temperature"]))
+
 
         if stream['hourly_generation'] is None:
             schedule = schedule_hour(
@@ -86,8 +94,10 @@ def simple_user(in_var):
             )
             hourly_generation = None
         else:
-            schedule = None
             hourly_generation = stream['hourly_generation']
+            schedule = None
+            capacity = max(hourly_generation)
+            flowrate = capacity * 3600 / (abs(stream["supply_temperature"] - stream["target_temperature"]))
 
         info_stream = stream_industry(
             None,

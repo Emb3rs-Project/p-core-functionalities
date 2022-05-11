@@ -41,6 +41,13 @@ def stream_industry(object_linked_id, stream_type, fluid, supply_temperature, ta
     else:
         schedule = list(map(lambda x: 1 if x > 0 else 0, hourly_generation))
 
+    i = 24  # repeat last day
+    while len(hourly_generation) != 366*24:
+        hourly_generation.append(hourly_generation[-(i):])
+        schedule.append(schedule[-(i):])
+        i +=1
+
+
     stream_data = {
         'id': randint(0, 10 ** 5),
         'object_type': 'stream',

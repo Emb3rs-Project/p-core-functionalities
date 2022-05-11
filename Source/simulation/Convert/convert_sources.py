@@ -113,6 +113,7 @@ def convert_sources(in_var, kb):
     MainErrorConvertSources(**in_var)
 
     group_of_sources = in_var['platform']['group_of_sources']
+    existing_grid_data = in_var['platform']['existing_grid_data']
     sink_group_grid_supply_temperature = in_var['cf_module']['sink_group_grid_supply_temperature']
     sink_group_grid_return_temperature = in_var['cf_module']['sink_group_grid_return_temperature']
 
@@ -720,7 +721,6 @@ def convert_sources(in_var, kb):
                     'streams_converted': output_converted
                 })
 
-
     except:
         raise ModuleRuntimeException(
             code="1",
@@ -728,6 +728,32 @@ def convert_sources(in_var, kb):
             msg="Source' streams conversion infeasible. Check sources' streams. \n "
                 "If all inputs are correct report to the platform."
         )
+
+
+    ############################
+    if existing_grid_data is not None:
+        grid_id = existing_grid_data['id']
+        latitude, longitude = existing_grid_data['location']
+        levelized_co2_emissions = existing_grid_data['levelized_co2_emissions']
+        levelized_om_var = existing_grid_data['levelized_om_var']
+        levelized_om_fix = existing_grid_data['levelized_om_fix']
+
+        ex_grid = {
+                      "teo_equipment_name": "ex_grid",
+                      "output": 1,
+                      "input_fuel": None,
+                      "output_fuel": "dhnwatersupply",
+                      "equipment": [],
+                      "max_capacity": 10**8,
+                      "turnkey_a": 0,
+                      "turnkey_b": 0,
+                      "conversion_efficiency": 1,
+                      "om_fix": levelized_om_fix,
+                      "om_var": levelized_om_var,
+                      "emissions": levelized_co2_emissions,
+                      "technologies": []
+            }
+
 
     ##############################
     # OUTPUT
@@ -763,6 +789,7 @@ def convert_sources(in_var, kb):
 
     all_info = {
         'all_sources_info': all_sources_info,
+        'ex_grid': ex_grid,
         'teo_string': 'dhn',
         "input_fuel": "dhnwatersupply",
         "output_fuel": "dhnwaterdem",

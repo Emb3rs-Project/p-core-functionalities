@@ -142,7 +142,6 @@ def convert_sinks(in_var, kb):
     vector_sink_max_target_temperature = []
     vector_sink_max_supply_temperature = []
     grid_specific_heating = []
-    grid_specific_cooling = []
     boiler_fuel_type = ['natural_gas', 'fuel_oil', 'biomass']  # types of fuel
     fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'biomass'}
 
@@ -153,8 +152,8 @@ def convert_sinks(in_var, kb):
 
     # Grid Characteristics
     grid_fluid = 'water'
-
-    hot_grid_delta_T = 30  # defined minimum grid delta_T  on sink side for oil and hot water
+    hot_grid_delta_T = 30  # defined minimum grid delta_T
+    max_grid_temperature = 100
 
     # HX Characteristics
     hx_efficiency = 0.95
@@ -189,10 +188,12 @@ def convert_sinks(in_var, kb):
                 grid_return_temperature = max(vector_sink_max_supply_temperature) + hx_delta_T
 
                 # check if grid delta_T is respected
-                delta_T = hot_grid_delta_T
-                if grid_supply_temperature - grid_return_temperature < delta_T:
-                    grid_supply_temperature = grid_return_temperature + delta_T
+                if grid_supply_temperature - grid_return_temperature < hot_grid_delta_T:
+                    grid_supply_temperature = grid_return_temperature + hot_grid_delta_T
 
+                if grid_supply_temperature > max_grid_temperature:
+                    grid_supply_temperature = max_grid_temperature
+                    grid_return_temperature = max_grid_temperature - hot_grid_delta_T
 
     ######################################
     # create backup for sink group
@@ -304,25 +305,6 @@ def convert_sinks(in_var, kb):
                 code="1",
                 type="convert_sinks.py",
                 msg="Designing heating grid specific technologies is infeasible. Report to the platform."
-            )
-
-    if group_of_sinks_grid_specific_power_cooling > 0:
-        try:
-            info_technology_group = Add_Electric_Chiller(kb,
-                                                         country,
-                                                         'non_household',
-                                                         group_of_sinks_grid_specific_power_cooling,
-                                                         power_fraction,
-                                                         min(group_of_sinks_grid_specific_minimum_supply_temperature),
-                                                         min(group_of_sinks_grid_specific_minimum_supply_temperature) + 5)
-
-            grid_specific_cooling.append(info_technology_group.data_teo)
-
-        except:
-            raise ModuleRuntimeException(
-                code="2",
-                type="convert_sinks.py",
-                msg="Designing cooling grid specific technologies is infeasible. Report to the platform."
             )
 
     ######################################
@@ -747,10 +729,11 @@ def convert_sinks(in_var, kb):
 
 
             gis_capacity = conversion_technologies[0]['max_capacity']
+            teo_id = 'sink' + str(sink['id']) + 'str' + str(stream['id']) + 'dem' # 'sink' + str(sink['id']) + 'stream' + str(stream['id'])
 
             output_converted.append({
                 'stream_id': stream['id'],
-                'demand_fuel': 'sink' + str(sink['id']) + 'str' + str(stream['id']) + 'dem',
+                'demand_fuel': teo_id,
                 'gis_capacity': gis_capacity,  # [kW]
                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
                 'teo_demand_factor': teo_demand_factor,
@@ -759,8 +742,6 @@ def convert_sinks(in_var, kb):
             })
 
             for index, i in enumerate(teo_group_of_sinks_demand_factor):
-                teo_id = 'sink' + str(sink['id']) + 'str' + str(
-                    stream['id']) + 'dem'  # 'sink' + str(sink['id']) + 'stream' + str(stream['id'])
                 i[teo_id] = teo_demand_factor[index]
 
         output_sink.append({
@@ -771,20 +752,17 @@ def convert_sinks(in_var, kb):
 
     except:
         raise ModuleRuntimeException(
-            code="3",
+            code="2",
             type="convert_sinks.py",
             msg="Sinks' streams conversion infeasible. Check sinks' streams."
         )
-
-
 
     ##############################
     # OUTPUT
     all_sinks_info = {
         'sink_group_grid_supply_temperature': grid_supply_temperature,
         'sink_group_grid_return_temperature': grid_return_temperature,
-        'grid_specific': {'heating': grid_specific_heating,
-                          'cooling': grid_specific_cooling},
+        'grid_specific': grid_specific_heating,
         'sinks': output_sink
     }
 
@@ -806,7 +784,7 @@ def convert_sinks(in_var, kb):
 
     n_grid_specific = [{
         'id': 0,
-        'coords': [group_latitude,group_longitude],
+        'coords': [group_latitude, group_longitude],
         'cap': group_of_sinks_grid_specific_power_heating  # [kW]
     }]
 

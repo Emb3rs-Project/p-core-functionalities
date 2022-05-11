@@ -1,12 +1,12 @@
-from pydantic import BaseModel, validator, confloat
+from pydantic import BaseModel, validator, confloat, NonNegativeInt
 from typing import List, Optional
 from .Convert_Source_Sink.source_or_sink import SourceOrSink
 from .Convert_Source_Sink.gis_source_losses import GISSourceLosses
-
+from .General.location import Location
 
 class MainErrorConvertSources(BaseModel):
 
-    platform: dict = None
+    platform: dict
     cf_module: dict = None
     gis_module: Optional[dict]
 
@@ -24,9 +24,18 @@ class MainErrorConvertSources(BaseModel):
     @validator('platform')
     def platform_inputs(cls,v):
 
+        class ExistingGridLinkPointData(BaseModel):
+            id: int
+            location: Location
+            levelized_co2_emissions: confloat(ge=0)
+            levelized_om_var: confloat(ge=0)
+            levelized_om_fix: confloat(ge=0)
+
+
         class PlatformConvertSources(BaseModel):
 
             group_of_sources: List[SourceOrSink]
+            existing_grid_link_point_data: ExistingGridLinkPointData = None
 
             @validator('group_of_sources')
             def check_if_there_are_sources(cls, v):
