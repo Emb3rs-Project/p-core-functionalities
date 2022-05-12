@@ -33,6 +33,21 @@ OUTPUT:  stream dictionary, as below:
 from random import randint
 
 
+months = [
+    "january"
+    , "february"
+    , "march"
+    , "april"
+    , "may"
+    , "june"
+    , "july"
+    , "august"
+    , "september"
+    , "october"
+    , "november"
+    , "december"
+]
+
 def stream_industry(object_linked_id, stream_type, fluid, supply_temperature, target_temperature, mass_flowrate, capacity,
                     schedule=None, hourly_generation=None):
 
@@ -48,6 +63,28 @@ def stream_industry(object_linked_id, stream_type, fluid, supply_temperature, ta
         i +=1
 
 
+    # get monthly generation
+    hour_new_month = 0
+    monthly_generation = []
+    for index, month in enumerate(months):
+        if month == ('january' or 'march' or 'may' or 'july' or 'august' or 'october' or 'december'):
+            number_days = 31
+        elif month == 'february':
+            number_days = 29  # year with 366 days considered
+        else:
+            number_days = 30
+
+        initial = hour_new_month
+        final = hour_new_month + number_days * 24
+
+        if month != 'december':
+            monthly_generation.append(sum(hourly_generation[initial:final]))
+        else:
+            monthly_generation.append(sum(hourly_generation[initial:]))
+
+        hour_new_month = final
+
+
     stream_data = {
         'id': randint(0, 10 ** 5),
         'object_type': 'stream',
@@ -59,7 +96,8 @@ def stream_industry(object_linked_id, stream_type, fluid, supply_temperature, ta
         'flowrate': mass_flowrate,  # [kg/h]
         'schedule': schedule,  # array with 1 and 0
         'hourly_generation': hourly_generation,  # [kWh]
-        'capacity': capacity  # [kW]
+        'capacity': capacity,  # [kW]
+        'monthly_generation': monthly_generation  # [kWh]
     }
 
     return stream_data

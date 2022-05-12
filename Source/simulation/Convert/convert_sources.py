@@ -118,7 +118,7 @@ def convert_sources(in_var, kb):
     sink_group_grid_return_temperature = in_var['cf_module']['sink_group_grid_return_temperature']
 
     try:
-        gis_sources_losses = in_var['gis_module']['cf_losses']
+        gis_sources_losses = in_var['gis_module']['source_losses']
         sources_to_analyse = [source['source_id'] for source in gis_sources_losses]
     except:
         gis_sources_losses = []
@@ -156,7 +156,6 @@ def convert_sources(in_var, kb):
 
     # Initialize array
     all_sources_info = []
-
     for source_index, source in enumerate(group_of_sources):
         for stream_index, stream in enumerate(source['streams']):
             hourly_stream_capacity = stream['hourly_generation']

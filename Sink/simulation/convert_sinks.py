@@ -781,12 +781,13 @@ def convert_sinks(in_var, kb):
 
         n_demand_list.append(gis_dict)
 
-
     n_grid_specific = [{
         'id': 0,
         'coords': [group_latitude, group_longitude],
         'cap': group_of_sinks_grid_specific_power_heating  # [kW]
     }]
+
+
 
     all_info = {
         "all_sinks_info": all_sinks_info,
