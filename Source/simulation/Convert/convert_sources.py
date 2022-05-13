@@ -113,7 +113,6 @@ def convert_sources(in_var, kb):
     MainErrorConvertSources(**in_var)
 
     group_of_sources = in_var['platform']['group_of_sources']
-    existing_grid_data = in_var['platform']['existing_grid_data']
     sink_group_grid_supply_temperature = in_var['cf_module']['sink_group_grid_supply_temperature']
     sink_group_grid_return_temperature = in_var['cf_module']['sink_group_grid_return_temperature']
 
@@ -122,6 +121,11 @@ def convert_sources(in_var, kb):
         sources_to_analyse = [source['source_id'] for source in gis_sources_losses]
     except:
         gis_sources_losses = []
+
+    try:
+        existing_grid_data = in_var['platform']['existing_grid_data']
+    except:
+        existing_grid_data = None
 
     try:
         last_iteration_data = in_var['cf_module']['last_iteration_data']  # data output from this function from first iteration
