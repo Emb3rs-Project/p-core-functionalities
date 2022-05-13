@@ -13,6 +13,7 @@ class SUStream(BaseModel):
     stream_type: StreamType
     supply_temperature: PositiveFloat
     target_temperature: PositiveFloat
+    flowrate: NonNegativeFloat
     fluid: StrictStr
     schedule: conlist(int)
     hourly_generation: conlist(NonNegativeFloat)

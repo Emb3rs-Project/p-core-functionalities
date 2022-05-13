@@ -17,11 +17,12 @@ def testSourceDetailedUser():
               'inflow',
               'outflow']
 
+    for i in test:
+        print(i.__dict__)
+
     error = 0
 
     for object in test:
-
-
         if object.object_type == 'process':
             for index, stream in enumerate(object.streams):
                 if stream['stream_type'] != result[index]:

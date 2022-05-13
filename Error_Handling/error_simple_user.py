@@ -7,7 +7,7 @@ class TypeofObject(str, Enum):
     source = "source"
     sink = "sink"
 
-class PlatformSimpleIndustry(BaseModel):
+class PlatformSimpleUser(BaseModel):
 
     type_of_object: TypeofObject
     streams: List[SimpleIndustryStreamDataInput]

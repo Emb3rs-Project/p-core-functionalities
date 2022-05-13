@@ -62,14 +62,15 @@ def su_adjust_capacity(in_var):
                 "If all inputs are correct report to the platform."
         )
 
-    return stream
+    dict_stream = {"stream": stream}
+    return dict_stream
 
 def monthly_adjust(stream, months_coef):
     hour_new_month = 0
     for index, month in enumerate(months):
         monthly_coef = months_coef[str(month)]
 
-        if month == ('january' or 'march' or 'may' or 'july' or 'august' or 'october' or 'december'):
+        if month == 'january' or month =='march' or month =='may' or month =='july' or month =='august' or month =='october' or month =='december':
             number_days = 31
         elif month == 'february':
             number_days = 29  # year with 366 days considered
@@ -130,7 +131,7 @@ def daily_adjust(stream, daily_real_values):
     hour_new_month = 0
     monthly_generation = []
     for index, month in enumerate(months):
-        if month == ('january' or 'march' or 'may' or 'july' or 'august' or 'october' or 'december'):
+        if month == 'january' or month =='march' or month =='may' or month =='july' or month =='august' or month =='october' or month =='december':
             number_days = 31
         elif month == 'february':
             number_days = 29  # year with 366 days considered

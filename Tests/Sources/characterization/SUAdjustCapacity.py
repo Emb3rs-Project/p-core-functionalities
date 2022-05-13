@@ -9,7 +9,6 @@ def testSUAdjustCapacity():
 
     # Adjust Capacity
     test = su_adjust_capacity(data_test)
+    print(test['stream'].keys())
 
-    print(test)
-
-
+    print('testSUAdjustCapacity - Everything Correct')

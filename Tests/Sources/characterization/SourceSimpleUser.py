@@ -9,8 +9,6 @@ data_test = json.load(open(os.path.join(script_dir, "test_files/source_simple_in
 def testSourceSimpleUser():
     test = simple_user(data_test)
 
-    with open("su.json", "w") as outfile:
-        json.dump(test, outfile)
 
     if test['streams'][0]['flowrate'] == 10:
         print('testSourceSimpleUser - Everything Correct')

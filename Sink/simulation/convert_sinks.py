@@ -787,12 +787,25 @@ def convert_sinks(in_var, kb):
         'cap': group_of_sinks_grid_specific_power_heating  # [kW]
     }]
 
+    n_thermal_storage = [{
+        'id': -1,
+        'coords': [group_latitude, group_longitude],
+        'cap': 1  # [kW]
+    },
+        {
+            'id': -2,
+            'coords': [group_latitude, group_longitude],
+            'cap': 1  # [kW]
+        }
+    ]
+
 
 
     all_info = {
         "all_sinks_info": all_sinks_info,
         "n_grid_specific": n_grid_specific,
         "n_demand_list": n_demand_list,
+        "n_thermal_storage": n_thermal_storage,
         "teo_demand_factor_group": teo_group_of_sinks_demand_factor
     }
 

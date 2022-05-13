@@ -14,14 +14,11 @@ class SimpleIndustryStreamDataInput(BaseModel):
     target_temperature: PositiveFloat
     fluid: StrictStr
     fluid_cp: PositiveFloat
-
     flowrate: Optional[PositiveFloat]
-
     daily_periods: Optional[conlist(conlist(conint(ge=0, le=24), min_items=2, max_items=2), min_items=0)]
     shutdown_periods: Optional[conlist(conlist(conint(ge=0, le=365), min_items=2, max_items=2), min_items=0)]
     saturday_on: Optional[ScheduleInfo]
     sunday_on: Optional[ScheduleInfo]
-
     capacity: Optional[PositiveFloat] = None
     hourly_generation: Optional[conlist(NonNegativeFloat, min_items=8760, max_items=8760)]
 

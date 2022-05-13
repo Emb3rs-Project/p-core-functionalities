@@ -56,18 +56,18 @@ def stream_industry(object_linked_id, stream_type, fluid, supply_temperature, ta
     else:
         schedule = list(map(lambda x: 1 if x > 0 else 0, hourly_generation))
 
+
     i = 24  # repeat last day
     while len(hourly_generation) != 366*24:
         hourly_generation.append(hourly_generation[-(i):])
         schedule.append(schedule[-(i):])
         i +=1
 
-
     # get monthly generation
     hour_new_month = 0
     monthly_generation = []
     for index, month in enumerate(months):
-        if month == ('january' or 'march' or 'may' or 'july' or 'august' or 'october' or 'december'):
+        if month == 'january' or month =='march' or month =='may' or month =='july' or month =='august' or month =='october' or month =='december':
             number_days = 31
         elif month == 'february':
             number_days = 29  # year with 366 days considered

@@ -44,13 +44,12 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
 
 from ...General.Auxiliary_General.stream_industry import stream_industry
 from ...General.Auxiliary_General.schedule_hour import schedule_hour
-from ...Error_Handling.error_simple_industry import PlatformSimpleIndustry
-import math
+from ...Error_Handling.error_simple_user import PlatformSimpleUser
 
 def simple_user(in_var):
     ##########################################################################################
     # INPUT
-    platform_data = PlatformSimpleIndustry(**in_var['platform'])
+    platform_data = PlatformSimpleUser(**in_var['platform'])
 
     streams = platform_data.streams
     streams = [vars(stream) for stream in streams]

@@ -85,7 +85,7 @@ def monthly_adjust(stream, months_coef):
     for index, month in enumerate(months):
         monthly_coef = months_coef[str(month)]
 
-        if month == ('january' or 'march' or 'may' or 'july' or 'august' or 'october' or 'december'):
+        if month == 'january' or month =='march' or month =='may' or month =='july' or month =='august' or month =='october' or month =='december':
             number_days = 31
         elif month == 'february':
             number_days = 29  # year with 366 days considered

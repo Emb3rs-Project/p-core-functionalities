@@ -41,7 +41,6 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
     all_equipment = []
     technologies_dict = []
 
-
     if object_type == 'sink':
         if object_id == 'grid_specific':
             input_fuel = None
@@ -107,11 +106,10 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
     teo_equipment_name = teo_equipment_name.replace('-','')
 
 
-    if 'orc' in teo_equipment_name:
-        for technology in technologies:
-            if technology.data_teo['equipment'] == 'orc':
-                electrical_conversion_efficiency = technology.data_teo['electrical_conversion_efficiency']
 
+
+    if object_id == 'grid_specific':
+        gs_cost = 10 ** 6
         data_teo = {
             'teo_equipment_name': teo_equipment_name,
             'output': 1,
@@ -122,28 +120,50 @@ def join_hx_and_technology(object_id,technologies,power_fraction,max_power_avail
             'turnkey_a': round(turnkey_a, 3),  # [€/kW]
             'turnkey_b': round(turnkey_b, 3),  # [€]
             'conversion_efficiency': round(conversion_efficiency, 3),  # []
-            'electrical_conversion_efficiency': round(electrical_conversion_efficiency, 3),
-            'om_fix': round(om_fix / max_power_available, 3),  # [€/year.kW]
-            'om_var': round(om_var / max_power_available, 3),  # [€/kWh]
+            'om_fix': round(om_fix / max_power_available, 3) * gs_cost,  # [€/year.kW]
+            'om_var': round(om_var / max_power_available, 3) * gs_cost,  # [€/kWh]
             'emissions': round(emissions / max_power_available, 3),  # [kg.CO2/kWh]
             'technologies': technologies_dict,
         }
+
     else:
-        data_teo = {
-            'teo_equipment_name': teo_equipment_name,
-            'output': 1,
-            'input_fuel': input_fuel,
-            'output_fuel': output_fuel,
-            'equipment': all_equipment,
-            'max_capacity': round(max_power_available, 3),  # [kW]
-            'turnkey_a': round(turnkey_a, 3),  # [€/kW]
-            'turnkey_b': round(turnkey_b, 3),  # [€]
-            'conversion_efficiency': round(conversion_efficiency, 3),  # []
-            'om_fix': round(om_fix / max_power_available, 3),  # [€/year.kW]
-            'om_var': round(om_var / max_power_available, 3),  # [€/kWh]
-            'emissions': round(emissions / max_power_available, 3),  # [kg.CO2/kWh]
-            'technologies': technologies_dict,
-        }
+        if 'orc' in teo_equipment_name:
+            for technology in technologies:
+                if technology.data_teo['equipment'] == 'orc':
+                    electrical_conversion_efficiency = technology.data_teo['electrical_conversion_efficiency']
+
+            data_teo = {
+                'teo_equipment_name': teo_equipment_name,
+                'output': 1,
+                'input_fuel': input_fuel,
+                'output_fuel': output_fuel,
+                'equipment': all_equipment,
+                'max_capacity': round(max_power_available, 3),  # [kW]
+                'turnkey_a': round(turnkey_a, 3),  # [€/kW]
+                'turnkey_b': round(turnkey_b, 3),  # [€]
+                'conversion_efficiency': round(conversion_efficiency, 3),  # []
+                'electrical_conversion_efficiency': round(electrical_conversion_efficiency, 3),
+                'om_fix': round(om_fix / max_power_available, 3),  # [€/year.kW]
+                'om_var': round(om_var / max_power_available, 3),  # [€/kWh]
+                'emissions': round(emissions / max_power_available, 3),  # [kg.CO2/kWh]
+                'technologies': technologies_dict,
+            }
+        else:
+            data_teo = {
+                'teo_equipment_name': teo_equipment_name,
+                'output': 1,
+                'input_fuel': input_fuel,
+                'output_fuel': output_fuel,
+                'equipment': all_equipment,
+                'max_capacity': round(max_power_available, 3),  # [kW]
+                'turnkey_a': round(turnkey_a, 3),  # [€/kW]
+                'turnkey_b': round(turnkey_b, 3),  # [€]
+                'conversion_efficiency': round(conversion_efficiency, 3),  # []
+                'om_fix': round(om_fix / max_power_available, 3),  # [€/year.kW]
+                'om_var': round(om_var / max_power_available, 3),  # [€/kWh]
+                'emissions': round(emissions / max_power_available, 3),  # [kg.CO2/kWh]
+                'technologies': technologies_dict,
+            }
 
     return data_teo
 
