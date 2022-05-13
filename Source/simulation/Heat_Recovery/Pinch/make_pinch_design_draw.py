@@ -165,7 +165,6 @@ def make_pinch_design_draw(streams_info,pinch_temperature,pinch_data,pinch_delta
                         i += 1
 
             # SPLIT BELOW PINCH
-            print('HEREEEEEEEEEEE')
 
             if len(stream['below_pinch']) > 1:
                 i = 0

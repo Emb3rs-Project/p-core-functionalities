@@ -43,7 +43,7 @@ def testConvertPinch():
     import time
     t0 = time.time()
 
-    option = 3
+    option = 1
 
     # OPTION 1 - test isolated streams
     if option == 1:

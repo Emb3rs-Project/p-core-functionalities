@@ -14,7 +14,7 @@ def testConvertSink():
 
     test = convert_sinks(data, KB(kb))
 
-    if test['all_sinks_info']['grid_specific']['heating'][0]['equipment'][0] == 'hot_water_boiler' and test['all_sinks_info']['grid_specific']['heating'][0]['max_capacity'] == 5398.305:
+    if test['all_sinks_info']['grid_specific'][0]['equipment'][0] == 'hot_water_boiler' and test['all_sinks_info']['grid_specific'][0]['max_capacity'] == 5398.305:
         print('Convert SINK Test - Everything Correct')
     else:
         print('Convert SINK Test - Report to CF that something is odd')

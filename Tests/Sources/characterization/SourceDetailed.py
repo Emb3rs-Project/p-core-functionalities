@@ -17,9 +17,6 @@ def testSourceDetailedUser():
               'inflow',
               'outflow']
 
-    for i in test:
-        print(i.__dict__)
-
     error = 0
 
     for object in test:
