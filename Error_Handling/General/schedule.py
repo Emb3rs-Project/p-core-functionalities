@@ -11,9 +11,19 @@ class Schedule(BaseModel):
 
     daily_periods: str #conlist(conlist(conint(ge=0, le=24), min_items=2, max_items=2), min_items=0)
     shutdown_periods: str #conlist(conlist(conint(ge=0, le=365), min_items=2, max_items=2), min_items=0)
-    saturday_on: ScheduleInfo
-    sunday_on: ScheduleInfo
+    saturday_on: str
+    sunday_on: str
 
+
+    @validator('saturday_on')
+    def check_saturday_on(cls, v):
+        v = ast.literal_eval(v)
+        return v
+
+    @validator('sunday_on')
+    def check_sunday_on(cls, v):
+        v = ast.literal_eval(v)
+        return v
 
     @validator('daily_periods')
     def check_structure_daily_periods(cls, v):
