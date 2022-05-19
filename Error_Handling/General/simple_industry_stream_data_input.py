@@ -1,7 +1,7 @@
 from pydantic import BaseModel, validator, conint, conlist, PositiveFloat, StrictStr, NonNegativeFloat
 from typing import Optional
 from enum import Enum
-
+import ast
 
 class ScheduleInfo(int, Enum):
     off = 0
@@ -15,8 +15,8 @@ class SimpleIndustryStreamDataInput(BaseModel):
     fluid: StrictStr
     fluid_cp: PositiveFloat
     flowrate: Optional[PositiveFloat]
-    daily_periods: Optional[conlist(conlist(conint(ge=0, le=24), min_items=2, max_items=2), min_items=0)]
-    shutdown_periods: Optional[conlist(conlist(conint(ge=0, le=365), min_items=2, max_items=2), min_items=0)]
+    daily_periods: Optional[str]
+    shutdown_periods: Optional[str]
     saturday_on: Optional[ScheduleInfo]
     sunday_on: Optional[ScheduleInfo]
     capacity: Optional[PositiveFloat] = None
@@ -38,6 +38,7 @@ class SimpleIndustryStreamDataInput(BaseModel):
     @validator('daily_periods')
     def check_structure_daily_periods(cls, v):
 
+        v = ast.literal_eval(v)
         if v != []:
             for value in v:
                 if len(value) != 2:
@@ -53,6 +54,8 @@ class SimpleIndustryStreamDataInput(BaseModel):
 
     @validator('shutdown_periods')
     def check_structure_shutdown_periods(cls, v):
+
+        v = ast.literal_eval(v)
         if v != []:
             for value in v:
                 if len(value) != 2:

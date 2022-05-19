@@ -1,6 +1,6 @@
 from pydantic import BaseModel, validator, conint, conlist
 from enum import Enum
-
+import ast
 
 class ScheduleInfo(int, Enum):
     off = 0
@@ -9,14 +9,16 @@ class ScheduleInfo(int, Enum):
 
 class Schedule(BaseModel):
 
-    daily_periods: conlist(conlist(conint(ge=0, le=24), min_items=2, max_items=2), min_items=0)
-    shutdown_periods: conlist(conlist(conint(ge=0, le=365), min_items=2, max_items=2), min_items=0)
+    daily_periods: str #conlist(conlist(conint(ge=0, le=24), min_items=2, max_items=2), min_items=0)
+    shutdown_periods: str #conlist(conlist(conint(ge=0, le=365), min_items=2, max_items=2), min_items=0)
     saturday_on: ScheduleInfo
     sunday_on: ScheduleInfo
 
 
     @validator('daily_periods')
     def check_structure_daily_periods(cls, v):
+
+        v = ast.literal_eval(v)
 
         if v != []:
             for value in v:
@@ -33,6 +35,9 @@ class Schedule(BaseModel):
 
     @validator('shutdown_periods')
     def check_structure_shutdown_periods(cls, v):
+
+        v = ast.literal_eval(v)
+
         if v != []:
             for value in v:
                 if len(value) != 2:
