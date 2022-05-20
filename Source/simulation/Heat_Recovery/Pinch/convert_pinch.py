@@ -260,7 +260,6 @@ def convert_pinch(in_var, kb : KB):
                                            pinch_delta_T_min,
                                            hx_delta_T,
                                            design_id)
-
     # pinch analysis for all streams COMBINATIONS
     if perform_all_combinations == True:
         for L in range(0, len(range(df_char.shape[0]))):
@@ -299,86 +298,86 @@ def convert_pinch(in_var, kb : KB):
     # Template with info needed for all designs
     df_optimization = pd.DataFrame(columns=['index', 'co2_savings', 'energy_saving', 'energy_investment', 'turnkey'])
 
+    # perform full analysis
+    if individual_equipment_optimization is False and only_isolated_streams is False:
+        for index, info in enumerate(info_pinch):
+            if info['analysis_state'] == 'performed':
+                pinch_data = info['df_hx']
 
-    try:
-        # perform full analysis
-        if individual_equipment_optimization is False and only_isolated_streams is False:
-            for index, info in enumerate(info_pinch):
-                if info['analysis_state'] == 'performed':
-                    pinch_data = info['df_hx']
-
-                    economic_data = info['df_equipment_economic']
-                    df_optimization = df_optimization.append({
-                        'index': index,
-                        'streams': info['streams'],
-                        'streams_info': info['streams_info'],
-                        'co2_savings': economic_data['CO2_Savings_Year'].sum(),
-                        'money_savings': economic_data['Savings_Year'].sum(),
-                        'energy_recovered': economic_data['Recovered_Energy'].sum(),
-                        'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / economic_data[
+                economic_data = info['df_equipment_economic']
+                df_optimization = df_optimization.append({
+                    'index': index,
+                    'streams': info['streams'],
+                    'streams_info': info['streams_info'],
+                    'co2_savings': economic_data['CO2_Savings_Year'].sum(),
+                    'money_savings': economic_data['Savings_Year'].sum(),
+                    'energy_recovered': economic_data['Recovered_Energy'].sum(),
+                    'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / economic_data[
                         'Recovered_Energy'].sum(),
-                        'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
-                        'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
-                    }, ignore_index=True)
+                    'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
+                    'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
+                }, ignore_index=True)
 
-        # equipment internal heat recovery/ only isolated streams
-        else:
-            for index, info in enumerate(info_pinch):
-                if info['analysis_state'] == 'performed':
-                    pinch_data = info['df_hx']
-                    if object['object_type'] == 'equipment':
-                        data = fuel_properties.get_values(country, object['fuel_type'], 'non-household')
-                        co2_emission_per_kw = data['co2_emissions']
-                        fuel_cost_kwh = data['price']
-                    else:
-                        only_isolated_streams = True
-                        co2_emission_per_kw = 0
-                        fuel_cost_kwh = 0
+    # equipment internal heat recovery/ only isolated streams
+    else:
+        for index, info in enumerate(info_pinch):
+            if info['analysis_state'] == 'performed':
+                pinch_data = info['df_hx']
+                if object['object_type'] == 'equipment':
+                    data = fuel_properties.get_values(country, object['fuel_type'], 'non-household')
+                    co2_emission_per_kw = data['co2_emissions']
+                    fuel_cost_kwh = data['price']
+                else:
+                    only_isolated_streams = True
+                    co2_emission_per_kw = 0
+                    fuel_cost_kwh = 0
 
-                    df_optimization = df_optimization.append({
-                        'index': index,
-                        'co2_savings': pinch_data['Recovered_Energy'].sum() * co2_emission_per_kw,
-                        'money_savings': pinch_data['Recovered_Energy'].sum() * fuel_cost_kwh,
-                        'energy_recovered': pinch_data['Recovered_Energy'].sum(),
-                        'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / pinch_data['Recovered_Energy'].sum(),
-                        'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
-                        'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
-                    }, ignore_index=True)
+                df_optimization = df_optimization.append({
+                    'index': index,
+                    'co2_savings': pinch_data['Recovered_Energy'].sum() * co2_emission_per_kw,
+                    'money_savings': pinch_data['Recovered_Energy'].sum() * fuel_cost_kwh,
+                    'energy_recovered': pinch_data['Recovered_Energy'].sum(),
+                    'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / pinch_data['Recovered_Energy'].sum(),
+                    'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
+                    'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
+                }, ignore_index=True)
 
-        # drop duplicates
-        df_optimization = df_optimization.drop_duplicates(
-            subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
+    # drop duplicates
+    df_optimization = df_optimization.drop_duplicates(subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
 
-        # get best options that recover maximum energy
-        energy_recovered = df_optimization.sort_values('energy_recovered', ascending=False).head(number_output_options)
-        energy_recovered_options = get_best_x_outputs(info_pinch, energy_recovered, country, lifetime,pinch_delta_T_min, kb)
+    # info for HTML
+    df_char.drop(['Supply_Shift','Target_Shift','Flowrate'], axis=1,inplace=True)
+    df_char.rename(columns=lambda name: name.replace('_', ' '),inplace=True)
+    df_char['Fluid'] = df_char['Fluid'].apply(lambda x: x.replace("_", " "))
+    stream_table = df_char
 
-        # get best options that give best energy_recovery/turnkey ratio
-        energy_investment = df_optimization.sort_values('energy_investment').head(number_output_options)
-        energy_investment_options = get_best_x_outputs(info_pinch, energy_investment, country, lifetime,
-                                                       pinch_delta_T_min, kb)
+    stream_combination_not_feasible = subset_not_possible_to_analyze
 
-        # get best options that save maximum amount of CO2
-        co2_savings = df_optimization.sort_values('co2_savings', ascending=False).head(number_output_options)
-        co2_savings_options = get_best_x_outputs(info_pinch, co2_savings, country, lifetime, pinch_delta_T_min, kb)
+    # get best options that recover maximum energy
+    energy_recovered = df_optimization.sort_values('energy_recovered', ascending=False).head(number_output_options)
+    energy_recovered_options = get_best_x_outputs(info_pinch, energy_recovered, country, lifetime, pinch_delta_T_min,
+                                                  kb,stream_table,stream_combination_not_feasible, type='Energy Savings')
 
-        # isolated streams are not linked to any equipment, thus not possible to know how much CO2 is saved
-        if only_isolated_streams == True:
-            co2_savings_options = []
+    # get best options that give best energy_recovery/turnkey ratio
+    energy_investment = df_optimization.sort_values('energy_investment').head(number_output_options)
+    energy_investment_options = get_best_x_outputs(info_pinch, energy_investment, country, lifetime,
+                                                   pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible, type='Energy Savings Specific Cost')
 
-        output = {
-            'co2_optimization': co2_savings_options,
-            'energy_recovered_optimization': energy_recovered_options,
-            'energy_investment_optimization': energy_investment_options
-        }
+    # get best options that save maximum amount of CO2
+    co2_savings = df_optimization.sort_values('co2_savings', ascending=False).head(number_output_options)
+    co2_savings_options = get_best_x_outputs(info_pinch, co2_savings, country, lifetime, pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible,type='CO<sub>2</sub> Emissions Savings')
 
-    except:
-        raise ModuleRuntimeException(
-            code="2",
-            type="convert_pinch.py",
-            msg="Error aggregating pinch analysis solutions techno-economic data. Check your inputs."
-                "If all inputs are correct report to the platform."
-        )
+    # isolated streams are not linked to any equipment, thus not possible to know how much CO2 is saved
+    if only_isolated_streams == True:
+        co2_savings_options = []
+
+    output = {
+        'co2_optimization': co2_savings_options,
+        'energy_recovered_optimization': energy_recovered_options,
+        'energy_investment_optimization': energy_investment_options
+    }
+
+
 
 
     return output
