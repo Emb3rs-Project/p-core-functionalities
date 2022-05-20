@@ -65,16 +65,17 @@ def get_best_x_outputs(info_pinch, df_optimization, country, lifetime, pinch_del
     solution_order = 1
     for index, row in df_optimization.iterrows():
 
-       #fig_html = make_pinch_design_draw(
-       #                      info_pinch[int(df_optimization['index'].loc[index])]['streams_info'],
-       #                      info_pinch[int(df_optimization['index'].loc[index])]['pinch_temperature'],
-       #                      info_pinch[int(df_optimization['index'].loc[index])]['df_hx'].to_dict(orient='records'),
-       #                      info_pinch[int(df_optimization['index'].loc[index])]['pinch_delta_T_min']
-       #                      )
+       _info_pinch = info_pinch[int(df_optimization['index'].loc[index])]
+      #fig_html = make_pinch_design_draw(
+      #                      _info_pinch['streams_info'],
+      #                      _info_pinch['pinch_temperature'],
+      #                      _info_pinch['df_hx'].to_dict(orient='records'),
+      #                      _info_pinch['pinch_delta_T_min']
+      #                      )
 #
 
        best_x_options.append({
-            "_info_pinch": info_pinch,
+            "_info_pinch": _info_pinch,
             'ID': info_pinch[int(df_optimization['index'].loc[index])]['ID'],
             'streams': info_pinch[int(df_optimization['index'].loc[index])]['streams'],
             'streams_info': info_pinch[int(df_optimization['index'].loc[index])]['streams_info'],
