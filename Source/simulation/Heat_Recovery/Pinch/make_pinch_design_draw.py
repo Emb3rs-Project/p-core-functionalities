@@ -552,8 +552,8 @@ def make_pinch_design_draw(streams_info,pinch_temperature,pinch_data,pinch_delta
     plt.legend(handles=handles, loc="lower right", ncol=3)
 
     # adjust plot size
-    mng = plt.get_current_fig_manager()
-    mng.window.showMaximized()
+    #mng = plt.get_current_fig_manager()
+    #mng.window.showMaximized()
     fig = plt.gcf()
     coef = 6 / 16
     y_val = 14
@@ -564,6 +564,7 @@ def make_pinch_design_draw(streams_info,pinch_temperature,pinch_data,pinch_delta
 
     # get HTML
     fig_html = mpld3.fig_to_html(fig)
+    plt.show()
     plt.close()
 
     return fig_html
