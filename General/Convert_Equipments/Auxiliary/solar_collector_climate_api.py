@@ -55,7 +55,7 @@ def solar_collector_climate_api(latitude,longitude):
     data[:, 5] = climate_df['Gd(h)']  # Global diffuse horizontal irradiance [Wh/m2]
     data[:, 6] = climate_df['IR(h)']  # Infrared horizontal irradiance [Wh/m2]
 
-
+    new_rows = []
     for i in range (8760):
 
         # compute vars
@@ -114,7 +114,11 @@ def solar_collector_climate_api(latitude,longitude):
                     'Q_beam_solar_collector': Q_beam_solar_collector,  # Direct  irradiance on inclined solar collector [W.h/m2]
                     'Q_dif_solar_collector': Q_dif_solar_collector,  # Diffuse irradiance on inclined solar collector [W.h/m2]
                    }
-        df_output = df_output.append(new_row, ignore_index=True)
+
+        new_rows.append(new_row)
+
+    df_output = pd.DataFrame(new_rows)
+
 
     return df_output
 
