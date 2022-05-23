@@ -33,7 +33,7 @@ def error_building(platform_data,kb):
         target_temperature_heat: Optional[PositiveFloat]
 
 
-        @validator('building_type')
+        @validator('building_type',allow_reuse=True)
         def check_hotel(cls, v, values, **kwargs):
             if v == 'hotel' and values['number_rooms'] == None:
                 raise Exception('If building type is hotel, introduce number of rooms per floor in the Advanced Parameters section.')
