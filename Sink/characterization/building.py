@@ -603,13 +603,13 @@ def building(in_var, kb : KB):
                 floor_in['temperature'] = T_floor_in
 
             # Hourly Profiles
-            profile_hourly_heat.append((round(cumulative_heat_hourly, 2)))  # hourly space heating demand [kWh]
-            profile_hourly_cool.append(round(cumulative_cool_hourly, 2))  # hourly space cooling demand [kWh]
+            profile_hourly_heat.append(cumulative_heat_hourly)  # hourly space heating demand [kWh]
+            profile_hourly_cool.append(cumulative_cool_hourly)  # hourly space cooling demand [kWh]
 
-        profile_monthly_heat = [round(i * number_floor,2) for i in profile_monthly_heat]
-        profile_monthly_cool = [round(i * number_floor,2) for i in profile_monthly_cool]
-        profile_hourly_heat = [round(i * number_floor,2) for i in profile_hourly_heat]
-        profile_hourly_cool = [round(i * number_floor,2) for i in profile_hourly_cool]
+        profile_monthly_heat = [i * number_floor for i in profile_monthly_heat]
+        profile_monthly_cool = [i * number_floor for i in profile_monthly_cool]
+        profile_hourly_heat = [i * number_floor for i in profile_hourly_heat]
+        profile_hourly_cool = [i * number_floor for i in profile_hourly_cool]
 
         ##############################
         # OUTPUT
