@@ -66,6 +66,8 @@ def building_climate_api(latitude,longitude):
     df_col_names = ['T_exterior','T_sky','Q_sun_N_facade','Q_sun_S_facade','Q_sun_E_facade', 'Q_sun_W_facade','Q_sun_roof','Q_solar_collector']
     df_output = pd.DataFrame(columns=df_col_names)
 
+    new_rows = []
+
     for i in range(8760):
 
         T_sky = (data[i,6]/(0.0000000567))**0.25-273
@@ -144,7 +146,10 @@ def building_climate_api(latitude,longitude):
                    'Wind_speed': data[i, 7],
                    }
 
-        df_output = df_output.append(new_row, ignore_index=True)
+
+        new_rows.append(new_row)
+
+    df_output = pd.DataFrame(new_rows)
 
     df_output = df_output.append(df_output.tail(n=24), ignore_index=True)
 
