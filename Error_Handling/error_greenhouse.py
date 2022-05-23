@@ -1,9 +1,11 @@
-from pydantic import validator, confloat, PositiveFloat, conint, PositiveInt, BaseModel
-from typing import Optional
-from .General.schedule import Schedule
-from .General.location import Location
-from .General.building_orientation import BuildingOrientation
 from enum import Enum
+from typing import Optional
+
+from pydantic import validator, confloat, PositiveFloat, conint, PositiveInt
+
+from .General.building_orientation import BuildingOrientation
+from .General.location import Location
+from .General.schedule import Schedule
 
 
 class GreenhouseEfficiency(int, Enum):
@@ -20,6 +22,8 @@ class ArtificalLights_and_ThermalBlanket(int, Enum):
 
 class PlatformGreenhouse(Schedule, Location):
     # Mandatory
+    hours_lights_needed: Optional[conint(gt=0, le=24)] = None
+
     greenhouse_efficiency: GreenhouseEfficiency
     width: PositiveFloat
     length: PositiveFloat
@@ -46,7 +50,6 @@ class PlatformGreenhouse(Schedule, Location):
     emissivity_cover_long_wave_radiation: Optional[confloat(gt=0, le=1)] = 0.2
     tau_cover_solar_radiation: Optional[confloat(gt=0, le=1)] = 0.9
     power_lights: Optional[PositiveFloat] = 20
-    hours_lights_needed: Optional[conint(gt=0, le=24)] = None
 
     @validator('f_c',always=True)
     def check_f_c(cls, f_c, values, **kwargs):
@@ -76,4 +79,11 @@ class PlatformGreenhouse(Schedule, Location):
         if values['target_temperature_heat'] >= v:
             raise ValueError(
                 'The \'Heaters low temperature\' (which is the supplied heater\'s fluid temperature to the DHN heat exchanger) must be lower than the \'Heaters high temperature\' (which is the target heater\'s fluid temperature  returning from the to the DHN heat exchanger). supply_temperature_heat < target_temperature_heat.')
+        return v
+
+    @validator('artificial_lights_system')
+    def check_artificial_lights_system(cls, v, values, **kwargs):
+        if v == 1 and values['hours_lights_needed'] is None:
+            raise ValueError(
+                'When introducing existing artificial lighting system, input daily light hours needed.')
         return v
