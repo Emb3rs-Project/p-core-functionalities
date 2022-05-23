@@ -15,15 +15,6 @@ class Schedule(BaseModel):
     sunday_on: ScheduleInfo
 
 
-    @validator('saturday_on')
-    def check_saturday_on(cls, v):
-        v = ast.literal_eval(v)
-        return v
-
-    @validator('sunday_on')
-    def check_sunday_on(cls, v):
-        v = ast.literal_eval(v)
-        return v
 
     @validator('daily_periods')
     def check_structure_daily_periods(cls, v):
