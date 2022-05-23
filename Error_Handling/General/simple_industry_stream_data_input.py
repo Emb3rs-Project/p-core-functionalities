@@ -22,15 +22,6 @@ class SimpleIndustryStreamDataInput(BaseModel):
     capacity: Optional[PositiveFloat] = None
     hourly_generation: Optional[conlist(NonNegativeFloat, min_items=8760, max_items=8760)]
 
-    @validator('saturday_on')
-    def check_saturday_on(cls, v):
-        v = ast.literal_eval(v)
-        return v
-
-    @validator('sunday_on')
-    def check_sunday_on(cls, v):
-        v = ast.literal_eval(v)
-        return v
 
     @validator('hourly_generation', always=True)
     def check_if_generated_or_import_schedule(cls, hourly_generation_profile, values,**kwargs):
