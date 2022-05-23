@@ -33,6 +33,9 @@ RETURN:
 import numpy as np
 from copy import deepcopy
 
+import pandas as pd
+
+
 def check_streams_number(df_streams_in, df_streams_out, above_pinch, delta_T_min, reach_pinch,check_time):
 
     ############################################################################################
@@ -260,7 +263,8 @@ def split_streams(combinations, above_pinch, delta_T_min, check_time):
                 new_row['Split_Check'] = False
 
                 # add split stream to df
-                df_streams_out_copy = df_streams_out_copy.append(new_row)
+                df_streams_out_copy = pd.concat([df_streams_out_copy, pd.DataFrame([new_row])])
+
 
                 # update dfs
                 df_streams_out_copy.loc[index_stream_out, ['Split_Check']] = True

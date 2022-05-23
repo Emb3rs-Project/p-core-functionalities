@@ -51,10 +51,7 @@ RETURN:
 """
 
 from ......KB_General.get_interest_rate import get_interest_rate
-#from ..make_pinch_design_draw import make_pinch_design_draw
-#from ..report_pinch import report_pinch
-#import pandas as pd
-#
+
 
 def get_best_x_outputs(info_pinch, df_optimization, country, lifetime, pinch_delta_T_min, kb, stream_table,stream_combination_not_feasible,type):
 
@@ -64,15 +61,7 @@ def get_best_x_outputs(info_pinch, df_optimization, country, lifetime, pinch_del
 
     solution_order = 1
     for index, row in df_optimization.iterrows():
-
        _info_pinch = info_pinch[int(df_optimization['index'].loc[index])]
-      #fig_html = make_pinch_design_draw(
-      #                      _info_pinch['streams_info'],
-      #                      _info_pinch['pinch_temperature'],
-      #                      _info_pinch['df_hx'].to_dict(orient='records'),
-      #                      _info_pinch['pinch_delta_T_min']
-      #                      )
-#
 
        best_x_options.append({
             "_info_pinch": _info_pinch,
@@ -95,27 +84,6 @@ def get_best_x_outputs(info_pinch, df_optimization, country, lifetime, pinch_del
             'theo_minimum_cold_utility': info_pinch[int(df_optimization['index'].loc[index])]['theo_minimum_cold_utility'],
         })
 
-
-
-       # initialize data of lists.
-       #data = {
-       #    'ID': info_pinch[int(df_optimization['index'].loc[index])]['ID'],
-       #    'Streams': [' ;'.join( str(id_sol) for id_sol in info_pinch[int(df_optimization['index'].loc[index])]['streams'])],
-       #    'Capex': [row['turnkey']],
-       #    'CO<sub>2</sub> Savings': [row['co2_savings']],
-       #    'Money Savings': [row['money_savings']],
-       #    'Energy Savings': row['energy_recovered']
-       #}
-#
-       #df_solutions = pd.DataFrame(data)
-       #df_solutions.set_index('ID', inplace=True)
-       #report_html = report_pinch( info_pinch[int(df_optimization['index'].loc[index])]['df_hx'],fig_html, type,solution_order,stream_table,stream_combination_not_feasible,df_solutions)
-#
-       #file = open("sample.html", "w")
-       #file.write(report_html)
-       #file.close()
-
        solution_order += 1
-       #break
 
     return best_x_options
