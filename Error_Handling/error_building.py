@@ -132,7 +132,7 @@ def error_building(platform_data,kb):
         Q_gain_per_floor: Optional[PositiveFloat] = val_Q_gain_per_floor
 
 
-        @validator('T_cool_on')
+        @validator('T_cool_on',allow_reuse=True)
         def check_occupied_temperatures_set_points(cls, v, values, **kwargs):
             if values['T_heat_on'] >= v:
                 raise ValueError(
@@ -140,7 +140,7 @@ def error_building(platform_data,kb):
             return v
 
 
-        @validator('T_off_max')
+        @validator('T_off_max',allow_reuse=True)
         def check_unoccupied_temperatures_set_points(cls, v, values, **kwargs):
             if values['T_off_min'] >= v:
                 raise ValueError(
@@ -148,7 +148,7 @@ def error_building(platform_data,kb):
             return v
 
 
-        @validator('supply_temperature_heat')
+        @validator('supply_temperature_heat',allow_reuse=True)
         def check_supply_and_target_temperature_heat(cls, v, values, **kwargs):
 
 
