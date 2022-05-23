@@ -52,7 +52,7 @@ def error_building(platform_data,kb):
     building_type = initial_data.building_type
     area_floor = initial_data.width_floor * initial_data.length_floor
     country = get_country(latitude, longitude)
-    space_heating_type = initial_data.space_heating_type
+    space_heating_type = int(initial_data.space_heating_type)
 
     val_u_wall, val_u_roof, val_u_glass, val_u_floor, val_tau_glass, val_alpha_wall, val_alpha_floor, val_alpha_glass, val_cp_wall, val_cp_floor, val_cp_roof, val_air_change_hour, val_emissivity_wall, val_emissivity_glass = building_properties.get_values(
             country, building_type)
@@ -75,6 +75,7 @@ def error_building(platform_data,kb):
         val_vol_dhw_set = 0.003 * val_number_person_per_floor  # daily dwelling DHW consumption [m3]
         val_Q_gain_per_floor = val_number_person_per_floor * 108 + 18 * area_floor  # occupancy and appliances heat gains [W]
         val_renewal_air_per_person = 10 * 10 ** (-3)  # [m3/s] per person
+
 
     if space_heating_type == 1:
         platform_data['target_temperature_heat'] = 75
