@@ -23,32 +23,22 @@ class SimpleIndustryStreamDataInput(BaseModel):
     hourly_generation: Optional[conlist(NonNegativeFloat, min_items=8760, max_items=8760)]
 
 
-    @validator('hourly_generation', always=True)
-    def check_if_generated_or_import_schedule(cls, hourly_generation_profile, values,**kwargs):
-        if hourly_generation_profile is None:
-            if values["daily_periods"] is None or values["shutdown_periods"] is None or values["saturday_on"] is None or values["sunday_on"] is None:
-                raise Exception("Import a profile (kWh) for the stream or provide data to estimate one.")
-        else:
-            if values["daily_periods"] is not None or values["shutdown_periods"] is not None or values["saturday_on"] is not None or values["sunday_on"] is not None:
-                raise Exception("Provide only the profile (kWh), or the schedule data, not both.")
-
-        return hourly_generation_profile
-
-
     @validator('daily_periods')
     def check_structure_daily_periods(cls, v):
-
         v = ast.literal_eval(v)
         if v != []:
-            for value in v:
-                if len(value) != 2:
-                    raise ValueError(
-                        'Only a start and ending hour must be given in each period. Example: [[9,12],[14,19]]')
-                else:
-                    value_a, value_b = value
-                    if value_b <= value_a:
+            if isinstance(v, list) is True :
+                for value in v:
+                    if len(value) != 2:
                         raise ValueError(
-                            'Second value of the daily period must be larger than the first. Example: [[9,12],[14,19]]')
+                            'Only a start and ending hour must be given in each period. Example: [[9,12],[14,19]]')
+                    else:
+                        value_a, value_b = value
+                        if value_b <= value_a:
+                            raise ValueError(
+                                'Second value of the daily period must be larger than the first. Example: [[9,12],[14,19]]')
+            else:
+                raise TypeError('Provide arrays for daily periods.')
 
         return v
 
@@ -57,14 +47,19 @@ class SimpleIndustryStreamDataInput(BaseModel):
 
         v = ast.literal_eval(v)
         if v != []:
-            for value in v:
-                if len(value) != 2:
-                    raise ValueError('Only a start and ending day must be given in each period. Example: [[220,250]]')
-                else:
-                    value_a, value_b = value
-                    if value_b <= value_a:
-                        raise ValueError(
-                            'Second value of the shutdown period must be larger than the first. Example: [[220,250]]')
+            if isinstance(v, list) is True :
+                for value in v:
+                    if len(value) != 2:
+                        raise ValueError('Only a start and ending day must be given in each period. Example: [[220,250]]')
+                    else:
+                        value_a, value_b = value
+                        if value_b <= value_a:
+                            raise ValueError(
+                                'Second value of the shutdown period must be larger than the first. Example: [[220,250]]')
+            else:
+                raise TypeError(
+                    'Provide arrays for shutdown periods.')
+
         return v
 
 
@@ -76,3 +71,15 @@ class SimpleIndustryStreamDataInput(BaseModel):
         else:
             return capacity
 
+
+    @validator('hourly_generation')
+    def check_if_generated_or_import_schedule(cls, hourly_generation_profile, values,**kwargs):
+
+        if hourly_generation_profile is None:
+            if values["daily_periods"] is None or values["shutdown_periods"] is None or values["saturday_on"] is None or values["sunday_on"] is None:
+                raise Exception("Import a profile (kWh) for the stream or provide data to estimate one.")
+        else:
+            if values["daily_periods"] is not None or values["shutdown_periods"] is not None or values["saturday_on"] is not None or values["sunday_on"] is not None:
+                raise Exception("Provide only the profile (kWh), or the schedule data, not both.")
+
+        return hourly_generation_profile
