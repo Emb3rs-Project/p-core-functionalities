@@ -17,10 +17,10 @@ def error_building(platform_data,kb):
         hotel = 'hotel'
         residential = 'residential'
 
-    class SpaceHeatingType(str, Enum):
-        conventional = "1"
-        low_temperature = "2"
-        user_input = "3"
+    class SpaceHeatingType(int, Enum):
+        conventional = 1
+        low_temperature = 2
+        user_input = 3
 
     class PlatformBuildingInitial(Location):
         building_type: BuildingType
