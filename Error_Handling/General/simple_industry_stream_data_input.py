@@ -17,8 +17,8 @@ class SimpleIndustryStreamDataInput(BaseModel):
     flowrate: Optional[PositiveFloat]
     daily_periods: Optional[str]
     shutdown_periods: Optional[str]
-    saturday_on: Optional[str]
-    sunday_on: Optional[str]
+    saturday_on: Optional[ScheduleInfo]
+    sunday_on: Optional[ScheduleInfo]
     capacity: Optional[PositiveFloat] = None
     hourly_generation: Optional[conlist(NonNegativeFloat, min_items=8760, max_items=8760)]
 
