@@ -212,15 +212,19 @@ def convert_pinch(in_var, kb : KB):
     df_char = pd.DataFrame(columns=['ID', 'Fluid', 'Flowrate', 'Supply_Temperature', 'Target_Temperature'])
     df_profile_data = []
 
+    list_char = []
+    list_profile_data = []
     for stream in streams:
-        df_profile_data.append(stream['schedule'])
-        df_char = df_char.append({
+        list_char.append(stream['schedule'])
+        list_profile_data.append({
                                 'ID': stream['id'],
                                 'Fluid': stream['fluid'],
                                 'Flowrate': stream['flowrate'],
                                 'Supply_Temperature': stream['supply_temperature'],
-                                'Target_Temperature': stream['target_temperature']},
-                                ignore_index=True)
+                                'Target_Temperature': stream['target_temperature']})
+
+    df_profile_data = pd.DataFrame(list_char)
+    df_char = pd.DataFrame(list_profile_data)
 
     df_profile = pd.DataFrame(data=df_profile_data)  # create df
     df_profile.set_index(df_char['ID'], inplace=True)
@@ -248,9 +252,10 @@ def convert_pinch(in_var, kb : KB):
         else row['Target_Temperature'] + pinch_delta_T_min, axis=1
     )
 
+
     ############################################################################################################
     # PINCH ANALYSIS
-    design_id = 0  # give each design an ID - initial value
+    design_id = 1  # give each design an ID - initial value
     df_operating = df_char.copy()
 
     # pinch analysis for all streams
@@ -299,13 +304,16 @@ def convert_pinch(in_var, kb : KB):
     df_optimization = pd.DataFrame(columns=['index', 'co2_savings', 'energy_saving', 'energy_investment', 'turnkey'])
 
     # perform full analysis
+    list_df_optimization = []
+
     if individual_equipment_optimization is False and only_isolated_streams is False:
         for index, info in enumerate(info_pinch):
             if info['analysis_state'] == 'performed':
-                pinch_data = info['df_hx']
 
+                pinch_data = info['df_hx']
                 economic_data = info['df_equipment_economic']
-                df_optimization = df_optimization.append({
+
+                list_df_optimization.append({
                     'index': index,
                     'streams': info['streams'],
                     'streams_info': info['streams_info'],
@@ -316,7 +324,9 @@ def convert_pinch(in_var, kb : KB):
                         'Recovered_Energy'].sum(),
                     'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
                     'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
-                }, ignore_index=True)
+                })
+
+
 
     # equipment internal heat recovery/ only isolated streams
     else:
@@ -332,7 +342,7 @@ def convert_pinch(in_var, kb : KB):
                     co2_emission_per_kw = 0
                     fuel_cost_kwh = 0
 
-                df_optimization = df_optimization.append({
+                list_df_optimization.append({
                     'index': index,
                     'co2_savings': pinch_data['Recovered_Energy'].sum() * co2_emission_per_kw,
                     'money_savings': pinch_data['Recovered_Energy'].sum() * fuel_cost_kwh,
@@ -340,7 +350,9 @@ def convert_pinch(in_var, kb : KB):
                     'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / pinch_data['Recovered_Energy'].sum(),
                     'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
                     'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
-                }, ignore_index=True)
+                })
+
+    df_optimization = pd.DataFrame(list_df_optimization)
 
     # drop duplicates
     df_optimization = df_optimization.drop_duplicates(subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])

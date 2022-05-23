@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emb3rs - Test Report</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"
+    integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body class="container pt-5">
+
+<body >
+                <div class="embers_logo">
+                    <img class="image" style="width:15%" src="https://www.rhc-platform.org/content/uploads/psf_projects/emb3rs-emb3rs-logo2.jpg">
+                </div>
+                <h1 style="padding: 5px 0px 5px 0px;"><center><strong>REPORT: Pinch Analysis</strong></center></h1>
+                <div class="tips" style="padding: 15px 0px 5px 0px;">
+                    <p><strong><mark>What is a Pinch Analysis?</mark></strong></p>
+                    <p>In brief, the pinch analysis is a theoretical method that, based on fundamental thermodynamics,
+                        analyzes the heat flow through the industry’s streams with the aim of recovering heat within those
+                        streams by proposing a heat exchanger - HX - network. By reducing the energy needs, it also reduces
+                        costs and CO<sub>2</sub> emissions (for more information check EMB3Rs deliverable D.3.3).
+                    </p>
+                    <p><strong><mark>What can you obtain from the report?</mark></strong></p>
+                    <p> The simulation assesses heat recovery alternatives within the streams by performing a series of
+                        pinch analysis to the streams combinations. The output of this routine is the 3 best pinch designs
+                        in terms of heat recovery (kW), lowest cost of heat (€/MWh) and highest CO<sub>2</sub> emission reductions/savings (kgCO<sub>2</sub>/kWh).</p>
+                    <p><strong><mark>What is the report structure?</mark></strong></p>
+                    <p> 1) It is presented a table with the streams and the minimum heat exchangers &#916T, the user provided. Below the
+                            streams table it the user knows whether all possbile combinations of streams were analyzed or not. If not
+                            the list of infeasible streams combinations is shown. <br>
+                            2) For each of the categories (heat recovery, cost of heat and CO<sub>2</sub> emissions savings)
+                            the 3 best simulated solutions are shown to the user.</p>
+                </div>
+
+                <h2>User Streams</h2>
+                <table class="table">
+                    <caption>Stream Table</caption>
+                    <center>{stream_table.to_html()}</center>
+                </table>
+
+                <p><bold>{stream_combination_not_feasible}</bold></p>
+                <h2 id="co2_solutions">Designed Solutions</h2>
+                 <div class="tips">
+                        <p>Here you can find an overview on the best 3 designed solutions for:</p>
+                        <ul class="ul_tips">
+                            <li>Heat recovery, cost of heat and CO<sub>2</sub> emissions savings</li>
+                            <li>CO<sub>2</sub> emissions savings</li>
+                            <li>Heat recovery over Capex</li>
+                        </ul>
+                        <p>You can find for each designed solution the streams that were utilized, the Capex and the
+                            energy, CO<sub>2</sub> and money savings. </p>
+                        <p><bold>For the three categories analyzed there can be repetition on the designed solutions - look at the ID.
+                            There will bea always Energy savings in all solutions, since the pinch analysis aims to recover energy.
+                            However, ther may not be Money/CO<sub>2</sub> Savings if only streams without an equipment and fuel associated are provided.</bold></p>
+                  </div>
+
+                 <h4 ><a href="#co2_solutions">Energy Savings</a></h4>
+                 <h4 ><a href="#co2_solutions">Money Savings</a></h4>
+                 <h4 ><a href="#co2_solutions">CO<sub>2</sub> Savings</a></h4>
+
+
+                <table class="table">
+                    <caption>All Solutions</caption>
+                    <center>{df_solutions.to_html()}</center>
+                </table>
+
+                {% for item in plots_it %}
+                    {% for code in plots_it[item]["codes"] %}
+                        {% set solution_number =1 %}
+                            <div class="solution" style="background-color:#f3eceb;margin: 5px 0px 30px 0px">
+                                <h3 style="background-color:#e6c6b0;border-radius: 5px;padding: 10px;opacity:0.85"> {{plots_it[item]["name"]}} - Solution {{solution_number}} of 3</h3>
+                                <div  class="solution"}>
+                                    <h4>Heat Exchangers Network Diagram</h4>
+                                        <div class="tips">
+                                            <p>In this subsection it is provided an economic analysis on the designed heat exchangers:</p>
+                                                <ul class="ul_tips">
+                                                    <li>The following diagram proposes a heat exchanger (HX) network for the streams given.</li>
+                                                    <li>The streams are represented by the horizontal lines with the respective IDs next to them.</li>
+                                                    <li>Red lines mean hot streams, which are stream going from a larger to a smaller temperature. The opposite occurs to the blue lines, known as cold streams</li>
+                                                    <li>Stream split may occur. This is to guarantee the achievement of a final solution. The splits are represented as the diagonal lines going out of the main/original stream.</li>
+                                                    <li>The heat exchangers designed are represented with its ID, together with the estiamted power. In some cases a temperature may appear next to the HX, representing the temperature the stream reached. If not, it means it reached the target or the pinch temperature.</li>
+                                                </ul>
+                                        </div>
+
+                                    <div class="img">
+                                        <center>{{code}}</center>
+                                    </div>
+
+                                    <h4>Solution Economic Data Overview</h4>
+                                    <div class="tips">
+                                        <p>In this subsection it is provided an overview of the most relevant tecno-economic parameters analized:</p>
+                                        <ul class="ul_tips">
+                                            <li>HX and storage turnkey - equipment investment cost</li>
+                                            <li>Energy recovered - yearly amount of recovered energy</li>
+                                            <li>CO<sub>2</sub> emissions - </li>
+                                        </ul>
+                                    </div>
+
+
+                                    <table class="table">
+                                        <caption>Overview</caption>
+                                        <center>{df_overview.to_html()}</center>
+                                    </table>
+
+                                    <h4>Heat Exchangers Technical Data</h4>
+                                    <div class="tips">
+                                        <p>In this subsection it is provided an extensive technical analysis on the designed heat exchangers:</p>
+                                        <ul class="ul_tips">
+                                            <li>Power</li>
+                                            <li>Hot/Cold Stream data:</li>
+                                                <ul>
+                                                <li> Hot Temperature (hot stream inlet or cold stream outlet)</li>
+                                                <li> Cold Temperature (hot stream outlet or cold stream inlet)</li>
+                                                <li> mcp - Heat Capacity</li>
+                                                <li> Split - whether it is a split from the main stream or not</li>
+                                            </ul>
+                                        </ul>
+                                    </div>
+
+                                    <table class="table">
+                                        <caption>Overview</caption>
+                                        <center>{df_hx.to_html()}</center>
+                                    </table>
+
+                                    <h4>HXs Estimated Economic Data</h4>
+                                    <div class="tips">
+                                        <p>In this subsection it is provided an economic analysis on the designed heat exchangers:</p>
+                                        <ul class="ul_tips">
+                                            <li>Power</li>
+                                            <li>Cold data: ID, Hot (outlet) and cold (inlet) temperatures, the mcp, and wheter it is a split from the main stream or not.</li>
+                                            <li>Hot Stream data: ID, Hot (inlet) and cold (outlet) temperatures, the mcp, and wheter it is a split from the main stream or not.</li>
+                                        </ul>
+                                     </div>
+
+                                    <table class="table">
+                                        <caption>Economic</caption>
+                                        <center>{df_hx_economic.to_html()}</center>
+                                    </table>
+
+                                    <h4>HXs Storage Estimated Data</h4>
+
+                                    <table class="table">
+                                        <caption>Storage</caption>
+                                        <center>{df_storage.to_html()}</center>
+                                    </table>
+
+                                </div>
+
+                            </div>
+                        {% set solution_number +=1 %}
+                    {% endfor %}
+                {% endfor %}
+
+
+  <!-- Change Before this -->
+</body>
+
+</html>
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Loading complete

@@ -40,8 +40,10 @@ RETURN:
 
 """
 
+import pandas as pd
 
 def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
+
 
     # initial value
     split_needed = False
@@ -138,7 +140,7 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                         new_row['Split_Check'] = True
 
                         # Add Split Stream to DFs
-                        df_streams_in_copy = df_streams_in_copy.append(new_row)
+                        df_streams_in_copy = pd.concat([df_streams_in_copy, pd.DataFrame([new_row])])
 
                         # Update DFs
                         df_streams_in_copy.loc[hot_stream_index, ['Split_Check']] = True
@@ -172,7 +174,7 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                         new_row['Split_Check'] = False
 
                         # Add Split Stream to DFs
-                        df_streams_in = df_streams_in.append(new_row)
+                        df_streams_in = pd.concat([df_streams_in, pd.DataFrame([new_row])])
 
                         # Update DFs
                         df_streams_in.loc[index_stream_in]['Split_Check'] = True
@@ -241,7 +243,7 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                             new_row['Split_Check'] = True
 
                             # Add Split Stream to DFs
-                            df_streams_out_copy = df_streams_out_copy.append(new_row)
+                            df_streams_out_copy = pd.concat([df_streams_out_copy, pd.DataFrame([new_row])])
 
                             # Update DFs
                             df_streams_out_copy.loc[cold_stream_index, ['Split_Check']] = True
@@ -270,7 +272,8 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                             new_row['Split_Check'] = True
 
                             # Add Split Stream to DFs
-                            df_streams_in_copy = df_streams_in_copy.append(new_row)
+                            df_streams_in_copy = pd.concat([df_streams_in_copy, pd.DataFrame([new_row])])
+
 
                             # Update DFs
                             df_streams_in_copy.loc[hot_stream_index, ['Split_Check']] = True
@@ -309,7 +312,8 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                             new_row['Split_Check'] = False
 
                             # Add Split Stream to DFs
-                            df_streams_out_copy = df_streams_out_copy.append(new_row)
+                            df_streams_out_copy = pd.concat([df_streams_out_copy, pd.DataFrame([new_row])])
+
 
                             # Update DFs
                             df_streams_out_copy.loc[hot_stream_index]['Split_Check'] = True
@@ -335,7 +339,7 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                             new_row['Split_Check'] = False
 
                             # Add Split Stream to DFs
-                            df_streams_in_copy = df_streams_in_copy.append(new_row)
+                            df_streams_in_copy = pd.concat([df_streams_in_copy, pd.DataFrame([new_row])])
 
                             # Update DFs
                             df_streams_in_copy.loc[index_stream_in]['Split_Check'] = True
@@ -346,6 +350,7 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
 
 
                 all_combinations = combinations_updated
+
                 all_combinations.append([df_streams_in, df_streams_out])
 
 

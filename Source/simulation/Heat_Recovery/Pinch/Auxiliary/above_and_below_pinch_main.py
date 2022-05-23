@@ -166,8 +166,7 @@ def above_and_below_pinch_main(kb, df_streams, pinch_delta_T_min, pinch_T, hx_de
             df_streams_in = df_cold_streams
             df_streams_out = df_hot_streams
 
-
-        ########################################################################################################
+            ########################################################################################################
         # Run Pinch
         # 1) check if special cases
         # 2) check number_streams_out < number_streams_in
@@ -227,6 +226,7 @@ def above_and_below_pinch_main(kb, df_streams, pinch_delta_T_min, pinch_T, hx_de
                                                                                               hx_delta_T,
                                                                                               restriction=False)
 
+
                         # append HX designed if all streams_in reach pinch
                         if df_streams_in.empty:
                             utility = 0
@@ -273,6 +273,7 @@ def above_and_below_pinch_main(kb, df_streams, pinch_delta_T_min, pinch_T, hx_de
             all_designs = all_df_hx
     else:
         all_designs = []
+
 
     return all_designs, pinch_analysis_possible
 

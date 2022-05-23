@@ -1,5 +1,6 @@
 {
   "platform": {
+    "perform_all_combinations": 0,
     "all_input_objects": [
       {
         "id": 23991,

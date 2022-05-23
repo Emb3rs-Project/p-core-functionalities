@@ -46,7 +46,7 @@ RETURN:
 
 
 """
-
+import pandas as pd
 
 from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_hx_temperatures import above_pinch_hx_temperatures
 from ......Source.simulation.Heat_Recovery.Pinch.HX.design_hx import design_hx
@@ -223,7 +223,8 @@ def make_combinations(kb, combination, all_combinations, hx_delta_T, above_pinch
                                     new_row.name = str(int(stream_in_index) * 100)  # new ID
 
                                     # add split stream to df
-                                    df_streams_in = df_streams_in.append(new_row)
+                                    df_streams_in = pd.concat([df_streams_in, pd.DataFrame([new_row])])
+
 
                                     hx_power, hx_stream_in_T_cold, hx_stream_in_T_hot, hx_stream_out_T_cold, hx_stream_out_T_hot\
                                         = above_pinch_hx_temperatures(stream_in_T_cold,
@@ -251,7 +252,7 @@ def make_combinations(kb, combination, all_combinations, hx_delta_T, above_pinch
                                     new_row.name = str(int(stream_in_index) * 100)  # new ID
 
                                     # add split stream to df
-                                    df_streams_in = df_streams_in.append(new_row)
+                                    df_streams_in = pd.concat([df_streams_in, pd.DataFrame([new_row])])
 
                                     hx_power, hx_stream_out_T_cold, hx_stream_out_T_hot, hx_stream_in_T_cold, hx_stream_in_T_hot\
                                         = below_pinch_hx_temperatures(stream_out_T_hot,
@@ -311,9 +312,8 @@ def make_combinations(kb, combination, all_combinations, hx_delta_T, above_pinch
                                                        original_stream_out_index,
                                                        original_stream_in_index)
 
+                            df_hx = pd.concat([df_hx,  pd.DataFrame([new_hx_row])], ignore_index=True)
 
-
-                            df_hx = df_hx.append(new_hx_row, ignore_index=True)
                             combination = deepcopy([df_streams_in, df_streams_out, df_hx])
 
                             ############################################################################################
@@ -329,7 +329,7 @@ def make_combinations(kb, combination, all_combinations, hx_delta_T, above_pinch
                                                                          hx_delta_T,
                                                                          above_pinch)
                                 except:
-                                    print('A iteration was not feasible')
+                                    pass
 
                                 # when iteration goes a step back, last HX designed must be eliminated
                                 df_hx.drop(df_hx.tail(1).index, inplace=True)

@@ -76,13 +76,17 @@ def eco_env_analysis(kb : KB, info_pinch, objects_to_analyze, all_input_objects,
                         data = fuel_properties.get_values(country, save_object['fuel_type'], 'non-household')
                         co2_emission_per_kw = float(data['co2_emissions'])
                         price = data['price']
-                        df_economic = df_economic.append({
+
+                        new_row= {
                             'Equipment_ID': save_object['id'],
                             'CO2_Savings_Year': row['Recovered_Energy'] * co2_emission_per_kw,
                             'Recovered_Energy': row['Recovered_Energy'],
                             'Savings_Year': row['Recovered_Energy'] * price,
-                            'Total_Turnkey': row['Total_Turnkey_Cost'], }
-                            , ignore_index=True)
+                            'Total_Turnkey': row['Total_Turnkey_Cost'] }
+
+                        df_economic = pd.concat([df_economic, pd.DataFrame([new_row])])
+
+
 
                     # compute equipment savings which heat/cool respective processes
                     elif save_object['object_type'] == 'process':  # object.type = 'process'
@@ -97,22 +101,25 @@ def eco_env_analysis(kb : KB, info_pinch, objects_to_analyze, all_input_objects,
                         price = data['price']
                         co2_emission_per_kw = data['co2_emissions']
 
-                        df_economic = df_economic.append({
+                        new_row = {
                             'Equipment_ID': save_object['equipment_id'],
                             'CO2_Savings_Year': row['Recovered_Energy'] * co2_emission_per_kw,
                             'Recovered_Energy': row['Recovered_Energy'],
                             'Savings_Year': row['Recovered_Energy'] * price,
-                            'Total_Turnkey': row['Total_Turnkey_Cost'], }
-                            , ignore_index=True)
+                            'Total_Turnkey': row['Total_Turnkey_Cost'] }
+
+                        df_economic = pd.concat([df_economic, pd.DataFrame([new_row])])
+
 
                     else:  # object.type = 'isolated_stream'
-                        df_economic = df_economic.append({
+                        new_row = {
                             'Equipment_ID': 'isolated_stream',
                             'CO2_Savings_Year': row['Recovered_Energy'] * co2_emission_per_kw,
                             'Recovered_Energy': row['Recovered_Energy'],
                             'Savings_Year': row['Recovered_Energy'] * price,
-                            'Total_Turnkey': row['Total_Turnkey'], }
-                            , ignore_index=True)
+                            'Total_Turnkey': row['Total_Turnkey']}
+
+                        df_economic = pd.concat([df_economic, pd.DataFrame([new_row])])
 
 
                 # aggregate same Equipment ID savings in df_equipment_economic
@@ -133,13 +140,14 @@ def eco_env_analysis(kb : KB, info_pinch, objects_to_analyze, all_input_objects,
                         if id == equipment['id']:  # find equipment that supplies process
                             break
 
-                    df_equipment_economic = df_equipment_economic.append({
-                        'Equipment_ID': id,
+                    new_row = {
+                        'Equipment_ID': 'isolated_stream',
                         'CO2_Savings_Year': row['Recovered_Energy'] * co2_emission_per_kw,
-                        'Recovered_Energy': total_recovered_heat,
-                        'Savings_Year': total_savings_year,
-                        'Total_Turnkey': total_turnkey, }
-                        , ignore_index=True)
+                        'Recovered_Energy': row['Recovered_Energy'],
+                        'Savings_Year': row['Recovered_Energy'] * price,
+                        'Total_Turnkey': row['Total_Turnkey']}
+
+                    df_equipment_economic = pd.concat([df_equipment_economic, pd.DataFrame([new_row])])
 
             pinch_case['df_equipment_economic'] = df_equipment_economic
 

@@ -112,7 +112,8 @@ def match_remaining_streams_main(kb, df_streams_in,df_streams_out,df_hx,above_pi
                 df_cold_streams_dummy = df_cold_streams.copy()
 
                 # save all designed HX
-                df_hx_dummy = df_hx_dummy.append(new_generated_hx, ignore_index=True)
+                if new_generated_hx != []:
+                    df_hx_dummy = pd.concat([df_hx_dummy, pd.DataFrame([new_generated_hx])], ignore_index=True)
 
         # No HX Possible - Break Function
         if df_hx_dummy.empty == True:
@@ -124,7 +125,9 @@ def match_remaining_streams_main(kb, df_streams_in,df_streams_out,df_hx,above_pi
             if row_hx_max_power['HX_Power'] < 1:  # safety
                 break
 
-            df_hx = df_hx.append(row_hx_max_power, ignore_index=True)
+
+
+            df_hx = pd.concat([df_hx, pd.DataFrame([row_hx_max_power])], ignore_index=True)
 
             # update original dfs
             hot_stream_index = row_hx_max_power['HX_Hot_Stream']

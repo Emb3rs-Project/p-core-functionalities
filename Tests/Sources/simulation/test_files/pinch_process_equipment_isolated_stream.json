@@ -5,7 +5,7 @@
         "object_type": "process",
         "streams": [
           {
-            "id": 57467,
+            "id": 12,
             "object_type": "stream",
             "object_linked_id": 55,
             "stream_type": "startup",
@@ -17538,7 +17538,7 @@
             "capacity": 546000.0
           },
           {
-            "id": 95819,
+            "id": 13,
             "object_type": "stream",
             "object_linked_id": 55,
             "stream_type": "inflow",
@@ -35071,7 +35071,7 @@
             "capacity": 7.777777777777778
           },
           {
-            "id": 31702,
+            "id": 14,
             "object_type": "stream",
             "object_linked_id": 55,
             "stream_type": "inflow",
@@ -52604,7 +52604,7 @@
             "capacity": 7.5
           },
           {
-            "id": 27007,
+            "id": 15,
             "object_type": "stream",
             "object_linked_id": 55,
             "stream_type": "outflow",
@@ -70156,7 +70156,7 @@
         "object_type": "equipment",
         "streams": [
           {
-            "id": 3030,
+            "id": 19,
             "object_type": "stream",
             "object_linked_id": 101,
             "stream_type": "inflow",
@@ -87739,7 +87739,7 @@
             "capacity": 197.31547532071676
           },
           {
-            "id": 82907,
+            "id": 20,
             "object_type": "stream",
             "object_linked_id": 101,
             "stream_type": "supply_heat",
@@ -105322,7 +105322,7 @@
             "capacity": 7500
           },
           {
-            "id": 32471,
+            "id": 21,
             "object_type": "stream",
             "object_linked_id": 101,
             "stream_type": "excess_heat",
@@ -122912,7 +122912,7 @@
         "equipment_sub_type": "steam_boiler"
       },
       {
-        "id": 23991,
+        "id": 18,
         "object_type": "stream",
         "object_linked_id": null,
         "stream_type": "cold_stream",
@@ -140495,7 +140495,7 @@
         "capacity": 25.0
       },
       {
-        "id": 12640,
+        "id": 17,
         "object_type": "stream",
         "object_linked_id": null,
         "stream_type": "cold_stream",
@@ -158078,7 +158078,7 @@
         "capacity": 4.0
       },
       {
-        "id": 21257,
+        "id": 16,
         "object_type": "stream",
         "object_linked_id": null,
         "stream_type": "hot_stream",
@@ -175670,4 +175670,7 @@
     ]
   }
 }
+
+
+
 

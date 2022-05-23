@@ -1,7 +1,12 @@
 import matplotlib.pyplot as plt, mpld3
 import matplotlib.lines as mlines
 
-def make_pinch_design_draw(streams_info,pinch_temperature,pinch_data,pinch_delta_temperature):
+def make_pinch_design_draw(info):
+
+    streams_info = info['streams_info']
+    pinch_temperature = info['pinch_temperature']
+    pinch_data = info['df_hx'].to_dict(orient='records')
+    pinch_delta_temperature = info['pinch_delta_T_min']
 
     ###########################
     # Defined vars
@@ -299,7 +304,10 @@ def make_pinch_design_draw(streams_info,pinch_temperature,pinch_data,pinch_delta
         # sort HX by temperatures
         info_to_design_hx['below_pinch'] = sorted(info_to_design_hx['below_pinch'], key=lambda d: d['HX_Hot_Stream_T_Cold'], reverse=True)
 
+
+
         for match in info_to_design_hx['below_pinch']:
+
             plt.plot((go_to_the_right, go_to_the_right), (dict_for_hx[str(match['HX_Cold_Stream'])], dict_for_hx[str(match['HX_Hot_Stream'])]), 'k-')
             circle_hot = plt.Circle((go_to_the_right, dict_for_hx[str(match['HX_Hot_Stream'])]), circle_radius, color='black', zorder=5)
             circle_cold = plt.Circle((go_to_the_right, dict_for_hx[str(match['HX_Cold_Stream'])]), circle_radius, color='black', zorder=5)
@@ -555,8 +563,8 @@ def make_pinch_design_draw(streams_info,pinch_temperature,pinch_data,pinch_delta
     #mng = plt.get_current_fig_manager()
     #mng.window.showMaximized()
     fig = plt.gcf()
-    coef = 6 / 16
-    y_val = 14
+    coef = 8 / 16
+    y_val = 10
     fig.set_size_inches(y_val, coef * y_val)
     ax = plt.gca()
     ax.set_xlim(x_min - 15, x_max + 15)
@@ -564,7 +572,7 @@ def make_pinch_design_draw(streams_info,pinch_temperature,pinch_data,pinch_delta
 
     # get HTML
     fig_html = mpld3.fig_to_html(fig)
-    plt.show()
+    #plt.show()
     plt.close()
 
     return fig_html
