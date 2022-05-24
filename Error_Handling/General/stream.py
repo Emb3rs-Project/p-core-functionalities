@@ -28,7 +28,7 @@ class Stream(BaseModel):
     object_linked_id: Optional[float] = None
 
 
-    @validator('schedule')
+    @validator('schedule',allow_reuse=True)
     def check_if_valid_values (cls, v):
 
         _v = list(filter(lambda num: num != 0, v))

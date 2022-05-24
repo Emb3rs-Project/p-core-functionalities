@@ -10,7 +10,7 @@ class SourceOrSink(Location):
     consumer_type: ConsumerTypeOptions
     streams: List[Stream]
 
-    @validator('streams')
+    @validator('streams',allow_reuse=True)
     def check_if_there_are_streams(cls, v):
         if len(v) < 1:
             raise ValueError('Introduce at least 1 stream for each sink')

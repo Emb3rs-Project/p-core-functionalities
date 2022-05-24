@@ -21,7 +21,7 @@ class MainErrorConvertSources(BaseModel):
         return v
 
 
-    @validator('platform')
+    @validator('platform',allow_reuse=True)
     def platform_inputs(cls,v):
 
         class ExistingGridLinkPointData(BaseModel):
@@ -46,7 +46,7 @@ class MainErrorConvertSources(BaseModel):
         return(PlatformConvertSources(**v))
 
 
-    @validator('gis_module')
+    @validator('gis_module',allow_reuse=True)
     def gis_module_inputs(cls, v):
 
         class GISConvertSources(BaseModel):
@@ -56,7 +56,7 @@ class MainErrorConvertSources(BaseModel):
         return(GISConvertSources(**v))
 
 
-    @validator('cf_module')
+    @validator('cf_module',allow_reuse=True)
     def cf_module_inputs(cls, v):
 
         class CFConvertSources(BaseModel):

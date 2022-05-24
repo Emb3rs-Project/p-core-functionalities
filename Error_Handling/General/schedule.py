@@ -35,6 +35,7 @@ class Schedule(BaseModel):
 
         return v
 
+
     @validator('shutdown_periods')
     def check_structure_shutdown_periods(cls, v):
 
