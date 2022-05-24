@@ -64,7 +64,7 @@ class MainErrorConvertSources(BaseModel):
             sink_group_grid_return_temperature: confloat(gt=0,le=95)
             sink_group_grid_supply_temperature: confloat(gt=0,le=95)
 
-            @validator('sink_group_grid_supply_temperature',always=True)
+            @validator('sink_group_grid_supply_temperature',allow_reuse=True)
             def check_grid_temperatures(cls, v, values, **kwargs):
                 if v < values['sink_group_grid_return_temperature']:
                    raise ValueError('Grid supply temperature must be larger than the return temperature.'
