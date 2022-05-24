@@ -125,7 +125,7 @@ def convert_sinks(in_var, kb):
     grid_return_temperature = platform_data.grid_return_temperature
 
     # TO REMOVEEEEEEEEEEEE
-    grid_supply_temperature = 100
+    grid_supply_temperature = 95
     grid_return_temperature = 70
     # TO REMOVEEEEEEEEEEEE
 
@@ -142,8 +142,8 @@ def convert_sinks(in_var, kb):
     vector_sink_max_target_temperature = []
     vector_sink_max_supply_temperature = []
     grid_specific_heating = []
-    boiler_fuel_type = ['natural_gas', 'fuel_oil', 'biomass']  # types of fuel
-    fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'biomass'}
+    boiler_fuel_type = ['electricity','natural_gas', 'fuel_oil', 'biomass']  # types of fuel
+    fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'biomass', 'electricity': 'electricity'}
 
     ##################################################################################################################
     # Defined vars
