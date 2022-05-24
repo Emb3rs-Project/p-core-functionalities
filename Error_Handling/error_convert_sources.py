@@ -35,9 +35,9 @@ class MainErrorConvertSources(BaseModel):
         class PlatformConvertSources(BaseModel):
 
             group_of_sources: List[SourceOrSink]
-            existing_grid_data: ExistingGridLinkPointData = None
+            existing_grid_data: Optional[ExistingGridLinkPointData] = None
 
-            @validator('group_of_sources')
+            @validator('group_of_sources',allow_reuse=True)
             def check_if_there_are_sources(cls, v):
                 if len(v) < 1:
                     raise ValueError('Introduce at least 1 source')
