@@ -1,8 +1,4 @@
 import os
-import json
-from module.utilities.kb import KB
-from module.utilities.kb_data import kb
-from module.Source.simulation.Heat_Recovery.Pinch.convert_pinch import convert_pinch
 from module.Source.simulation.Heat_Recovery.Pinch.make_pinch_design_draw import make_pinch_design_draw
 import pandas as pd
 
@@ -73,16 +69,18 @@ def pinch_report(test):
         else:
             df_best_design = pd.DataFrame(test[str(key)]['best_options']).drop(columns=['energy_investment'])
             df_best_design.columns = ['Solution ID', 'CO2 Savings [kgCO2/year]', 'Money Savings [€/year]','Energy Recovered [kWh/year]', 'CAPEX  [€]', 'OM Fix [€/year]']
+            df_best_design = get_int(df_best_design)
             best_options_data[str(key)] = styling(df_best_design)
 
         # GET Each Designed Solutions
         for solution in category_solutions_data["solutions"]:
 
             # stream table
-            df_streams = solution['stream_table'].copy()
+            solution['stream_table'].columns = ['Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "Stream Type", "mcp [kJ/K]"]
+            all_streams_table = solution['stream_table'][['Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "mcp [kJ/K]", "Stream Type"]]
+
+            df_streams = all_streams_table.copy()
             df_streams.insert(0, 'Stream ID', df_streams.index.copy())
-            df_streams.columns = ['Stream ID', 'Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "Stream Type", "mcp [kJ/K]"]
-            df_streams["Capacity [kW]"] = get_int(df_streams["Capacity [kW]"])
             df_streams = styling(df_streams)
 
             # stream combination not feasible
@@ -99,7 +97,9 @@ def pinch_report(test):
             # df HX Technical
             df_hx = df[['HX ID', "HX_Power", "HX_Original_Cold_Stream", "HX_Cold_Stream_mcp", "HX_Cold_Stream_T_Cold",
                         "HX_Cold_Stream_T_Hot", "HX_Original_Hot_Stream", "HX_Hot_Stream_mcp", "HX_Hot_Stream_T_Hot",
-                        "HX_Hot_Stream_T_Cold"]]
+                        "HX_Hot_Stream_T_Cold"]].copy()
+
+            df_hx["HX_Power"] = get_int(df_hx["HX_Power"])
 
             columns = [("HX Info", "HX ID"),
                         ("HX Info", "HX Power"),
@@ -133,6 +133,8 @@ def pinch_report(test):
             # HX economic
             df_hx_economic = df[["HX ID",'HX_Type', 'HX_Turnkey_Cost', 'HX_OM_Fix_Cost']].copy()
             df_hx_economic['HX_Type'] = df_hx_economic['HX_Type'].apply(lambda x: x.replace("_", " "))
+            df_hx_economic['HX_Turnkey_Cost'] = get_int(df_hx_economic['HX_Turnkey_Cost'])
+            df_hx_economic['HX_OM_Fix_Cost'] = get_int(df_hx_economic['HX_OM_Fix_Cost'])
             df_hx_economic.columns = ["HX ID",'Type', 'CAPEX [€]', 'OM Fix [€/year]']
             solutions_data[key]['df_hx_economic'].append(styling(df_hx_economic))
 
@@ -145,7 +147,7 @@ def pinch_report(test):
             solutions_data[key]['hx_network'].append(make_pinch_design_draw(solution['_info_pinch']))
 
             # DF streams each solution
-            df_streams_each_solution = solution['stream_table'].loc[solution['streams']]
+            df_streams_each_solution = all_streams_table.loc[solution['streams']]
             df_streams_each_solution.insert(0, 'Stream ID', df_streams_each_solution.index.copy())
             solutions_data[key]['df_streams_each_solution'].append(styling(df_streams_each_solution))
 
@@ -158,32 +160,19 @@ def pinch_report(test):
     ### REPORT_RENDERING_codes [BEGIN]
     from jinja2 import Environment, FileSystemLoader
 
+
+    script_dir = os.path.dirname(__file__)
+
     env = Environment(
-        loader=FileSystemLoader('asset'),
+        loader=FileSystemLoader(os.path.join(script_dir, "asset")),
         autoescape=False
     )
 
     template = env.get_template('index.pinch_template.html')
-    template_content = template.render(designed_solutions=solutions_data,
+    report_html = template.render(designed_solutions=solutions_data,
                                        stream_table=df_streams,
                                        stream_combination_not_feasible=stream_combination_not_feasible_data,
                                        best_options=best_options_data)
 
-    f = open("./asset/output.html", "w")
-    f.write(template_content)
-    f.close()
+    return report_html
 
-    output = {
-        "every" : "thing",
-        "else" : "yes",
-        "report" : template_content
-    }
-    return output
-
-
-script_dir = os.path.dirname(__file__)
-data_test = json.load(open(os.path.join(script_dir,
-                                        "../Tests/Sources/simulation/test_files/pinch_isolated_streams_test_2.json")))
-test = convert_pinch(data_test, KB(kb))
-
-a = pinch_report(test)

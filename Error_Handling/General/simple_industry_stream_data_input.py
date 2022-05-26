@@ -13,8 +13,8 @@ class SimpleIndustryStreamDataInput(BaseModel):
     supply_temperature: PositiveFloat
     target_temperature: PositiveFloat
     fluid: StrictStr
-    fluid_cp: Optional[PositiveFloat]
-    flowrate: Optional[PositiveFloat]
+    fluid_cp: Optional[PositiveFloat] = None
+    flowrate: Optional[PositiveFloat] = None
     daily_periods: Optional[str]
     shutdown_periods: Optional[str]
     saturday_on: Optional[ScheduleInfo]

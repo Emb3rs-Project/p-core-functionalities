@@ -144,6 +144,7 @@ import pandas as pd
 from .....utilities.kb import KB
 from .....Error_Handling.runtime_error import ModuleRuntimeException
 from .....Error_Handling.error_pinch import error_convert_pinch
+from .....Reports.pinch_report import pinch_report
 
 def convert_pinch(in_var, kb : KB):
 
@@ -163,7 +164,6 @@ def convert_pinch(in_var, kb : KB):
     ############################################################################################################
     # KB
     fuel_properties = FuelProperties(kb)
-    medium = Medium(kb)
 
     ############################################################################################################
     # Defined Vars
@@ -380,7 +380,7 @@ def convert_pinch(in_var, kb : KB):
     else:
         co2_savings = co2_savings.to_dict(orient='records')
 
-    output = {
+    output_pinch = {
         'co2_optimization': {
             "best_options": co2_savings,
             "solutions": co2_savings_options},
@@ -393,6 +393,19 @@ def convert_pinch(in_var, kb : KB):
     }
 
 
+    report_html = pinch_report(output_pinch)
+
+    output_pinch = {
+        'co2_optimization': co2_savings,
+        'energy_recovered_optimization': energy_recovered.to_dict(orient='records'),
+        'energy_investment_optimization': energy_investment.to_dict(orient='records')
+    }
+
+
+    output = {
+            'best_options': output_pinch,
+            'report': report_html
+    }
 
 
     return output

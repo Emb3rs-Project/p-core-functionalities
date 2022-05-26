@@ -27,32 +27,60 @@
                 <div class="embers_logo">
                     <img class="image" style="width:15%" src="https://www.rhc-platform.org/content/uploads/psf_projects/emb3rs-emb3rs-logo2.jpg">
                 </div>
-                <h1 style="padding: 5px 0px 5px 0px;"><center><strong>REPORT: ORC Analysis</strong></center></h1>
-                <div class="tips" style="padding: 15px 0px 5px 0px;">
-                    <p><strong><mark>What is an Organic Rankine Cycle (ORC) unit?</mark></strong></p>
-                    <p>
-                        An Organic Rankine Cycle – ORC - is a thermodynamic cycle that converts heat to electricity.
-                        ORC units utilize a source of heat, usually excess heat, and produce electricity, either for
-                        self-consumption or to sell to the grid (for more information check EMB3Rs deliverable D.3.3).
-                    </p>
-                    <p><strong><mark>What can you obtain from this report?</mark></strong></p>
-                    <p> The simulation assesses for a unique and multiples streams, the amount of recoverable
-                        excess heat, and its conversion to electricity by implementing an ORC unit. The output of this simulation are the 3
-                        best ORC designs in terms of lowest specific cost of electrical generation (€/kWh).
+                <h1 style="padding: 5px 0px 15px 0px;"><center><strong>REPORT: ORC Analysis</strong></center></h1>
 
-                    <p><strong><mark>What is the report structure?</mark></strong></p>
-                    <p>It is presented:</p>
-                    <ul>
-                        <li> A table with the streams that were assessed. Only streams whose supply
-                            temperature is larger than the ORC's evaporator temperature are analyzed. </li>
-                         <li> An overview on the best 3 designed ORC solutions in electrical generation specific cost</li>
-                         <li> A detailed technical analysis on each solution designed</li>
-                         <li> A detailed economic analysis on each solution designed</li>
+                 <button
+                  class="btn btn-dark"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#collapseExample"
+                  aria-expanded="false"
+                  aria-controls="collapseExample"
+                >
+                  HELP: Introduction
+                </button>
 
-                    </ul>
+                <!-- Collapsed content -->
+                <div class="collapse" id="collapseExample">
+                    <div class="tips" style="padding: 15px 0px 5px 0px;">
+                        <p><strong>
+                            <mark>What is an Organic Rankine Cycle (ORC) unit?</mark>
+                        </strong></p>
+                        <p>
+                            An Organic Rankine Cycle – ORC - is a thermodynamic cycle that converts heat to electricity.
+                            ORC units utilize a source of heat, usually excess heat, and produce electricity, either for
+                            self-consumption or to sell to the grid (for more information check EMB3Rs deliverable
+                            D.3.3).
+                        </p>
+                        <p><strong>
+                            <mark>What can you obtain from this report?</mark>
+                        </strong></p>
+                        <p> The simulation assesses for a unique and multiples streams, the amount of recoverable
+                            excess heat, and its conversion to electricity by implementing an ORC unit. The output of
+                            this simulation are the 3
+                            best ORC designs in terms of lowest specific cost of electrical generation (€/kWh).
+
+                        <p><strong>
+                            <mark>What is the report structure?</mark>
+                        </strong></p>
+                        <p>It is presented:</p>
+                        <ul>
+                            <li> A table with the streams that were assessed. Only streams whose supply
+                                temperature is larger than the ORC's evaporator temperature are analyzed.
+                            </li>
+                            <li> An overview on the best 3 designed ORC solutions in electrical generation specific
+                                cost
+                            </li>
+                            <li> A detailed technical analysis on each solution designed</li>
+                            <li> A detailed economic analysis on each solution designed</li>
+
+                        </ul>
+                    </div>
                 </div>
 
-                <h2 style="margin: 45px 0px 20px 0px;"><u>User Streams</u></h2>
+
+
+                <h2 style="margin: 35px 0px 20px 0px;"><u>User Streams</u></h2>
                 <p>Here you can find data regarding all the streams your considered for the ORC analysis and respective details.
 
                 </p>
@@ -62,22 +90,38 @@
                 </table>
 
                 <h2 style="margin: 45px 0px 20px 0px;"><u>Overview Designed Solutions</u></h2>
-                <div class="tips">
-                    <p>Here you can find an overview on the best designed solutions for CAPEX over yearly generated electricity</p>
+                <p>Here you can find an overview on the best designed solutions for CAPEX over yearly generated electricity</p>
+                <button
+                        class="btn btn-dark"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#all_overview"
+                        aria-expanded="false"
+                        aria-controls="all_overview"
+                >
+                    HELP: Overview Designed Solutions
+                </button>
 
-                    <p>You can find for each designed solution:
-                    <ul class="ul_tips">
-                        <li>Streams ID - streams of the design solution </li>
-                        <li>CO<sub>2</sub> Savings - yearly CO<sub>2</sub> emissions reduction</li>
-                        <li>Money Savings - Yearly money savings</li>
-                        <li>Yearly Electrical Generation</li>
-                        <li>CAPEX - Solution investment cost</li>
-                        <li>OM Fix - Fixed operation and maintenance costs of the solution</li>
-                    </ul>
+                <!-- Collapsed content -->
+                <div class="collapse" id="all_overview">
+                    <div class="tips" style="padding: 15px 15px 15px 15px;">
 
-                    <p>When computing CO<sub>2</sub> and money savings, it is assumed that all electricity is used
-                        for self consumption (assumptions: <strong>electricity price : {{elec_cost}} [€/kWh];
-                        CO<sub>2</sub> emissions : {{co2_emission}} [kg CO<sub>2</sub>/kWh]</strong>) </p>
+                        <div class="tips">
+                            <p>You can find for each designed solution:
+                            <ul class="ul_tips">
+                                <li>Streams ID - streams of the design solution </li>
+                                <li>CO<sub>2</sub> Savings - yearly CO<sub>2</sub> emissions reduction</li>
+                                <li>Money Savings - Yearly money savings</li>
+                                <li>Yearly Electrical Generation</li>
+                                <li>CAPEX - Solution investment cost</li>
+                                <li>OM Fix - Fixed operation and maintenance costs of the solution</li>
+                            </ul>
+
+                            <p>When computing CO<sub>2</sub> and money savings, it is assumed that all electricity is used
+                                for self consumption (assumptions: <strong>electricity price : {{elec_cost}} [€/kWh];
+                                CO<sub>2</sub> emissions : {{co2_emission}} [kg CO<sub>2</sub>/kWh]</strong>) </p>
+                        </div>
+                    </div>
                 </div>
 
                 <table class="table">
@@ -87,42 +131,75 @@
 
 
                 <h2 style="margin: 45px 0px 20px 0px;"><u>Technical Data </u></h2>
-                <div>
-                    <p>In this subsection you can find detailed technical data about the ORCs designed: </p>
-                     <ul class="ul_tips">
-                            <li>ORC Power - ORC's nominal electrical power</li>
-                            <li>ORC eff - ORC's Heat to electricity conversion efficiency</li>
-                            <li>T<sub>evaporator</sub> -  ORC's evaporator temperature</li>
-                            <li>T<sub>condenser</sub> -  ORC's condenser temperature</li>
-                        </ul>
+                <p>In this subsection you can find detailed technical data about the ORCs designed </p>
 
-                     <table class="table">
-                         <caption><center>ORC Design Technical Details</center></caption>
-                        <center>{{df_technical}}</center>
-                    </table>
+                <button
+                        class="btn btn-dark"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#technical_data"
+                        aria-expanded="false"
+                        aria-controls="technical_data"
+                >
+                    HELP: Technical Data
+                </button>
 
-
-
+                <!-- Collapsed content -->
+                <div class="collapse" id="technical_data">
+                    <div style="padding:15px 0px 0px 0px">
+                         <ul class="ul_tips" >
+                                <li>ORC Power - ORC's nominal electrical power</li>
+                                <li>ORC eff - ORC's Heat to electricity conversion efficiency</li>
+                                <li>T<sub>evaporator</sub> -  ORC's evaporator temperature</li>
+                                <li>T<sub>condenser</sub> -  ORC's condenser temperature</li>
+                            </ul>
+                    </div>
                 </div>
 
+                <table class="table">
+                    <caption>
+                        <center>ORC Design Technical Details</center>
+                    </caption>
+                    <center>{{df_technical}}</center>
+                </table>
+
+
                 <h2 style="margin: 45px 0px 20px 0px;"><u>Economic Data</u></h2>
-                <div>
-                    <p>In this subsection you can find detailed economic data about the ORCs designed: </p>
-                     <ul class="ul_tips">
+                <p>In this subsection you can find detailed economic data about the ORCs designed: </p>
+
+
+                <button
+                        class="btn btn-dark"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#economic_data"
+                        aria-expanded="false"
+                        aria-controls="economic_data"
+                >
+                    HELP: Economic Data
+                </button>
+
+                <!-- Collapsed content -->
+                <div class="collapse" id="economic_data">
+                    <div style="padding:15px 0px 0px 0px">
+                        <ul class="ul_tips">
                             <li>CAPEX - Design solution investment cost</li>
                             <li>OM Fix - Yearly fixed operation and maintenance cost</li>
                             <li>OM Variable -  Yearly variable operation and maintenance cost (due to intermediate pumping)</li>
                         </ul>
-
-
-                     <table class="table">
-                        <caption><center>ORC Design Economic Details</center></caption>
-                        <center>{{df_economic}}</center>
-                    </table>
-
-
+                    </div>
                 </div>
-                <!-- Change Before this -->
+
+
+                <table class="table">
+                    <caption>
+                        <center>ORC Design Economic Details</center>
+                    </caption>
+                    <center>{{df_economic}}</center>
+                </table>
+
+
+
 </body>
 
 </body>

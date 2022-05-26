@@ -59,6 +59,7 @@ from .....KB_General.get_interest_rate import get_interest_rate
 from .....utilities.kb import KB
 from .....Error_Handling.error_convert_orc import PlatformConvertORC
 from .....Error_Handling.runtime_error import ModuleRuntimeException
+from .....Reports.orc_report import orc_report
 
 
 def convert_orc(in_var, kb: KB):
@@ -261,6 +262,7 @@ def convert_orc(in_var, kb: KB):
                 "If all inputs are correct report to the platform."
         )
 
+
     ##############################
     # OUTPUT
     output_orc = {
@@ -270,6 +272,12 @@ def convert_orc(in_var, kb: KB):
         "elec_cost_data":electricity_data['price'],
     }
 
-    return output_orc
+    report_html = orc_report(output_orc)
+
+    output = {
+            'best_options': best_options,
+            'report': report_html}
+
+    return output
 
 

@@ -42,25 +42,25 @@ def orc_report(convert_orc_output):
 
     df_solutions['conversion_efficiency'] = get_round(df_solutions['conversion_efficiency'],3)
 
-    df_solutions["CO<sub>2</sub> Savings"] = df_solutions["co2_savings"] * df_solutions["electrical_generation_yearly"]
-    df_solutions["CO<sub>2</sub> Savings"] = get_int(df_solutions["CO<sub>2</sub> Savings"])
+    df_solutions["CO2 Savings"] = df_solutions["co2_savings"] * df_solutions["electrical_generation_yearly"]
+    df_solutions["CO2 Savings"] = get_int(df_solutions["CO2 Savings"])
 
     df_solutions["Money Savings"] = df_solutions["money_savings"] * df_solutions["electrical_generation_yearly"]
     df_solutions['Money Savings']= df_solutions['Money Savings'].astype(int)
     df_solutions["Money Savings"] = get_int(df_solutions["Money Savings"])
 
     # Overview Data
-    df_overview_data = df_solutions [["ID","streams_id","CO<sub>2</sub> Savings","Money Savings","electrical_generation_yearly","turnkey","om_fix"]]
-    df_overview_data.columns = ["Solution ID","Streams ID","CO<sub>2</sub> Savings [kgCO<sub>2</sub>/year]","Money Savings [€/year]","Yearly Electrical Generation [kWh]","CAPEX [€]","OM Fix [€/year]"]
+    df_overview_data = df_solutions [["ID","streams_id","CO2 Savings","Money Savings","electrical_generation_yearly","turnkey","om_fix"]].copy()
+    df_overview_data.columns = ["Solution ID","Streams ID","CO2 Savings [kgCO2/year]","Money Savings [€/year]","Yearly Electrical Generation [kWh]","CAPEX [€]","OM Fix [€/year]"]
 
     # Technical Data
-    df_technical_data = df_solutions [["ID","electrical_generation_nominal","conversion_efficiency","orc_T_evap","orc_T_cond"]]
+    df_technical_data = df_solutions [["ID","electrical_generation_nominal","conversion_efficiency","orc_T_evap","orc_T_cond"]].copy()
     df_technical_data['conversion_efficiency'] = df_technical_data['conversion_efficiency']*100
 
     df_technical_data.columns = ["Solution ID","ORC Power [kW]","ORC eff [%]","T evaporator [ºC]","T condenser [ºC]"]
 
     # Economic Data
-    df_economic_data = df_solutions [["ID","turnkey","om_fix","om_var"]]
+    df_economic_data = df_solutions [["ID","turnkey","om_fix","om_var"]].copy()
 
     df_economic_data['om_var'] = df_economic_data['om_var'] * df_solutions["electrical_generation_yearly"]
     df_economic_data['om_var'] = get_int(df_economic_data['om_var'])
@@ -75,28 +75,22 @@ def orc_report(convert_orc_output):
 
     ### REPORT_RENDERING_codes [BEGIN]
     from jinja2 import Environment, FileSystemLoader, PackageLoader, select_autoescape
+    import os
+
+    script_dir = os.path.dirname(__file__)
 
     env = Environment(
-        loader=FileSystemLoader('asset'),
+        loader=FileSystemLoader(os.path.join(script_dir, "asset")),
         autoescape=False
     )
 
     template = env.get_template('index.orc_template.html')
-    template_content = template.render(stream_table=stream_table_data,
+    report_html = template.render(stream_table=stream_table_data,
                                        df_overview=df_overview_data,
                                        df_technical=df_technical_data,
                                        df_economic=df_economic_data,
                                        elec_cost=elec_cost_data,
                                        co2_emission=co2_emission_data)
 
-    f = open("./asset/output_orc.html", "w")
-    f.write(template_content)
-    f.close()
 
-    output = {
-        "every" : "thing",
-        "else" : "yes",
-        "report" : template_content
-    }
-
-    return output
+    return report_html
