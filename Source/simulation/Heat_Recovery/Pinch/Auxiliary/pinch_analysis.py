@@ -136,8 +136,10 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
             for df_hx_below in info_df_hx_below_pinch:
                 cold_utility = df_hx_below['utility']
                 df_hx_below = df_hx_below['df_hx']
+                concat_df_hx = pd.concat([df_hx_above, df_hx_below], ignore_index=True)
+
                 vector_df_hx.append({
-                    'df_hx': pd.concat([df_hx_above, df_hx_below], ignore_index=True),
+                    'df_hx': concat_df_hx,
                     'hot_utility': hot_utility,
                     'cold_utility': cold_utility})
 
@@ -171,6 +173,7 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
     if len(vector_df_hx) > 0:
         for df_hx in vector_df_hx:
             # give ID to HX
+            df_hx['df_hx'].index = df_hx['df_hx'].index + 1
             df_hx['df_hx']['id'] = df_hx['df_hx'].index
             streams_info =[]
 

@@ -13,7 +13,7 @@ class SimpleIndustryStreamDataInput(BaseModel):
     supply_temperature: PositiveFloat
     target_temperature: PositiveFloat
     fluid: StrictStr
-    fluid_cp: PositiveFloat
+    fluid_cp: Optional[PositiveFloat]
     flowrate: Optional[PositiveFloat]
     daily_periods: Optional[str]
     shutdown_periods: Optional[str]
@@ -68,6 +68,11 @@ class SimpleIndustryStreamDataInput(BaseModel):
 
         if values["fluid"] == 'steam' and capacity == None:
             raise Exception('When introducing steam as a fluid, introduce the capacity.')
+
+        elif (capacity == None and values['flowrate'] == None and values['fluid_cp'] == None):
+            raise Exception('To characterize a stream, introduce Capacity or Flowrate and Cp.')
+        elif (capacity == None and (values['flowrate'] == None or values['fluid_cp'] == None)):
+            raise Exception('To characterize a stream, introduce Capacity or Flowrate and Cp.')
         else:
             return capacity
 

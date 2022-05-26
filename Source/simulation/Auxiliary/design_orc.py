@@ -60,7 +60,7 @@ def design_orc(stream_capacity, stream_fluid, stream_supply_temperature, stream_
     if aggregate_streams == True:
         intermediate_circuit_exist = True
         number_hx = 2
-        if stream_fluid == 'flue_gas':
+        if stream_fluid == 'flue_gas' or stream_fluid == 'flue_gas':
             stream_target_temperature_corrected_min = flue_gas_T_minimum
         else:
             stream_target_temperature_corrected_min = intermediate_T_cold + hx_delta_T
@@ -68,7 +68,7 @@ def design_orc(stream_capacity, stream_fluid, stream_supply_temperature, stream_
         stream_target_temperature_corrected = orc_T_evap + hx_delta_T * number_hx
 
     else:
-        if stream_fluid == 'flue_gas':
+        if stream_fluid == 'flue gas' or stream_fluid == 'flue_gas':
             stream_target_temperature_corrected_min = flue_gas_T_minimum  # design constraint - lower flue_gas temperatures mean condensation
         else:
             stream_target_temperature_corrected_min = orc_T_evap + hx_delta_T

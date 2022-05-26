@@ -209,9 +209,6 @@ def convert_pinch(in_var, kb : KB):
         )
 
     # create DF with streams characteristics (df_char) and  DF with only streams profiles (df_profile)
-    df_char = pd.DataFrame(columns=['ID', 'Fluid', 'Flowrate', 'Supply_Temperature', 'Target_Temperature'])
-    df_profile_data = []
-
     list_char = []
     list_profile_data = []
     for stream in streams:
@@ -219,9 +216,9 @@ def convert_pinch(in_var, kb : KB):
         list_profile_data.append({
                                 'ID': stream['id'],
                                 'Fluid': stream['fluid'],
-                                'Flowrate': stream['flowrate'],
                                 'Supply_Temperature': stream['supply_temperature'],
-                                'Target_Temperature': stream['target_temperature']})
+                                'Target_Temperature': stream['target_temperature'],
+                                'Capacity': stream['capacity'],})
 
     df_profile_data = pd.DataFrame(list_char)
     df_char = pd.DataFrame(list_profile_data)
@@ -231,12 +228,6 @@ def convert_pinch(in_var, kb : KB):
     df_char.set_index('ID', inplace=True)
 
     # get all streams info necessary for pinch analysis
-    df_char['Cp'] = df_char.apply(
-        lambda row: medium.cp(row['Fluid'], row['Supply_Temperature']), axis=1
-    )
-
-    df_char['mcp'] = df_char['Flowrate'] * df_char['Cp'] / 3600  # [kW/K]
-
     df_char['Stream_Type'] = df_char.apply(
         lambda row: 'Hot' if row['Supply_Temperature'] > row['Target_Temperature']
         else 'Cold', axis=1
@@ -252,6 +243,7 @@ def convert_pinch(in_var, kb : KB):
         else row['Target_Temperature'] + pinch_delta_T_min, axis=1
     )
 
+    df_char['mcp'] = df_char['Capacity'] /abs(df_char['Supply_Shift']- df_char['Target_Shift'])  # [kW/K]
 
     ############################################################################################################
     # PINCH ANALYSIS
@@ -292,6 +284,8 @@ def convert_pinch(in_var, kb : KB):
     empty_data = None
     empty_df = pd.DataFrame(empty_data, columns=['None'])
 
+
+
     # economic and environmental analysis for pinch data
     if objects_to_analyze != []:
         info_pinch = eco_env_analysis(kb,info_pinch, objects_to_analyze, all_input_objects, country)
@@ -320,13 +314,10 @@ def convert_pinch(in_var, kb : KB):
                     'co2_savings': economic_data['CO2_Savings_Year'].sum(),
                     'money_savings': economic_data['Savings_Year'].sum(),
                     'energy_recovered': economic_data['Recovered_Energy'].sum(),
-                    'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / economic_data[
-                        'Recovered_Energy'].sum(),
+                    'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / economic_data['Recovered_Energy'].sum(),
                     'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
                     'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
                 })
-
-
 
     # equipment internal heat recovery/ only isolated streams
     else:
@@ -352,41 +343,54 @@ def convert_pinch(in_var, kb : KB):
                     'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
                 })
 
+
     df_optimization = pd.DataFrame(list_df_optimization)
+    df_optimization['index'] = df_optimization['index'] + 1
 
     # drop duplicates
     df_optimization = df_optimization.drop_duplicates(subset=['co2_savings', 'energy_recovered', 'energy_investment', 'turnkey'])
 
     # info for HTML
-    df_char.drop(['Supply_Shift','Target_Shift','Flowrate'], axis=1,inplace=True)
+    df_char.drop(['Supply_Shift','Target_Shift'], axis=1,inplace=True)
     df_char.rename(columns=lambda name: name.replace('_', ' '),inplace=True)
     df_char['Fluid'] = df_char['Fluid'].apply(lambda x: x.replace("_", " "))
     stream_table = df_char
 
     stream_combination_not_feasible = subset_not_possible_to_analyze
 
+
     # get best options that recover maximum energy
-    energy_recovered = df_optimization.sort_values('energy_recovered', ascending=False).head(number_output_options)
+    energy_recovered = df_optimization.sort_values('energy_recovered', ascending=False).head(number_output_options).copy()
     energy_recovered_options = get_best_x_outputs(info_pinch, energy_recovered, country, lifetime, pinch_delta_T_min,
                                                   kb,stream_table,stream_combination_not_feasible, type='Energy Savings')
 
     # get best options that give best energy_recovery/turnkey ratio
-    energy_investment = df_optimization.sort_values('energy_investment').head(number_output_options)
+    energy_investment = df_optimization.sort_values('energy_investment').head(number_output_options).copy()
     energy_investment_options = get_best_x_outputs(info_pinch, energy_investment, country, lifetime,
                                                    pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible, type='Energy Savings Specific Cost')
 
     # get best options that save maximum amount of CO2
-    co2_savings = df_optimization.sort_values('co2_savings', ascending=False).head(number_output_options)
+    co2_savings = df_optimization.sort_values('co2_savings', ascending=False).head(number_output_options).copy()
     co2_savings_options = get_best_x_outputs(info_pinch, co2_savings, country, lifetime, pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible,type='CO<sub>2</sub> Emissions Savings')
 
     # isolated streams are not linked to any equipment, thus not possible to know how much CO2 is saved
+
     if only_isolated_streams == True:
         co2_savings_options = []
+        co2_savings = []
+    else:
+        co2_savings = co2_savings.to_dict(orient='records')
 
     output = {
-        'co2_optimization': co2_savings_options,
-        'energy_recovered_optimization': energy_recovered_options,
-        'energy_investment_optimization': energy_investment_options
+        'co2_optimization': {
+            "best_options": co2_savings,
+            "solutions": co2_savings_options},
+        'energy_recovered_optimization': {
+            "best_options": energy_recovered.to_dict(orient='records'),
+            "solutions": energy_recovered_options},
+        'energy_investment_optimization': {
+            "best_options": energy_investment.to_dict(orient='records'),
+            "solutions": energy_investment_options},
     }
 
 

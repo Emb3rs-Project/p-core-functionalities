@@ -272,7 +272,7 @@ def make_pinch_design_draw(info):
             small_circle_cold = plt.Circle((go_to_the_left, dict_for_hx[str(match['HX_Cold_Stream'])]), small_circle_radius, color='white', zorder=10)
             plt.gca().add_patch(small_circle_hot)
             plt.gca().add_patch(small_circle_cold)
-            plt.gca().text(go_to_the_left, dict_for_hx[str(match['HX_Cold_Stream'])] - height_hx_power, str(round(match['HX_Power'],1)) + 'kW', ha="center", va="top")
+            plt.gca().text(go_to_the_left, dict_for_hx[str(match['HX_Cold_Stream'])] - height_hx_power, str(int(match['HX_Power'])) + 'kW', ha="center", va="top")
             plt.gca().text(go_to_the_left, dict_for_hx[str(match['HX_Hot_Stream'])], str(match['id']), size='large' ,weight='bold', zorder=15, ha="center", va="center")
 
             # write hot streams hx temperatures
@@ -317,7 +317,7 @@ def make_pinch_design_draw(info):
             small_circle_cold = plt.Circle((go_to_the_right, dict_for_hx[str(match['HX_Cold_Stream'])]), small_circle_radius, color='white', zorder=10)
             plt.gca().add_patch(small_circle_hot)
             plt.gca().add_patch(small_circle_cold)
-            plt.gca().text(go_to_the_right , dict_for_hx[str(match['HX_Cold_Stream'])] - height_hx_power, str(round(match['HX_Power'],1)) + 'kW', ha="center", va="top")
+            plt.gca().text(go_to_the_right , dict_for_hx[str(match['HX_Cold_Stream'])] - height_hx_power, str(int(match['HX_Power'])) + 'kW', ha="center", va="top")
             plt.gca().text(go_to_the_right , dict_for_hx[str(match['HX_Hot_Stream'])], str(match['id']), size='large',weight='bold', zorder=15, ha="center", va="center")
 
             # write hot hx temperatures
@@ -560,15 +560,13 @@ def make_pinch_design_draw(info):
     plt.legend(handles=handles, loc="lower right", ncol=3)
 
     # adjust plot size
-    #mng = plt.get_current_fig_manager()
-    #mng.window.showMaximized()
     fig = plt.gcf()
-    coef = 8 / 16
-    y_val = 10
-    fig.set_size_inches(y_val, coef * y_val)
+    coef = 8.5 / 16
+    y_val = 11
+    fig.set_size_inches(11, 6)
     ax = plt.gca()
     ax.set_xlim(x_min - 15, x_max + 15)
-    ax.set_ylim(y_min - 5, y_max + 5)
+    ax.set_ylim(y_min - 15, y_max + 5)
 
     # get HTML
     fig_html = mpld3.fig_to_html(fig)

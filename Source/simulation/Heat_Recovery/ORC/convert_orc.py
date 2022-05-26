@@ -73,6 +73,8 @@ def convert_orc(in_var, kb: KB):
     location = platform_data.location
     get_best_number = platform_data.get_best_number
     orc_years_working = platform_data.orc_years_working
+
+
     orc_T_evap = platform_data.orc_T_evap
     orc_T_cond = platform_data.orc_T_cond
 
@@ -106,6 +108,7 @@ def convert_orc(in_var, kb: KB):
     # get interest rate and fuel price
     interest_rate = get_interest_rate(country, kb)
     electricity_data = fuel_properties.get_values(country, 'electricity', consumer_type)
+
 
     # check if streams temperature enough to be converted
     df_streams = pd.DataFrame.from_dict(streams)
@@ -215,6 +218,8 @@ def convert_orc(in_var, kb: KB):
                             'electrical_generation_yearly_turnkey': total_turnkey / electrical_generation_yearly,
                             'co2_savings': electricity_data['co2_emissions'],  # [kg CO2/kWh]
                             'money_savings': electricity_data['price'],  # [€/kWh]
+                            "orc_T_evap": orc_T_evap,
+                            "orc_T_cond": orc_T_cond
                             })
 
                         new_id += 1
@@ -248,7 +253,12 @@ def convert_orc(in_var, kb: KB):
 
     ##############################
     # OUTPUT
-    output_orc = {'best_options': best_options}
+    output_orc = {
+        'best_options': best_options,
+        'df_streams_analyzed': df_streams.to_dict(orient='records'),
+        "co2_emission_data":electricity_data['co2_emissions'],
+        "elec_cost_data":electricity_data['price'],
+    }
 
     return output_orc
 
