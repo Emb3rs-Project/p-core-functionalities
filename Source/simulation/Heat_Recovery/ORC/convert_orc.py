@@ -242,6 +242,11 @@ def convert_orc(in_var, kb: KB):
                 best_options = []
         else:
             best_options = []
+            raise ModuleRuntimeException(
+                code="1",
+                type="convert_orc.py",
+                msg="There are no feasible ORC designs ofr the streams provided."
+            )
 
     except:
         raise ModuleRuntimeException(
