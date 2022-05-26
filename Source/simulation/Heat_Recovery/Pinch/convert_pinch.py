@@ -222,7 +222,6 @@ def convert_pinch(in_var, kb : KB):
 
     df_profile_data = pd.DataFrame(list_char)
     df_char = pd.DataFrame(list_profile_data)
-
     df_profile = pd.DataFrame(data=df_profile_data)  # create df
     df_profile.set_index(df_char['ID'], inplace=True)
     df_char.set_index('ID', inplace=True)
