@@ -1,9 +1,3 @@
-import os
-import json
-
-from module.utilities.kb import KB
-from module.utilities.kb_data import kb
-from module.Source.simulation.Heat_Recovery.ORC.convert_orc import convert_orc
 import pandas as pd
 
 
@@ -106,10 +100,3 @@ def orc_report(convert_orc_output):
     }
 
     return output
-
-
-
-script_dir = os.path.dirname(__file__)
-data_test = json.load(open(os.path.join(script_dir, "../Tests/Sources/simulation/test_files/orc_test_1.json")))
-data = convert_orc(data_test, KB(kb))
-things =orc_report(data)
