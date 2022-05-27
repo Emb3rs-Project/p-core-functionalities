@@ -258,7 +258,7 @@ def convert_orc(in_var, kb: KB):
         raise ModuleRuntimeException(
             code="1",
             type="convert_orc.py",
-            msg="ORC design to source' streams infeasible. Check sources' streams. \n "
+            msg="ORC design to source' streams infeasible. Check sources' streams.  "
                 "If all inputs are correct report to the platform."
         )
 
