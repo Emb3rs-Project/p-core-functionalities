@@ -241,18 +241,9 @@ def convert_orc(in_var, kb: KB):
                 best_options = df_data.sort_values('electrical_generation_yearly_turnkey', ascending=True).head(n=get_best_number).to_dict(orient='records')
             else:
                 best_options = []
-                raise ModuleRuntimeException(
-                    code="1",
-                    type="convert_orc.py",
-                    msg="There are no feasible ORC designs ofr the streams provided."
-                )
+
         else:
             best_options = []
-            raise ModuleRuntimeException(
-                code="1",
-                type="convert_orc.py",
-                msg="There are no feasible ORC designs ofr the streams provided."
-            )
 
     except:
         raise ModuleRuntimeException(
@@ -261,6 +252,15 @@ def convert_orc(in_var, kb: KB):
             msg="ORC design to source' streams infeasible. Check sources' streams.  "
                 "If all inputs are correct report to the platform."
         )
+
+    if best_options == []:
+        raise ModuleRuntimeException(
+            code="1",
+            type="convert_orc.py",
+            msg="There are no feasible ORC designs off the streams provided."
+        )
+
+
 
 
     ##############################
