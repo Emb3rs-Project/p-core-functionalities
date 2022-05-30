@@ -23,338 +23,378 @@
 
 <body class="container pt-5">
 
-<body >
-                <div class="embers_logo">
-                    <img class="image" style="width:15%" src="https://www.rhc-platform.org/content/uploads/psf_projects/emb3rs-emb3rs-logo2.jpg">
-                </div>
-                <h1 style="padding: 5px 0px 15px 0px;"><center><strong>REPORT: Pinch Analysis</strong></center></h1>
+    <div class="embers_logo">
+        <img class="image" style="width:15%"
+             src="https://www.rhc-platform.org/content/uploads/psf_projects/emb3rs-emb3rs-logo2.jpg">
+    </div>
 
-                <button
-                  class="btn btn-dark"
-                  type="button"
-                  data-toggle="collapse"
-                  data-target="#collapseExample"
-                  aria-expanded="false"
-                  aria-controls="collapseExample"
-                >
-                  HELP: Introduction
-                </button>
+    <h1 style="padding: 5px 0px 15px 0px;">
+        <center><strong>REPORT: Pinch Analysis</strong></center>
+    </h1>
 
-                <!-- Collapsed content -->
-                <div class="collapse" id="collapseExample">
-                    <div class="tips" style="padding: 15px 15px 15px 15px;">
-                                    <p><strong><mark>What is a Pinch Analysis?</mark></strong></p>
-                                    <p>In brief, the pinch analysis is a theoretical method that, based on fundamental thermodynamics,
-                                        analyzes the heat flow through the industry’s streams with the aim of recovering heat within those
-                                        streams by proposing a heat exchanger - HX - network. By reducing the energy needs, it also reduces
-                                        fuel costs and CO<sub>2</sub> emissions (for more information check EMB3Rs deliverable D.3.3).
-                                    </p>
-                                    <p><strong><mark>What can you obtain from this report?</mark></strong></p>
-                                    <p> The simulation assesses heat recovery alternatives within the streams by performing a series of
-                                        pinch analysis to the streams combinations. The output of this routine is the 3 best pinch designs
-                                        in terms of heat recovery (kW), lowest cost of heat recovered (€/kWh) and highest CO<sub>2</sub> emission reductions/savings (kgCO<sub>2</sub>/kWh).</p>
-                                    <p><strong><mark>What is the report structure?</mark></strong></p>
-                                    <p>It is presented:</p>
-                                    <ul>
-                                        <li> A table with the streams and the minimum heat exchangers &#916T, the user provided. Below the
-                                            streams table, the user can check whether all possbile combinations of streams were analyzed or not. If not
-                                            the list of infeasible streams combinations is shown. </li>
-                                        <li> An overview of the designed solutions for each of the categories - heat recovery, lowest
-                                            cost of heat recovery and CO<sub>2</sub> emissions savings). The 3 best solutions of each category
-                                            are shown to the user.</li>
-                                        <li> A detailed analysis of each designed solution of each category. </li>
+    <div>
+        <button
+                class="btn btn-dark"
+                type="button"
+                data-toggle="collapse"
+                data-target="#collapseExample"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+        >
+            HELP: Introduction
+        </button>
+
+        <!-- Collapsed content -->
+        <div class="collapse" id="collapseExample">
+            <div class="tips" style="padding: 15px 15px 15px 15px;">
+                <p><strong>
+                    <mark>What is a Pinch Analysis?</mark>
+                </strong></p>
+                <p>In brief, the pinch analysis is a theoretical method that, based on fundamental thermodynamics,
+                    analyzes the heat flow through the industry’s streams with the aim of recovering heat within those
+                    streams by proposing a heat exchanger - HX - network. By reducing the energy needs, it also reduces
+                    fuel costs and CO<sub>2</sub> emissions (for more information check EMB3Rs deliverable D.3.3).
+                </p>
+                <p><strong>
+                    <mark>What can you obtain from this report?</mark>
+                </strong></p>
+                <p> The simulation assesses heat recovery alternatives within the streams by performing a series of
+                    pinch analysis to the streams combinations. The output of this routine is the 3 best pinch designs
+                    in terms of heat recovery (kW), lowest cost of heat recovered (€/kWh) and highest CO<sub>2</sub>
+                    emission
+                    reductions/savings (kgCO<sub>2</sub>/kWh).</p>
+                <p><strong>
+                    <mark>What is the report structure?</mark>
+                </strong></p>
+                <p>It is presented:</p>
+                <ul>
+                    <li> A table with the streams and the minimum heat exchangers &#916T, the user provided. Below the
+                        streams table, the user can check whether all possbile combinations of streams were analyzed or
+                        not. If
+                        not
+                        the list of infeasible streams combinations is shown.
+                    </li>
+                    <li> An overview of the designed solutions for each of the categories - heat recovery, lowest
+                        cost of heat recovery and CO<sub>2</sub> emissions savings). The 3 best solutions of each
+                        category
+                        are shown to the user.
+                    </li>
+                    <li> A detailed analysis of each designed solution of each category.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h2 style="margin: 30px 0px 20px 0px;"><u>User Streams</u></h2>
+        <p>Here you can find data regarding all the streams your considered for the pinch analysis and respective
+            details.</p>
+        <table class="table">
+            <caption>
+                <center>Stream Table</center>
+            </caption>
+            <center>{{stream_table}}</center>
+        </table>
+
+        <p><strong>{{stream_combination_not_feasible}}</strong></p>
+
+        <h2 style="margin: 45px 0px 20px 0px;"><u>Overview Designed Solutions</u></h2>
+        <p>Here you can find an overview on the best 3 designed solutions for each one of the analyzed categories</p>
+
+        <button
+                class="btn btn-dark"
+                type="button"
+                data-toggle="collapse"
+                data-target="#hx_overview_all"
+                aria-expanded="false"
+                aria-controls="hx_overview_all"
+        >
+            HELP: Overview Designed Solutions
+        </button>
+
+        <!-- Collapsed content -->
+        <div class="collapse" id="hx_overview_all" style="padding: 15px 0px 0px 0px">
+            <div class="tips">
+                <p>Categories analyzed:</p>
+                <ul class="ul_tips">
+                    <li>CO<sub>2</sub> Savings - Yearly CO<sub>2</sub> emissions reduction</li>
+                    <li>Energy Savings - Yearly heat recovered</li>
+                    <li>Energy Savings Specific Cost - Solution's CAPEX over yearly heat recovered</li>
+                </ul>
+                <p><em>For the three categories analyzed there can be a repetition on the designed solutions - check the
+                    ID.
+                    There will be always energy savings in all solutions, since the pinch analysis aims to recover
+                    energy.
+                    However, there may not be Money/CO<sub>2</sub> Savings if streams without an equipment and fuel
+                    associated
+                    are provided.</em></p>
+
+                <p>In each category, you can find for each solution:
+                <ul class="ul_tips">
+                    <li>CO<sub>2</sub> Savings - yearly CO<sub>2</sub> emissions reduction</li>
+                    <li>Money Savings - Yearly money savings</li>
+                    <li>Energy Recovered - Yearly energy recovered</li>
+                    <li>CAPEX - Solution investment cost</li>
+                    <li>OM Fix - Fixed operation and maintenance costs of the solution</li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div>
+        {% for item in designed_solutions %}
+        {% set link = namespace(ref="#" + item) %}
+        <h4 style="padding:15px 0px 0px 0px"><a href="{{link.ref}} "
+                                                style="color:#FF6400">{{designed_solutions[item]["name"]}}</a></h4>
+        {% if best_options[item] == []%}
+        <p>No solutions to present</p>
+        {% endif %}
+
+        {% if best_options[item] != []%}
+        <table class="table">
+            <caption>
+                <center>Best Design Solutions - {{designed_solutions[item]["name"]}}</center>
+            </caption>
+            <center>{{best_options[item]}}</center>
+        </table>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <div>
+        <h2 style="margin: 45px 0px 20px 0px;"><u>Designed Solutions</u></h2>
+
+        {% for item in designed_solutions %}
+        {% set solution_number = namespace(val=0) %}
+        <h3 id={{item}}>{{designed_solutions[item]["name"]}}</h3>
+
+        {% if designed_solutions[item]["hx_network"]|length == 0%}
+        <p>No solutions to present</p>
+        {% endif %}
+
+        {% for num in range(designed_solutions[item]["hx_network"]|length) %}
+        {% set hx_network=namespace(graph=designed_solutions[item]["hx_network"][solution_number.val] )%}
+        {% set df_overview=namespace(graph=designed_solutions[item]["df_overview"][solution_number.val] )%}
+        {% set df_hx=namespace(graph=designed_solutions[item]["df_hx"][solution_number.val] )%}
+        {% set df_hx_economic=namespace(graph=designed_solutions[item]["df_hx_economic"][solution_number.val] )%}
+        {% set df_storage=namespace(graph=designed_solutions[item]["df_storage"][solution_number.val] )%}
+        {% set df_each_solution=namespace(graph=designed_solutions[item]["df_streams_each_solution"][solution_number.val] )%}
+        {% set body_color=namespace(color=designed_solutions[item]["body_color"]) %}
+        {% set header_color=namespace(color=designed_solutions[item]["header_color"]) %}
+
+        <div class="solution">
+            <div class="body"
+                 style="background-color:{{body_color.color}};margin: 5px 0px 30px 0px;border-radius: 5px">
+                <h3 class="header"
+                    style="background-color:{{header_color.color}};border-radius: 5px;padding: 15px;opacity:0.85">
+                    {{designed_solutions[item]["name"]}} - Solution {{solution_number.val+1}} of 3</h3>
+
+                <div class="body" style="padding: 25px">
+                    <div>
+                        <h4>Streams</h4>
+                        <p>In this subsection you can find the streams that are utilized in this design solution.</p>
+
+                        <div>
+                            <caption>
+                                <center>Solution Streams Table</center>
+                            </caption>
+                            <center>{{df_each_solution.graph}}</center>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>HXs Network Diagram</h4>
+                        <p>In this subsection it is provided an economic analysis on the designed heat
+                            exchangers</p>
+                        <div>
+                            <button
+                                    class="btn btn-dark"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#hx_network"
+                                    aria-expanded="false"
+                                    aria-controls="hx_network"
+                            >
+                                HELP: Introduction
+                            </button>
+
+                            <!-- Collapsed content -->
+                            <div class="collapse" id="hx_network" style="padding: 15px 0px 0px 0px">
+                                <div class="tips">
+
+                                    <ul class="ul_tips">
+                                        <li>The following diagram proposes a heat exchanger (HX) network.
+                                        </li>
+                                        <li>The streams are represented by the horizontal lines with the respective
+                                            IDs next
+                                            to them.
+                                        </li>
+                                        <li>Red lines are hot streams, which are streams going from a larger to a
+                                            smaller
+                                            temperature. Blue lines are cold streams, which are streams going from a
+                                            smaller
+                                            to a larger temperature.
+                                        </li>
+                                        <li>Stream splits (splitting the stream flowrate) may occur to guarantee the achievement of a
+                                            final
+                                            solution. The splits are represented as the diagonal lines going out of
+                                            the main/original stream.
+                                        </li>
+                                        <li>The heat exchangers designed are represented with its ID, together with
+                                            the estimated power. In some cases a temperature may appear next to the HX,
+                                            representing the temperature the stream reached. If not, it means it
+                                            reached the target or the pinch temperature.
+                                        </li>
+
+                                        <li>Cold/Hot Utility - An external source of heating/cooling additional to the
+                                            heat recovered between streams, so that they reach their target temperature.
+                                        </li>
                                     </ul>
+
                                 </div>
-                </div>
-
-                <h2 style="margin: 30px 0px 20px 0px;"><u>User Streams</u></h2>
-                <p>Here you can find data regarding all the streams your considered for the pinch analysis and respective details.</p>
-                <table class="table">
-                    <caption><center>Stream Table</center></caption>
-                    <center>{{stream_table}}</center>
-                </table>
-
-                <p><strong>{{stream_combination_not_feasible}}</strong></p>
-
-                <h2 style="margin: 45px 0px 20px 0px;"><u>Overview Designed Solutions</u></h2>
-                <p>Here you can find an overview on the best 3 designed solutions for each one of the analyzed categories</p>
-
-                <button
-                        class="btn btn-dark"
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#hx_overview_all"
-                        aria-expanded="false"
-                        aria-controls="hx_overview_all"
-                >
-                    HELP: Overview Designed Solutions
-                </button>
-
-                <!-- Collapsed content -->
-                <div class="collapse" id="hx_overview_all" style="padding: 15px 0px 0px 0px">
-                 <div class="tips">
-                        <p>Categories analyzed:</p>
-                        <ul class="ul_tips">
-                            <li>CO<sub>2</sub> Savings - Yearly CO<sub>2</sub> emissions reduction</li>
-                            <li>Energy Savings - Yearly heat recovered</li>
-                            <li>Energy Savings Specific Cost - Solution's CAPEX over yearly heat recovered </li>
-                        </ul>
-                        <p><em>For the three categories analyzed there can be a repetition on the designed solutions - check the ID.
-                            There will be always energy savings in all solutions, since the pinch analysis aims to recover energy.
-                            However, there may not be Money/CO<sub>2</sub> Savings if streams without an equipment and fuel associated are provided.</em></p>
-
-                        <p>In each category, you can find for each solution:
-                         <ul class="ul_tips">
-                                <li>CO<sub>2</sub> Savings - yearly CO<sub>2</sub> emissions reduction</li>
-                                <li>Money Savings - Yearly money savings</li>
-                                <li>Energy Recovered - Yearly energy recovered </li>
-                                <li>CAPEX - Solution investment cost </li>
-                                <li>OM Fix - Fixed operation and maintenance costs of the solution </li>
-
-                            </ul>
-                  </div>
-                </div>
-
-
-
-                 {% for item in designed_solutions %}
-                    {% set link = namespace(ref="#" + item) %}
-                    <h4 style="padding:15px 0px 0px 0px" ><a href="{{link.ref}} " style="color:#FF6400">{{designed_solutions[item]["name"]}}</a></h4>
-                    {% if best_options[item] == []%}
-                    <p>No solutions to present</p>
-                    {% endif %}
-                    {% if best_options[item] != []%}
-                    <table class="table">
-                        <caption><center>Best Design Solutions - {{designed_solutions[item]["name"]}}</center></caption>
-                        <center>{{best_options[item]}}</center>
-                    </table>
-                    {% endif %}
-                {% endfor %}
-
-
-                <h2 style="margin: 45px 0px 20px 0px;"><u>Designed Solutions</u></h2>
-
-                {% for item in designed_solutions %}
-                    {% set solution_number = namespace(val=0) %}
-                     <h3 id={{item}}>{{designed_solutions[item]["name"]}}</h3>
-
-                    {% if designed_solutions[item]["hx_network"]|length == 0%}
-                    <p>No solutions to present</p>
-                    {% endif %}
-
-                    {% for num in range(designed_solutions[item]["hx_network"]|length) %}
-                        {% set hx_network=namespace(graph=designed_solutions[item]["hx_network"][solution_number.val] )%}
-                        {% set df_overview=namespace(graph=designed_solutions[item]["df_overview"][solution_number.val] )%}
-                        {% set df_hx=namespace(graph=designed_solutions[item]["df_hx"][solution_number.val] )%}
-                        {% set df_hx_economic=namespace(graph=designed_solutions[item]["df_hx_economic"][solution_number.val] )%}
-                        {% set df_storage=namespace(graph=designed_solutions[item]["df_storage"][solution_number.val] )%}
-                        {% set df_each_solution=namespace(graph=designed_solutions[item]["df_streams_each_solution"][solution_number.val] )%}
-
-                        {% set body_color=namespace(color=designed_solutions[item]["body_color"]) %}
-                        {% set header_color=namespace(color=designed_solutions[item]["header_color"]) %}
-
-                        <div class="solution">
-                            <div class="body"
-                                 style="background-color:{{body_color.color}};margin: 5px 0px 30px 0px;border-radius: 5px">
-                                <h3 class="header"
-                                    style="background-color:{{header_color.color}};border-radius: 5px;padding: 15px;opacity:0.85">
-                                    {{designed_solutions[item]["name"]}} - Solution {{solution_number.val+1}} of 3</h3>
-
-                                <div class="body" style="padding: 25px">
-
-                                    <h4>Streams</h4>
-                                    <p>In this subsection you can find the streams that are utilized in this design solution.</p>
-
-                                    <div>
-                                        <caption><center>Solution Streams Table</center></caption>
-                                        <center>{{df_each_solution.graph}}</center>
-                                    </div>
-
-
-                                    <h4>HXs Network Diagram</h4>
-
-
-                                    <p>In this subsection it is provided an economic analysis on the designed heat
-                                            exchangers</p>
-
-                                    <button
-                                      class="btn btn-dark"
-                                      type="button"
-                                      data-toggle="collapse"
-                                      data-target="#hx_network"
-                                      aria-expanded="false"
-                                      aria-controls="hx_network"
-                                    >
-                                      HELP: Introduction
-                                    </button>
-
-                                    <!-- Collapsed content -->
-                                    <div class="collapse" id="hx_network" style="padding: 15px 0px 0px 0px">
-                                       <div class="tips">
-
-                                        <ul class="ul_tips">
-                                            <li>The following diagram proposes a heat exchanger (HX) network.
-                                            </li>
-                                            <li>The streams are represented by the horizontal lines with the respective
-                                                IDs next
-                                                to them.
-                                            </li>
-                                            <li>Red lines are hot streams, which are streams going from a larger to a
-                                                smaller
-                                                temperature. Blue lines are cold streams, which are streams going from a
-                                                smaller
-                                                to a larger temperature.
-                                            </li>
-                                            <li>Stream splits (splitting the stream flowrate) may occur to guarantee the achievement of a final
-                                                solution. The splits are represented as the diagonal lines going out of
-                                                the main/original stream.
-                                            </li>
-                                            <li>The heat exchangers designed are represented with its ID, together with
-                                                the estimated power. In some cases a temperature may appear next to the HX,
-                                                representing the temperature the stream reached. If not, it means it
-                                                reached the target or the pinch temperature.
-                                            </li>
-
-                                            <li>Cold/Hot Utility - An external source of heating/cooling additional to the
-                                                heat recovered between streams, so that they reach their target temperature.
-                                            </li>
-                                        </ul>
-
-                                    </div>
-                                    </div>
-
-
-
-
-                                    <div class="img" style="padding: 15px 0px 0px 0px"
->
-                                        <caption><center>Network Diagram</center></caption>
-                                        <center>{{hx_network.graph}}</center>
-                                    </div>
-
-                                    <h4>HXs Technical Data</h4>
-
-                                    <p>In this subsection it is provided an extensive technical analysis on the designed
-                                        heat exchangers</p>
-
-                                    <button
-                                      class="btn btn-dark"
-                                      type="button"
-                                      data-toggle="collapse"
-                                      data-target="#hx_technical"
-                                      aria-expanded="false"
-                                      aria-controls="hx_technical"
-                                    >
-                                      HELP: HX Technical Data
-                                    </button>
-
-                                    <!-- Collapsed content -->
-                                    <div class="collapse" id="hx_technical" style="padding: 15px 0px 0px 0px">
-                                       <div class="tips">
-
-                                        <ul class="ul_tips">
-                                            <li>HX Info </li>
-                                            <ul>
-                                                <li>HX ID </li>
-                                                <li>HX Power - Nominal power of the HX</li>
-                                            </ul>
-                                            <li>Hot/Cold stream data:</li>
-                                            <ul>
-                                                <li> ID - Stream ID</li>
-                                                <li> T<sub>in</sub> - Stream's temperature going in the HX </li>
-                                                <li> T<sub>out</sub> - Stream's temperature going out of the HX</li>
-                                                <li> mcp - Heat capacity; mass flowrate multiplied by the specific heat capacity</li>
-                                            </ul>
-                                        </ul>
-                                    </div>
-                                    </div>
-
-
-
-                                    <table class="table">
-                                        <caption><center>Heat Exchangers Technical Data</center></caption>
-                                        <center>{{df_hx.graph}}</center>
-                                    </table>
-
-
-                                    <h4>HXs Estimated Economic Data</h4>
-
-
-                                    <p>In this subsection it is provided an economic analysis on the designed heat
-                                            exchangers</p>
-
-                                     <button
-                                      class="btn btn-dark"
-                                      type="button"
-                                      data-toggle="collapse"
-                                      data-target="#hx_economic"
-                                      aria-expanded="false"
-                                      aria-controls="hx_economic"
-                                    >
-                                      HELP: HX Economic Data
-                                    </button>
-
-                                    <!-- Collapsed content -->
-                                    <div class="collapse" id="hx_economic" style="padding: 15px 0px 0px 0px">
-                                       <div class="tips">
-
-                                            <ul class="ul_tips">
-                                                <li>Type - Type of heat exchanger designed</li>
-                                                <li>CAPEX - HX investment cost</li>
-                                                <li>OM Fix - HX operation and maintenance fixed cost</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <table class="table">
-                                        <caption><center>Heat Exchangers Economic Data</center></caption>
-                                        <center>{{df_hx_economic.graph}}</center>
-                                    </table>
-
-                                    <h4>HXs Storage Estimated Data</h4>
-                                    <p>In this subsection it is provided the HX's storage data</p>
-
-                                    <button
-                                      class="btn btn-dark"
-                                      type="button"
-                                      data-toggle="collapse"
-                                      data-target="#hx_storage"
-                                      aria-expanded="false"
-                                      aria-controls="hx_storage"
-                                    >
-                                      HELP: HX Storage Data
-                                    </button>
-
-                                    <!-- Collapsed content -->
-                                    <div class="collapse" id="hx_storage" style="padding: 15px 0px 0px 0px">
-                                        <div class="tips">
-                                            <ul class="ul_tips">
-                                                <li>Storage Volume - Estimated storage volume</li>
-                                                <li>Storage Match - Percentage of the amount of heat the storage satisfies of all the cold stream non-satisfied hours</li>
-                                                <li>CAPEX - Storage investment cost</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-
-                                    <table class="table">
-                                        <caption><center>Heat Exchangers' Storage Data</center></caption>
-                                        <center>{{df_storage.graph}}</center>
-                                    </table>
-                                </div>
-
                             </div>
                         </div>
-                        {% set solution_number.val = solution_number.val + 1 %}
-                    {% endfor %}
-
-                {% endfor %}
 
 
-  <!-- Change Before this -->
-</body>
+                        <div class="img" style="padding: 15px 0px 0px 0px">
+                            <caption>
+                                <center>Network Diagram</center>
+                            </caption>
+                            <center>{{hx_network.graph}}</center>
+                        </div>
+                    </div>
 
-</body>
+                    <div>
+                        <h4>HXs Technical Data</h4>
+                        <p>In this subsection it is provided an extensive technical analysis on the designed
+                            heat exchangers</p>
+                        <div>
+                             <button
+                                    class="btn btn-dark"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#hx_technical"
+                                    aria-expanded="false"
+                                    aria-controls="hx_technical"
+                            >
+                                HELP: HX Technical Data
+                            </button>
+
+                            <!-- Collapsed content -->
+                            <div class="collapse" id="hx_technical" style="padding: 15px 0px 0px 0px">
+                                <div class="tips">
+                                    <ul class="ul_tips">
+                                        <li>HX Info</li>
+                                        <ul>
+                                            <li>HX ID</li>
+                                            <li>HX Power - Nominal power of the HX</li>
+                                        </ul>
+                                        <li>Hot/Cold stream data:</li>
+                                        <ul>
+                                            <li> ID - Stream ID</li>
+                                            <li> T<sub>in</sub> - Stream's temperature going in the HX</li>
+                                            <li> T<sub>out</sub> - Stream's temperature going out of the HX</li>
+                                            <li> mcp - Heat capacity; mass flowrate multiplied by the specific heat capacity</li>
+                                        </ul>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table">
+                            <caption>
+                                <center>Heat Exchangers Technical Data</center>
+                            </caption>
+                            <center>{{df_hx.graph}}</center>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h4>HXs Estimated Economic Data</h4>
+                        <p>In this subsection it is provided an economic analysis on the designed heat
+                            exchangers</p>
+                        <div>
+                            <button
+                                    class="btn btn-dark"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#hx_economic"
+                                    aria-expanded="false"
+                                    aria-controls="hx_economic"
+                            >
+                                HELP: HX Economic Data
+                            </button>
+                            <!-- Collapsed content -->
+                            <div class="collapse" id="hx_economic" style="padding: 15px 0px 0px 0px">
+                                <div class="tips">
+
+                                    <ul class="ul_tips">
+                                        <li>Type - Type of heat exchanger designed</li>
+                                        <li>CAPEX - HX investment cost</li>
+                                        <li>OM Fix - HX operation and maintenance fixed cost</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table">
+                            <caption>
+                                <center>Heat Exchangers Economic Data</center>
+                            </caption>
+                            <center>{{df_hx_economic.graph}}</center>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h4>HXs Storage Estimated Data</h4>
+                        <p>In this subsection it is provided the HX's storage data</p>
+                        <div>
+                            <button
+                                    class="btn btn-dark"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#hx_storage"
+                                    aria-expanded="false"
+                                    aria-controls="hx_storage"
+                            >
+                                HELP: HX Storage Data
+                            </button>
+                            <!-- Collapsed content -->
+                            <div class="collapse" id="hx_storage" style="padding: 15px 0px 0px 0px">
+                                <div class="tips">
+                                    <ul class="ul_tips">
+                                        <li>Storage Volume - Estimated storage volume</li>
+                                        <li>Storage Match - Percentage of the amount of heat the storage satisfies of all
+                                            the cold
+                                            stream non-satisfied hours
+                                        </li>
+                                        <li>CAPEX - Storage investment cost</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table">
+                            <caption>
+                                <center>Heat Exchangers' Storage Data</center>
+                            </caption>
+                            <center>{{df_storage.graph}}</center>
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        {% set solution_number.val = solution_number.val + 1 %}
+        {% endfor %}
+
+        {% endfor %}
+    </div>
+    </body>
 </html>
 © 2022 GitHub, Inc.
 Terms

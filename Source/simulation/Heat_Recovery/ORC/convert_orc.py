@@ -175,16 +175,11 @@ def convert_orc(in_var, kb: KB):
                     else:  # not aggregated
                         info_type = "info_individual"
 
-                    electrical_generation_nominal = streams_info[str(stream_index)][info_type][
-                        'orc_electrical_generation']
-                    stream_thermal_capacity_total += streams_info[str(stream_index)][info_type][
-                        'stream_thermal_capacity_max_power']
-                    om_fix_intermediate = streams_info[str(stream_index)][info_type][
-                        'intermediate_om_fix_max_power']
-                    turnkey_intermediate = streams_info[str(stream_index)][info_type][
-                        'intermediate_turnkey_max_power']
-                    om_var_intermediate = streams_info[str(stream_index)][info_type][
-                        'intermediate_om_var_max_power']
+                    electrical_generation_nominal = streams_info[str(stream_index)][info_type]['orc_electrical_generation']
+                    stream_thermal_capacity_total += streams_info[str(stream_index)][info_type]['stream_thermal_capacity_max_power']
+                    om_fix_intermediate = streams_info[str(stream_index)][info_type]['intermediate_om_fix_max_power']
+                    turnkey_intermediate = streams_info[str(stream_index)][info_type]['intermediate_turnkey_max_power']
+                    om_var_intermediate = streams_info[str(stream_index)][info_type]['intermediate_om_var_max_power']
 
                     # yearly and nominal electric generation
                     if vec_electrical_generation_nominal_total == []:
@@ -254,7 +249,7 @@ def convert_orc(in_var, kb: KB):
                 n=get_best_number)
         else:
             raise ModuleRuntimeException(
-                code="1",
+                code="2",
                 type="convert_orc.py",
                 msg="There are no feasible ORC designs off the streams provided."
             )

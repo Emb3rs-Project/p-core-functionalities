@@ -119,6 +119,7 @@ def convert_sources(in_var, kb):
     try:
         gis_sources_losses = in_var['gis_module']['source_losses']
         sources_to_analyse = [source['source_id'] for source in gis_sources_losses]
+
     except:
         gis_sources_losses = []
 
@@ -131,6 +132,8 @@ def convert_sources(in_var, kb):
         last_iteration_data = in_var['cf_module']['last_iteration_data']  # data output from this function from first iteration
     except:
         last_iteration_data = []
+
+
 
     ############################################################################################################
     # Defined vars
@@ -172,6 +175,7 @@ def convert_sources(in_var, kb):
     # ROUTINE
     try:
         for source_index, source in enumerate(group_of_sources):
+
             output_converted = []
             latitude, longitude = source['location']
             country = get_country(latitude, longitude)
@@ -180,16 +184,16 @@ def convert_sources(in_var, kb):
             if gis_sources_losses == []:
                 analyse_source = True  # first iteration analyse all sources
             else:
-                if source['id'] in sources_to_analyse:
+                if str(source['id']) in sources_to_analyse:
                     analyse_source = True
 
-                    for i in gis_sources_losses:
-                        if i['source_id'] == source['id']:
-                            source_loss = i['losses_total']
+                    for source_loss_info in gis_sources_losses:
+                        if source_loss_info['source_id'] == str(source['id']):
+                            source_loss = source_loss_info['losses_total']
+
                             break
                 else:
                     analyse_source = False
-
 
             if analyse_source == True:
 
@@ -215,7 +219,9 @@ def convert_sources(in_var, kb):
 
 
                     # 2nd step - Compute and converge temperatures of grid supply/return at source
-                    add_delta_T = (grid_delta_T) / (1 - source_loss / power_last_iteration) - grid_delta_T
+                    #add_delta_T = abs((grid_delta_T) / (1 - source_loss / power_last_iteration) - grid_delta_T)
+                    add_delta_T = abs(source_loss / power_last_iteration)*grid_delta_T
+
                     delta_T_supply = add_delta_T * supply_coef
                     delta_T_return = add_delta_T * return_coef
 
@@ -230,7 +236,8 @@ def convert_sources(in_var, kb):
                         supply_coef = hot_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)
                         return_coef = cold_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)
 
-                        add_delta_T = (grid_delta_T) / (1 - source_loss / power_last_iteration) - grid_delta_T
+                        #add_delta_T = abs((grid_delta_T) / (1 - source_loss / power_last_iteration) - grid_delta_T)
+                        add_delta_T = abs(source_loss / power_last_iteration)*grid_delta_T
                         new_delta_T_supply = add_delta_T * supply_coef
                         new_delta_T_return = add_delta_T * return_coef
 
@@ -239,10 +246,11 @@ def convert_sources(in_var, kb):
                             delta_T_supply = copy(new_delta_T_supply)
                             delta_T_return = copy(new_delta_T_return)
                             converge = True
-
                         else:
                             delta_T_supply = copy(new_delta_T_supply)
                             delta_T_return = copy(new_delta_T_return)
+
+
 
                 #####################################################################################
                 #####################################################################################
@@ -290,7 +298,7 @@ def convert_sources(in_var, kb):
 
                                         # add HX intermediate
                                         hx_intermediate_supply_temperature, hx_intermediate_return_temperature, hx_stream_supply_temperature, hx_stream_target_temperature = source_get_hx_temperatures(hx_intermediate_supply_temperature, hx_intermediate_return_temperature, stream['supply_temperature'], stream['target_temperature'], hx_delta_T)
-                                        hx_power = stream_nominal_capacity * ( abs(hx_stream_supply_temperature - hx_stream_target_temperature) / abs(stream['supply_temperature'] - stream['target_temperature']))
+                                        hx_power = stream_nominal_capacity * (abs(hx_stream_supply_temperature - hx_stream_target_temperature) / abs(stream['supply_temperature'] - stream['target_temperature']))
 
                                         stream_available_capacity = copy(hx_power)
 
