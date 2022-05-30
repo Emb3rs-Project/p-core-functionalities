@@ -311,7 +311,7 @@ def convert_orc(in_var, kb: KB):
     ##############################
     # OUTPUT
     output = {
-        'best_options': best_options,
+        'best_options': best_options.to_dict(orient='records'),
         'report': report_html
     }
 
