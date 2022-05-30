@@ -7,12 +7,12 @@ from .General.location import Location
 class MainErrorConvertSources(BaseModel):
 
     platform: dict
-    cf_module: dict = None
+    cf_module: dict
     gis_module: Optional[dict]
 
 
     @validator("platform","cf_module",always=True)
-    def fasd(cls,v):
+    def check_if_data_exists(cls,v):
 
         if v == None:
             raise Exception(
