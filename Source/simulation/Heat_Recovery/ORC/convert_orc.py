@@ -6,44 +6,51 @@ INFO: Convert_Options Raw Data to ORC, for maximum electrical generation.
 
 
 ##############################
-INPUT:  consumer_type - 'household' or 'non-household'
+INPUT:
+        MANDATORY:
+        consumer_type - 'household' or 'non-household'
         location = [latitude,longitude]
-        get_best_number - number of best conversion cases, 3 by default
-        streams - array with dicts where
-                    {id,
-                     object_type,
-                     stream_type,
-                     fluid, capacity,
-                     supply_temperature,
-                     target_temperature,
-                     hourly_generation,
-                     schedule}
+        streams - array with streams dicts, with:
+            - id
+            - object_type
+            - stream_type
+            - fluid, capacity
+            - supply_temperature
+            - target_temperature
+            - hourly_generation
 
         OPTIONAL:
             orc_T_evap [ºC]
             orc_T_cond [ºC]
+            get_best_number - number of best conversion cases, 3 by default
+
 
 ##############################
-OUTPUT: array best_options with dictionaries, e.g. best_options=[option_1,option_2,..]
+OUTPUT:
+    output = {
+        'best_options': best_options,
+        'report': report_html
+    }
 
-        Where, for example:
+        Where 'best_options'= [option_1,option_2,..]
+            For example:
 
-        option_1 = {
-        #           'ID' - orc design ID
-        #           'streams_id' - vector with streams ID
-        #           'electrical_generation_nominal' [kW]
-        #           'electrical_generation_yearly' [kWh]
-        #           'excess_heat_supply_capacity' [kW]
-        #           'conversion_efficiency' []
-        #           'turnkey' [€]
-        #           'om_fix' - yearly om fix costs [€/year]
-        #           'om_var' [€/kWh]
-        #           'electrical_generation_yearly_turnkey' [kWh/€]
-        #           'co2_savings'  [kg CO2/kWh]
-        #           'money_savings' [€/kWh]
-        #           'discount_rate' []
-        #           'lifetime' [years]
-        #  }
+            option_1 = {
+            #           'ID' - orc design ID
+            #           'streams_id' - vector with streams ID
+            #           'electrical_generation_nominal' [kW]
+            #           'electrical_generation_yearly' [kWh]
+            #           'excess_heat_supply_capacity' [kW]
+            #           'conversion_efficiency' []
+            #           'turnkey' [€]
+            #           'om_fix' - yearly om fix costs [€/year]
+            #           'om_var' [€/kWh]
+            #           'electrical_generation_yearly_turnkey' [kWh/€]
+            #           'co2_savings'  [kg CO2/kWh]
+            #           'money_savings' [€/kWh]
+            #           'discount_rate' []
+            #           'lifetime' [years]
+            #  }
 
 
 """
@@ -51,7 +58,7 @@ OUTPUT: array best_options with dictionaries, e.g. best_options=[option_1,option
 import itertools
 import pandas as pd
 import numpy as np
-from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.convert_orc_aux import convert_aux
+from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.get_data_of_converting_each_stream_to_orc import get_data_of_converting_each_stream_to_orc
 from .....KB_General.equipment_details import EquipmentDetails
 from .....General.Auxiliary_General.get_country import get_country
 from .....KB_General.fuel_properties import FuelProperties
@@ -63,7 +70,6 @@ from .....Reports.orc_report import orc_report
 
 
 def convert_orc(in_var, kb: KB):
-
     #################################################################
     # INPUT
     platform_data = PlatformConvertORC(**in_var['platform'])
@@ -74,19 +80,18 @@ def convert_orc(in_var, kb: KB):
     location = platform_data.location
     get_best_number = platform_data.get_best_number
     orc_years_working = platform_data.orc_years_working
-
-
     orc_T_evap = platform_data.orc_T_evap
     orc_T_cond = platform_data.orc_T_cond
 
     #################################################################
-    # KB
-    fuel_properties = FuelProperties(kb)
-    equipment_details = EquipmentDetails(kb)
-
+    #GET DATA
     # Initialize Arrays
     convert_info = []
     stream_combination_not_feasible = []
+
+    # KB
+    fuel_properties = FuelProperties(kb)
+    equipment_details = EquipmentDetails(kb)
 
     # ORC characteristics
     minimum_orc_power = 100  # [kW] - minimum power ORC designed
@@ -96,12 +101,8 @@ def convert_orc(in_var, kb: KB):
     carnot_correction_factor = 0.44
     eff_carnot = (1 - (orc_T_cond + 273.15) / (orc_T_evap + 273.15)) * carnot_correction_factor
     min_orc_supply_temperature = orc_T_evap + hx_delta_T
-
-    # Intermediate Circuit Characteristics
     intermediate_fluid = 'water'
 
-    #################################################################
-    # COMPUTE
     # get country
     latitude, longitude = location
     country = get_country(latitude, longitude)
@@ -110,44 +111,63 @@ def convert_orc(in_var, kb: KB):
     interest_rate = get_interest_rate(country, kb)
     electricity_data = fuel_properties.get_values(country, 'electricity', consumer_type)
 
-
     # check if streams temperature enough to be converted
     df_streams = pd.DataFrame.from_dict(streams)
     df_streams = df_streams.drop(df_streams[df_streams['supply_temperature'] < min_orc_supply_temperature].index)
     df_streams = df_streams.drop(df_streams[df_streams['capacity'] < minimum_orc_power].index)
 
+    #################################################################
+    # COMPUTE
     try:
         if df_streams.empty == False:
             df_streams['sum_hourly_generation'] = df_streams.apply(lambda x: sum(x['hourly_generation']), axis=1)
-            df_streams_best_five = df_streams.sort_values('hourly_generation', ascending=False).head(n=get_best_number)
-            streams_best_five_index = df_streams_best_five.index.tolist()
+            all_streams_index = df_streams.index.tolist()
 
             # do all possible combinations between the streams
             combinations = []
-            for L in range(0, len(streams_best_five_index) + 1):
-                for subset in itertools.combinations(streams_best_five_index, L):
+            for L in range(0, len(all_streams_index) + 1):
+                for subset in itertools.combinations(all_streams_index, L):
                     if list(subset) != []:
                         combinations.append(list(subset))
 
             # compute stream conversion info when aggregated and not aggregated
             streams_info = {}
-            for stream_index in streams_best_five_index:
+            for stream_index in all_streams_index:
                 stream = streams[stream_index]
 
                 # Individual Stream
                 aggregate_streams = False
-                stream_thermal_capacity_max_power,orc_type,orc_electrical_generation,intermediate_turnkey_max_power,intermediate_om_fix_max_power,intermediate_om_var_max_power = convert_aux(kb,stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency,power_fraction,intermediate_fluid, country,consumer_type,aggregate_streams)
-                info_individual = {'orc_type':orc_type, 'stream_thermal_capacity_max_power':stream_thermal_capacity_max_power, 'orc_electrical_generation':orc_electrical_generation, 'intermediate_turnkey_max_power':intermediate_turnkey_max_power, 'intermediate_om_fix_max_power': intermediate_om_fix_max_power, 'intermediate_om_var_max_power': intermediate_om_var_max_power}
+
+                stream_thermal_capacity_max_power, orc_type, orc_electrical_generation, intermediate_turnkey_max_power, intermediate_om_fix_max_power, intermediate_om_var_max_power = get_data_of_converting_each_stream_to_orc(
+                    kb, stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency, power_fraction, intermediate_fluid,
+                    country, consumer_type, aggregate_streams)
+
+                info_individual = {
+                    'orc_type': orc_type,
+                    'stream_thermal_capacity_max_power': stream_thermal_capacity_max_power,
+                    'orc_electrical_generation': orc_electrical_generation,
+                    'intermediate_turnkey_max_power': intermediate_turnkey_max_power,
+                    'intermediate_om_fix_max_power': intermediate_om_fix_max_power,
+                    'intermediate_om_var_max_power': intermediate_om_var_max_power}
 
                 # Aggregated
                 aggregate_streams = True
-                stream_thermal_capacity_max_power,orc_type,orc_electrical_generation,intermediate_turnkey_max_power,intermediate_om_fix_max_power,intermediate_om_var_max_power = convert_aux(kb,stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency,power_fraction,intermediate_fluid, country,consumer_type,aggregate_streams)
-                info_aggregate = {'orc_type':orc_type, 'stream_thermal_capacity_max_power':stream_thermal_capacity_max_power, 'orc_electrical_generation':orc_electrical_generation, 'intermediate_turnkey_max_power':intermediate_turnkey_max_power, 'intermediate_om_fix_max_power': intermediate_om_fix_max_power, 'intermediate_om_var_max_power': intermediate_om_var_max_power}
+
+                stream_thermal_capacity_max_power, orc_type, orc_electrical_generation, intermediate_turnkey_max_power, intermediate_om_fix_max_power, intermediate_om_var_max_power = get_data_of_converting_each_stream_to_orc(
+                    kb, stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency, power_fraction, intermediate_fluid,
+                    country, consumer_type, aggregate_streams)
+
+                info_aggregate = {
+                    'orc_type': orc_type, 'stream_thermal_capacity_max_power': stream_thermal_capacity_max_power,
+                    'orc_electrical_generation': orc_electrical_generation,
+                    'intermediate_turnkey_max_power': intermediate_turnkey_max_power,
+                    'intermediate_om_fix_max_power': intermediate_om_fix_max_power,
+                    'intermediate_om_var_max_power': intermediate_om_var_max_power}
 
                 streams_info[str(stream_index)] = {
-                                                    'info_individual': info_individual,
-                                                    'info_aggregate': info_aggregate
-                                                   }
+                    'info_individual': info_individual,
+                    'info_aggregate': info_aggregate
+                }
 
             new_id = 1
 
@@ -166,38 +186,54 @@ def convert_orc(in_var, kb: KB):
                     for stream_index in combination:
 
                         if len(combination) > 1:  # aggregated
-                            electrical_generation_nominal = streams_info[str(stream_index)]['info_aggregate']['orc_electrical_generation']
-                            stream_thermal_capacity_total += streams_info[str(stream_index)]['info_aggregate']['stream_thermal_capacity_max_power']
-                            om_fix_intermediate += streams_info[str(stream_index)]['info_aggregate']['intermediate_om_fix_max_power']
-                            turnkey_intermediate += streams_info[str(stream_index)]['info_aggregate']['intermediate_turnkey_max_power']
-                            om_var_intermediate += streams_info[str(stream_index)]['info_aggregate']['intermediate_om_var_max_power']
+                            electrical_generation_nominal = streams_info[str(stream_index)]['info_aggregate'][
+                                'orc_electrical_generation']
+                            stream_thermal_capacity_total += streams_info[str(stream_index)]['info_aggregate'][
+                                'stream_thermal_capacity_max_power']
+                            om_fix_intermediate += streams_info[str(stream_index)]['info_aggregate'][
+                                'intermediate_om_fix_max_power']
+                            turnkey_intermediate += streams_info[str(stream_index)]['info_aggregate'][
+                                'intermediate_turnkey_max_power']
+                            om_var_intermediate += streams_info[str(stream_index)]['info_aggregate'][
+                                'intermediate_om_var_max_power']
                             combo.append(streams[stream_index]['id'])
 
                         else:  # not aggregated
-                            electrical_generation_nominal = streams_info[str(stream_index)]['info_individual']['orc_electrical_generation']
-                            stream_thermal_capacity_total += streams_info[str(stream_index)]['info_individual']['stream_thermal_capacity_max_power']
-                            om_fix_intermediate = streams_info[str(stream_index)]['info_individual']['intermediate_om_fix_max_power']
-                            turnkey_intermediate = streams_info[str(stream_index)]['info_individual']['intermediate_turnkey_max_power']
-                            om_var_intermediate = streams_info[str(stream_index)]['info_individual']['intermediate_om_var_max_power']
+                            electrical_generation_nominal = streams_info[str(stream_index)]['info_individual'][
+                                'orc_electrical_generation']
+                            stream_thermal_capacity_total += streams_info[str(stream_index)]['info_individual'][
+                                'stream_thermal_capacity_max_power']
+                            om_fix_intermediate = streams_info[str(stream_index)]['info_individual'][
+                                'intermediate_om_fix_max_power']
+                            turnkey_intermediate = streams_info[str(stream_index)]['info_individual'][
+                                'intermediate_turnkey_max_power']
+                            om_var_intermediate = streams_info[str(stream_index)]['info_individual'][
+                                'intermediate_om_var_max_power']
 
                         # yearly and nominal electric generation
                         if vec_electrical_generation_nominal_total == []:
-                            vec_electrical_generation_nominal_total = [electrical_generation_nominal * i for i in streams[stream_index]['schedule']]
+                            vec_electrical_generation_nominal_total = [electrical_generation_nominal * i for i in
+                                                                       streams[stream_index]['schedule']]
                         else:
-                            vec_electrical_generation_nominal_total += electrical_generation_nominal * np.array(streams[stream_index]['schedule'])
+                            vec_electrical_generation_nominal_total += electrical_generation_nominal * np.array(
+                                streams[stream_index]['schedule'])
 
-                        electrical_generation_yearly += electrical_generation_nominal * sum(streams[stream_index]['schedule'])
+                        electrical_generation_yearly += electrical_generation_nominal * sum(
+                            streams[stream_index]['schedule'])
 
                     # design ORC for this nominal electrical generation
                     electrical_generation_nominal_total = max(vec_electrical_generation_nominal_total)
 
                     if len(combination) > 1:
                         combination_streams_id.append(combo)
-                        global_conversion_efficiency_equipment, om_fix_orc, turnkey_orc = equipment_details.get_values('orc',electrical_generation_nominal_total)
+                        global_conversion_efficiency_equipment, om_fix_orc, turnkey_orc = equipment_details.get_values(
+                            'orc', electrical_generation_nominal_total)
 
                     else:
                         combination_streams_id.append([streams[stream_index]['id']])
-                        global_conversion_efficiency_equipment, om_fix_orc, turnkey_orc = equipment_details.get_values(streams_info[str(stream_index)]['info_individual']['orc_type'],electrical_generation_nominal_total)
+                        global_conversion_efficiency_equipment, om_fix_orc, turnkey_orc = equipment_details.get_values(
+                            streams_info[str(stream_index)]['info_individual']['orc_type'],
+                            electrical_generation_nominal_total)
 
                     # total costs
                     om_var_total = om_var_intermediate
@@ -210,18 +246,18 @@ def convert_orc(in_var, kb: KB):
                             'ID': new_id,
                             'streams_id': combination_streams_id[0],
                             'electrical_generation_nominal': electrical_generation_nominal_total,  # [kW]
-                            'electrical_generation_yearly': electrical_generation_yearly,  # electric generation per year [kWh]
+                            'electrical_generation_yearly': electrical_generation_yearly, # electric generation per year [kWh]
                             'excess_heat_supply_capacity': stream_thermal_capacity_total,  # [kW]
                             'conversion_efficiency': eff_carnot,  # [%]
                             'turnkey': total_turnkey,  # [€]
                             'om_fix': om_fix_total,  # yearly om fix costs [€/year]
-                            'om_var': om_var_total/electrical_generation_yearly,  # [€/kWh]
+                            'om_var': om_var_total / electrical_generation_yearly,  # [€/kWh]
                             'electrical_generation_yearly_turnkey': total_turnkey / electrical_generation_yearly,
                             'co2_savings': electricity_data['co2_emissions'],  # [kg CO2/kWh]
                             'money_savings': electricity_data['price'],  # [€/kWh]
                             "orc_T_evap": orc_T_evap,
                             "orc_T_cond": orc_T_cond
-                            })
+                        })
 
                         new_id += 1
 
@@ -230,20 +266,29 @@ def convert_orc(in_var, kb: KB):
 
             df_data = pd.DataFrame()
             for dict in convert_info:
-                df_data = df_data.append(dict,ignore_index=True)
-
-            # update columns for Business Module
-            df_data['discount_rate'] = interest_rate
-            df_data['lifetime'] = orc_years_working
+                df_data = df_data.append(dict, ignore_index=True)
 
             # get best
             if df_data.empty == False:
-                best_options = df_data.sort_values('electrical_generation_yearly_turnkey', ascending=True).head(n=get_best_number).to_dict(orient='records')
+                # update columns for Business Module
+                df_data['discount_rate'] = interest_rate
+                df_data['lifetime'] = orc_years_working
+
+                best_options = df_data.sort_values('electrical_generation_yearly_turnkey', ascending=True).head(
+                    n=get_best_number)
             else:
-                best_options = []
+                raise ModuleRuntimeException(
+                    code="1",
+                    type="convert_orc.py",
+                    msg="There are no feasible ORC designs off the streams provided."
+                )
 
         else:
-            best_options = []
+            raise ModuleRuntimeException(
+                code="1",
+                type="convert_orc.py",
+                msg="There are no feasible ORC designs off the streams provided."
+            )
 
     except:
         raise ModuleRuntimeException(
@@ -253,31 +298,21 @@ def convert_orc(in_var, kb: KB):
                 "If all inputs are correct report to the platform."
         )
 
-    if best_options == []:
-        raise ModuleRuntimeException(
-            code="1",
-            type="convert_orc.py",
-            msg="There are no feasible ORC designs off the streams provided."
-        )
+    # Get Report HTML
+    data_report = {
+        'best_options': best_options,
+        'df_streams': df_streams,
+        "co2_emission_data": electricity_data['co2_emissions'],
+        "elec_cost_data": electricity_data['price'],
+    }
 
-
-
+    report_html = orc_report(data_report)
 
     ##############################
     # OUTPUT
-    output_orc = {
+    output = {
         'best_options': best_options,
-        'df_streams_analyzed': df_streams.to_dict(orient='records'),
-        "co2_emission_data":electricity_data['co2_emissions'],
-        "elec_cost_data":electricity_data['price'],
+        'report': report_html
     }
 
-    report_html = orc_report(output_orc)
-
-    output = {
-            'best_options': best_options,
-            'report': report_html}
-
     return output
-
-
