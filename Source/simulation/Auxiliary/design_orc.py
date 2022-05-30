@@ -73,7 +73,7 @@ def design_orc(stream_capacity, stream_fluid, stream_supply_temperature, stream_
         else:
             stream_target_temperature_corrected_min = orc_T_evap + hx_delta_T
 
-        # from the suppliers, water streams can be directly fed to the orc system, otherwise implement intermediate circuit
+        # from the suppliers - water streams can be directly fed to the orc system, otherwise implement intermediate circuit
         if stream_fluid != 'water':
             intermediate_circuit_exist = True
             number_hx = 2

@@ -39,9 +39,9 @@ from ......General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from ......General.Convert_Equipments.Convert_Options.add_hx import Add_HX
 
 
-def get_data_of_converting_each_stream_to_orc(kb,stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency, power_fraction, intermediate_fluid, country,
-                consumer_type, aggregate_streams):
-
+def get_data_of_converting_each_stream_to_orc(kb, stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency,
+                                              power_fraction, intermediate_fluid, country,
+                                              consumer_type, aggregate_streams):
     # design orc/rc
     orc_type, stream_thermal_capacity_max_power, orc_electrical_generation, overall_thermal_capacity, stream_target_temperature_corrected, intermediate_circuit, hx_intermediate_supply_temperature, hx_intermediate_return_temperature = design_orc(
         stream['capacity'], stream['fluid'], stream['supply_temperature'], stream['target_temperature'],
@@ -54,21 +54,33 @@ def get_data_of_converting_each_stream_to_orc(kb,stream, hx_delta_T, orc_T_cond,
             hx_stream_supply_temperature = stream['supply_temperature']
             hx_stream_target_temperature = stream_target_temperature_corrected
             hx_power = stream_thermal_capacity_max_power
-            info_hx_intermediate = Add_HX(kb, hx_stream_supply_temperature, hx_stream_target_temperature, stream['fluid'],
-                                          hx_intermediate_supply_temperature, hx_intermediate_return_temperature,
-                                          intermediate_fluid, hx_power, power_fraction)
+            info_hx_intermediate = Add_HX(kb,
+                                          hx_stream_supply_temperature,
+                                          hx_stream_target_temperature,
+                                          stream['fluid'],
+                                          hx_intermediate_supply_temperature,
+                                          hx_intermediate_return_temperature,
+                                          intermediate_fluid, hx_power,
+                                          power_fraction)
 
             # add intermediation circulation pumping
-            info_pump_intermediate = Add_Pump(kb, country, consumer_type, intermediate_fluid,
-                                              info_hx_intermediate.available_power, power_fraction,
-                                              hx_intermediate_supply_temperature, hx_intermediate_return_temperature)
+            info_pump_intermediate = Add_Pump(kb,
+                                              country,
+                                              consumer_type,
+                                              intermediate_fluid,
+                                              info_hx_intermediate.available_power,
+                                              power_fraction,
+                                              hx_intermediate_supply_temperature,
+                                              hx_intermediate_return_temperature)
 
-            hx_intermediate_turnkey = info_hx_intermediate.data_teo['max_input_capacity'] * info_hx_intermediate.data_teo[
-                'turnkey_a'] + info_hx_intermediate.data_teo['turnkey_b']
-            hx_intermediate_om_fix = info_hx_intermediate.data_teo['max_input_capacity'] * info_hx_intermediate.data_teo[
-                'om_fix']
+            hx_intermediate_turnkey = info_hx_intermediate.data_teo['max_input_capacity'] * \
+                                      info_hx_intermediate.data_teo['turnkey_a'] + info_hx_intermediate.data_teo['turnkey_b']
+            hx_intermediate_om_fix = info_hx_intermediate.data_teo['max_input_capacity'] * \
+                                     info_hx_intermediate.data_teo[
+                                         'om_fix']
             pumping_intermediate_turnkey = info_pump_intermediate.data_teo['max_input_capacity'] * \
-                                           info_pump_intermediate.data_teo['turnkey_a'] + info_pump_intermediate.data_teo[
+                                           info_pump_intermediate.data_teo['turnkey_a'] + \
+                                           info_pump_intermediate.data_teo[
                                                'turnkey_b']
             pumping_intermediate_om_fix = info_pump_intermediate.data_teo['max_input_capacity'] * \
                                           info_pump_intermediate.data_teo['om_fix']
@@ -85,5 +97,5 @@ def get_data_of_converting_each_stream_to_orc(kb,stream, hx_delta_T, orc_T_cond,
         intermediate_om_fix_max_power = 0
         intermediate_om_var_max_power = 0
 
-    return stream_thermal_capacity_max_power, orc_type, orc_electrical_generation, intermediate_turnkey_max_power,\
-               intermediate_om_fix_max_power, intermediate_om_var_max_power
+    return stream_thermal_capacity_max_power, orc_type, orc_electrical_generation, intermediate_turnkey_max_power, \
+           intermediate_om_fix_max_power, intermediate_om_var_max_power
