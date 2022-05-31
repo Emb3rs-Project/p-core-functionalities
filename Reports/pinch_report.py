@@ -49,6 +49,12 @@ def styling(df):
                       classes=['table', 'bg-white', 'table-striped', "text-center"]
                       ).replace("<th>", "<th class='align-middle text-center'>")
 
+    html = html.replace("CO2","CO<sub>2</sub>")
+    html = html.replace("mcp","mc<sub>p</sub>")
+    html = html.replace("Tin","T<sub>in</sub>")
+    html = html.replace("Tout","T<sub>out</sub>")
+
+
     return html
 
 def get_round(df, decimal=2):
@@ -75,7 +81,6 @@ def pinch_report(test):
         else:
             df_best_design = pd.DataFrame(test[str(key)]['best_options']).drop(columns=['energy_investment'])
             df_best_design.columns = ['Solution ID', 'CO2 Savings [kgCO2/year]', 'Monetary Savings [€/year]','Heat Recovered [kWh/year]', 'CAPEX  [€]', 'OM Fix [€/year]']
-
             df_best_design['Heat Recovered [kWh/year]'] = convert_to_megawatt(df_best_design['Heat Recovered [kWh/year]'])
             df_best_design = get_int(df_best_design)
             df_best_design.rename(columns={'Heat Recovered [kWh/year]': 'Heat Recovered [MWh/year]'}, inplace=True)
