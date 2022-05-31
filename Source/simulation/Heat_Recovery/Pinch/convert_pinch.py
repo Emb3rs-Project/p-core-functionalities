@@ -136,7 +136,6 @@ RETURN: dictionary with 3 keys:
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.pinch_analysis import pinch_analysis
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.get_best_x_outputs import get_best_x_outputs
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.eco_env_analysis import eco_env_analysis
-from .....KB_General.medium import Medium
 from .....KB_General.fuel_properties import FuelProperties
 from .....General.Auxiliary_General.get_country import get_country
 import itertools
@@ -292,9 +291,6 @@ def convert_pinch(in_var, kb : KB):
         only_isolated_streams = True
         for pinch_case in info_pinch:
             pinch_case['df_equipment_economic'] = empty_df
-
-    # Template with info needed for all designs
-    df_optimization = pd.DataFrame(columns=['index', 'co2_savings', 'energy_saving', 'energy_investment', 'turnkey'])
 
     # perform full analysis
     list_df_optimization = []

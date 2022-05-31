@@ -33,6 +33,16 @@
     </h1>
 
     <div>
+        <h2 style="margin: 30px 0px 20px 0px;"><u>Index</u></h2>
+        <ol>
+            <li><a href="#user_streams">User Streams</a></li>
+            <li><a href="#overview_designed_solutions">Overview Designed Solutions</a></li>
+            <li><a href="#designed_solutions">Designed Solutions</a></li>
+        </ol>
+    </div>
+
+
+    <div style="padding:20px 0px 15px 0px">
         <button
                 class="btn btn-dark"
                 type="button"
@@ -41,7 +51,7 @@
                 aria-expanded="false"
                 aria-controls="collapseExample"
         >
-            HELP: Introduction
+            More Info: Introduction
         </button>
 
         <!-- Collapsed content -->
@@ -52,7 +62,7 @@
                 </strong></p>
                 <p>In brief, the pinch analysis is a theoretical method that, based on fundamental thermodynamics,
                     analyzes the heat flow through the industry’s streams with the aim of recovering heat within those
-                    streams by proposing a heat exchanger - HX - network. By reducing the energy needs, it also reduces
+                    streams by proposing a heat exchanger - HX - network. By reducing the heating/cooling needs, it also reduces
                     fuel costs and CO<sub>2</sub> emissions (for more information check EMB3Rs deliverable D.3.3).
                 </p>
                 <p><strong>
@@ -60,9 +70,8 @@
                 </strong></p>
                 <p> The simulation assesses heat recovery alternatives within the streams by performing a series of
                     pinch analysis to the streams combinations. The output of this routine is the 3 best pinch designs
-                    in terms of heat recovery (kW), lowest cost of heat recovered (€/kWh) and highest CO<sub>2</sub>
-                    emission
-                    reductions/savings (kgCO<sub>2</sub>/kWh).</p>
+                    in terms of CO<sub>2</sub> emission reductions/savings (kgCO<sub>2</sub>/kWh), amount fo heat recovered (kW), and
+                    heat recovery specific cost (€/kW).</p>
                 <p><strong>
                     <mark>What is the report structure?</mark>
                 </strong></p>
@@ -74,10 +83,9 @@
                         not
                         the list of infeasible streams combinations is shown.
                     </li>
-                    <li> An overview of the designed solutions for each of the categories - heat recovery, lowest
-                        cost of heat recovery and CO<sub>2</sub> emissions savings). The 3 best solutions of each
-                        category
-                        are shown to the user.
+                    <li> An overview of the designed solutions for each of the categories - CO<sub>2</sub> emissions savings,
+                        heat recovery, and heat recovery specific cost). The 3 best solutions of each
+                        category are shown to the user.
                     </li>
                     <li> A detailed analysis of each designed solution of each category.</li>
                 </ul>
@@ -86,19 +94,19 @@
     </div>
 
     <div>
-        <h2 style="margin: 30px 0px 20px 0px;"><u>User Streams</u></h2>
+        <h2 id="user_streams" style="margin: 30px 0px 20px 0px;"><u>1. User Streams</u></h2>
         <p>Here you can find data regarding all the streams your considered for the pinch analysis and respective
             details.</p>
         <table class="table">
             <caption>
-                <center>Stream Table</center>
+                <center>Table 1. Stream Table</center>
             </caption>
             <center>{{stream_table}}</center>
         </table>
 
         <p><strong>{{stream_combination_not_feasible}}</strong></p>
 
-        <h2 style="margin: 45px 0px 20px 0px;"><u>Overview Designed Solutions</u></h2>
+        <h2 id="overview_designed_solutions" style="margin: 45px 0px 20px 0px;"><u>2. Overview Designed Solutions</u></h2>
         <p>Here you can find an overview on the best 3 designed solutions for each one of the analyzed categories</p>
 
         <button
@@ -109,7 +117,7 @@
                 aria-expanded="false"
                 aria-controls="hx_overview_all"
         >
-            HELP: Overview Designed Solutions
+            More Info: Overview Designed Solutions
         </button>
 
         <!-- Collapsed content -->
@@ -118,22 +126,20 @@
                 <p>Categories analyzed:</p>
                 <ul class="ul_tips">
                     <li>CO<sub>2</sub> Savings - Yearly CO<sub>2</sub> emissions reduction</li>
-                    <li>Energy Savings - Yearly heat recovered</li>
-                    <li>Energy Savings Specific Cost - Solution's CAPEX over yearly heat recovered</li>
+                    <li>Heat Recovery - Yearly heat recovered</li>
+                    <li>eat Recovery  Specific Cost - Solution's CAPEX over yearly heat recovered</li>
                 </ul>
-                <p><em>For the three categories analyzed there can be a repetition on the designed solutions - check the
+                <p><em><u>For the three categories analyzed there can be a repetition on the designed solutions - check the
                     ID.
-                    There will be always energy savings in all solutions, since the pinch analysis aims to recover
-                    energy.
-                    However, there may not be Money/CO<sub>2</sub> Savings if streams without an equipment and fuel
-                    associated
-                    are provided.</em></p>
+                    There will always be heat recovered in all solutions since the pinch analysis aims to recover
+                    heat, however, there may not be Monetary/CO<sub>2</sub> Savings if streams without an equipment and fuel
+                    associated are provided.</u></em></p>
 
                 <p>In each category, you can find for each solution:
                 <ul class="ul_tips">
                     <li>CO<sub>2</sub> Savings - yearly CO<sub>2</sub> emissions reduction</li>
-                    <li>Money Savings - Yearly money savings</li>
-                    <li>Energy Recovered - Yearly energy recovered</li>
+                    <li>Monetary Savings - Yearly monetary savings</li>
+                    <li>Heat Recovered - Yearly heat recovered</li>
                     <li>CAPEX - Solution investment cost</li>
                     <li>OM Fix - Fixed operation and maintenance costs of the solution</li>
 
@@ -144,6 +150,7 @@
 
 
     <div>
+        {% set table_number = namespace(val=2) %}
         {% for item in designed_solutions %}
         {% set link = namespace(ref="#" + item) %}
         <h4 style="padding:15px 0px 0px 0px"><a href="{{link.ref}} "
@@ -153,18 +160,21 @@
         {% endif %}
 
         {% if best_options[item] != []%}
+
+
         <table class="table">
             <caption>
-                <center>Best Design Solutions - {{designed_solutions[item]["name"]}}</center>
+                <center>Table {{table_number.val}}. Best Design Solutions - {{designed_solutions[item]["name"]}}</center>
             </caption>
             <center>{{best_options[item]}}</center>
         </table>
+        {% set table_number.val = table_number.val + 1 %}
         {% endif %}
         {% endfor %}
     </div>
 
     <div>
-        <h2 style="margin: 45px 0px 20px 0px;"><u>Designed Solutions</u></h2>
+        <h2 id="designed_solutions" style="margin: 45px 0px 20px 0px;"><u>3. Designed Solutions</u></h2>
 
         {% for item in designed_solutions %}
         {% set solution_number = namespace(val=0) %}
@@ -198,7 +208,7 @@
 
                         <div>
                             <caption>
-                                <center>Solution Streams Table</center>
+                                <center>Table 1. Solution Streams Table</center>
                             </caption>
                             <center>{{df_each_solution.graph}}</center>
                         </div>
@@ -217,7 +227,7 @@
                                     aria-expanded="false"
                                     aria-controls="hx_network"
                             >
-                                HELP: Introduction
+                                More Info: HX Network
                             </button>
 
                             <!-- Collapsed content -->
@@ -260,7 +270,7 @@
 
                         <div class="img" style="padding: 15px 0px 0px 0px">
                             <caption>
-                                <center>Network Diagram</center>
+                                <center>Figure 1. Network Diagram</center>
                             </caption>
                             <center>{{hx_network.graph}}</center>
                         </div>
@@ -279,7 +289,7 @@
                                     aria-expanded="false"
                                     aria-controls="hx_technical"
                             >
-                                HELP: HX Technical Data
+                                More Info: HX Technical Data
                             </button>
 
                             <!-- Collapsed content -->
@@ -305,7 +315,7 @@
 
                         <table class="table">
                             <caption>
-                                <center>Heat Exchangers Technical Data</center>
+                                <center>Table 2. Heat Exchangers Technical Data</center>
                             </caption>
                             <center>{{df_hx.graph}}</center>
                         </table>
@@ -324,7 +334,7 @@
                                     aria-expanded="false"
                                     aria-controls="hx_economic"
                             >
-                                HELP: HX Economic Data
+                                More Info: HX Economic Data
                             </button>
                             <!-- Collapsed content -->
                             <div class="collapse" id="hx_economic" style="padding: 15px 0px 0px 0px">
@@ -341,7 +351,7 @@
 
                         <table class="table">
                             <caption>
-                                <center>Heat Exchangers Economic Data</center>
+                                <center>Table 3. Heat Exchangers Economic Data</center>
                             </caption>
                             <center>{{df_hx_economic.graph}}</center>
                         </table>
@@ -349,39 +359,47 @@
 
                     <div>
                         <h4>HXs Storage Estimated Data</h4>
-                        <p>In this subsection it is provided the HX's storage data</p>
-                        <div>
-                            <button
-                                    class="btn btn-dark"
-                                    type="button"
-                                    data-toggle="collapse"
-                                    data-target="#hx_storage"
-                                    aria-expanded="false"
-                                    aria-controls="hx_storage"
-                            >
-                                HELP: HX Storage Data
-                            </button>
-                            <!-- Collapsed content -->
-                            <div class="collapse" id="hx_storage" style="padding: 15px 0px 0px 0px">
-                                <div class="tips">
-                                    <ul class="ul_tips">
-                                        <li>Storage Volume - Estimated storage volume</li>
-                                        <li>Storage Match - Percentage of the amount of heat the storage satisfies of all
-                                            the cold
-                                            stream non-satisfied hours
-                                        </li>
-                                        <li>CAPEX - Storage investment cost</li>
-                                    </ul>
+
+                        {% if df_storage.graph == 'no_solution'%}
+                            <p>* Storage was not designed for the HXs of this solution.</p>
+                        {% else %}
+                            <p>In this subsection it is provided the HX's storage data</p>
+                            <div>
+                                <button
+                                        class="btn btn-dark"
+                                        type="button"
+                                        data-toggle="collapse"
+                                        data-target="#hx_storage"
+                                        aria-expanded="false"
+                                        aria-controls="hx_storage"
+                                >
+                                    More Info: HX Storage Data
+                                </button>
+                                <!-- Collapsed content -->
+                                <div class="collapse" id="hx_storage" style="padding: 15px 0px 0px 0px">
+                                    <div class="tips">
+                                        <ul class="ul_tips">
+                                            <li>Storage Volume - Estimated storage volume</li>
+                                            <li>Storage Match - Percentage of the amount of heat the storage satisfies of all
+                                                the cold
+                                                stream non-satisfied hours
+                                            </li>
+                                            <li>CAPEX - Storage investment cost</li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <table class="table">
-                            <caption>
-                                <center>Heat Exchangers' Storage Data</center>
-                            </caption>
-                            <center>{{df_storage.graph}}</center>
-                        </table>
+                            <table class="table">
+                                <caption>
+                                    <center>Table 4. Heat Exchangers' Storage Data</center>
+                                </caption>
+                                <center>{{df_storage.graph}}</center>
+                            </table>
+                        {% endif %}
+
+
+
 
                     </div>
 

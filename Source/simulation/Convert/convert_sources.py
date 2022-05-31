@@ -724,13 +724,14 @@ def convert_sources(in_var, kb):
                                     i[teo_id] = teo_capacity_factor[index]
 
                 # get conversion for each source
-                all_sources_info.append({
-                    'source_id': source['id'],
-                    'location': [latitude, longitude],
-                    'source_grid_supply_temperature': source_grid_supply_temperature,
-                    'source_grid_return_temperature': source_grid_return_temperature,
-                    'streams_converted': output_converted
-                })
+                if output_converted != []:
+                    all_sources_info.append({
+                        'source_id': source['id'],
+                        'location': [latitude, longitude],
+                        'source_grid_supply_temperature': source_grid_supply_temperature,
+                        'source_grid_return_temperature': source_grid_return_temperature,
+                        'streams_converted': output_converted
+                    })
 
     except:
         raise ModuleRuntimeException(
@@ -775,13 +776,14 @@ def convert_sources(in_var, kb):
         for stream in source['streams_converted']:
             total_cap += float(stream['gis_capacity'])  # [kW]
 
-        gis_dict = {
-            'id': source['source_id'],
-            'coords': source['location'],
-            'cap': total_cap
-        }
+        if total_cap != 0:
+            gis_dict = {
+                'id': source['source_id'],
+                'coords': source['location'],
+                'cap': total_cap
+            }
 
-        n_supply_list.append(gis_dict)
+            n_supply_list.append(gis_dict)
 
     teo_dhn = {
         "technology": "dhn",
