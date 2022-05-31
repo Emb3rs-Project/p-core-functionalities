@@ -19,7 +19,7 @@ solutions_data = {
         },
     'energy_recovered_optimization': {
         'df_streams_each_solution': [],
-        'name': "Energy Savings",
+        'name': "Heat Recovery",
         'hx_network': [],
         'body_color': '#FDF9E9',
         'header_color': '#F7DC6F'
@@ -31,7 +31,7 @@ solutions_data = {
     },
     'energy_investment_optimization': {
         'df_streams_each_solution': [],
-        'name': "Energy Savings Specific Cost",
+        'name': "Heat Recovery Specific Cost",
         'hx_network': [],
         'body_color': '#EAF2F8',
         'header_color': '#AED6F1 ',
@@ -57,6 +57,12 @@ def get_round(df, decimal=2):
 def get_int(df):
     return df.astype(int)
 
+def put_line_if_zero(df):
+    df = df.map(str)
+    return df.apply(lambda x: x.replace('0', "-"))
+
+def convert_to_megawatt(df):
+    return df/1000
 
 def pinch_report(test):
 
@@ -68,8 +74,14 @@ def pinch_report(test):
             best_options_data[str(key)] = []
         else:
             df_best_design = pd.DataFrame(test[str(key)]['best_options']).drop(columns=['energy_investment'])
-            df_best_design.columns = ['Solution ID', 'CO2 Savings [kgCO2/year]', 'Money Savings [€/year]','Energy Recovered [kWh/year]', 'CAPEX  [€]', 'OM Fix [€/year]']
+            df_best_design.columns = ['Solution ID', 'CO2 Savings [kgCO2/year]', 'Monetary Savings [€/year]','Heat Recovered [kWh/year]', 'CAPEX  [€]', 'OM Fix [€/year]']
+
+            df_best_design['Heat Recovered [kWh/year]'] = convert_to_megawatt(df_best_design['Heat Recovered [kWh/year]'])
             df_best_design = get_int(df_best_design)
+            df_best_design.rename(columns={'Heat Recovered [kWh/year]': 'Heat Recovered [MWh/year]'}, inplace=True)
+            df_best_design['CO2 Savings [kgCO2/year]'] = put_line_if_zero(df_best_design['CO2 Savings [kgCO2/year]'])
+            df_best_design['Monetary Savings [€/year]'] = put_line_if_zero(df_best_design['Monetary Savings [€/year]'])
+
             best_options_data[str(key)] = styling(df_best_design)
 
         # GET Each Designed Solutions
@@ -78,6 +90,8 @@ def pinch_report(test):
             # stream table
             solution['stream_table'].columns = ['Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "Stream Type", "mcp [kJ/K]"]
             all_streams_table = solution['stream_table'][['Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "mcp [kJ/K]", "Stream Type"]]
+            all_streams_table["Capacity [kW]"] = get_int(all_streams_table["Capacity [kW]"])
+
 
             df_streams = all_streams_table.copy()
             df_streams.insert(0, 'Stream ID', df_streams.index.copy())
@@ -91,7 +105,7 @@ def pinch_report(test):
 
             # df HX overview
             df_overview = df[['HX ID', 'Total_Turnkey_Cost', 'Recovered_Energy']]
-            df_overview.columns = ['HX ID', 'Total Turnkey [€]', 'Recovered Energy [kWh/year]']
+            df_overview.columns = ['HX ID', 'Total Turnkey [€]', 'Recovered Heat [kWh/year]']
             solutions_data[key]['df_overview'].append(styling(df_overview))
 
             # df HX Technical
@@ -141,7 +155,12 @@ def pinch_report(test):
             # HX storage
             df_storage = df[["HX ID",'Storage', 'Storage_Satisfies', 'Storage_Turnkey_Cost']]
             df_storage.columns = ["HX ID",'Storage Volume [m3]', 'Storage Match [%]', 'CAPEX [€]']
-            solutions_data[key]['df_storage'].append(styling(df_storage))
+
+            if (df_storage['Storage Volume [m3]'] == 0).sum() == df_storage.shape[0]:
+                solutions_data[key]['df_storage'].append("no_solution")
+            else:
+                df_storage = df_storage[df_storage['Storage Volume [m3]'] > 0]
+                solutions_data[key]['df_storage'].append(styling(df_storage))
 
             # HX Network
             solutions_data[key]['hx_network'].append(make_pinch_design_draw(solution['_info_pinch']))
