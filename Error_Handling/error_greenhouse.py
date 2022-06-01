@@ -38,7 +38,7 @@ class PlatformGreenhouse(Schedule, Location):
     saturday_on: int = 1
 
     # Optional
-    f_c: None
+    f_c: Optional[float] = None
     supply_temperature_heat: Optional[float] = 30
     target_temperature_heat: Optional[float] = 50
     leaf_area_index: Optional[confloat(gt=0, le=20)] = 1

@@ -3,57 +3,47 @@
   "platform": {
     "streams": [
       {
-        "supply_temperature": 150,
-        "target_temperature": 100,
+        "supply_temperature": 750,
+        "target_temperature": 350,
         "fluid": "thermal_oil",
-        "fluid_cp": 2,
-        "flowrate": 900,
         "saturday_on": 1,
         "sunday_on": 1,
-        "shutdown_periods": [],
-        "daily_periods": [
-          [
-            0,
-            24
-          ]
-        ]
+        "capacity": 18000,
+        "shutdown_periods": "[]",
+        "daily_periods": "[[ 0,24 ]]"
       },
       {
-        "supply_temperature": 90,
-        "target_temperature": 70,
+        "supply_temperature": 550,
+        "target_temperature": 250,
         "fluid": "thermal_oil",
-        "fluid_cp": 2,
-        "flowrate": 360,
+        "capacity": 12000,
         "saturday_on": 1,
         "sunday_on": 1,
-        "shutdown_periods": [],
-        "daily_periods": [
-          [
-            0,
-            24
-          ]
-        ]
+        "shutdown_periods": "[]",
+        "daily_periods": "[[ 0,24 ]]"
       },
             {
-        "supply_temperature": 90,
-        "target_temperature": 140,
+        "supply_temperature": 300,
+        "target_temperature": 900,
         "fluid": "thermal_oil",
-        "fluid_cp": 2,
-        "flowrate": 720,
+        "capacity": 25800,
         "saturday_on": 1,
         "sunday_on": 1,
-        "shutdown_periods": [],
-        "daily_periods": [
-          [
-            0,
-            24
-          ]
-        ]
-      }]
+        "shutdown_periods": "[]",
+        "daily_periods": "[[ 0,24 ]]"
+      },
+    {
+        "supply_temperature": 200,
+        "target_temperature": 550,
+        "fluid": "thermal_oil",
+        "saturday_on": 1,
+        "sunday_on": 1,
+        "capacity": 7000,
+        "shutdown_periods": "[]",
+        "daily_periods": "[[ 0,24 ]]"
+      }
+    ]
   }
 }
-
-
-
 
 

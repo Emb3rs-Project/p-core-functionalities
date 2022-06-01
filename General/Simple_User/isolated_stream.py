@@ -1,7 +1,7 @@
 """
 ##############################
-INFO: Simple User streams characterization. Receives user's streams data from the platform and creates a standard
-      stream data output to be used in other modules.
+INFO: 'Template' to create isolated streams - meant for Pinch Analysis.
+
 
 ##############################
 INPUT: object with:
@@ -12,8 +12,9 @@ INPUT: object with:
          #          'supply_temperature' [ºC]
          #          'target_temperature' [ºC]
          #          'fluid - name
-         #          'fluid_cp' [kJ/kg.K]
-         #          'flowrate' [kg/h]
+         #          'fluid_cp' [kJ/kg.K] ** OPTIONAL - introduce capacity or fluid_cp and flowrate
+         #          'flowrate' [kg/h]  ** OPTIONAL - introduce capacity or fluid_cp and flowrate
+         #          'capacity' [kW] ** OPTIONAL - introduce capacity or fluid_cp and flowrate
          #          'saturday_on' - 1 (yes)  or 0 (no)
          #          'sunday_on' - 1 (yes)  or 0 (no)
          #          'shutdown_periods' - array with day arrays e.g. [[130,140],[289,299]]
@@ -32,6 +33,7 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
         #           'stream_type' - inflow
         #           'schedule' - array with 1=working and 0 =not_working
         #           'hourly_generation' - array [kWh]
+        #           'monthly_generation' - array [kWh]
         #           'capacity' [kW]
         #           'supply_temperature' [ºC]
         #           'target_temperature' [ºC]
