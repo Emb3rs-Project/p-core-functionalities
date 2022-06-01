@@ -3,16 +3,15 @@ alisboa/jmcunha
 
 
 ##############################
-INFO: compute for the hx between source and grid, its temperatures, according to the source's streams temperature needs
-      and the grid temperatures
+INFO: compute temperatures for the HX between source and grid
 
 
 ##############################
 INPUT:
-        # grid_stream_supply_temperature  [ºC]
-        # grid_stream_return_temperature  [ºC]
-        # stream_supply_temperature  [ºC]
-        # stream_target_temperature  [ºC]
+        # hx_grid_stream_target_temperature  [ºC]
+        # hx_grid_stream_supply_temperature [ºC]
+        # source_stream_supply_temperature [ºC]
+        # source_stream_target_temperature [ºC]
         # hx_delta_T   [ºC]
 
 

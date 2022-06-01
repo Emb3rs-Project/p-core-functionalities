@@ -29,7 +29,7 @@ import datetime
 import pandas as pd
 
 
-def solar_collector_climate_api(latitude,longitude):
+def solar_collector_climate_api(latitude, longitude):
 
     # Defined vars
     solar_collector_inclination = latitude - 15

@@ -1,6 +1,31 @@
-import copy
-def dhn_correct_losses(power_source, grid_losses, T_supply_sink, T_return_sink, max_T_grid_allowed):
+"""
+alisboa/jmcunha
 
+##############################
+INFO: Correct temperatures at Source according to loss of grid
+
+
+##############################
+INPUT:
+        # power_source [kW]
+        # grid_losses [kW]
+        # T_supply_sink [ºC]
+        # T_return_sink [ºC]
+        # max_T_grid_allowed [ºC]
+
+
+##############################
+OUTPUT:
+        # T_supply_source,
+        # T_return_source
+
+
+"""
+
+import copy
+
+
+def dhn_correct_losses(power_source, grid_losses, T_supply_sink, T_return_sink, max_T_grid_allowed):
     ambient_temperature = 15
     do_iterations = True
 
@@ -17,12 +42,14 @@ def dhn_correct_losses(power_source, grid_losses, T_supply_sink, T_return_sink, 
         return_pipe_losses = grid_losses * return_coef
 
         # get source side temperatures
-        T_supply_source = T_supply_sink + supply_pipe_losses/mcp
-        T_return_source = T_return_sink - return_pipe_losses/mcp
+        T_supply_source = T_supply_sink + supply_pipe_losses / mcp
+        T_return_source = T_return_sink - return_pipe_losses / mcp
 
         # correct losses coefs.
-        hot_pipe_delta_T = (T_supply_source + T_supply_sink) / 2 - ambient_temperature  # delta T, grid supply temperature pipe
-        cold_pipe_delta_T = (T_return_source + T_return_sink) / 2 - ambient_temperature  # delta T, grid return temperature pipe
+        hot_pipe_delta_T = (
+                                       T_supply_source + T_supply_sink) / 2 - ambient_temperature  # delta T, grid supply temperature pipe
+        cold_pipe_delta_T = (
+                                        T_return_source + T_return_sink) / 2 - ambient_temperature  # delta T, grid return temperature pipe
         supply_coef = hot_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)  # correction coefficient
         return_coef = cold_pipe_delta_T / (hot_pipe_delta_T + cold_pipe_delta_T)
 
@@ -43,6 +70,4 @@ def dhn_correct_losses(power_source, grid_losses, T_supply_sink, T_return_sink, 
                 T_return_source = None
                 break
 
-    return T_supply_source,T_return_source
-
-dhn_correct_losses(391.468, 562.001875, 95, 70, 120)
+    return T_supply_source, T_return_source

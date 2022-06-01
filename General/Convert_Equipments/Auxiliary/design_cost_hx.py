@@ -3,8 +3,7 @@ alisboa/jmcunha
 
 
 ##############################
-INFO: design and cost hx according to hot stream ( supply temperature larger than target  temperature) and cold stream
-      characteristics
+INFO: design and cost HX according to hot and cold stream characteristics
 
 
 ##############################

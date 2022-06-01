@@ -1,3 +1,21 @@
+"""
+alisboa/jmcunha
+
+
+##############################
+INFO: Build Pinch Analysis report HTML
+
+
+##############################
+INPUT:
+
+
+##############################
+OUTPUT: report HTML
+
+"""
+
+
 import os
 from module.Source.simulation.Heat_Recovery.Pinch.make_pinch_design_draw import make_pinch_design_draw
 import pandas as pd

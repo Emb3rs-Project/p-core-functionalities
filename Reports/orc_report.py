@@ -5,6 +5,19 @@ alisboa/jmcunha
 ##############################
 INFO: Build ORC report HTML
 
+
+##############################
+INPUT:
+        best_options - convert_orc routine output -> best options
+        df_streams - streams converted in ORC
+        co2_emission_data - electricity CO2 emissions
+        elec_cost_data - electricity price
+
+
+##############################
+OUTPUT: report HTML
+
+
 """
 
 from jinja2 import Environment, FileSystemLoader

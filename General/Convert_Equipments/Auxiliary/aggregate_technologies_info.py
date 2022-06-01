@@ -4,15 +4,24 @@ INFO: Aggregate conversion technologies and compute data for TEO
 
 
 ##############################
-INPUT:  technologies - vector with technologies objects
-        power_fraction - minimum power fraction technologies are designed for  []
-        max_power_available - maximum power stream can provide (sources - heat from excess heat stream; sinks - heat from grid stream) [kW]
-        max_power_convertible - maximum power supplied with conversion (sources - heat to grid; sinks - heat to sinks' needs) [kW]
+INPUT:
+        # object_id - source/sink ID or 'grid_specfic'
+        # technologies - dict with technologies
+        # power_fraction
+        # max_power_available - stream max power available before conversion
+        # max_power_convertible - stream power given to the the DHN after conversion
+        # object_type - 'sink' or 'source'
+        # teo_equipment_name
+        # stream_id
 
 
 ##############################
 OUTPUT: dictionary with:
 
+            # teo_equipment_name - TEO INFO
+            # output - TEO INFO
+            # input_fuel - TEO INFO
+            # output_fuel - TEO INFO
             # equipment - all conversion equipments; array with technologies names; e.g. ['hx_plate', 'heat_pump','hx_plate']
             # max_capacity - stream power (sources- excess heat; sinks - grid heat)  [kW]
             # turnkey_a - aggregated turnkey [€/kW]
@@ -21,8 +30,7 @@ OUTPUT: dictionary with:
             # om_fix - aggregated om_fix  [€/year.kW]
             # om_var - aggregated om_var  [€/kWh]
             # emissions - aggregated emissions  [kg.CO2/kWh]
-            # technologies - each equipment info in detail 
-
+            # technologies - each equipment info in detail
 
 """
 
@@ -30,7 +38,7 @@ OUTPUT: dictionary with:
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
 
-def join_hx_and_technology(object_id,technologies,power_fraction,max_power_available,max_power_convertible,object_type,teo_equipment_name,stream_id):
+def aggregate_technologies_info(object_id,technologies,power_fraction,max_power_available,max_power_convertible,object_type,teo_equipment_name,stream_id):
 
     turnkey_max_power = 0
     turnkey_power_fraction = 0

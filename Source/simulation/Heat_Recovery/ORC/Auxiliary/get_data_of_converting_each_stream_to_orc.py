@@ -3,7 +3,7 @@ alisboa/jmcunha
 
 
 ##############################
-INFO: Auxiliary function to the main script, with the purpose of designing the orc according to the stream given and
+INFO: Auxiliary function to the main script, with the purpose of designing the ORC according to the stream given and
       estimate costs.
 
 
@@ -25,7 +25,7 @@ INPUT:
 ##############################
 OUTPUT:
         # stream_thermal_capacity_max_power  [kW]
-        # orc_type - e.g. 'rc' or 'orc'
+        # orc_type - orc'
         # orc_electrical_generation  [kW]
         # intermediate_turnkey_max_power  [€]
         # intermediate_om_fix_max_power  [€/year]

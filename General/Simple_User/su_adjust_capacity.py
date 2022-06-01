@@ -1,3 +1,21 @@
+"""
+##############################
+INFO: Adjust hourly capacity of Simple User stream
+
+##############################
+INPUT:
+        # stream
+        # user_daily_capacity [list with monthly values]/
+         user_monthly_capacity [list with monthly vals]/
+         user_yearly_capacity [float val]
+
+##############################
+OUTPUT: stream with 'hourly_generation' and 'monthly_generation' updated
+
+
+"""
+
+
 
 from ...Error_Handling.runtime_error import ModuleRuntimeException
 from ...Error_Handling.error_su_adjust_capacity import PlatformSUAdjustCapacity

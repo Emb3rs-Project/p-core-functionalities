@@ -10,7 +10,9 @@ INPUT:  object_linked_id - Object ID associated; e.g. process or equipment ID
         target_temperature [ºC]
         mass_flowrate [kg/h]
         capacity  [kW]
-        schedule - vector with 1 and 0
+        schedule - vector with 1 and 0 // default:None
+        hourly_generation - [kWh] // default:None
+
 
 ##############################
 OUTPUT:  stream dictionary, as below:
@@ -25,6 +27,7 @@ OUTPUT:  stream dictionary, as below:
             #         'flowrate'   [kg/h]
             #         'schedule' -  array with 1 and 0
             #         'hourly_generation' [kWh]
+            #         'monthly_generation': monthly_generation  # [kWh]
             #         'capacity'  [kW]
             #     }
 

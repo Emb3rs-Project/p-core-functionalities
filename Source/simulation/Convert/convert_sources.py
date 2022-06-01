@@ -98,7 +98,7 @@ from ....General.Convert_Equipments.Convert_Options.add_heat_pump import Add_Hea
 from ....General.Convert_Equipments.Convert_Options.add_chp import Add_CHP
 from ....General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from ....General.Convert_Equipments.Convert_Options.add_orc_cascaded import Add_ORC_Cascaded
-from ....General.Convert_Equipments.Auxiliary.join_hx_and_technology import join_hx_and_technology
+from ....General.Convert_Equipments.Auxiliary.aggregate_technologies_info import aggregate_technologies_info
 from ....Source.simulation.Auxiliary.design_orc import design_orc
 from ....General.Auxiliary_General.get_country import get_country
 from ....General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import coef_solar_thermal_backup
@@ -317,7 +317,7 @@ def convert_sources(in_var, kb):
                                                                       source_grid_return_temperature)
 
                                             teo_equipment_name = 'mhex'
-                                            info = join_hx_and_technology(source['id'],
+                                            info = aggregate_technologies_info(source['id'],
                                                                           [info_hx_intermediate, info_pump_intermediate,info_hx_grid, info_pump_grid],
                                                                           power_fraction,
                                                                           stream_available_capacity,
@@ -357,7 +357,7 @@ def convert_sources(in_var, kb):
 
                                             teo_equipment_name = 'shex'
 
-                                            info = join_hx_and_technology(source['id'],
+                                            info = aggregate_technologies_info(source['id'],
                                                                           [info_hx_grid, info_pump_grid],
                                                                           power_fraction,
                                                                           stream_available_capacity,
@@ -422,7 +422,7 @@ def convert_sources(in_var, kb):
                                             teo_equipment_name = 'orc'
 
                                             if intermediate_circuit == True:
-                                                info = join_hx_and_technology(source['id'],
+                                                info = aggregate_technologies_info(source['id'],
                                                                               [info_hx_intermediate, info_pump_intermediate,
                                                                                info_technology,
                                                                                info_pump_grid],
@@ -433,7 +433,7 @@ def convert_sources(in_var, kb):
                                                                               teo_equipment_name,
                                                                               stream['id'])
                                             else:
-                                                info = join_hx_and_technology(source['id'],
+                                                info = aggregate_technologies_info(source['id'],
                                                                               [info_technology, info_pump_grid],
                                                                               power_fraction,
                                                                               stream_available_capacity,
@@ -493,7 +493,7 @@ def convert_sources(in_var, kb):
 
                                                 teo_equipment_name = fuels_teo_nomenclature[info_technology.fuel_type] + '_whrb'
 
-                                                info = join_hx_and_technology(source['id'],
+                                                info = aggregate_technologies_info(source['id'],
                                                                               [info_technology, info_hx_grid,info_pump_grid],
                                                                               power_fraction,
                                                                               stream_available_capacity,
@@ -530,7 +530,7 @@ def convert_sources(in_var, kb):
 
                                                 coef_solar_thermal, info_technology_boiler = coef_solar_thermal_backup(stream['hourly_generation'], info_technology_solar_thermal,info_technology_boiler)
 
-                                                info = join_hx_and_technology(source['id'],
+                                                info = aggregate_technologies_info(source['id'],
                                                                               [info_technology_solar_thermal,info_technology_boiler,info_hx_grid, info_pump_grid],
                                                                               power_fraction,
                                                                               stream_available_capacity,
@@ -555,7 +555,7 @@ def convert_sources(in_var, kb):
 
                                             coef_solar_thermal, info_technology_heat_pump = coef_solar_thermal_backup(stream['hourly_generation'], info_technology_solar_thermal,info_technology_heat_pump)
 
-                                            info = join_hx_and_technology(source['id'],
+                                            info = aggregate_technologies_info(source['id'],
                                                                           [info_technology_solar_thermal, info_technology_heat_pump,info_hx_grid, info_pump_grid],
                                                                           power_fraction,
                                                                           stream_available_capacity,
@@ -590,7 +590,7 @@ def convert_sources(in_var, kb):
                                                                       source_grid_supply_temperature,
                                                                       source_grid_return_temperature)
 
-                                            info = join_hx_and_technology(source['id'],
+                                            info = aggregate_technologies_info(source['id'],
                                                                           [info_technology,
                                                                            info_hx_grid,
                                                                            info_pump_grid],
@@ -616,7 +616,7 @@ def convert_sources(in_var, kb):
 
                                                 teo_equipment_name = 'chp_' + fuels_teo_nomenclature[info_technology.fuel_type]
 
-                                                info = join_hx_and_technology(source['id'],
+                                                info = aggregate_technologies_info(source['id'],
                                                                               [info_technology, info_hx_grid,info_pump_grid],
                                                                               power_fraction,
                                                                               stream_available_capacity,
@@ -664,7 +664,7 @@ def convert_sources(in_var, kb):
                                                                   source_grid_supply_temperature,
                                                                   source_grid_return_temperature)
 
-                                        info = join_hx_and_technology(source['id'],
+                                        info = aggregate_technologies_info(source['id'],
                                                                       [info_technology, info_hx_pump, info_pump_grid],
                                                                       power_fraction,
                                                                       stream_available_capacity,
