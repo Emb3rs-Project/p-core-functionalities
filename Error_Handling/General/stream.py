@@ -2,8 +2,8 @@ from pydantic import BaseModel, validator, conlist, PositiveFloat, NonNegativeFl
 from typing import Optional, Union
 from enum import Enum
 
-class StreamType(str, Enum):
 
+class StreamType(str, Enum):
     inflow = 'inflow'
     outflow = 'outflow'
     excess_heat = 'excess_heat'
@@ -13,7 +13,6 @@ class StreamType(str, Enum):
 
 
 class Stream(BaseModel):
-
     id: int
     object_type: str
     stream_type: StreamType
@@ -27,10 +26,8 @@ class Stream(BaseModel):
 
     object_linked_id: Optional[float] = None
 
-
-    @validator('schedule',allow_reuse=True)
-    def check_if_valid_values (cls, v):
-
+    @validator('schedule', allow_reuse=True)
+    def check_if_valid_values(cls, v):
         _v = list(filter(lambda num: num != 0, v))
         _v = list(filter(lambda num: num != 1, _v))
 
