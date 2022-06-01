@@ -1,6 +1,7 @@
-from pydantic import BaseModel, validator, conint, conlist
+from pydantic import BaseModel, validator
 from enum import Enum
 import ast
+
 
 class ScheduleInfo(int, Enum):
     off = 0
@@ -8,55 +9,47 @@ class ScheduleInfo(int, Enum):
 
 
 class Schedule(BaseModel):
-
-    daily_periods: str #conlist(conlist(conint(ge=0, le=24), min_items=2, max_items=2), min_items=0)
-    shutdown_periods: str #conlist(conlist(conint(ge=0, le=365), min_items=2, max_items=2), min_items=0)
+    daily_periods: str
+    shutdown_periods: str
     saturday_on: ScheduleInfo
     sunday_on: ScheduleInfo
 
-
-
     @validator('daily_periods')
-    def check_structure_daily_periods(cls, v):
-        v = ast.literal_eval(v)
-        if v != []:
-            if isinstance(v, list) is True :
-                for value in v:
-                    if len(value) != 2:
+    def check_structure_daily_periods(cls, daily_periods):
+        daily_periods = ast.literal_eval(daily_periods)
+        if daily_periods != []:
+            if isinstance(daily_periods, list) is True:
+                for period in daily_periods:
+                    if len(period) != 2:
                         raise ValueError(
                             'Only a start and ending hour must be given in each period. Example: [[9,12],[14,19]]')
                     else:
-                        value_a, value_b = value
-                        if value_b <= value_a:
+                        period_a, period_b = period
+                        if period_b <= period_a:
                             raise ValueError(
                                 'Second value of the daily period must be larger than the first. Example: [[9,12],[14,19]]')
             else:
-                raise TypeError('Provide arrays for daily periods.')
+                raise TypeError('Provide a list for daily periods.')
 
-        return v
-
+        return daily_periods
 
     @validator('shutdown_periods')
-    def check_structure_shutdown_periods(cls, v):
+    def check_structure_shutdown_periods(cls, shutdown_periods):
 
-        v = ast.literal_eval(v)
-        if v != []:
-            if isinstance(v, list) is True:
-                for value in v:
-                    if len(value) != 2:
+        shutdown_periods = ast.literal_eval(shutdown_periods)
+        if shutdown_periods != []:
+            if isinstance(shutdown_periods, list) is True:
+                for period in shutdown_periods:
+                    if len(period) != 2:
                         raise ValueError(
                             'Only a start and ending day must be given in each period. Example: [[220,250]]')
                     else:
-                        value_a, value_b = value
-                        if value_b <= value_a:
+                        period_a, period_b = period
+                        if period_b <= period_a:
                             raise ValueError(
                                 'Second value of the shutdown period must be larger than the first. Example: [[220,250]]')
             else:
                 raise TypeError(
-                    'Provide arrays for shutdown periods.')
+                    'Provide a list for shutdown periods.')
 
-        return v
-
-
-
-
+        return shutdown_periods

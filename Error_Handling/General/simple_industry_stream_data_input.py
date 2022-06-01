@@ -3,13 +3,13 @@ from typing import Optional
 from enum import Enum
 import ast
 
+
 class ScheduleInfo(int, Enum):
     off = 0
     on = 1
 
 
 class SimpleIndustryStreamDataInput(BaseModel):
-
     supply_temperature: PositiveFloat
     target_temperature: PositiveFloat
     fluid: StrictStr
@@ -22,49 +22,48 @@ class SimpleIndustryStreamDataInput(BaseModel):
     capacity: Optional[PositiveFloat] = None
     hourly_generation: Optional[conlist(NonNegativeFloat, min_items=8760, max_items=8760)]
 
-
     @validator('daily_periods')
-    def check_structure_daily_periods(cls, v):
-        v = ast.literal_eval(v)
-        if v != []:
-            if isinstance(v, list) is True :
-                for value in v:
-                    if len(value) != 2:
+    def check_structure_daily_periods(cls, daily_periods):
+        daily_periods = ast.literal_eval(daily_periods)
+        if daily_periods != []:
+            if isinstance(daily_periods, list) is True:
+                for period in daily_periods:
+                    if len(period) != 2:
                         raise ValueError(
                             'Only a start and ending hour must be given in each period. Example: [[9,12],[14,19]]')
                     else:
-                        value_a, value_b = value
-                        if value_b <= value_a:
+                        period_a, period_b = period
+                        if period_b <= period_a:
                             raise ValueError(
                                 'Second value of the daily period must be larger than the first. Example: [[9,12],[14,19]]')
             else:
-                raise TypeError('Provide arrays for daily periods.')
+                raise TypeError('Provide a list for daily periods.')
 
-        return v
+        return daily_periods
 
     @validator('shutdown_periods')
-    def check_structure_shutdown_periods(cls, v):
+    def check_structure_shutdown_periods(cls, shutdown_periods):
 
-        v = ast.literal_eval(v)
-        if v != []:
-            if isinstance(v, list) is True :
-                for value in v:
-                    if len(value) != 2:
-                        raise ValueError('Only a start and ending day must be given in each period. Example: [[220,250]]')
+        shutdown_periods = ast.literal_eval(shutdown_periods)
+        if shutdown_periods != []:
+            if isinstance(shutdown_periods, list) is True:
+                for period in shutdown_periods:
+                    if len(period) != 2:
+                        raise ValueError(
+                            'Only a start and ending day must be given in each period. Example: [[220,250]]')
                     else:
-                        value_a, value_b = value
-                        if value_b <= value_a:
+                        period_a, period_b = period
+                        if period_b <= period_a:
                             raise ValueError(
                                 'Second value of the shutdown period must be larger than the first. Example: [[220,250]]')
             else:
                 raise TypeError(
-                    'Provide arrays for shutdown periods.')
+                    'Provide a list for shutdown periods.')
 
-        return v
-
+        return shutdown_periods
 
     @validator('capacity', always=True)
-    def give_capacity_for_steam(cls, capacity, values, **kwargs):
+    def check_capacity_or_flowrate_and_cp(cls, capacity, values, **kwargs):
 
         if values["fluid"] == 'steam' and capacity == None:
             raise Exception('When introducing steam as a fluid, introduce the capacity.')
@@ -77,9 +76,8 @@ class SimpleIndustryStreamDataInput(BaseModel):
         else:
             return capacity
 
-
     @validator('hourly_generation')
-    def check_if_generated_or_import_schedule(cls, hourly_generation_profile, values,**kwargs):
+    def check_if_generated_or_import_schedule(cls, hourly_generation_profile, values, **kwargs):
 
         if hourly_generation_profile is None:
             if values["daily_periods"] is None or values["shutdown_periods"] is None or values["saturday_on"] is None or values["sunday_on"] is None:

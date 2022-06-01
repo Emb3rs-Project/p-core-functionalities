@@ -1,7 +1,7 @@
 from pydantic import BaseModel, validator, conlist
 
-class Location(BaseModel):
 
+class Location(BaseModel):
     location: conlist(float, min_items=2, max_items=2)
 
     @validator('location')
@@ -16,4 +16,3 @@ class Location(BaseModel):
             raise ValueError('longitude must be within [-180,180]. location = [latitude,longitude]')
 
         return location
-
