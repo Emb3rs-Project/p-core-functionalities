@@ -4,6 +4,7 @@ from .source_detailed_object import SourceDetailedObject
 from ..General.schedule import Schedule
 from enum import Enum
 
+
 class Inflow(BaseModel):
     flowrate: PositiveFloat
     fluid_cp: PositiveFloat
@@ -28,8 +29,9 @@ class Startup(BaseModel):
     supply_temperature: PositiveFloat
     fluid: str
 
-class ScheduleType(int,Enum):
-    continous = 0
+
+class ScheduleType(int, Enum):
+    continuous = 0
     batch = 1
 
 
@@ -42,4 +44,3 @@ class Process(SourceDetailedObject, Schedule):
     maintenance_data: Optional[List[Maintenance]]
     inflow_data: Optional[List[Inflow]]
     outflow_data: Optional[List[Outflow]]
-

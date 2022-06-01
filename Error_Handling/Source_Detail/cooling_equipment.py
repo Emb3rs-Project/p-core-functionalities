@@ -4,10 +4,12 @@ from typing import Optional
 from .source_detailed_object import SourceDetailedObject
 from enum import Enum
 
+
 class CoolingEquipmentSubType(str, Enum):
     compression_chiller = "compression_chiller"
     co2_chiller = "co2_chiller"
     cooling_tower = "cooling_tower"
+
 
 class CoolingEquipment(SourceDetailedObject, Schedule):
     cooling_equipment_sub_type: CoolingEquipmentSubType
