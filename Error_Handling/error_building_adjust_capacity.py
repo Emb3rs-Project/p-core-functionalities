@@ -1,5 +1,5 @@
 from pydantic import BaseModel, NonNegativeFloat, validator, PositiveFloat, StrictStr, conlist
-from typing import Optional, Dict
+from typing import Optional
 from enum import Enum
 
 class StreamType(str, Enum):

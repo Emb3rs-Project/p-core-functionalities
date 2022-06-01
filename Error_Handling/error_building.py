@@ -131,16 +131,16 @@ def error_building(platform_data, kb):
 
         @validator('T_cool_on', allow_reuse=True)
         def check_occupied_temperatures_set_points(cls, T_cool_on, values, **kwargs):
-            if values['T_heat_on'] >= v:
+            if values['T_heat_on'] >= T_cool_on:
                 raise ValueError(
-                    'Occupied periods Heating setpoint temperature must be lower than the Cooling setpoint temperature.')
+                    'Occupied periods Heating Setpoint temperature must be lower than the Cooling Setpoint temperature.')
             return T_cool_on
 
         @validator('T_off_max', allow_reuse=True)
         def check_unoccupied_temperatures_set_points(cls, supply_temperature_heat, values, **kwargs):
             if values['T_off_min'] >= supply_temperature_heat:
                 raise ValueError(
-                    'Unoccupied periods Heating setpoint temperature must be lower than the Cooling setpoint temperatur.')
+                    'Unoccupied periods Heating Setpoint temperature must be lower than the Cooling Setpoint temperature.')
             return supply_temperature_heat
 
         @validator('supply_temperature_heat', allow_reuse=True)
