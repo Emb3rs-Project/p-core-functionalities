@@ -1,11 +1,13 @@
 from pydantic import BaseModel, NonNegativeFloat, validator, PositiveFloat, StrictStr, conlist
-from typing import Optional, Dict, Union
+from typing import Optional, Union
 from enum import Enum
+
 
 class StreamType(str, Enum):
     inflow = 'inflow'
     outflow = 'outflow'
     excess_heat = 'excess_heat'
+
 
 class SUStream(BaseModel):
     id: int
@@ -17,10 +19,11 @@ class SUStream(BaseModel):
     fluid: StrictStr
     schedule: conlist(int)
     hourly_generation: conlist(NonNegativeFloat)
-    monthly_generation: conlist(NonNegativeFloat,min_items=12,max_items=12)
+    monthly_generation: conlist(NonNegativeFloat, min_items=12, max_items=12)
     capacity: PositiveFloat
 
     object_linked_id: Union[int, None]
+
 
 class UserMonthlyCapacity(BaseModel):
     january: Optional[NonNegativeFloat]
@@ -38,7 +41,6 @@ class UserMonthlyCapacity(BaseModel):
 
 
 class PlatformSUAdjustCapacity(BaseModel):
-
     stream: SUStream
     user_daily_capacity: Optional[conlist(NonNegativeFloat, min_items=365, max_items=366)] = None
     user_monthly_capacity: Optional[UserMonthlyCapacity] = None
@@ -47,16 +49,14 @@ class PlatformSUAdjustCapacity(BaseModel):
     @validator("user_yearly_capacity", always=True)
     def check_which_capacity_was_given(cls, user_yearly_capacity, values, **kwargs):
 
-        if values["user_monthly_capacity"] is None and user_yearly_capacity is None and values["user_daily_capacity"] is None:
+        if values["user_monthly_capacity"] is None and user_yearly_capacity is None and values[
+            "user_daily_capacity"] is None:
             raise Exception('To adjust capacities, provide real monthly or yearly capacities.')
 
-        elif values["user_monthly_capacity"] is not None and user_yearly_capacity is not None and values["user_daily_capacity"] is not None:
-            raise Exception('To adjust capacities provide ONLY one of the following: monthly, daily or yearly real capacities.')
+        elif values["user_monthly_capacity"] is not None and user_yearly_capacity is not None and values[
+            "user_daily_capacity"] is not None:
+            raise Exception(
+                'To adjust capacities provide ONLY one of the following: monthly, daily or yearly real capacities.')
 
         else:
             return user_yearly_capacity
-
-
-
-
-

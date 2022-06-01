@@ -1,4 +1,5 @@
-from pydantic import BaseModel, validator, PositiveFloat, PositiveInt, conlist, NonNegativeInt, StrictStr, NonNegativeFloat
+from pydantic import BaseModel, validator, PositiveFloat, PositiveInt, conlist, NonNegativeInt, StrictStr, \
+    NonNegativeFloat
 from typing import Optional, List, Union
 from module.Error_Handling.General.location import Location
 from .Source_Detail.fuel_type import FuelType
@@ -41,13 +42,9 @@ def error_convert_pinch(platform_data):
                 raise ValueError('Values not valid found (only 0 or 1)')
             return v
 
-
-
-
     class TrueFalse(int, Enum):
         true = 1
         false = 0
-
 
     class ObjectType(str, Enum):
         process = "process"
@@ -95,7 +92,6 @@ def error_convert_pinch(platform_data):
             else:
                 return False
 
-
     # general check
     main_data = PlatformPinch(**platform_data)
     all_objects = []
@@ -112,7 +108,5 @@ def error_convert_pinch(platform_data):
         all_objects.append(new_object)
 
     main_data.all_input_objects = all_objects
-
-
 
     return main_data

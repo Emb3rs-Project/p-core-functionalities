@@ -6,7 +6,6 @@ from .General.consumer_type_options import ConsumerTypeOptions
 
 
 class PlatformConvertORC(Location):
-
     streams: List[Stream]
     consumer_type: ConsumerTypeOptions
     get_best_number: Optional[PositiveInt] = 3
@@ -17,13 +16,12 @@ class PlatformConvertORC(Location):
     @validator('streams')
     def check_if_there_are_streams(cls, v):
         if len(v) < 1:
-           raise ValueError('Introduce at least 1 stream')
+            raise ValueError('Introduce at least 1 stream')
         return v
 
     @validator('orc_T_cond')
     def check_orc_temperatures(cls, orc_T_cond, values, **kwargs):
         if orc_T_cond >= values['orc_T_evap']:
-            raise ValueError('ORC evaporator temperature must be larger than the condenser')
-
+            raise ValueError('ORC Evaporator temperature must be larger than the Condenser temperature')
 
         return orc_T_cond

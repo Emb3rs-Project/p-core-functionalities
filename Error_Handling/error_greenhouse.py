@@ -51,7 +51,7 @@ class PlatformGreenhouse(Schedule, Location):
     tau_cover_solar_radiation: Optional[confloat(gt=0, le=1)] = 0.9
     power_lights: Optional[PositiveFloat] = 20
 
-    @validator('f_c',always=True)
+    @validator('f_c', always=True)
     def check_f_c(cls, f_c, values, **kwargs):
 
         if values['greenhouse_efficiency'] == 1:
