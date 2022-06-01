@@ -124,14 +124,8 @@ def convert_sinks(in_var, kb):
     grid_supply_temperature = platform_data.grid_supply_temperature
     grid_return_temperature = platform_data.grid_return_temperature
 
-    # TO REMOVEEEEEEEEEEEE
-    grid_supply_temperature = 95
-    grid_return_temperature = 70
-    # TO REMOVEEEEEEEEEEEE
-
     group_of_sinks = platform_data.group_of_sinks  # e.g. building, greenhouse, streams
     group_of_sinks = [vars(sink) for sink in group_of_sinks]
-
 
     for sink in group_of_sinks:
         sink['streams'] = [vars(stream) for stream in sink['streams']]
@@ -153,7 +147,7 @@ def convert_sinks(in_var, kb):
     # Grid Characteristics
     grid_fluid = 'water'
     hot_grid_delta_T = 30  # defined minimum grid delta_T
-    max_grid_temperature = 100
+    max_grid_temperature = 110
 
     # HX Characteristics
     hx_efficiency = 0.95

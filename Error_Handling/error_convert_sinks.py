@@ -5,8 +5,8 @@ from .Convert_Source_Sink.source_or_sink import SourceOrSink
 class PlatformConvertSinks(BaseModel):
 
     group_of_sinks: List[SourceOrSink]
-    grid_supply_temperature: Optional[confloat(gt=5, le=100)] = None
-    grid_return_temperature: Optional[confloat(gt=5, le=100)] = None
+    grid_supply_temperature: Optional[confloat(gt=5, le=110)] = None
+    grid_return_temperature: Optional[confloat(gt=5, le=110)] = None
 
     @validator('group_of_sinks')
     def check_if_there_are_sinks(cls, v):

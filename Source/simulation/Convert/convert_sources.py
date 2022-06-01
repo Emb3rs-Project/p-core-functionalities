@@ -134,15 +134,14 @@ def convert_sources(in_var, kb):
         last_iteration_data = []
 
 
-
     ############################################################################################################
     # Defined vars
     ambient_temperature = 15
+    delta_T_buffer = 6  # sources to grid delta_T buffer
 
     # Grid Characteristics
     max_grid_temperature = 120  # defined maximum hot water grid temperature [ºC]
     grid_fluid = 'water'
-    grid_delta_T = sink_group_grid_supply_temperature - sink_group_grid_return_temperature
 
     # HX Characteristics
     hx_efficiency = 0.95
@@ -181,43 +180,60 @@ def convert_sources(in_var, kb):
             country = get_country(latitude, longitude)
             consumer_type = source['consumer_type']
 
-            if gis_sources_losses == []:
-                analyse_source = True  # first iteration analyse all sources
-            else:
-                if str(source['id']) in sources_to_analyse:
-                    analyse_source = True
-
-                    for source_loss_info in gis_sources_losses:
-                        if source_loss_info['source_id'] == str(source['id']):
-                            source_loss = source_loss_info['losses_total']
-
-                            break
+            #########################################################
+            ###################### TO BE REMOVED ####################
+            #########################################################
+            old_version = True
+            if old_version == True:
+                if gis_sources_losses == []:
+                    analyse_source = True  # first iteration analyse all sources
                 else:
-                    analyse_source = False
+                    if str(source['id']) in sources_to_analyse:
+                        analyse_source = True
 
+                        for source_loss_info in gis_sources_losses:
+                            if source_loss_info['source_id'] == str(source['id']):
+                                source_loss = source_loss_info['losses_total']
+                                break
+                    else:
+                        analyse_source = False
+
+            #########################################################
+            #########################################################
+            #########################################################
+            analyse_source = True
             if analyse_source == True:
 
-                # first iteration - grid losses not considered
-                if gis_sources_losses == []:
-                    source_grid_supply_temperature = sink_group_grid_supply_temperature
-                    source_grid_return_temperature = sink_group_grid_return_temperature
+                #########################################################
+                ###################### TO BE REMOVED ####################
+                #########################################################
+                old_version = True
+                if old_version == True:
+                    # first iteration - grid losses not considered
+                    if gis_sources_losses == []:
+                        source_grid_supply_temperature = sink_group_grid_supply_temperature
+                        source_grid_return_temperature = sink_group_grid_return_temperature
 
-                # other iterations - grid losses considered
-                else:
-                    # get source max power supplied on last iteration
-                    for cap_source in last_iteration_data["n_supply_list"]:
-                        if cap_source['id'] == source['id']:
-                            power_last_iteration = cap_source['cap']
-                            break
+                    # other iterations - grid losses considered
+                    else:
+                        # get source max power supplied on last iteration
+                        for cap_source in last_iteration_data["n_supply_list"]:
+                            if cap_source['id'] == source['id']:
+                                power_last_iteration = cap_source['cap']
+                                break
 
-                    source_grid_supply_temperature, source_grid_return_temperature = dhn_correct_losses(power_last_iteration, source_loss, sink_group_grid_supply_temperature, sink_group_grid_return_temperature, max_grid_temperature)
+                        source_grid_supply_temperature, source_grid_return_temperature = dhn_correct_losses(power_last_iteration, source_loss, sink_group_grid_supply_temperature, sink_group_grid_return_temperature, max_grid_temperature)
 
-                    print("power_last_iteration",power_last_iteration,"source_grid_supply_temperature",source_grid_supply_temperature, "source_grid_return_temperature",source_grid_return_temperature)
+                #########################################################
+                #########################################################
+                #########################################################
 
                 # get conversion technologies for each stream
                 for stream_index, stream in enumerate(source['streams']):
 
                     conversion_technologies = []
+                    source_grid_supply_temperature = sink_group_grid_supply_temperature + delta_T_buffer
+                    source_grid_return_temperature = sink_group_grid_return_temperature - delta_T_buffer
 
                     # only convert sources where grid supply temperature is inferior to max_grid_temperature
                     if source_grid_supply_temperature is not None:

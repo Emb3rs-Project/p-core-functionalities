@@ -15,6 +15,12 @@ def styling(df):
                       classes=['table', 'bg-white', 'table-striped', "text-center"]
                       ).replace("<th>", "<th class='align-middle text-center'>")
 
+
+
+    html = html.replace("CO2","CO<sub>2</sub>")
+    html = html.replace("T evaporator","T<sub>evaporator</sub>")
+    html = html.replace("T condenser","T<sub>condenser</sub>")
+
     return html
 
 
@@ -25,6 +31,9 @@ def get_round(df, decimal=2):
 def get_int(df):
     return df.astype(int)
 
+
+def convert_to_megawatt(df):
+    return df/1000
 
 def get_html(stream_table_data, df_overview_data, df_technical_data, df_economic_data, elec_cost_data, co2_emission_data):
 
@@ -89,13 +98,20 @@ def orc_report(convert_orc_output):
         ["ID", "streams_id", "CO2 Savings", "Money Savings", "electrical_generation_yearly", "turnkey",
          "om_fix"]].copy()
 
+
+
     df_overview_data.columns = ["Solution ID",
                                 "Streams ID",
                                 "CO2 Savings [kgCO2/year]",
-                                "Money Savings [€/year]",
+                                "Monetary Savings [€/year]",
                                 "Yearly Electrical Generation [kWh]",
                                 "CAPEX [€]",
                                 "OM Fix [€/year]"]
+
+
+    df_overview_data['Yearly Electrical Generation [kWh]'] = convert_to_megawatt(df_overview_data['Yearly Electrical Generation [kWh]'])
+    df_overview_data.rename(columns={'Yearly Electrical Generation [kWh]': 'Yearly Electrical Generation [MWh]'}, inplace=True)
+    df_overview_data['Yearly Electrical Generation [MWh]'] = get_int(df_overview_data['Yearly Electrical Generation [MWh]'])
 
     # Technical Data
     df_technical_data = df_solutions[

@@ -31,7 +31,19 @@
         <center><strong>REPORT: ORC Analysis</strong></center>
     </h1>
 
+
     <div>
+        <h2 style="margin: 30px 0px 20px 0px;"><u>Index</u></h2>
+        <ol>
+            <li><a href="#user_streams" style="color:black">User Streams</a></li>
+            <li><a href="#overview_designed_solutions" style="color:black">Overview Designed Solutions</a></li>
+            <li><a href="#technical_data" style="color:black">Technical Data</a></li>
+            <li><a href="#economic_data" style="color:black">Economic Data</a></li>
+        </ol>
+    </div>
+
+
+    <div style="padding:20px 0px 15px 0px">
         <button class="btn btn-dark"
                 type="button"
                 data-toggle="collapse"
@@ -75,7 +87,7 @@
 
                 <center><img class="orc_image" style="width:80%" src="https://i.ibb.co/54kfWxN/orc.png"></center>
                 <caption>
-                    <center>ORC schematic representation</center>
+                    <center>Figure 1. ORC schematic representation</center>
                 </caption>
 
             </div>
@@ -83,18 +95,18 @@
     </div>
 
     <div>
-        <h2 style="margin: 35px 0px 20px 0px;"><u>User Streams</u></h2>
+        <h2 id="user_streams" style="margin: 35px 0px 20px 0px;"><u>User Streams</u></h2>
         <p>Here you can find data regarding all the streams your considered for the ORC analysis and respective details.</p>
         <table class="table">
             <caption>
-                <center>Stream Table</center>
+                <center>Table 1. Stream Table</center>
             </caption>
             <center>{{stream_table}}</center>
         </table>
     </div>
 
     <div>
-        <h2 style="margin: 45px 0px 20px 0px;"><u>Overview Designed Solutions</u></h2>
+        <h2 id="overview_designed_solutions" style="margin: 45px 0px 20px 0px;"><u>Overview Designed Solutions</u></h2>
         <p>Here you can find an overview on the best designed solutions for CAPEX over yearly generated electricity</p>
         <div>
             <button class="btn btn-dark"
@@ -115,13 +127,13 @@
                         <ul class="ul_tips">
                             <li>Streams ID - streams of the design solution</li>
                             <li>CO<sub>2</sub> Savings - yearly CO<sub>2</sub> emissions reduction</li>
-                            <li>Money Savings - Yearly money savings</li>
+                            <li>Monetary Savings - Yearly monetary savings</li>
                             <li>Yearly Electrical Generation</li>
                             <li>CAPEX - Solution investment cost</li>
                             <li>OM Fix - Fixed operation and maintenance costs of the solution</li>
                         </ul>
 
-                        <p>When computing CO<sub>2</sub> and money savings, it is assumed that all electricity is used
+                        <p>When computing CO<sub>2</sub> and monetary savings, it is assumed that all electricity is used
                             for self consumption (assumptions: <strong>electricity price : {{elec_cost}} [€/kWh];
                                 CO<sub>2</sub> emissions : {{co2_emission}} [kg CO<sub>2</sub>/kWh]</strong>) </p>
                     </div>
@@ -131,14 +143,14 @@
 
         <table class="table">
             <caption>
-                <center>Best Design Solutions</center>
+                <center>Table 2. Best Design Solutions</center>
             </caption>
             <center>{{df_overview}}</center>
         </table>
     </div>
 
     <div>
-        <h2 style="margin: 45px 0px 20px 0px;"><u>Technical Data </u></h2>
+        <h2 id="technical_data" style="margin: 45px 0px 20px 0px;"><u>Technical Data </u></h2>
         <p>In this subsection you can find detailed technical data about the ORCs designed </p>
 
         <div>
@@ -146,15 +158,15 @@
                     class="btn btn-dark"
                     type="button"
                     data-toggle="collapse"
-                    data-target="#technical_data"
+                    data-target="#technical_data_info"
                     aria-expanded="false"
-                    aria-controls="technical_data"
+                    aria-controls="technical_data_info"
             >
                 More Info: Technical Data
             </button>
 
             <!-- Collapsed content -->
-            <div class="collapse" id="technical_data">
+            <div class="collapse" id="technical_data_info">
                 <div style="padding:15px 0px 0px 0px">
                     <ul class="ul_tips">
                         <li>ORC Power - ORC's nominal electrical power</li>
@@ -167,7 +179,7 @@
 
             <table class="table">
                 <caption>
-                    <center>ORC Design Technical Details</center>
+                    <center>Table 3. ORC Design Technical Details</center>
                 </caption>
                 <center>{{df_technical}}</center>
             </table>
@@ -175,7 +187,7 @@
     </div>
 
     <div>
-        <h2 style="margin: 45px 0px 20px 0px;"><u>Economic Data</u></h2>
+        <h2 id="economic_data" style="margin: 45px 0px 20px 0px;"><u>Economic Data</u></h2>
         <p>In this subsection you can find detailed economic data about the ORCs designed: </p>
 
         <div>
@@ -183,15 +195,15 @@
                     class="btn btn-dark"
                     type="button"
                     data-toggle="collapse"
-                    data-target="#economic_data"
+                    data-target="#economic_data_collapse"
                     aria-expanded="false"
-                    aria-controls="economic_data"
+                    aria-controls="economic_data_collapse"
             >
                 More Info: Economic Data
             </button>
 
             <!-- Collapsed content -->
-            <div class="collapse" id="economic_data">
+            <div class="collapse" id="economic_data_collapse">
                 <div style="padding:15px 0px 0px 0px">
                     <ul class="ul_tips">
                         <li>CAPEX - Design solution investment cost</li>
@@ -204,7 +216,7 @@
 
         <table class="table">
             <caption>
-                <center>ORC Design Economic Details</center>
+                <center>Table 4. ORC Design Economic Details</center>
             </caption>
             <center>{{df_economic}}</center>
         </table>

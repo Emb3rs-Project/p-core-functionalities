@@ -61,8 +61,8 @@ class MainErrorConvertSources(BaseModel):
 
         class CFConvertSources(BaseModel):
 
-            sink_group_grid_return_temperature: confloat(gt=0,le=95)
-            sink_group_grid_supply_temperature: confloat(gt=0,le=95)
+            sink_group_grid_return_temperature: confloat(gt=0,le=110)
+            sink_group_grid_supply_temperature: confloat(gt=0,le=110)
 
             @validator('sink_group_grid_supply_temperature',allow_reuse=True)
             def check_grid_temperatures(cls, v, values, **kwargs):
