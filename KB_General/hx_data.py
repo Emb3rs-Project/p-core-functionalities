@@ -3,7 +3,7 @@ alisboa/jmcunha
 
 
 ##############################
-INFO: Receives heatx exchanger working fluids and return appropriate heat exchanger and u value.
+INFO: Receives heat exchanger working fluids and return appropriate heat exchanger and U value.
 
 
 ##############################

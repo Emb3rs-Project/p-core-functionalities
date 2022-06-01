@@ -25,16 +25,12 @@ OUTPUT: all building properties ofr simulation
 
 """
 
-
 from dataclasses import dataclass
-
 
 
 @dataclass
 class BuildingProperties:
-
     kb_data: dict
-
 
     def get_values(self, country, building_type):
 
@@ -100,7 +96,6 @@ class BuildingProperties:
             capacitance_roof = float(data[country]["capacitance_roof"])
             capacitance_wall = float(data[country]["capacitance_wall"])
             air_change_hour = float(data[country]["air_change_hour"])  # [1/h]
-
 
         emissivity_wall = 0.9
         emissivity_glass = 0.85

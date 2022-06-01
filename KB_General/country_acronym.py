@@ -1,4 +1,15 @@
+"""
+##############################
+INFO: Get country acronym
 
+##############################
+INPUT:  country - country of the location
+
+
+##############################
+OUTPUT: country_acronym
+
+"""
 
 from dataclasses import dataclass
 

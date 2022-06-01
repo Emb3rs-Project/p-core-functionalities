@@ -9,7 +9,7 @@ INFO: The fuel properties are returned according to the country and consumer typ
 ##############################
 INPUT:
         # country - country name
-        # fuel_type - e.g. 'natural_gas', 'fuel_oil', ' biomass'
+        # fuel_type - e.g. 'natural_gas', 'fuel_oil', ' biomass', 'electricity'
         # consumer_type - e.g. 'non-household', 'household'
 
 

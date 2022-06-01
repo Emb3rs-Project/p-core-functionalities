@@ -34,11 +34,6 @@ class EquipmentDetails:
 
     def get_values(self, equipment, equipment_char):
 
-        global_conversion_efficiency = 1
-        electrical_conversion_efficiency = 1
-        om_fix = 1
-        turnkey = 1
-
         data = self.kb_data.get("equipment_details")
 
         try:
@@ -54,7 +49,6 @@ class EquipmentDetails:
                 data[equipment]['electrical_efficiency_n'])
         except:
             raise Exception("Equipment not in the Knowledge Base." )
-
 
         # special case CHP
         if equipment == 'chp_gas_engine' or equipment == 'chp_gas_turbine':
