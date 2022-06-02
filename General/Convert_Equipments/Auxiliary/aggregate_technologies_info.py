@@ -86,7 +86,6 @@ def aggregate_technologies_info(object_id,technologies,power_fraction,max_power_
         else:
             max_supply_capacity_val = technology.data_teo['max_input_capacity']
 
-        max_supply_capacity += max_supply_capacity_val
         turnkey_max_power += max_supply_capacity_val * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
         turnkey_power_fraction += max_supply_capacity_val * power_fraction * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
 
@@ -98,6 +97,8 @@ def aggregate_technologies_info(object_id,technologies,power_fraction,max_power_
     power_fraction_supply_capacity = max_power_available * power_fraction
     conversion_efficiency = max_power_convertible/max_power_available
     turnkey_a, turnkey_b = linearize_values(turnkey_max_power, turnkey_power_fraction, max_power_available, power_fraction_supply_capacity)
+
+
 
 
     # TEO CHANGES FOR THE NAMES

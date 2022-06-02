@@ -20,13 +20,13 @@ RETURN:
 
 """
 
-
+# default values for compression chiller
 def compute_cop_err(type, condenser_temperature=2,evaporator_temperature=15):
 
     if type == 'compression_chiller':
-        cop = 0.405 * (condenser_temperature + 273 + 5) / (evaporator_temperature - condenser_temperature + 10)
+        cop = 0.405 * (condenser_temperature + 273) / (evaporator_temperature - condenser_temperature)
         return cop
 
     else:
-        err = 0.55 * (condenser_temperature + 273 + 5) / (condenser_temperature - evaporator_temperature + 10)
+        err = 0.55 * (condenser_temperature + 273) / (condenser_temperature - evaporator_temperature)
         return err

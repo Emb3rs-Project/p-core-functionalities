@@ -314,11 +314,8 @@ def convert_sinks(in_var, kb):
         for stream in sink['streams']:
             conversion_technologies = []
             hourly_stream_capacity = stream['hourly_generation']  # [kWh]
-
-            # get stream nominal capacity
             stream_nominal_capacity = max(hourly_stream_capacity)  # [kW]
 
-            # design/cost equipment
             if stream['stream_type'] == 'inflow':
 
                 # get heating technologies
@@ -326,7 +323,6 @@ def convert_sinks(in_var, kb):
 
                     # vapour is needed - only heat pump is designed
                     if stream['target_temperature'] > 100 - hx_delta_T:
-                        # add heat pump: evaporator_temperature = grid return temperature - hx_delta_T
                         teo_equipment_name = 'hp'
 
                         info_technology = Add_Heat_Pump(kb,
@@ -398,6 +394,7 @@ def convert_sinks(in_var, kb):
                         # grid may not supply enough heat to the sink
                         needed_supply_capacity = stream_nominal_capacity - hx_power_supply  # [kW]
 
+                        # only HX needed
                         if stream['target_temperature'] == hx_sink_target_temperature:
                             teo_equipment_name = 'shex'
 
@@ -412,8 +409,9 @@ def convert_sinks(in_var, kb):
 
                             conversion_technologies.append(info)
 
+                        # add boosting technologies
                         elif stream['target_temperature'] > hx_sink_target_temperature:
-                            # add boiler
+                            # 1) add boiler
                             for fuel in boiler_fuel_type:
                                 info_technology = Add_Boiler(kb,
                                                              fuel,
@@ -437,7 +435,7 @@ def convert_sinks(in_var, kb):
 
                                 conversion_technologies.append(info)
 
-                            # add solar thermal + boiler as backup
+                            # 2) add solar thermal + boiler as backup
                             info_technology_solar_thermal = Add_Solar_Thermal(kb,
                                                                               country,
                                                                               consumer_type,
@@ -477,7 +475,7 @@ def convert_sinks(in_var, kb):
 
                             conversion_technologies.append(info)
 
-                            # add solar thermal + heat pump as backup
+                            # 3) add solar thermal + heat pump as backup
                             info_technology_heat_pump = Add_Heat_Pump(kb,
                                                                       country,
                                                                       consumer_type,
@@ -512,13 +510,13 @@ def convert_sinks(in_var, kb):
 
                                 conversion_technologies.append(info)
 
-                            # add heat pump
+                            # 4) add Heat Pump
                             info_technology = Add_Heat_Pump(kb,
                                                             country,
                                                             consumer_type,
                                                             power_fraction,
-                                                            hx_sink_target_temperature,
-                                                            hx_sink_supply_temperature,
+                                                            stream["target_temperature"],
+                                                            stream["supply_temperature"],
                                                             grid_return_temperature,
                                                             supply_capacity=stream_nominal_capacity)
                             teo_equipment_name = 'hp'
@@ -534,7 +532,7 @@ def convert_sinks(in_var, kb):
                                                       hx_grid_return_temperature)
 
                             info = aggregate_technologies_info(sink['id'],
-                                                          [info_hx_grid, info_pump_grid, info_technology],
+                                                          [info_pump_grid, info_technology],
                                                           power_fraction,
                                                           info_pump_grid.supply_capacity,
                                                           stream_nominal_capacity,
@@ -552,7 +550,7 @@ def convert_sinks(in_var, kb):
                     else:
                         after_hx_global_conversion_efficiency = thermal_chiller_efficiency
 
-                    # add electric chiller - stream target temperature inferior to absorption chiller supply temperature
+                    # add electric chiller IF stream target temperature inferior to absorption chiller supply temperature
                     if stream['target_temperature'] < thermal_chiller_supply_temperature:
                         electric_chiller_supply_capacity = stream_nominal_capacity * (
                                 thermal_chiller_supply_temperature - stream['target_temperature']) / (
@@ -616,7 +614,7 @@ def convert_sinks(in_var, kb):
                                                           thermal_chiller_supply_capacity,
                                                           power_fraction)
 
-                    # absorption chiller evaporation temperature not reached
+                    # absorption chiller evaporation temperature not reached by the grid - put booster technology before
                     if hx_sink_target_temperature < thermal_chiller_generator_T_hot:
                         # add boiler
                         for fuel in boiler_fuel_type:
