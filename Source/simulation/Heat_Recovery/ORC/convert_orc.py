@@ -237,7 +237,9 @@ def convert_orc(in_var, kb: KB):
 
         df_data = pd.DataFrame()
         for dict in convert_info:
-            df_data = df_data.append(dict, ignore_index=True)
+            df_data = pd.concat([df_data, pd.DataFrame([dict])], ignore_index=True)
+
+            #df_data = df_data.append(dict, ignore_index=True)
 
         # get best
         if df_data.empty == False:
