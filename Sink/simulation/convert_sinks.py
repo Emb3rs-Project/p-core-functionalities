@@ -137,7 +137,7 @@ def convert_sinks(in_var, kb):
     vector_sink_max_supply_temperature = []
     grid_specific_heating = []
     boiler_fuel_type = ['electricity','natural_gas', 'fuel_oil', 'biomass']  # types of fuel
-    fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'biomass', 'electricity': 'electricity'}
+    fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'bio', 'electricity': 'el'}
 
     ##################################################################################################################
     # Defined vars

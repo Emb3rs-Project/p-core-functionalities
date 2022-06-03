@@ -145,7 +145,7 @@ def convert_sources(in_var, kb):
     power_fraction = 0.05  # default value; equipment are designed for max_power and power_fraction*max_power
     boiler_fuel_type = ['electricity', 'natural_gas', 'fuel_oil', 'biomass']  # types of fuel
     chp_fuel_type = ['natural_gas', 'fuel_oil', 'biomass']
-    fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'biomass', 'electricity': 'electricity'}
+    fuels_teo_nomenclature = {'natural_gas': 'ng', 'fuel_oil': 'oil', 'biomass': 'bio', 'electricity': 'el'}
 
     # Initialize array
     all_sources_info = []
