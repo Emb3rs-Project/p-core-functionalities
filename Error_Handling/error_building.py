@@ -22,7 +22,6 @@ def error_building(platform_data, kb):
         user_input = 3
 
     class PlatformBuildingInitial(Location):
-        building_type: BuildingType
         width_floor: PositiveFloat
         length_floor: PositiveFloat
         space_heating_type: SpaceHeatingType
@@ -30,6 +29,7 @@ def error_building(platform_data, kb):
         number_person_per_floor: Optional[PositiveInt]
         supply_temperature_heat: Optional[PositiveFloat]
         target_temperature_heat: Optional[PositiveFloat]
+        building_type: BuildingType
 
         @validator('building_type', allow_reuse=True)
         def check_hotel(cls, v, values, **kwargs):

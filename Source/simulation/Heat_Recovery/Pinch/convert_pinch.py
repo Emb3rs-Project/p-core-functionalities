@@ -369,13 +369,13 @@ def convert_pinch(in_var, kb : KB):
     co2_savings_options = get_best_x_outputs(info_pinch, co2_savings, country, lifetime, pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible,type='CO<sub>2</sub> Emissions Savings')
 
     # isolated streams are not linked to any equipment, thus not possible to know how much CO2 is saved
-
     if only_isolated_streams == True:
         co2_savings_options = []
         co2_savings = []
     else:
         co2_savings = co2_savings.to_dict(orient='records')
 
+    # build report
     output_pinch = {
         'co2_optimization': {
             "best_options": co2_savings,
@@ -388,15 +388,14 @@ def convert_pinch(in_var, kb : KB):
             "solutions": energy_investment_options},
     }
 
-
     report_html = pinch_report(output_pinch)
 
+    # output
     output_pinch = {
         'co2_optimization': co2_savings,
         'energy_recovered_optimization': energy_recovered.to_dict(orient='records'),
         'energy_investment_optimization': energy_investment.to_dict(orient='records')
     }
-
 
     output = {
             'best_options': output_pinch,
