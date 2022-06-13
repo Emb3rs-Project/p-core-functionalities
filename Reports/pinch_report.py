@@ -83,21 +83,21 @@ def get_int(df):
 
 def put_line_if_zero(df):
     df = df.map(str)
-    return df.apply(lambda x: x.replace('0', "-"))
+    return df.apply(lambda x: x.replace('0', "-") if len(x) == 1 else x)
 
 def convert_to_megawatt(df):
     return df/1000
 
-def pinch_report(test):
+def pinch_report(data_pinch):
 
-    for key in test:
-        category_solutions_data = test[str(key)]
+    for key in data_pinch:
+        category_solutions_data = data_pinch[str(key)]
 
         # GET Overview Category Solutions
-        if test[str(key)]['best_options'] == []:
+        if data_pinch[str(key)]['best_options'] == []:
             best_options_data[str(key)] = []
         else:
-            df_best_design = pd.DataFrame(test[str(key)]['best_options']).drop(columns=['energy_investment'])
+            df_best_design = pd.DataFrame(data_pinch[str(key)]['best_options']).drop(columns=['energy_investment'])
             df_best_design.columns = ['Solution ID', 'CO2 Savings [kgCO2/year]', 'Monetary Savings [€/year]','Heat Recovered [kWh/year]', 'CAPEX  [€]', 'OM Fix [€/year]']
             df_best_design['Heat Recovered [kWh/year]'] = convert_to_megawatt(df_best_design['Heat Recovered [kWh/year]'])
             df_best_design = get_int(df_best_design)
