@@ -134,8 +134,7 @@ class Cooling_Equipment:
                                                      excess_heat_target_temperature)
         else:
             excess_heat_supply_capacity = self.supply_capacity * (1 - 1 / self.global_conversion_efficiency)
-            excess_heat_flowrate = excess_heat_supply_capacity / (
-                    abs(excess_heat_supply_temperature - excess_heat_target_temperature) * excess_heat_fluid_cp)
+            excess_heat_flowrate = excess_heat_supply_capacity / ( abs(excess_heat_supply_temperature - excess_heat_target_temperature) * excess_heat_fluid_cp) *3600
 
         # GET STREAMS
         # excess heat

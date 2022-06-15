@@ -64,6 +64,8 @@ class Boiler:
         inflow_supply_temperature = 20  # Ambient Temperature
         excess_heat_fluid = 'flue_gas'  # Excess heat fluid type
         excess_heat_target_temperature = 120  # flue_gas is usually cooled until 120ºC  due to the formation of condensates
+        inflow_target_temperature = 80
+
 
         ############################################################################################
         # INPUT
@@ -140,11 +142,9 @@ class Boiler:
         ############################################################
 
         # inflow stream
-        inflow_target_temperature = 80
         inflow_flowrate = m_air
         inflow_fluid_cp = medium.cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
-        inflow_capacity = inflow_flowrate * (inflow_target_temperature - inflow_supply_temperature) \
-                          * inflow_fluid_cp / 3600  # [kW]
+        inflow_capacity = inflow_flowrate * (inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp / 3600  # [kW]
 
         # GET STREAMS
         # air inflow

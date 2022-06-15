@@ -118,9 +118,10 @@ class Burner:
         # excess heat stream
         flue_gas_cp = medium.cp(supply_fluid, excess_heat_supply_temperature)
 
-        excess_heat_supply_capacity = excess_heat_flowrate * abs(
-            excess_heat_supply_temperature - excess_heat_target_temperature) \
-                                      * flue_gas_cp
+        if excess_heat_target_temperature > excess_heat_supply_temperature:
+            excess_heat_supply_capacity = 0
+        else:
+            excess_heat_supply_capacity = excess_heat_flowrate/3600 * abs(excess_heat_supply_temperature - excess_heat_target_temperature) * flue_gas_cp
 
         # GET STREAMS
         # air inflow
