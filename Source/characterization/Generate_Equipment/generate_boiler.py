@@ -40,7 +40,7 @@ OUTPUT: object Boiler.
 """
 
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
-from ....General.Auxiliary_General.combustion import compute_flue_gas_temperature, combustion_mass_flows
+from ....General.Auxiliary_General.combustion_mass_flows import combustion_mass_flows
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.medium import Medium
@@ -113,6 +113,7 @@ class Boiler:
                 self.equipment_sub_type, self.supply_capacity)
 
         # fuel consumption
+        refinement_efficiency = 0.03  # comparing real data and estimate
         fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(kb,
                                                                     self.supply_capacity,
                                                                     self.global_conversion_efficiency,
@@ -129,18 +130,17 @@ class Boiler:
 
         # excess heat stream
         excess_heat_supply_capacity = thermal_capacity - self.supply_capacity
-        excess_heat_supply_temperature, inflow_target_temperature = compute_flue_gas_temperature(kb,
-                                                                                                 self.supply_capacity,
-                                                                                                 self.fuel_type,
-                                                                                                 fuel_consumption,
-                                                                                                 m_flue_gas)
-        excess_heat_flowrate = compute_flow_rate(kb,
-                                                 excess_heat_fluid,
-                                                 excess_heat_supply_capacity,
-                                                 excess_heat_supply_temperature,
-                                                 excess_heat_target_temperature)
+        excess_heat_flowrate = m_flue_gas
+
+        excess_heat_supply_temperature = excess_heat_target_temperature + excess_heat_supply_capacity/(m_flue_gas/3600*1.4)
+
+
+        ############################################################
+        ############################################################
+        ############################################################
 
         # inflow stream
+        inflow_target_temperature = 80
         inflow_flowrate = m_air
         inflow_fluid_cp = medium.cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
         inflow_capacity = inflow_flowrate * (inflow_target_temperature - inflow_supply_temperature) \
@@ -176,3 +176,4 @@ class Boiler:
                                             excess_heat_flowrate,
                                             excess_heat_supply_capacity,
                                             schedule))
+

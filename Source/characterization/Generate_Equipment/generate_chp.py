@@ -45,7 +45,7 @@ OUTPUT: object CHP.
 """
 
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
-from ....General.Auxiliary_General.combustion import compute_flue_gas_temperature, combustion_mass_flows
+from ....General.Auxiliary_General.combustion_mass_flows import  combustion_mass_flows
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.medium import Medium
 from ....utilities.kb import KB
@@ -63,6 +63,7 @@ class Chp:
         self.object_type = 'equipment'
         self.streams = []
         inflow_supply_temperature = 20  # Ambient Temperature [ºC]
+        inflow_target_temperature = 80
         inflow_fluid = 'air'
 
         ############################################################################################
@@ -110,17 +111,12 @@ class Chp:
                                                                     self.global_conversion_efficiency,
                                                                     self.fuel_type)
 
-        # excess heat stream
-        excess_heat_supply_temperature, inflow_target_temperature = compute_flue_gas_temperature(kb,
-                                                                                                 self.supply_capacity,
-                                                                                                 self.fuel_type,
-                                                                                                 fuel_consumption,
-                                                                                                 m_flue_gas)
+
+
         # inflow stream
         inflow_flowrate = m_air
         inflow_fluid_cp = medium.cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
-        inflow_capacity = inflow_flowrate * (
-                inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp / 3600  # [kW]
+        inflow_capacity = inflow_flowrate * (inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp / 3600  # [kW]
 
         # GET STREAMS
         # inflow

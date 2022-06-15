@@ -43,7 +43,7 @@ OUTPUT: object Burner.
 """
 
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
-from ....General.Auxiliary_General.combustion import combustion_mass_flows
+from ....General.Auxiliary_General.combustion_mass_flows import combustion_mass_flows
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.medium import Medium
 from ....utilities.kb import KB
@@ -117,6 +117,7 @@ class Burner:
 
         # excess heat stream
         flue_gas_cp = medium.cp(supply_fluid, excess_heat_supply_temperature)
+
         excess_heat_supply_capacity = excess_heat_flowrate * abs(
             excess_heat_supply_temperature - excess_heat_target_temperature) \
                                       * flue_gas_cp
