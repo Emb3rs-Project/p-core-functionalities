@@ -1,5 +1,5 @@
 from pydantic import BaseModel, validator, PositiveFloat, PositiveInt, conlist, NonNegativeInt, StrictStr, \
-    NonNegativeFloat
+    NonNegativeFloat,confloat
 from typing import Optional, List, Union
 from module.Error_Handling.General.location import Location
 from .Source_Detail.fuel_type import FuelType
@@ -32,6 +32,9 @@ def error_convert_pinch(platform_data):
         capacity: PositiveFloat
 
         object_linked_id: Optional[float] = None
+        fuel: Optional[FuelType]
+        eff_equipment: Optional[confloat(gt=0,le=1)]
+
 
         @validator('schedule')
         def check_if_valid_values(cls, v):
@@ -81,7 +84,7 @@ def error_convert_pinch(platform_data):
 
         all_input_objects: List[ObjectData]
         pinch_delta_T_min: Optional[PositiveFloat] = 20
-        perform_all_combinations: Optional[TrueFalse] = False
+        perform_all_combinations: Optional[TrueFalse] = True
         lifetime: Optional[PositiveInt] = 20
         number_output_options: Optional[PositiveInt] = 3
 

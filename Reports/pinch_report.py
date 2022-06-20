@@ -111,6 +111,7 @@ def pinch_report(data_pinch):
         for solution in category_solutions_data["solutions"]:
 
             # stream table
+            solution['stream_table'] =solution['stream_table'][['Fluid', 'Supply Temperature', 'Target Temperature', 'Capacity', 'Stream Type', 'mcp']]
             solution['stream_table'].columns = ['Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "Stream Type", "mcp [kJ/K]"]
             all_streams_table = solution['stream_table'][['Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "mcp [kJ/K]", "Stream Type"]]
             all_streams_table["Capacity [kW]"] = get_int(all_streams_table["Capacity [kW]"])

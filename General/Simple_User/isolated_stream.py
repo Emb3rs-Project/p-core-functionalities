@@ -43,16 +43,9 @@ OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stre
 
 from ...General.Auxiliary_General.stream_industry import stream_industry
 from ...General.Auxiliary_General.schedule_hour import schedule_hour
-from ...Error_Handling.error_isolated_stream import PlatformIsolatedStream
 
 
-def isolated_stream(in_var):
-    ##########################################################################################
-    # INPUT
-    platform_data = PlatformIsolatedStream(**in_var['platform'])
-
-    streams = platform_data.streams
-    streams = [vars(stream) for stream in streams]
+def isolated_stream(streams):
 
     ##########################################################################################
     # COMPUTE
@@ -101,6 +94,10 @@ def isolated_stream(in_var):
         )
 
         streams_output.append(info_stream)
+
+        info_stream['id'] = stream['id']
+        info_stream['fuel'] = stream['fuel_associated']
+        info_stream['eff_equipment'] = stream['eff_equipment_associated']
 
     output = {'streams': streams_output}
 

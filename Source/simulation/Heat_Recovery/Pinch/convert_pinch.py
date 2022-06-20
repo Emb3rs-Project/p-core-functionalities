@@ -188,6 +188,7 @@ def convert_pinch(in_var, kb : KB):
                         streams.append(stream)
             elif object['object_type'] == 'stream':  # isolated streams
                 streams.append(object)
+                only_isolated_streams = True
 
         # if empty, it means analyse equipment internal heat recovery
         if streams == []:
@@ -212,12 +213,24 @@ def convert_pinch(in_var, kb : KB):
     list_profile_data = []
     for stream in streams:
         list_char.append(stream['schedule'])
-        list_profile_data.append({
-                                'ID': stream['id'],
-                                'Fluid': stream['fluid'],
-                                'Supply_Temperature': stream['supply_temperature'],
-                                'Target_Temperature': stream['target_temperature'],
-                                'Capacity': stream['capacity'],})
+
+        if only_isolated_streams == True:
+            list_profile_data.append({
+                'ID': stream['id'],
+                'Fluid': stream['fluid'],
+                'Supply_Temperature': stream['supply_temperature'],
+                'Target_Temperature': stream['target_temperature'],
+                'Capacity': stream['capacity'],
+                'Fuel': stream['fuel'],
+                'Eff_Equipment': stream['eff_equipment']})
+
+        else:
+            list_profile_data.append({
+                                    'ID': stream['id'],
+                                    'Fluid': stream['fluid'],
+                                    'Supply_Temperature': stream['supply_temperature'],
+                                    'Target_Temperature': stream['target_temperature'],
+                                    'Capacity': stream['capacity'],})
 
     df_profile_data = pd.DataFrame(list_char)
     df_char = pd.DataFrame(list_profile_data)
@@ -243,13 +256,16 @@ def convert_pinch(in_var, kb : KB):
 
     df_char['mcp'] = df_char['Capacity'] /abs(df_char['Supply_Shift']- df_char['Target_Shift'])  # [kW/K]
 
+
+
+
     ############################################################################################################
     # PINCH ANALYSIS
     design_id = 1  # give each design an ID - initial value
     df_operating = df_char.copy()
 
     # pinch analysis for all streams
-    info_pinch, design_id = pinch_analysis(kb,
+    pinch_designed_solutions, design_id = pinch_analysis(kb,
                                            df_operating,
                                            df_profile,
                                            pinch_delta_T_min,
@@ -272,7 +288,7 @@ def convert_pinch(in_var, kb : KB):
                                                                      design_id)
                             if df_hx_hourly != []:
                                 for df in df_hx_hourly:
-                                    info_pinch.append(df)
+                                    pinch_designed_solutions.append(df)
                         except:
                             subset_not_possible_to_analyze.append(subset)
 
@@ -286,17 +302,17 @@ def convert_pinch(in_var, kb : KB):
 
     # economic and environmental analysis for pinch data
     if objects_to_analyze != []:
-        info_pinch = eco_env_analysis(kb,info_pinch, objects_to_analyze, all_input_objects, country)
+        pinch_designed_solutions = eco_env_analysis(kb,pinch_designed_solutions, objects_to_analyze, all_input_objects, country)
     else:
         only_isolated_streams = True
-        for pinch_case in info_pinch:
+        for pinch_case in pinch_designed_solutions:
             pinch_case['df_equipment_economic'] = empty_df
 
     # perform full analysis
     list_df_optimization = []
 
     if individual_equipment_optimization is False and only_isolated_streams is False:
-        for index, info in enumerate(info_pinch):
+        for index, info in enumerate(pinch_designed_solutions):
             if info['analysis_state'] == 'performed':
 
                 pinch_data = info['df_hx']
@@ -315,10 +331,11 @@ def convert_pinch(in_var, kb : KB):
                 })
 
     # equipment internal heat recovery/ only isolated streams
-    else:
-        for index, info in enumerate(info_pinch):
+    elif individual_equipment_optimization == True:
+        for index, info in enumerate(pinch_designed_solutions):
             if info['analysis_state'] == 'performed':
                 pinch_data = info['df_hx']
+
                 if object['object_type'] == 'equipment':
                     data = fuel_properties.get_values(country, object['fuel_type'], 'non-household')
                     co2_emission_per_kw = data['co2_emissions']
@@ -336,6 +353,53 @@ def convert_pinch(in_var, kb : KB):
                     'energy_investment': pinch_data['Total_Turnkey_Cost'].sum() / pinch_data['Recovered_Energy'].sum(),
                     'turnkey': pinch_data['Total_Turnkey_Cost'].sum(),
                     'om_fix': pinch_data['HX_OM_Fix_Cost'].sum()
+                })
+
+    elif only_isolated_streams == True:
+
+        # Isolated streams
+        for index, info in enumerate(pinch_designed_solutions):
+            if info['analysis_state'] == 'performed':
+                df_hx = info['df_hx']
+                total_co2_emissions_savings = 0
+                total_money_savings = 0
+
+                for index_df_hx, row_df_hx in df_hx.iterrows():
+
+                    original_hot_stream_id = row_df_hx['HX_Original_Hot_Stream']
+                    original_cold_stream_id = row_df_hx['HX_Original_Cold_Stream']
+
+                    hot_stream_fuel = df_char['Fuel'].loc[df_char.index == original_hot_stream_id].values[0]
+                    cold_stream_fuel = df_char['Fuel'].loc[df_char.index == original_cold_stream_id].values[0]
+
+                    # hot stream
+                    if hot_stream_fuel is not None:
+                        data_stream_hot = fuel_properties.get_values(country, hot_stream_fuel, 'non-household')
+                        co2_emission_per_kw_stream_hot = data_stream_hot['co2_emissions']
+                        fuel_cost_kwh_stream_hot = data_stream_hot['price']
+                        eff_equipment = df_char['Eff_Equipment'].loc[df_char.index == original_hot_stream_id].values[0]
+
+                        total_co2_emissions_savings += co2_emission_per_kw_stream_hot * row_df_hx['Recovered_Energy']/eff_equipment
+                        total_money_savings += fuel_cost_kwh_stream_hot * row_df_hx['Recovered_Energy']/eff_equipment
+
+                    # cold stream
+                    if cold_stream_fuel is not None:
+                        data_stream_cold = fuel_properties.get_values(country, cold_stream_fuel, 'non-household')
+                        co2_emission_per_kw_stream_cold = data_stream_cold['co2_emissions']
+                        fuel_cost_kwh_stream_cold = data_stream_cold['price']
+                        eff_equipment = df_char['Eff_Equipment'].loc[df_char.index == original_cold_stream_id].values[0]
+
+                        total_co2_emissions_savings += co2_emission_per_kw_stream_cold * row_df_hx['Recovered_Energy']/eff_equipment
+                        total_money_savings += fuel_cost_kwh_stream_cold * row_df_hx['Recovered_Energy']/eff_equipment
+
+                list_df_optimization.append({
+                    'index': index,
+                    'co2_savings': total_co2_emissions_savings,
+                    'money_savings': total_money_savings,
+                    'energy_recovered': df_hx['Recovered_Energy'].sum(),
+                    'energy_investment': df_hx['Total_Turnkey_Cost'].sum() / df_hx['Recovered_Energy'].sum(),
+                    'turnkey': df_hx['Total_Turnkey_Cost'].sum(),
+                    'om_fix': df_hx['HX_OM_Fix_Cost'].sum()
                 })
 
 
@@ -356,29 +420,23 @@ def convert_pinch(in_var, kb : KB):
 
     # get best options that recover maximum energy
     energy_recovered = df_optimization.sort_values('energy_recovered', ascending=False).head(number_output_options).copy()
-    energy_recovered_options = get_best_x_outputs(info_pinch, energy_recovered, country, lifetime, pinch_delta_T_min,
+    energy_recovered_options = get_best_x_outputs(pinch_designed_solutions, energy_recovered, country, lifetime, pinch_delta_T_min,
                                                   kb,stream_table,stream_combination_not_feasible, type='Energy Savings')
 
     # get best options that give best energy_recovery/turnkey ratio
     energy_investment = df_optimization.sort_values('energy_investment').head(number_output_options).copy()
-    energy_investment_options = get_best_x_outputs(info_pinch, energy_investment, country, lifetime,
+    energy_investment_options = get_best_x_outputs(pinch_designed_solutions, energy_investment, country, lifetime,
                                                    pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible, type='Energy Savings Specific Cost')
 
     # get best options that save maximum amount of CO2
     co2_savings = df_optimization.sort_values('co2_savings', ascending=False).head(number_output_options).copy()
-    co2_savings_options = get_best_x_outputs(info_pinch, co2_savings, country, lifetime, pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible,type='CO<sub>2</sub> Emissions Savings')
+    co2_savings_options = get_best_x_outputs(pinch_designed_solutions, co2_savings, country, lifetime, pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible,type='CO<sub>2</sub> Emissions Savings')
 
-    # isolated streams are not linked to any equipment, thus not possible to know how much CO2 is saved
-    if only_isolated_streams == True:
-        co2_savings_options = []
-        co2_savings = []
-    else:
-        co2_savings = co2_savings.to_dict(orient='records')
 
     # build report
     output_pinch = {
         'co2_optimization': {
-            "best_options": co2_savings,
+            "best_options": co2_savings.to_dict(orient='records'),
             "solutions": co2_savings_options},
         'energy_recovered_optimization': {
             "best_options": energy_recovered.to_dict(orient='records'),
