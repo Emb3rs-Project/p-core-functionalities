@@ -4,13 +4,13 @@ from .Pinch.convert_pinch import convert_pinch
 from ....utilities.kb import KB
 
 
-def pinch_isolated_streams(in_var, kb: KB):
+def convert_pinch_isolated_streams(in_var, kb: KB):
     '''
     Perform Pinch Analysis to isolated streams.
     Return best solutions data and report
 
     :param in_var:
-        all_input_objects : dict
+        streams : dict
             Streams data
 
         pinch_delta_T_min : float
