@@ -36,7 +36,7 @@ class StreamData(BaseModel):
     capacity: Optional[PositiveFloat] = None
     hourly_generation: Optional[conlist(NonNegativeFloat, min_items=8760, max_items=8760)]
 
-    @validator('daily_periods')
+    @validator('daily_periods', allow_reuse=True)
     def check_structure_daily_periods(cls, daily_periods):
         daily_periods = ast.literal_eval(daily_periods)
         if daily_periods != []:
@@ -54,7 +54,7 @@ class StreamData(BaseModel):
                 raise TypeError('Provide a list for daily periods.')
         return daily_periods
 
-    @validator('shutdown_periods')
+    @validator('shutdown_periods', allow_reuse=True)
     def check_structure_shutdown_periods(cls, shutdown_periods):
         shutdown_periods = ast.literal_eval(shutdown_periods)
         if shutdown_periods != []:
@@ -73,7 +73,7 @@ class StreamData(BaseModel):
                     'Provide a list for shutdown periods.')
         return shutdown_periods
 
-    @validator('capacity', always=True)
+    @validator('capacity', always=True, allow_reuse=True)
     def check_capacity_or_flowrate_and_cp(cls, capacity, values, **kwargs):
         if values["fluid"] == 'steam' and capacity == None:
             raise Exception('When introducing steam as a fluid, introduce the capacity.')
@@ -86,7 +86,7 @@ class StreamData(BaseModel):
         else:
             return capacity
 
-    @validator('hourly_generation')
+    @validator('hourly_generation', allow_reuse=True)
     def check_if_generated_or_import_schedule(cls, hourly_generation_profile, values, **kwargs):
         if hourly_generation_profile is None:
             if values["daily_periods"] is None or values["shutdown_periods"] is None or values["saturday_on"] is None or \
