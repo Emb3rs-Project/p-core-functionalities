@@ -450,7 +450,7 @@ def convert_pinch(in_var, kb : KB):
 
     # output
     output_pinch = {
-        'co2_optimization': co2_savings,
+        'co2_optimization': co2_savings.to_dict(orient='records'),
         'energy_recovered_optimization': energy_recovered.to_dict(orient='records'),
         'energy_investment_optimization': energy_investment.to_dict(orient='records')
     }
