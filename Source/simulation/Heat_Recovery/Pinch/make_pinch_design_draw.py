@@ -27,6 +27,11 @@ def make_pinch_design_draw(info):
     pinch_temperature = info['pinch_temperature']
     pinch_data = info['df_hx'].to_dict(orient='records')
     pinch_delta_temperature = info['pinch_delta_T_min']
+    pinch_delta_temperature = pinch_delta_temperature/2
+    pinch_temperature -= pinch_delta_temperature
+
+    pinch_hot = pinch_temperature + pinch_delta_temperature
+    pinch_cold = pinch_temperature - pinch_delta_temperature
 
     ###########################
     # Defined vars
@@ -69,7 +74,7 @@ def make_pinch_design_draw(info):
     below_pinch_hx = []
     info_to_design_hx = {}
     for match_data in pinch_data:
-        if match_data['HX_Hot_Stream_T_Cold'] >= pinch_temperature:
+        if match_data['HX_Hot_Stream_T_Cold'] >= pinch_hot:
             above_pinch_hx.append(match_data)
         else:
             below_pinch_hx.append(match_data)
@@ -86,19 +91,21 @@ def make_pinch_design_draw(info):
     y_stream = y_max
     y_stream -= space_between_streams  # y of first stream to be drawn
 
+
     for stream in streams_info:
         supply_temperature, target_temperature = stream['temperatures']
+
         # hot stream
         if supply_temperature > target_temperature:
-            if supply_temperature > pinch_temperature and target_temperature > pinch_temperature:
+            if supply_temperature > pinch_hot and target_temperature > pinch_hot:
                 left_side_pinch.append(target_temperature)
-            elif supply_temperature < pinch_temperature and target_temperature < pinch_temperature:
+            elif supply_temperature < pinch_hot and target_temperature < pinch_hot:
                 right_side_pinch.append(supply_temperature)
         # cold stream
         else:
-            if supply_temperature < pinch_temperature and target_temperature < pinch_temperature:
+            if supply_temperature < pinch_cold and target_temperature < pinch_cold:
                 right_side_pinch.append(target_temperature)
-            elif supply_temperature > pinch_temperature and target_temperature > pinch_temperature:
+            elif supply_temperature > pinch_cold and target_temperature > pinch_cold:
                 left_side_pinch.append(supply_temperature)
 
     # sort temperature steps
@@ -109,7 +116,9 @@ def make_pinch_design_draw(info):
 
     ######################################################################################
     # DRAW MAIN STREAMS AND SPLITS - stream per stream
+
     for stream in streams_info:
+
         number_splits_above = 0
         number_splits_below = 0
         supply_temperature, target_temperature = stream['temperatures']
@@ -121,16 +130,16 @@ def make_pinch_design_draw(info):
             plt.gca().text(x_min - 4, y_stream, str(stream['id']),color="red", size='large', style='normal', weight='bold', ha='right', va='center')
             plt.gca().text(x_min - 4, y_stream, str(stream['id']), color="red", size='large', style='normal', weight='bold', ha='right', va='center')
 
-            if supply_temperature > pinch_temperature:
+            if supply_temperature > pinch_hot:
                 left_temperature = x_min
-            elif supply_temperature == pinch_temperature:
+            elif supply_temperature == pinch_hot:
                 left_temperature = pinch
             else:
                 left_temperature = pinch + (right_side_pinch.index(supply_temperature) + 1) * 3
 
-            if target_temperature < pinch_temperature:
+            if target_temperature < pinch_hot:
                 right_temperature = x_max
-            elif target_temperature == pinch_temperature:
+            elif target_temperature == pinch_hot:
                 right_temperature = pinch
             else:
                 right_temperature = pinch-(left_side_pinch.index(target_temperature) + 1) * 3
@@ -157,7 +166,7 @@ def make_pinch_design_draw(info):
                 i = 0
                 for iterator in range(len(stream['above_pinch'])):
                     if stream['above_pinch'][iterator]['id'] != stream['id']:
-                        if target_temperature < pinch_temperature:
+                        if target_temperature < pinch_hot:
                             split_closest_pinch_temperature = pinch
                         else:
                             split_closest_pinch_temperature = right_temperature
@@ -172,9 +181,9 @@ def make_pinch_design_draw(info):
             # SPLIT BELOW PINCH
             if len(stream['below_pinch']) > 1:
                 i = 0
-                for iterator in range(len(stream['below_pinch'])): # for iterator in range(len(stream['below_pinch']) - 1):
+                for iterator in range(len(stream['below_pinch'])):  # for iterator in range(len(stream['below_pinch']) - 1):
                     if stream['below_pinch'][iterator]['id'] != stream['id']:
-                        if supply_temperature > pinch_temperature:
+                        if supply_temperature > pinch_hot:
                             split_closest_pinch_temperature = left_temperature
                         else:
                             split_closest_pinch_temperature = pinch
@@ -197,16 +206,17 @@ def make_pinch_design_draw(info):
 
             dict_for_hx[str(stream['id'])] = y_stream
 
-            if supply_temperature == pinch_temperature-pinch_delta_temperature:
+
+            if supply_temperature == pinch_cold:
                 right_temperature = pinch
-            elif supply_temperature < pinch_temperature-pinch_delta_temperature:
+            elif supply_temperature < pinch_cold:
                 right_temperature = x_max
             else:
                 right_temperature = pinch - (left_side_pinch.index(supply_temperature) + 1) * 3
 
-            if target_temperature > pinch_temperature-pinch_delta_temperature:
+            if target_temperature > pinch_cold:
                 left_temperature = x_min
-            elif target_temperature == pinch_temperature-pinch_delta_temperature:
+            elif target_temperature == pinch_cold:
                 left_temperature = pinch
             else:
                 left_temperature = pinch + (right_side_pinch.index(target_temperature) + 1) * 3
@@ -232,7 +242,7 @@ def make_pinch_design_draw(info):
                 i = 0
                 for iterator in range(len(stream['above_pinch'])):
                     if stream['above_pinch'][iterator]['id'] != stream['id']:
-                        if supply_temperature < pinch_temperature:
+                        if supply_temperature < pinch_cold:
                             split_closest_pinch_temperature = pinch
                         else:
                             split_closest_pinch_temperature = right_temperature
@@ -252,7 +262,7 @@ def make_pinch_design_draw(info):
                 i = 0
                 for iterator in range(len(stream['below_pinch'])):
                     if stream['below_pinch'][iterator]['id'] != stream['id']:
-                        if target_temperature > pinch_temperature - pinch_delta_temperature:
+                        if target_temperature > pinch_cold:
                             split_closest_pinch_temperature = pinch
                         else:
                             split_closest_pinch_temperature = left_temperature
@@ -298,7 +308,7 @@ def make_pinch_design_draw(info):
             # write hot streams hx temperatures
             for stream_info in streams_info:
                 if stream_info['id'] == match['HX_Original_Hot_Stream']:
-                    if round(pinch_temperature) != round(match['HX_Hot_Stream_T_Cold']) and round(stream_info['temperatures'][1]) != round(match['HX_Hot_Stream_T_Cold']):
+                    if round(pinch_hot) != round(match['HX_Hot_Stream_T_Cold']) and round(stream_info['temperatures'][1]) != round(match['HX_Hot_Stream_T_Cold']):
                         plt.gca().text(go_to_the_left + 1,
                                        dict_for_hx[str(match['HX_Hot_Stream'])] + height_temperature_text ,
                                        "{:.0f}".format(round(match['HX_Hot_Stream_T_Cold'])) + 'º', ha="left", va="bottom")
@@ -353,7 +363,7 @@ def make_pinch_design_draw(info):
             # write cold streams hx temperatures
             for stream_info in streams_info:
                 if stream_info['id'] == match['HX_Original_Cold_Stream']:
-                    if round(pinch_temperature-pinch_delta_temperature) != round(match['HX_Cold_Stream_T_Hot']) and round(stream_info['temperatures'][1]) != round(match['HX_Cold_Stream_T_Hot']):
+                    if round(pinch_cold) != round(match['HX_Cold_Stream_T_Hot']) and round(stream_info['temperatures'][1]) != round(match['HX_Cold_Stream_T_Hot']):
                         plt.gca().text(go_to_the_right - 1,
                                        dict_for_hx[str(match['HX_Cold_Stream'])] + height_temperature_text ,
                                        "{:.0f}".format(round(match['HX_Cold_Stream_T_Hot'])) + 'º', ha="right", va="bottom")
@@ -418,9 +428,9 @@ def make_pinch_design_draw(info):
                         plt.gca().text(diagonal_space_cold_stream_out / 2, stream_y, 'H', weight='bold', ha='center', va='center', zorder=15)
                         plt.gca().text(diagonal_space_cold_stream_out / 2, stream_y - circle_radius - 1, str(round(power_utility, 1)) + 'kW', ha='center', va='center')
 
-        elif target_temperature > supply_temperature and target_temperature > pinch_temperature - pinch_delta_temperature:
+        elif target_temperature > supply_temperature and target_temperature > pinch_cold:
 
-            power_utility = mcp_total * (target_temperature - (pinch_temperature - pinch_delta_temperature))
+            power_utility = mcp_total * (target_temperature - pinch_cold)
 
             if power_utility > 0:
                 circle_hot_utility = plt.Circle((diagonal_space_cold_stream_out / 2, stream_y), circle_radius, color='red', zorder=5)
@@ -499,9 +509,9 @@ def make_pinch_design_draw(info):
                                    str(round(power_utility, 1)) + 'kW', ha='center', va='center')
 
 
-        elif supply_temperature > target_temperature and pinch_temperature > target_temperature:
+        elif supply_temperature > target_temperature and pinch_hot > target_temperature:
 
-            power_utility = mcp_total * (pinch_temperature - target_temperature)
+            power_utility = mcp_total * pinch_hot
 
             if power_utility > 0:
                 circle_hot_utility = plt.Circle((x_max - (diagonal_space_hot_stream_out / 2), stream_y), circle_radius,
@@ -518,8 +528,8 @@ def make_pinch_design_draw(info):
     ########################################################################
     # PINCH LINE AND TEMPERATURES
     plt.plot((pinch, pinch), (y_min+ space_between_splits/2, y_max- space_between_splits/2), 'k--')
-    plt.gca().text(pinch, y_max - space_between_splits/2, "{:.1f}".format(pinch_temperature) + 'ºC', style='italic', ha='right', va='bottom')
-    plt.gca().text(pinch, y_min, "{:.1f}".format(pinch_temperature-pinch_delta_temperature) + 'ºC', style='italic', ha='left', va='top')
+    plt.gca().text(pinch, y_max - space_between_splits/2, "{:.1f}".format(pinch_hot) + 'ºC', style='italic', ha='right', va='bottom')
+    plt.gca().text(pinch, y_min, "{:.1f}".format(pinch_cold) + 'ºC', style='italic', ha='left', va='top')
 
     #plt.title('- HX NETWORK - PINCH ANALYSIS ('+"{:.1f}".format(pinch_temperature - pinch_delta_temperature/2) + 'ºC)',weight='bold', ha='center', va='top',size='large')
 
@@ -590,7 +600,6 @@ def make_pinch_design_draw(info):
 
     # get HTML
     fig_html = mpld3.fig_to_html(fig)
-    #plt.show()
     plt.close()
 
     return fig_html
