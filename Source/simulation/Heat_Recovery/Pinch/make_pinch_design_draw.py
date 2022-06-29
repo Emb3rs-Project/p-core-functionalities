@@ -30,6 +30,7 @@ def make_pinch_design_draw(info):
     pinch_delta_temperature = pinch_delta_temperature/2
     pinch_temperature -= pinch_delta_temperature
 
+
     pinch_hot = pinch_temperature + pinch_delta_temperature
     pinch_cold = pinch_temperature - pinch_delta_temperature
 
@@ -160,6 +161,7 @@ def make_pinch_design_draw(info):
 
             # gather stream ID and corresponding y where it was placed
             dict_for_hx[str(stream['id'])] = y_stream
+
 
             # SPLIT ABOVE PINCH
             if len(stream['above_pinch']) > 1:
@@ -405,7 +407,6 @@ def make_pinch_design_draw(info):
                     # get temperature the stream reaches
                     for key in dict_temperatures[str(stream['id'])].keys():
                         write_temperature += dict_temperatures[str(stream['id'])][key]['temperature'] * dict_temperatures[str(stream['id'])][key]['mcp'] /mcp_total
-
                     plt.gca().text(diagonal_space_cold_stream_out, stream_y + height_temperature_text, "{:.0f}".format(write_temperature) + 'º',ha='center',va='bottom')
                     # get utility power
                     power_utility = mcp_total * (target_temperature-write_temperature)
@@ -420,6 +421,7 @@ def make_pinch_design_draw(info):
 
             elif len(stream['above_pinch']) != 0:
                     power_utility = mcp_total * (target_temperature - dict_temperatures[str(stream['id'])][str(stream['id'])]['temperature'])
+
                     if power_utility != 0:
                         circle_hot_utility = plt.Circle((diagonal_space_cold_stream_out / 2, stream_y), circle_radius,color='red', zorder=5)
                         circle_hot_utility_small = plt.Circle((diagonal_space_cold_stream_out / 2, stream_y),small_circle_radius, color='white', zorder=10)
@@ -601,6 +603,7 @@ def make_pinch_design_draw(info):
     # get HTML
     fig_html = mpld3.fig_to_html(fig)
     plt.close()
+
 
     return fig_html
 

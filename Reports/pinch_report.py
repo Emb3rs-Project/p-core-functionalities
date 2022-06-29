@@ -111,11 +111,14 @@ def pinch_report(data_pinch):
         for solution in category_solutions_data["solutions"]:
 
             # stream table
-            solution['stream_table'] =solution['stream_table'][['Fluid', 'Supply Temperature', 'Target Temperature', 'Capacity', 'Stream Type', 'mcp']]
-            solution['stream_table'].columns = ['Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "Stream Type", "mcp [kJ/K]"]
-            all_streams_table = solution['stream_table'][['Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "mcp [kJ/K]", "Stream Type"]]
-            all_streams_table["Capacity [kW]"] = get_int(all_streams_table["Capacity [kW]"])
+            solution['stream_table'] = solution['stream_table'][['Name','Fluid', 'Supply Temperature', 'Target Temperature', 'Capacity', 'Stream Type', 'mcp']]
+            solution['stream_table'].columns = ['Name','Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "Stream Type", "mcp [kJ/K]"]
 
+
+            all_streams_table = solution['stream_table'][['Name','Fluid', "Supply Temperature [ºC]", "Target Temperature [ºC]", "Capacity [kW]", "mcp [kJ/K]", "Stream Type"]]
+            all_streams_table["Capacity [kW]"] = get_int(all_streams_table["Capacity [kW]"])
+            all_streams_table["Supply Temperature [ºC]"] = get_round(all_streams_table["Supply Temperature [ºC]"], decimal=1)
+            all_streams_table["mcp [kJ/K]"] = get_round(all_streams_table["mcp [kJ/K]"], decimal=1)
 
             df_streams = all_streams_table.copy()
             df_streams.insert(0, 'Stream ID', df_streams.index.copy())
@@ -137,7 +140,14 @@ def pinch_report(data_pinch):
                         "HX_Cold_Stream_T_Hot", "HX_Original_Hot_Stream", "HX_Hot_Stream_mcp", "HX_Hot_Stream_T_Hot",
                         "HX_Hot_Stream_T_Cold"]].copy()
 
+
+            df_hx["HX_Cold_Stream_mcp"] = get_round(df_hx["HX_Cold_Stream_mcp"], decimal=2)
+            df_hx["HX_Hot_Stream_mcp"] = get_round(df_hx["HX_Hot_Stream_mcp"], decimal=2)
             df_hx["HX_Power"] = get_int(df_hx["HX_Power"])
+            df_hx["HX_Cold_Stream_T_Cold"] = get_round(df_hx["HX_Cold_Stream_T_Cold"], decimal=1)
+            df_hx["HX_Cold_Stream_T_Hot"] = get_round(df_hx["HX_Cold_Stream_T_Hot"], decimal=1)
+            df_hx["HX_Hot_Stream_T_Hot"] = get_round(df_hx["HX_Hot_Stream_T_Hot"], decimal=1)
+            df_hx["HX_Hot_Stream_T_Cold"] = get_round(df_hx["HX_Hot_Stream_T_Cold"], decimal=1)
 
             columns = [("HX Info", "HX ID"),
                         ("HX Info", "HX Power"),
@@ -177,7 +187,11 @@ def pinch_report(data_pinch):
             solutions_data[key]['df_hx_economic'].append(styling(df_hx_economic))
 
             # HX storage
-            df_storage = df[["HX ID",'Storage', 'Storage_Satisfies', 'Storage_Turnkey_Cost']]
+            df_storage = df[["HX ID",'Storage', 'Storage_Satisfies', 'Storage_Turnkey_Cost']].copy()
+            df_storage["Storage_Satisfies"] = get_round(df_storage["Storage_Satisfies"], decimal=2)
+            df_storage["Storage_Turnkey_Cost"] = get_int(df_storage["Storage_Turnkey_Cost"])
+            df_storage["Storage"] = get_round(df_storage["Storage"], decimal=2)
+
             df_storage.columns = ["HX ID",'Storage Volume [m3]', 'Storage Match [%]', 'CAPEX [€]']
 
             if (df_storage['Storage Volume [m3]'] == 0).sum() == df_storage.shape[0]:

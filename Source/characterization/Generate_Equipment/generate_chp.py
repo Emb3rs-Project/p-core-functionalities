@@ -120,11 +120,13 @@ class Chp:
 
         # GET STREAMS
         # inflow
-        self.streams.append(stream_industry(self.id,
+        self.streams.append(stream_industry('chp air inflow',
+                                            self.id,
                                             'inflow',
                                             inflow_fluid,
                                             inflow_supply_temperature,
                                             inflow_target_temperature,
                                             inflow_flowrate,
                                             inflow_capacity,
-                                            schedule))
+                                            schedule,
+                                            stream_id=1))

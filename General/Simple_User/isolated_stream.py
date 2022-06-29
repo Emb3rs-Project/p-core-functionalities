@@ -51,7 +51,8 @@ def isolated_stream(streams):
     # COMPUTE
     streams_output = []
 
-    for stream in streams:
+    for index_stream, stream in enumerate(streams):
+        index_stream += 1  # to start IDs at 1
         if stream['capacity'] == None:
             capacity = ( stream["flowrate"] * stream["fluid_cp"] * abs((stream["supply_temperature"] - stream["target_temperature"]))/ 3600)
             flowrate = stream['flowrate']
@@ -82,6 +83,7 @@ def isolated_stream(streams):
 
 
         info_stream = stream_industry(
+            stream["name"],
             None,
             stream_type,
             stream["fluid"],
@@ -90,14 +92,15 @@ def isolated_stream(streams):
             flowrate,
             capacity,
             schedule=schedule,
-            hourly_generation=hourly_generation
+            hourly_generation=hourly_generation,
+            stream_id=index_stream
         )
 
         streams_output.append(info_stream)
 
         info_stream['id'] = stream['id']
-        info_stream['fuel'] = stream['fuel_associated']
-        info_stream['eff_equipment'] = stream['eff_equipment_associated']
+        info_stream['fuel'] = stream['fuel']
+        info_stream['eff_equipment'] = stream['eff_equipment']
 
     output = {'streams': streams_output}
 

@@ -87,6 +87,7 @@ class Burner:
             excess_heat_target_temperature = 120
         else:
             supply_fluid = 'air'  # Excess heat fluid type
+            excess_heat_target_temperature = 25
 
         ############################################################################################
         # COMPUTE
@@ -103,11 +104,13 @@ class Burner:
 
             self.supply_capacity = self.total_yearly_supply_capacity / (sum(schedule))
 
+
         # fuel consumption
         fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(kb,
                                                                     self.supply_capacity,
                                                                     self.global_conversion_efficiency,
                                                                     self.fuel_type)
+
 
         # inflow stream
         inflow_flowrate = m_air
@@ -125,20 +128,25 @@ class Burner:
 
         # GET STREAMS
         # air inflow
-        self.streams.append(stream_industry(self.id,
+        self.streams.append(stream_industry('burner air inflow',
+                                            self.id,
                                             'inflow',
                                             inflow_fluid,
                                             inflow_supply_temperature,
                                             inflow_target_temperature,
                                             inflow_flowrate,
                                             inflow_capacity,
-                                            schedule))
+                                            schedule,
+                                            stream_id=1))
 
-        self.streams.append(stream_industry(self.id,
-                                            'excess_heat',
-                                            supply_fluid,
-                                            excess_heat_supply_temperature,
-                                            excess_heat_target_temperature,
-                                            excess_heat_flowrate,
-                                            excess_heat_supply_capacity,
-                                            schedule))
+        if excess_heat_target_temperature < excess_heat_supply_temperature:
+            self.streams.append(stream_industry('burner excess heat',
+                                                self.id,
+                                                'excess_heat',
+                                                supply_fluid,
+                                                excess_heat_supply_temperature,
+                                                excess_heat_target_temperature,
+                                                excess_heat_flowrate,
+                                                excess_heat_supply_capacity,
+                                                schedule,
+                                                stream_id=2))

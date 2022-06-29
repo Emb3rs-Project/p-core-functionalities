@@ -48,19 +48,21 @@ class HxData:
             state_2 = 'liquid'
 
         # get hx values
+
         if state_1 == 'liquid' and state_2 == 'liquid':
             hx_type = 'hx_plate'
             hx_u_value = 2000
 
-        elif (state_1 == 'flue_gas' and state_2 == 'liquid') or (state_1 == 'liquid' and state_2 == 'flue_gas') or  (state_1 == 'gas' and state_2 == 'flue_gas') or  (state_1 == 'flue_gas' and state_2 == 'gas'):
+        elif (state_1 == 'flue_gas' and state_2 == 'liquid') or (state_1 == 'liquid' and state_2 == 'flue_gas') or  (state_1 == 'gas' and state_2 == 'flue_gas') or  (state_1 == 'flue_gas' and state_2 == 'gas') or  (state_1 == 'gas' and state_2 == 'gas'):
             hx_type = 'hx_economizer'
             hx_u_value = 50
 
-        elif (state_1 == 'liquid' and state_2 == 'steam') or (state_1 == 'steam' and state_2 == 'liquid'):
+        elif (state_1 == 'liquid' and state_2 == 'steam') or (state_1 == 'steam' and state_2 == 'liquid') or (state_1 == 'gas' and state_2 == 'liquid') or (state_1 == 'liquid' and state_2 == 'gas'):
             hx_type = 'hx_kettle_boiler'
             hx_u_value = 800
 
         else:
+            print(state_1,state_2)
             print('When designing heat exchanger, combination of fluids not found.'
                   'Default: hx_u_value = 800')
 

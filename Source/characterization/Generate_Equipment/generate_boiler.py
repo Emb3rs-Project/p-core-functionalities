@@ -72,6 +72,8 @@ class Boiler:
         self.id = in_var['id']  # equipment ID
         self.fuel_type = in_var['fuel_type']  # Fuel type  (Natural gas, Fuel oil, Biomass)
         self.supply_capacity = in_var['supply_capacity']
+
+
         self.global_conversion_efficiency = in_var['global_conversion_efficiency']
         processes = in_var['processes']
         supply_temperature = in_var['equipment_supply_temperature']
@@ -92,12 +94,7 @@ class Boiler:
         schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
 
         # supply temperature
-        if supply_temperature > 100:
-            self.equipment_sub_type = 'steam_boiler'
-            supply_fluid = 'steam'
-        else:
-            self.equipment_sub_type = 'hot_water_boiler'
-            supply_fluid = 'water'
+        supply_fluid = "water"  # this is only used in the PINCH -> water for both steam/hot water boiler
 
         # supply capacity
         if self.supply_capacity is None:
@@ -115,18 +112,23 @@ class Boiler:
                 self.equipment_sub_type, self.supply_capacity)
 
         # fuel consumption
-        refinement_efficiency = 0.03  # comparing real data and estimate
         fuel_consumption, m_air, m_flue_gas = combustion_mass_flows(kb,
                                                                     self.supply_capacity,
                                                                     self.global_conversion_efficiency,
                                                                     self.fuel_type)
 
         # supply heat stream
-        supply_flowrate = compute_flow_rate(kb,
-                                            supply_fluid,
-                                            self.supply_capacity,
-                                            supply_temperature,
-                                            return_temperature)
+        if supply_temperature > 100:
+            supply_flowrate = in_var['supply_flowrate']  # [kg/h]
+            supply_capacity_water = supply_flowrate * 4.2 * (100-return_temperature)
+        else:
+            supply_flowrate = compute_flow_rate(kb,
+                                                supply_fluid,
+                                                self.supply_capacity,
+                                                supply_temperature,
+                                                return_temperature)
+
+            supply_capacity_water = self.supply_capacity
 
         thermal_capacity = self.supply_capacity / self.global_conversion_efficiency
 
@@ -148,32 +150,38 @@ class Boiler:
 
         # GET STREAMS
         # air inflow
-        self.streams.append(stream_industry(self.id,
+        self.streams.append(stream_industry('boiler air inflow',
+                                            self.id,
                                             'inflow',
                                             inflow_fluid,
                                             inflow_supply_temperature,
                                             inflow_target_temperature,
                                             inflow_flowrate,
                                             inflow_capacity,
-                                            schedule))
+                                            schedule,
+                                            stream_id=1))
 
         # supply heat
-        self.streams.append(stream_industry(self.id,
+        self.streams.append(stream_industry('boiler circuit',
+                                            self.id,
                                             'supply_heat',
                                             supply_fluid,
                                             return_temperature,
                                             supply_temperature,
                                             supply_flowrate,
-                                            self.supply_capacity,
-                                            schedule))
+                                            supply_capacity_water,
+                                            schedule,
+                                            stream_id=2))
 
         # excess heat
-        self.streams.append(stream_industry(self.id,
+        self.streams.append(stream_industry('boiler flue gas',
+                                            self.id,
                                             'excess_heat',
                                             excess_heat_fluid,
                                             excess_heat_supply_temperature,
                                             excess_heat_target_temperature,
                                             excess_heat_flowrate,
                                             excess_heat_supply_capacity,
-                                            schedule))
+                                            schedule,
+                                            stream_id=3))
 

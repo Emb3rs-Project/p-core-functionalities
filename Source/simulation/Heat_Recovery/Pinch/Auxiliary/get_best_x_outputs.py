@@ -85,7 +85,7 @@ def get_best_x_outputs(info_pinch, df_optimization, country, lifetime, pinch_del
             'money_savings': row['money_savings'] / row['energy_recovered'],
             'energy_dispatch': row['energy_recovered'],
             'discount_rate': interest_rate,
-            'equipment_detailed_savings': _info_pinch['df_equipment_economic'].to_dict(orient='records'),  # each equipment savings
+            #'equipment_detailed_savings': _info_pinch['df_equipment_economic'].to_dict(orient='records'),  # each equipment savings
             'pinch_temperature': _info_pinch['pinch_temperature'] - pinch_delta_T_min,
             'pinch_hx_data': _info_pinch['df_hx'].to_dict(orient='records'),  # all pinch data information
             'theo_minimum_hot_utility': _info_pinch['theo_minimum_hot_utility'],

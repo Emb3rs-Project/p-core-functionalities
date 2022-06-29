@@ -128,23 +128,24 @@ class Cooling_Equipment:
         # excess heat stream
         if self.equipment_sub_type == 'co2_chiller':
             excess_heat_supply_capacity = self.supply_capacity * 1.520
-            excess_heat_flowrate = compute_flow_rate(excess_heat_fluid,
+
+            excess_heat_flowrate = compute_flow_rate(kb,excess_heat_fluid,
                                                      excess_heat_supply_capacity,
                                                      excess_heat_supply_temperature,
                                                      excess_heat_target_temperature)
         else:
             excess_heat_supply_capacity = self.supply_capacity * (1 - 1 / self.global_conversion_efficiency)
-            excess_heat_flowrate = excess_heat_supply_capacity / ( abs(excess_heat_supply_temperature - excess_heat_target_temperature) * excess_heat_fluid_cp) *3600
+            excess_heat_flowrate = excess_heat_supply_capacity / (abs(excess_heat_supply_temperature - excess_heat_target_temperature) * excess_heat_fluid_cp) *3600
 
         # GET STREAMS
         # excess heat
-        self.streams.append(stream_industry(self.id,
+        self.streams.append(stream_industry(self.equipment_sub_type + ' excess heat',
+                                            self.id,
                                             'excess_heat',
                                             excess_heat_fluid,
                                             excess_heat_supply_temperature,
                                             excess_heat_target_temperature,
                                             excess_heat_flowrate,
                                             excess_heat_supply_capacity,
-                                            schedule))
-
-
+                                            schedule,
+                                            stream_id=1))

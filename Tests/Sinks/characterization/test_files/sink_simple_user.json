@@ -4,6 +4,7 @@
     "name": "1",
     "streams": [
       {
+        "name": "stream_1",
         "fluid": "water",
         "flowrate": 1,
         "fluid_cp": 1.5,

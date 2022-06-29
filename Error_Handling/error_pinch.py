@@ -21,13 +21,14 @@ def error_convert_pinch(platform_data):
     class StreamPinch(BaseModel):
 
         id: int
+        name: str
         object_type: str
         stream_type: StreamType
         supply_temperature: PositiveFloat
         target_temperature: PositiveFloat
         fluid: StrictStr
         flowrate: Union[PositiveFloat, None]
-        schedule: conlist(int)
+        schedule: conlist(float)
         hourly_generation: conlist(NonNegativeFloat)
         capacity: PositiveFloat
 
@@ -38,8 +39,8 @@ def error_convert_pinch(platform_data):
 
         @validator('schedule')
         def check_if_valid_values(cls, v):
-            _v = list(filter(lambda num: num != 0, v))
-            _v = list(filter(lambda num: num != 1, _v))
+            _v = list(filter(lambda num: num < 0, v))
+            _v = list(filter(lambda num: num > 1, _v))
 
             if len(_v) > 0:
                 raise ValueError('Values not valid found (only 0 or 1)')
@@ -59,6 +60,7 @@ def error_convert_pinch(platform_data):
         equipment_id: Optional[NonNegativeInt]
         fuel_type: Optional[FuelType]
         streams: Optional[List[StreamPinch]]
+        global_conversion_efficiency: Optional[confloat(gt=0)]
         object_type: ObjectType
 
         @validator("object_type")
@@ -74,6 +76,10 @@ def error_convert_pinch(platform_data):
                     raise Exception(
                         ' All equipment must have a fuel type associated (missing Equipment key:\'fuel_type\').')
 
+                if values['global_conversion_efficiency'] is None:
+                    raise Exception(
+                        ' All equipment must have a conversion efficiency associated (missing Equipment key:\'global_conversion_efficiency\').')
+
             return object_type
 
     class ObjectData(BaseModel):
@@ -83,6 +89,7 @@ def error_convert_pinch(platform_data):
     class PlatformPinch(Location):
 
         all_input_objects: List[ObjectData]
+        streams_to_analyse: conlist(int, min_items=1)
         pinch_delta_T_min: Optional[PositiveFloat] = 20
         perform_all_combinations: Optional[TrueFalse] = True
         lifetime: Optional[PositiveInt] = 20

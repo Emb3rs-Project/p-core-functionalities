@@ -41,11 +41,11 @@ def convert_pinch_isolated_streams(in_var, kb: KB):
     # perform pinch analysis
     input_data = {
         "platform": {
+            "streams_to_analyse": in_var['platform']['streams_to_analyse'],
             'all_input_objects': streams,
             'pinch_delta_T_min': in_var['platform']['pinch_delta_T_min'],
             'location': in_var['platform']['location']}
     }
-
 
     pinch_output = convert_pinch(input_data, kb)
 

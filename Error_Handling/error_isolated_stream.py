@@ -20,9 +20,10 @@ class Fuel(str, Enum):
 class StreamData(BaseModel):
 
     id: int
-
-    fuel_associated: Optional[Union[Fuel, None]]
-    eff_equipment_associated: Optional[Union[confloat(gt=0,le=1), None]]
+    name: str
+    fuel: Optional[Union[Fuel, None]]
+    eff_equipment: Optional[Union[confloat(gt=0,le=1), None]]
+    object_type: Optional[str] = "stream"
 
     supply_temperature: PositiveFloat
     target_temperature: PositiveFloat

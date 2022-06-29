@@ -1,0 +1,184 @@
+{
+  "platform": {
+    "all_objects_info": [
+      {
+        "name": "asdf",
+        "object_type": "stream",
+        "id": 190,
+        "saturday_on": 0,
+        "sunday_on": 0,
+        "shutdown_periods": "[]",
+        "daily_periods": "[[0,24]]",
+        "supply_temperature": 800,
+        "target_temperature": 65,
+        "fluid": "water",
+        "capacity": 86324
+      },
+      {
+        "name": "compressor oil",
+        "object_type": "stream",
+        "id": 189,
+        "saturday_on": 0,
+        "sunday_on": 0,
+        "shutdown_periods": "[]",
+        "daily_periods": "[[0,24]]",
+        "supply_temperature": 80,
+        "target_temperature": 65,
+        "fluid": "water",
+        "capacity": 86
+      },
+      {
+        "object_type": "boiler",
+        "id": 1001,
+        "saturday_on": 0,
+        "sunday_on": 0,
+        "shutdown_periods": "[]",
+        "daily_periods": "[[0,24]]",
+        "equipment_supply_temperature": 95,
+        "open_closed_loop": 0,
+        "fuel_type": "natural_gas",
+        "equipment_return_temperature": 40,
+        "global_conversion_efficiency": 0.9,
+        "processes_id": [2000,2001],
+        "supply_capacity": 200
+      },
+      {
+        "object_type": "cooling_equipment",
+        "id": 1002,
+        "saturday_on": 1,
+        "sunday_on": 1,
+        "shutdown_periods": "[[1,15]]",
+        "daily_periods": "[[0,24]]",
+        "cooling_equipment_sub_type": "co2_chiller",
+        "supply_capacity": 150
+      },
+      {
+        "object_type": "burner",
+        "id": 1003,
+        "burner_equipment_sub_type": "indirect_burner",
+        "saturday_on": 0,
+        "sunday_on": 0,
+        "shutdown_periods": "[]",
+        "daily_periods": "[[0,24]]",
+        "fuel_type": "fuel_oil",
+        "supply_capacity": 2500,
+        "burner_excess_heat_supply_temperature": 70,
+        "burner_excess_heat_target_temperature": 30,
+        "burner_excess_heat_flowrate": 3000,
+        "global_conversion_efficiency": 0.95,
+        "processes_id": [2002]
+      },
+      {
+        "object_type": "process",
+        "id": 2000,
+        "equipment_id": 1001,
+        "saturday_on": 0,
+        "sunday_on": 0,
+        "shutdown_periods": "[]",
+        "daily_periods": "[[8,9],[10,11],[12,13],[14,15],[16,17],[18,19]]",
+        "operation_temperature": 32,
+        "schedule_type": 1,
+        "cycle_time_percentage": 1,
+        "inflow_data": [
+          {
+            "name": "milk pre heating",
+            "mass": 10000,
+            "fluid": "milk",
+            "fluid_cp": 4,
+            "supply_temperature": 10
+          }
+        ]
+      },
+      {
+        "object_type": "process",
+        "id": 2001,
+        "equipment_id": 1001,
+        "saturday_on": 0,
+        "sunday_on": 0,
+        "shutdown_periods": "[]",
+        "daily_periods": "[[9,10],[11,12],[13,14],[15,16],[17,18],[19,20]]",
+        "operation_temperature": 45,
+        "schedule_type": 1,
+        "cycle_time_percentage": 0.5,
+        "inflow_data": [
+          {
+            "name": "water fermenter",
+            "mass": 1000,
+            "fluid_cp": 4.2,
+            "fluid": "water",
+            "supply_temperature": 20
+          },
+          {
+            "name": "milk fermenter",
+            "mass": 10000,
+            "fluid": "milk",
+            "fluid_cp": 4,
+            "supply_temperature": 32
+          }
+        ],
+         "maintenance_data": [
+          {
+            "name": "maintenance",
+            "maintenance_capacity": 1500
+
+          }
+        ],
+        "outflow_data": [
+          {
+            "name": "hot whey",
+            "mass": 11000,
+            "fluid_cp": 4.2,
+            "fluid": "whey",
+            "target_temperature": 20
+          }
+        ]
+      },
+      {
+        "object_type": "process",
+        "id": 2002,
+        "equipment_id": 1003,
+        "saturday_on": 0,
+        "sunday_on": 0,
+        "shutdown_periods": "[]",
+        "daily_periods": "[[8,18]]",
+        "operation_temperature": 100,
+        "schedule_type": 1,
+        "cycle_time_percentage": 0.1,
+        "inflow_data": [
+          {
+            "name": "cold whey" ,
+            "flowrate": 6000,
+            "fluid": "milk",
+            "fluid_cp": 4,
+            "supply_temperature": 20
+          }
+        ],
+        "maintenance_data": [
+          {
+            "name": "whey evaporation",
+            "maintenance_capacity": 1500
+          }
+        ],
+        "outflow_data": [
+          {
+            "name": "whey concentrate",
+            "flowrate": 600,
+            "fluid_cp": 4.2,
+            "fluid": "whey",
+            "initial_temperature": 75,
+            "target_temperature": 20
+          },
+          {
+            "name": "water condensate",
+            "flowrate": 5400,
+            "fluid_cp": 4.2,
+            "initial_temperature": 75,
+            "fluid": "water",
+            "target_temperature": 20
+          }
+        ]
+      }
+    ]
+  }
+}
+

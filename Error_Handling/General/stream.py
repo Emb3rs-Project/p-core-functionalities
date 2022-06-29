@@ -14,6 +14,7 @@ class StreamType(str, Enum):
 
 class Stream(BaseModel):
     id: int
+    name: Optional[str]
     object_type: str
     stream_type: StreamType
     supply_temperature: PositiveFloat

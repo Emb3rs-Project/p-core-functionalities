@@ -8,9 +8,9 @@ from ..General.schedule import Schedule
 class Chp(SourceDetailedObject, Schedule):
     fuel_type: FuelType
     global_conversion_efficiency: confloat(gt=0, lt=1)
-    supply_capacity: Optional[PositiveFloat]
+    supply_capacity: PositiveFloat
     electrical_generation: Optional[PositiveFloat]
-    processes_id: Optional[conlist(int)]
+    #processes_id: None
     thermal_conversion_efficiency: Optional[confloat(gt=0, lt=1)]
     electrical_conversion_efficiency: Optional[confloat(gt=0, lt=1)]
 
@@ -22,10 +22,11 @@ class Chp(SourceDetailedObject, Schedule):
 
         return v
 
-    @validator("supply_capacity", always=True)
-    def provide_supply_or_electrical_capacity_or_processes(cls, v, values, **kwargs):
-
-        if v is None and values['processes_id'] is None and values['electrical_generation'] is None:
-            raise Exception('Provide equipment thermal capacity, electrical capacity or the processes associated')
-
-        return v
+    #@validator("supply_capacity", always=True)
+    #def provide_supply_or_electrical_capacity_or_processes(cls, v, values, **kwargs):
+    #
+    #    if v is None and values['processes_id'] is None and values['electrical_generation'] is None:
+    #        raise Exception('Provide equipment thermal capacity, electrical capacity or the processes associated')
+    #
+    #    return v
+    #

@@ -26,7 +26,7 @@ INPUT: object with:
              # initial_temperature [ºC]
              # mass [kg]
 
-         Where in maintenance_data :
+         Where in maintenance_data /evaporation :
              # capacity [kW]
 
         Where in inflow_data :
@@ -59,6 +59,7 @@ class Process:
         # defined var
         self.object_type = 'process'
         self.streams = []
+        self.stream_id = 1
 
         # INPUT
         self.id = in_var['id']  # process ID
@@ -70,6 +71,7 @@ class Process:
         self.daily_periods = in_var['daily_periods']  # e.g: [[8,12],[15,19]]
         self.schedule_type = in_var['schedule_type']  # 0-Continuous, 1-Batch
 
+        self.example_of_daily_period = self.daily_periods[0][1] - self.daily_periods[0][0]
 
         try:
             self.cycle_time_percentage = in_var['cycle_time_percentage']  # Cycle percentage for Startup and Outflow (when in Batch)
@@ -79,111 +81,137 @@ class Process:
             self.cycle_time_percentage = 0.1
 
         # Startup
-        try:
-            startup_data = in_var['startup_data']
-            self.generate_process_startup(startup_data)
-        except:
-            pass
+        # startup_data = in_var['startup_data']
+        # self.generate_startup(startup_data)
 
-        # Maintenance
+
+        # Set Point Maintenance
         try:
             maintenance_data = in_var['maintenance_data']
-            self.generate_process_maintenance(maintenance_data)
+            self.generate_maintenance_and_evaporation(maintenance_data)
         except:
             pass
 
         # Inflows
         try:
             inflow_data = in_var['inflow_data']
-            self.generate_process_inflow(inflow_data)
+            self.generate_inflow(inflow_data)
         except:
             pass
 
         # Outflows
-        try:
-            outflow_data = in_var['outflow_data']
-            self.generate_process_outflow(outflow_data)
-        except:
-            pass
+        outflow_data = in_var['outflow_data']
+        self.generate_outflow(outflow_data)
 
 
-    def generate_process_startup(self,data):
 
-        for startup in data:
+    #def generate_startup(self,data):
+    #
+    #    for startup in data:
+    #
+    #        schedule = self.schedule('startup')
+    #
+    #        try:  # batch
+    #            capacity = startup['mass'] / (self.example_of_daily_period * self.cycle_time_percentage * 3600) * \
+    #                       startup['fluid_cp'] * (self.operation_temperature - startup['supply_temperature'])  # [kW]
+    #        except:
+    #            raise Exception('Check STARTUP parameters.')
+    #
+    #
+    #
+    #        self.streams.append(stream_industry(self.id,
+    #                                            'startup',
+    #                                            startup['fluid'],
+    #                                            startup['supply_temperature'],
+    #                                            self.operation_temperature,
+    #                                            startup['mass'] / self.cycle_time_percentage,
+    #                                            capacity,
+    #                                            schedule))
 
-            schedule = self.schedule('startup')
-            capacity = startup['mass']/self.cycle_time_percentage * startup['fluid_cp'] * (self.operation_temperature - startup['supply_temperature'])  # [kW]
 
-            self.streams.append(stream_industry(self.id,
-                                                'startup',
-                                                startup['fluid'],
-                                                startup['supply_temperature'],
-                                                self.operation_temperature,
-                                                startup['mass'] / self.cycle_time_percentage,
-                                                capacity,
-                                                schedule))
+    def generate_maintenance_and_evaporation(self,data):
 
-
-    def generate_process_maintenance(self,data):
-
-        # Maintenance Info
+        # Maintenance/Evaporation Info
         for maintenance in data:
             schedule = self.schedule('maintenance')
 
-            self.streams.append(stream_industry(self.id,
+            self.streams.append(stream_industry(maintenance['name'],
+                                                self.id,
                                                 'maintenance',
-                                                'none',
-                                                0,
-                                                0,
+                                                "water",
+                                                self.operation_temperature - 1,
+                                                self.operation_temperature + 1,
+                                                None,
                                                 maintenance['maintenance_capacity'],
-                                                0,
-                                                schedule))
+                                                schedule,
+                                                stream_id=self.stream_id))
 
+            self.stream_id += 1
 
-    def generate_process_inflow(self,data):
+    def generate_inflow(self,data):
 
         schedule = self.schedule('inflow')
 
         for inflow in data:
-            capacity = inflow['flowrate'] * inflow['fluid_cp'] * (self.operation_temperature - inflow['supply_temperature'])/3600  # [kW]
+            try:  # batch
+                capacity = inflow['mass'] / (self.example_of_daily_period * 3600) * inflow['fluid_cp'] * (self.operation_temperature - inflow['supply_temperature'])  # [kW]
+            except:
+                capacity = inflow['flowrate'] / 3600 * inflow['fluid_cp'] * (self.operation_temperature - inflow['supply_temperature'])  # [kW]
 
-            self.streams.append(stream_industry(self.id,
+            self.streams.append(stream_industry(inflow['name'],
+                                                self.id,
                                                 'inflow',
                                                 inflow['fluid'],
                                                 inflow['supply_temperature'],
                                                 self.operation_temperature,
                                                 inflow['flowrate'],
                                                 capacity,
-                                                schedule))
+                                                schedule,
+                                                stream_id=self.stream_id))
 
+            self.stream_id += 1
 
-    def generate_process_outflow(self,outflow_data):
+    def generate_outflow(self,outflow_data):
 
         schedule = self.schedule('outflow')
 
         for outflow in outflow_data:
-            capacity = outflow['flowrate'] * outflow['fluid_cp'] * (self.operation_temperature - outflow['target_temperature'])/3600  # [kW]
+            try:  # batch
+                capacity = outflow['flowrate'] / 3600 * outflow['fluid_cp'] * (self.operation_temperature - outflow['target_temperature'])  # [kW]
+            except:
+                capacity = outflow['mass'] / (self.example_of_daily_period * self.cycle_time_percentage * 3600) * outflow['fluid_cp'] * (self.operation_temperature - outflow['target_temperature'])  # [kW]
 
-            self.streams.append(stream_industry(self.id,
+            if outflow["initial_temperature"] == None:
+                initial_temperature = self.operation_temperature
+            else:
+                initial_temperature = outflow["initial_temperature"]
+
+
+            self.streams.append(stream_industry(outflow['name'],
+                                                self.id,
                                                 'outflow',
                                                 outflow['fluid'],
-                                                self.operation_temperature,
+                                                initial_temperature,
                                                 outflow['target_temperature'],
                                                 outflow['flowrate'],
                                                 capacity,
-                                                schedule))
+                                                schedule,
+                                                stream_id=self.stream_id))
+
+            self.stream_id += 1
+
 
 
     def schedule(self,stream_type):
 
-        # Shutdown Periods FROM USER - e.g. shutdown_periods = [[1/jan/2021,6/jan/2021],[3/aug/2021,10/aug/2021]]
+        # Shutdown Periods
         shutdown_start_date = []
         shutdown_end_date = []
         for period in self.shutdown_periods:
             shutdown_start_date.append(period[0].timetuple().tm_yday)
             shutdown_end_date.append(period[-1].timetuple().tm_yday)
 
-        # Cycle Working Periods FROM USER - e.g. daily_periods = [[8,12],[14,18]]
+        # Cycle Working Periods
         cycle_start_time = []
         cycle_end_time = []
         cycle_duration = []

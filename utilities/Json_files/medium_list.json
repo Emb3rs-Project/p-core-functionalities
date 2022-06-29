@@ -301,8 +301,8 @@
     "phase_change_enthalpy_c3": "0",
     "outlet temp compressor": "0"
   },
-  "whey_concentrate": {
-    "fluid_name": "whey_concentrate",
+  "whey": {
+    "fluid_name": "whey",
     "fluid_type": "liquid",
     "min_temperature": "0",
     "max_temperature": "100",

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, PositiveInt, PositiveFloat, confloat
+from pydantic import BaseModel, PositiveInt, PositiveFloat, confloat, validator
 from typing import List, Optional
 from .source_detailed_object import SourceDetailedObject
 from ..General.schedule import Schedule
@@ -6,29 +6,41 @@ from enum import Enum
 
 
 class Inflow(BaseModel):
-    flowrate: PositiveFloat
+    name: str
+    flowrate: Optional[PositiveFloat] = None
     fluid_cp: PositiveFloat
     supply_temperature: PositiveFloat
     fluid: str
+    mass: Optional[PositiveFloat] = None
 
+    @validator("mass",allow_reuse=True, always=True)
+    def get_flowrate_or_mass(cls, mass, values, **kwargs):
+
+        if (mass == None and values["flowrate"] == None) or (mass != None and values["flowrate"] != None):
+            raise Exception('Introduce INFLOW flowrate [kg/h] or mass [kg]')
+
+        return mass
 
 class Outflow(BaseModel):
-    flowrate: PositiveFloat
+    name: str
+    flowrate: Optional[PositiveFloat] = None
     fluid_cp: PositiveFloat
     target_temperature: PositiveFloat
     fluid: str
+    mass: Optional[PositiveFloat] = None
+    initial_temperature: Optional[PositiveFloat] = None
 
+
+    @validator("mass", allow_reuse=True, always=True)
+    def get_flowrate_or_mass(cls, mass, values, **kwargs):
+        if (mass == None and values["flowrate"] == None) or (mass != None and values["flowrate"] != None):
+            raise Exception('Introduce OUTFLOW flowrate [kg/h] or mass [kg]')
+
+        return mass
 
 class Maintenance(BaseModel):
+    name: str
     maintenance_capacity: PositiveFloat
-
-
-class Startup(BaseModel):
-    mass: PositiveFloat
-    fluid_cp: PositiveFloat
-    supply_temperature: PositiveFloat
-    fluid: str
-
 
 class ScheduleType(int, Enum):
     continuous = 0
@@ -39,8 +51,7 @@ class Process(SourceDetailedObject, Schedule):
     equipment_id: PositiveInt
     operation_temperature: PositiveFloat
     schedule_type: ScheduleType
-    cycle_time_percentage: confloat(gt=0, lt=1)
-    startup_data: Optional[List[Startup]]
-    maintenance_data: Optional[List[Maintenance]]
-    inflow_data: Optional[List[Inflow]]
-    outflow_data: Optional[List[Outflow]]
+    cycle_time_percentage: confloat(gt=0, le=1)
+    maintenance_data: Optional[List[Maintenance]] = []
+    inflow_data: Optional[List[Inflow]] = []
+    outflow_data: Optional[List[Outflow]] = []

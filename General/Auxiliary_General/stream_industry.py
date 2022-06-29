@@ -51,8 +51,12 @@ months = [
     , "december"
 ]
 
-def stream_industry(object_linked_id, stream_type, fluid, supply_temperature, target_temperature, mass_flowrate, capacity,
-                    schedule=None, hourly_generation=None):
+def stream_industry(stream_name,object_linked_id, stream_type, fluid, supply_temperature, target_temperature, mass_flowrate, capacity,
+                    schedule=None, hourly_generation=None, stream_id=None):
+
+
+    if stream_id == None:
+        raise Exception('No stream ID given. Report to the platform.')
 
     if hourly_generation is None:
         hourly_generation = [i * capacity for i in schedule]
@@ -60,11 +64,17 @@ def stream_industry(object_linked_id, stream_type, fluid, supply_temperature, ta
         schedule = list(map(lambda x: 1 if x > 0 else 0, hourly_generation))
 
 
-    i = 24  # repeat last day
-    while len(hourly_generation) != 366*24:
-        hourly_generation.append(hourly_generation[-(i):])
-        schedule.append(schedule[-(i):])
-        i +=1
+    i = 48  # repeat last day
+    hours_needed = 366*24-1
+    if len(hourly_generation) < hours_needed:
+        while len(hourly_generation) != hours_needed:
+            hourly_generation.append(hourly_generation[-i])
+            schedule.append(schedule[-i])
+            i += 1
+    else:
+        hourly_generation = hourly_generation[:hours_needed]
+        schedule = schedule[:hours_needed]
+
 
     # get monthly generation
     hour_new_month = 0
@@ -80,16 +90,18 @@ def stream_industry(object_linked_id, stream_type, fluid, supply_temperature, ta
         initial = hour_new_month
         final = hour_new_month + number_days * 24
 
+
         if month != 'december':
             monthly_generation.append(sum(hourly_generation[initial:final]))
         else:
+
             monthly_generation.append(sum(hourly_generation[initial:]))
 
         hour_new_month = final
 
-
     stream_data = {
-        'id': randint(0, 10 ** 5),
+        'name': stream_name,
+        'id': stream_id,
         'object_type': 'stream',
         'object_linked_id': object_linked_id,  # Object ID associated; e.g. process or equipment ID
         'stream_type': stream_type,  # e.g. inflow, supply_heat, excess_heat

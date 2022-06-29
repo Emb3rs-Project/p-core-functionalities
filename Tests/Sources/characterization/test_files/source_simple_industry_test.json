@@ -3,6 +3,7 @@
     "type_of_object": "source",
     "streams": [
       {
+        "name": "source_stream",
         "supply_temperature": 500,
         "target_temperature": 55,
         "fluid": "flue_gas",

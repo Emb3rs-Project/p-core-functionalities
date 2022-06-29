@@ -66,7 +66,9 @@ def simple_user(in_var):
     else:
         stream_type = "excess_heat"
 
-    for stream in streams:
+    for index_stream, stream in enumerate(streams):
+
+        index_stream += 1  # to start at 1
 
         # check if capacity or flowrate given
         if stream['capacity'] == None:
@@ -101,6 +103,7 @@ def simple_user(in_var):
             flowrate = capacity * 3600 / (abs(stream["supply_temperature"] - stream["target_temperature"]))
 
         info_stream = stream_industry(
+            stream["name"],
             None,
             stream_type,
             stream["fluid"],
@@ -109,7 +112,8 @@ def simple_user(in_var):
             flowrate,
             capacity,
             schedule=schedule,
-            hourly_generation=hourly_generation
+            hourly_generation=hourly_generation,
+            stream_id=index_stream
         )
 
         streams_output.append(info_stream)

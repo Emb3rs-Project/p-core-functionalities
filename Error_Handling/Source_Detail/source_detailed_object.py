@@ -8,6 +8,7 @@ class ObjectType(str, Enum):
     chp = "chp"
     burner = "burner"
     cooling_equipment = "cooling_equipment"
+    stream = "stream"
 
 
 class SourceDetailedObject(BaseModel):

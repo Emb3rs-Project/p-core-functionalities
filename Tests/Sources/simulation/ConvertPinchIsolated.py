@@ -1,4 +1,4 @@
-from ....Source.simulation.Heat_Recovery.pinch_isolated_streams import pinch_isolated_streams
+from ....Source.simulation.Heat_Recovery.convert_pinch_isolated_streams import convert_pinch_isolated_streams
 from ....utilities.kb import KB
 from ....utilities.kb_data import kb
 import os
@@ -12,7 +12,7 @@ def testConvertPinchIsolated():
 
     data_test = json.load(open(os.path.join(script_dir, "test_files/pinch_isolated_raw.json")))
 
-    test = pinch_isolated_streams(data_test, KB(kb))
+    test = convert_pinch_isolated_streams(data_test, KB(kb))
 
 
     file = open("sampleaaaaaaa.html", "w")

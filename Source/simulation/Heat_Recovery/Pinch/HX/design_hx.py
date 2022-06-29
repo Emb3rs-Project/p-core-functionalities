@@ -49,7 +49,7 @@ from ......KB_General.medium import Medium
 from ......utilities.kb import KB
 
 
-def design_hx( kb : KB ,hot_stream_index, cold_stream_index, hx_hot_stream_T_hot, hx_hot_stream_T_cold, hot_stream_fluid,
+def design_hx(kb : KB ,hot_stream_index, cold_stream_index, hx_hot_stream_T_hot, hx_hot_stream_T_cold, hot_stream_fluid,
               hx_cold_stream_T_hot, hx_cold_stream_T_cold, cold_stream_fluid, hx_power, original_hot_stream_index,
               original_cold_stream_index):
 
@@ -89,13 +89,13 @@ def design_hx( kb : KB ,hot_stream_index, cold_stream_index, hx_hot_stream_T_hot
                   'HX_Cold_Stream_mcp': cold_stream_mcp,
                   'HX_Hot_Stream_flowrate': hot_stream_flowrate,
                   'HX_Cold_Stream_flowrate': cold_stream_flowrate,
-                  'HX_Hot_Stream_T_Hot': round(hx_hot_stream_T_hot + .0, 1),
-                  'HX_Hot_Stream_T_Cold': round(hx_hot_stream_T_cold + .0, 1),
-                  'HX_Cold_Stream_T_Hot': round(hx_cold_stream_T_hot + .0, 1),
-                  'HX_Cold_Stream_T_Cold': round(hx_cold_stream_T_cold + .0, 1),
+                  'HX_Hot_Stream_T_Hot': hx_hot_stream_T_hot,
+                  'HX_Hot_Stream_T_Cold': hx_hot_stream_T_cold,
+                  'HX_Cold_Stream_T_Hot': hx_cold_stream_T_hot,
+                  'HX_Cold_Stream_T_Cold': hx_cold_stream_T_cold,
                   'HX_Type': hx_type,
-                  'HX_Turnkey_Cost': round(hx_turnkey_cost + .0, 1),
-                  'HX_OM_Fix_Cost': round(hx_om_fix_cost + .0, 1),
+                  'HX_Turnkey_Cost': hx_turnkey_cost,
+                  'HX_OM_Fix_Cost': hx_om_fix_cost,
                   'HX_Original_Hot_Stream': int(original_hot_stream_index),
                   'HX_Original_Cold_Stream': int(original_cold_stream_index),
                   'Hot_Split': hot_split,

@@ -8,12 +8,12 @@
         "sunday_on": 0,
         "shutdown_periods": "[[60,75],[150,155],[360,365]]",
         "daily_periods": "[[ 0, 14] ]",
-        "equipment_supply_temperature": 180,
+        "equipment_supply_temperature": 90,
         "open_closed_loop": 0,
         "fuel_type": "natural_gas",
         "equipment_return_temperature": 20,
-        "supply_capacity": 7500,
-        "global_conversion_efficiency": 0.88
+        "supply_capacity": 1200,
+        "global_conversion_efficiency": 0.96
       },
       {
         "object_type": "process",
@@ -36,18 +36,18 @@
         ],
         "maintenance_data": [
           {
-            "maintenance_capacity": 100
+            "maintenance_capacity": 1000
           }
         ],
         "inflow_data": [
           {
-            "flowrate": 100,
+            "flowrate": 1000,
             "fluid": "oil",
             "fluid_cp": 2,
             "supply_temperature": 10
           },
           {
-            "flowrate": 100,
+            "flowrate": 1000,
             "fluid": "oil",
             "fluid_cp": 2,
             "supply_temperature": 10
@@ -55,7 +55,7 @@
         ],
         "outflow_data": [
           {
-            "flowrate": 100,
+            "flowrate": 1000,
             "fluid_cp": 2,
             "fluid": "oil",
             "target_temperature": 45
@@ -69,7 +69,7 @@
         "sunday_on": 1,
         "shutdown_periods": "[[60,75],[150,155],[360,365]]",
         "daily_periods": "[[9,24] ]",
-        "cooling_equipment_sub_type": "compression_chiller",
+        "cooling_equipment_sub_type": "co2_chiller",
         "supply_capacity": 7500
       },
       {
@@ -91,16 +91,16 @@
       {
         "object_type": "burner",
         "id": 10,
-        "burner_equipment_sub_type": "direct_burner",
+        "burner_equipment_sub_type": "indirect_burner",
         "saturday_on": 0,
         "sunday_on": 0,
         "shutdown_periods": "[]",
         "daily_periods": "[ [ 0,24 ] ]",
         "fuel_type": "biomass",
-        "burner_excess_heat_supply_temperature": 400,
-        "burner_excess_heat_target_temperature": 120,
-        "burner_excess_heat_flowrate": 20,
-        "supply_capacity": 7500,
+        "burner_excess_heat_supply_temperature": 80,
+        "burner_excess_heat_target_temperature": 30,
+        "burner_excess_heat_flowrate": 200,
+        "supply_capacity": 500,
         "processes": [],
         "global_conversion_efficiency": 0.9
       }

@@ -13,13 +13,14 @@ class CoolingEquipmentSubType(str, Enum):
 
 class CoolingEquipment(SourceDetailedObject, Schedule):
     cooling_equipment_sub_type: CoolingEquipmentSubType
-    processes_id: Optional[conlist(int)]
-    supply_capacity: Optional[PositiveFloat]
+    #processes_id: None
+    supply_capacity: PositiveFloat
     global_conversion_efficiency: Optional[confloat(gt=2, le=20)]
 
-    @validator("supply_capacity", always=True)
-    def provide_supply_capacity_or_processes(cls, v, values, **kwargs):
-        if v is None and values['processes_id'] is None:
-            raise Exception('Provide equipment supply capacity or the processes associated')
-
-        return v
+   # @validator("supply_capacity", always=True)
+   # def provide_supply_capacity_or_processes(cls, v, values, **kwargs):
+   #     if v is None and values['processes_id'] is None:
+   #         raise Exception('Provide equipment supply capacity or the processes associated')
+    #
+   #     return v
+    #

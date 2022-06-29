@@ -10,6 +10,7 @@ class ScheduleInfo(int, Enum):
 
 
 class SimpleIndustryStreamDataInput(BaseModel):
+    name: str
     supply_temperature: PositiveFloat
     target_temperature: PositiveFloat
     fluid: StrictStr

@@ -84,15 +84,21 @@ def design_hx_storage(kb : KB, df_profile, info_df_hx, storage_delta_T=5):
                     index_cold_stream = row['HX_Original_Cold_Stream']  # original index stream - to get hourly profile
                     index_hot_stream = row['HX_Original_Hot_Stream']
 
-                    profile_cold_stream = df_profile.loc[index_cold_stream]  # hourly profile with 0 and 1
+
+
+                    profile_cold_stream = df_profile.loc[index_cold_stream]  # hourly profile between 0 and 1
                     profile_hot_stream = df_profile.loc[index_hot_stream]
 
                     # compute surplus/deficit/coincident hours
-                    hours_cold = sum(profile_cold_stream[profile_cold_stream == 1])
-                    hours_hot = sum(profile_hot_stream[profile_hot_stream == 1])
-                    hours_coincident = profile_hot_stream[
-                        profile_hot_stream == profile_cold_stream]  # check when both streams have same schedule
-                    hours_coincident = sum(hours_coincident[hours_coincident != 0])  # remove when both not operating
+                    hours_cold = sum(profile_cold_stream[profile_cold_stream > 0])
+                    hours_hot = sum(profile_hot_stream[profile_hot_stream > 0])
+                    hours_coincident = 0
+
+                    for i in range(len(profile_hot_stream)):
+                        if profile_hot_stream[i]>0 and profile_cold_stream[i]>0:
+                            hours_coincident += min(profile_hot_stream[i],profile_cold_stream[i])
+
+
 
                     # Storage
                     # create 10 days profile to assure correct storage computation
@@ -120,14 +126,14 @@ def design_hx_storage(kb : KB, df_profile, info_df_hx, storage_delta_T=5):
 
                                 for hour in range(len(profile_cold_stream)):
                                     # deficit
-                                    if profile_cold_stream[hour] == 1 and profile_hot_stream[hour] == 0:
-                                        power_storage -= power_hx  # remove power from storage
-                                        hours_deficit += 1
+                                    if profile_cold_stream[hour] > 0 and profile_hot_stream[hour] == 0:
+                                        power_storage -= power_hx*profile_cold_stream[hour]  # remove power from storage
+                                        hours_deficit += profile_cold_stream[hour]
 
                                     # surplus
-                                    if profile_cold_stream[hour] == 0 and profile_hot_stream[hour] == 1:
+                                    if profile_cold_stream[hour] == 0 and profile_hot_stream[hour] > 0:
                                         if power_storage < volume_max_storage:
-                                            power_storage += power_hx  # add power to storage
+                                            power_storage += power_hx*profile_hot_stream[hour]  # add power to storage
 
                                     # storage cannot reach 0 - break cycle. Minimum storage was already saved in
                                     # previous iteration
@@ -150,29 +156,30 @@ def design_hx_storage(kb : KB, df_profile, info_df_hx, storage_delta_T=5):
 
                             for hour in range(len(profile_cold_stream)):
                                 # deficit
-                                if profile_cold_stream[hour] == 1 and profile_hot_stream[hour] == 0:
-                                    hours_deficit += 1
+                                if profile_cold_stream[hour] > 0 and profile_hot_stream[hour] == 0:
+                                    hours_deficit += profile_cold_stream[hour]
                                     if power_storage > 0:
-                                        hours_match += 1
-                                        power_storage -= power_hx  # remove power from storage
+                                        hours_match += profile_cold_stream[hour]
+                                        power_storage -= power_hx*profile_cold_stream[hour]  # remove power from storage
 
                                 # surplus
-                                if profile_cold_stream[hour] == 0 and profile_hot_stream[hour] == 1:
-                                    power_storage += power_hx  # add power to storage
+                                if profile_cold_stream[hour] == 0 and profile_hot_stream[hour] > 0:
+                                    power_storage += power_hx*profile_hot_stream[hour]  # add power to storage
 
                                 # find storage that can receive has much surplus power as possible
                                 if power_storage > storage_final:
                                     storage_final = power_storage
 
                             new_volume_max_storage = storage_final
+
                             storage_satisfies = hours_match / hours_deficit * 100
                             vector_storage_satisfies.append(storage_satisfies)
 
                         # compute storage volume
                         hot_stream_T_hot = row['HX_Hot_Stream_T_Hot']
                         hot_stream_T_cold = row['HX_Hot_Stream_T_Cold']
-                        volume_storage = new_volume_max_storage * 3600 / (
-                                    cp_fluid * rho_fluid * (hot_stream_T_hot - hot_stream_T_cold))  # [m3]
+
+                        volume_storage = new_volume_max_storage * 3600 / (cp_fluid * rho_fluid * (hot_stream_T_hot - hot_stream_T_cold))  # [m3]
                         vector_storage_volume.append(volume_storage)
 
                         # compute turnkey
