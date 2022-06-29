@@ -56,9 +56,9 @@ def testConvertPinch():
 
         test = convert_pinch(data_test, KB(kb))
 
-        file = open("sampleaaaaaaa.html", "w")
-        file.write(test['report'])
-        file.close()
+        #file = open("sampleaaaaaaa.html", "w")
+        #file.write(test['report'])
+        #file.close()
 
 
 
