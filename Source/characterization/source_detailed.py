@@ -40,7 +40,6 @@ def source_detailed(in_var, kb: KB):
 
     try:
         for index, object_info in enumerate(platform_data):
-            print(object_info)
             if object_info['object_type'] == 'process':
                 new_process = Process(object_info, kb)
                 objects_list.append(new_process)
@@ -103,7 +102,6 @@ def source_detailed(in_var, kb: KB):
                 stream["id"] = index_stream
                 index_stream += 1
         except:
-            print(object)
             object["id"] = index_stream
             index_stream += 1
 

@@ -62,7 +62,7 @@ def error_convert_pinch(platform_data):
         global_conversion_efficiency: Optional[confloat(gt=0)]
         object_type: ObjectType
 
-        @validator("object_type")
+        @validator("object_type",allow_reuse=True)
         def validate_if_all_info_in_object(cls, object_type, values, **kwargs):
 
             if object_type == "process":
@@ -94,7 +94,7 @@ def error_convert_pinch(platform_data):
         lifetime: Optional[PositiveInt] = 20
         number_output_options: Optional[PositiveInt] = 3
 
-        @validator("perform_all_combinations")
+        @validator("perform_all_combinations",allow_reuse=True)
         def check_perform_all_combinations(cls, v):
             if v == 1:
                 return True
