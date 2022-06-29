@@ -1,18 +1,21 @@
 {
   "platform": {
+    "streams_to_analyse": [1,2,3,4] ,
     "streams": [
       {
+        "name": "stream_1",
         "id": 1,
-        "supply_temperature": 750,
-        "target_temperature": 350,
+        "supply_temperature": 99,
+        "target_temperature": 100,
         "fluid": "thermal_oil",
         "saturday_on": 1,
         "sunday_on": 1,
-        "capacity": 18000,
+        "capacity": 180,
         "shutdown_periods": "[]",
         "daily_periods": "[[ 0,24 ]]"
       },
       {
+        "name": "stream_2",
         "id": 2,
         "supply_temperature": 550,
         "target_temperature": 250,
@@ -24,6 +27,7 @@
         "daily_periods": "[[ 0,24 ]]"
       },
       {
+        "name": "stream_3",
         "id": 3,
         "supply_temperature": 300,
         "target_temperature": 900,
@@ -32,11 +36,12 @@
         "saturday_on": 1,
         "sunday_on": 1,
         "shutdown_periods": "[]",
-        "fuel_associated": "natural_gas",
-        "eff_equipment_associated": "0.9",
+        "fuel": "natural_gas",
+        "eff_equipment": "0.9",
         "daily_periods": "[[ 0,24 ]]"
       },
       {
+        "name": "stream_4",
         "id": 4,
         "supply_temperature": 200,
         "target_temperature": 550,
@@ -45,8 +50,8 @@
         "sunday_on": 1,
         "capacity": 7000,
         "shutdown_periods": "[]",
-        "fuel_associated": "biomass",
-        "eff_equipment_associated": "0.8",
+        "fuel": "biomass",
+        "eff_equipment": "0.8",
         "daily_periods": "[[ 0,24 ]]"
       }
     ],
