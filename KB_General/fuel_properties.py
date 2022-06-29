@@ -29,7 +29,9 @@ OUTPUT: dictionary fuel_data, with the following keys:
 import urllib3
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
+from urllib.request import urlopen
 import json
+import ssl
 
 
 @dataclass
@@ -37,10 +39,12 @@ class FuelProperties:
     kb_data: dict
 
     def get_values(self, country, fuel_type, consumer_type):
+        context = ssl._create_unverified_context()
 
         # get KB data
         data_eu_countries = self.kb_data.get('eu_country_acronym')
-        data_electricity_ghg_and_fuel_cost_per_country = self.kb_data.get('electricity_ghg_fuel_costs_per_country')
+        data_electricity_ghg_and_fuel_cost_per_country = self.kb_data.get(
+            'electricity_ghg_fuel_costs_per_country')
         data_fuel_properties = self.kb_data.get('fuel_properties')
 
         # get country acronym
@@ -62,7 +66,8 @@ class FuelProperties:
 
         if fuel_type == 'electricity':
             try:
-                info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', urlelec).data, "html.parser").text)
+                info = json.loads(BeautifulSoup(
+                    urlopen(urlelec, context=context), "html.parser").text)
                 price = info['value'][consumer_type]  # [€/kWh]
             except:
                 print("Country's electricity cost not found."
@@ -71,28 +76,34 @@ class FuelProperties:
                 price = 0.23  # [€/kWh]
 
         elif fuel_type == "natural_gas":
-            info = json.loads(BeautifulSoup(urllib3.PoolManager().request('GET', urlgas).data, "html.parser").text)
+            info = json.loads(BeautifulSoup(
+                urlopen(urlgas, context=context), "html.parser").text)
             price = info['value'][consumer_type] / 277.78  # [€/kWh]
 
         else:
             fuel_type_cost = fuel_type + '_cost'
             try:
-                price = float(data_electricity_ghg_and_fuel_cost_per_country[country][fuel_type_cost])  # [€/kWh]
+                price = float(
+                    data_electricity_ghg_and_fuel_cost_per_country[country][fuel_type_cost])  # [€/kWh]
 
             except:
                 print("Country's fuel data not in the Knowledge Base."
                       "Default: Portugal set as country")
 
-                price = float(data_electricity_ghg_and_fuel_cost_per_country['Portugal'][fuel_type_cost])  # [€/kWh]
+                price = float(
+                    data_electricity_ghg_and_fuel_cost_per_country['Portugal'][fuel_type_cost])  # [€/kWh]
 
         # get properties
         if fuel_type == 'natural_gas' or fuel_type == 'biomass' or fuel_type == 'fuel_oil':
             density = float(data_fuel_properties[fuel_type]['density'])
-            lhv_fuel = float(data_fuel_properties[fuel_type]['lhv'])  # [kWh/kg]
+            lhv_fuel = float(
+                data_fuel_properties[fuel_type]['lhv'])  # [kWh/kg]
             excess_air_fuel = (float(data_fuel_properties[fuel_type]['excess_air_ratio_min']) + float(
                 data_fuel_properties[fuel_type]['excess_air_ratio_max'])) / 2  # average
-            air_to_fuel_ratio = float(data_fuel_properties[fuel_type]['air_to_fuel_ratio'])
-            co2_emissions = float(data_fuel_properties[fuel_type]['co2_emissions'])  # [kg/kWh]
+            air_to_fuel_ratio = float(
+                data_fuel_properties[fuel_type]['air_to_fuel_ratio'])
+            co2_emissions = float(
+                data_fuel_properties[fuel_type]['co2_emissions'])  # [kg/kWh]
             lhv_fuel = lhv_fuel / density
 
         elif fuel_type == 'electricity':
@@ -102,17 +113,16 @@ class FuelProperties:
             air_to_fuel_ratio = 'none'
 
             try:
-                co2_emissions = float( data_electricity_ghg_and_fuel_cost_per_country[country]['electricity_emissions']) \
-                                / 1000  # [kg CO2/kW]
+                co2_emissions = float(data_electricity_ghg_and_fuel_cost_per_country[country]['electricity_emissions']) \
+                    / 1000  # [kg CO2/kW]
             except:
                 print("Country's electricity CO2 emissions data not in the Knowledge Base."
                       "Default: Portugal set as country")
                 co2_emissions = float(data_electricity_ghg_and_fuel_cost_per_country['Portugal'][
-                                          'electricity_emissions']) / 1000  # [kg CO2/kW]
+                    'electricity_emissions']) / 1000  # [kg CO2/kW]
 
         else:
             raise Exception("Fuel data not in the Knowledge Base.")
-
 
         fuel_data = {
             'price': price,  # [€/kWh]
