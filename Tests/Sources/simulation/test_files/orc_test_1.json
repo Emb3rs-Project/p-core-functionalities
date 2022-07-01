@@ -3,6 +3,7 @@
     "streams": [
       {
         "id": 1,
+        "name": "flue gas 108",
         "object_type": "stream",
         "object_id": 5,
         "stream_type": "excess_heat",
@@ -17586,6 +17587,7 @@
       },
       {
         "id": 2,
+        "name": "flue gas 56",
         "object_type": "stream",
         "object_id": 5,
         "stream_type": "excess_heat",

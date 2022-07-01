@@ -77,7 +77,7 @@ def orc_report(convert_orc_output):
     elec_cost_data = convert_orc_output["elec_cost_data"]
     co2_emission_data = convert_orc_output["co2_emission_data"]
     stream_table_data = convert_orc_output['df_streams'][
-        ["id", "supply_temperature", "target_temperature", "fluid", "capacity"]].copy()
+        ["id","name", "supply_temperature", "target_temperature", "fluid", "capacity"]].copy()
 
     #############################
     # Stream table
@@ -85,6 +85,7 @@ def orc_report(convert_orc_output):
     stream_table_data["fluid"] = stream_table_data["fluid"].apply(lambda x: x.replace("_", " "))
 
     stream_table_data.columns = ["Stream ID",
+                                 "Name",
                                  "Supply Temperature [ºC]",
                                  "Target Temperature[ºC]",
                                  "Fluid",
