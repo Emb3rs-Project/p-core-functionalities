@@ -1,5 +1,7 @@
 {
   "platform": {
+    "grid_supply_temperature":90 ,
+    "grid_return_temperature":60,
     "group_of_sinks": [
       {
         "id": 3,

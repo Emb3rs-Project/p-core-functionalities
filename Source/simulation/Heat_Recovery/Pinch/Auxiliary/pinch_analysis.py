@@ -316,7 +316,6 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
                                                     "flowrate": 0,
                                                     "mcp": df_streams.loc[stream_id]['mcp']
                                                    })
-                print(streams_info)
 
             detailed_info_pinch_analysis.append({'ID': design_id,
                                                  'analysis_state': 'performed',

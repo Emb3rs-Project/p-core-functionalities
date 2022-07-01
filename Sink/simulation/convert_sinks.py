@@ -189,6 +189,7 @@ def convert_sinks(in_var, kb):
                     grid_supply_temperature = max_grid_temperature
                     grid_return_temperature = max_grid_temperature - hot_grid_delta_T
 
+
     ######################################
     # create backup for sink group
     group_of_sinks_grid_specific_power_heating = 0

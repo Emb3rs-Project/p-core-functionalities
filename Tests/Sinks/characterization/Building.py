@@ -15,6 +15,7 @@ def testBuilding():
     value_heat = int(sum(test['hot_stream']['monthly_generation'])/(data_1['platform']['number_floor'] * data_1['platform']['length_floor'] * data_1['platform']['width_floor']))
     value_cool = int(sum(test['cold_stream']['monthly_generation'])/(data_1['platform']['number_floor'] * data_1['platform']['length_floor'] * data_1['platform']['width_floor']))
 
+
     if int(value_heat) == 35 and int(value_cool) == 20:
         print('Building Test 1 - Everything Correct')
     else:

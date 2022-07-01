@@ -4,11 +4,6 @@ from ....utilities.kb_data import kb
 import os
 import json
 
-# IMPORTANT
-### OPTION 1 - just pinch analysis (energy optimization) - INPUT: isolated streams (example below)
-### OPTION 2 - pinch analysis with processes (co2,energy,cost optmization - 3 best solutions of each) - INPUT:processes, equipments
-### OPTION 3 - pinch analysis with processes and isolated streams (co2,energy,cost optmization - 3 best solutions of each) - INPUT:processes, equipments and isolated streams
-### OPTION 4 - equipment internal optimization (co2,energy,cost - 1 solution of each) - INPUT: only one equipment at a time
 
 script_dir = os.path.dirname(__file__)
 
@@ -48,19 +43,13 @@ def testConvertPinch():
 
     # OPTION 1 - test isolated streams
     if option == 1:
-        data_test = isolatedstreams(2)
-
-        data_test = json.load(open(os.path.join(script_dir, "test_files/pinch_detailed.json")))
+        #data_test = isolatedstreams(2)
+        #test = convert_pinch(data_test, KB(kb))
 
         data_test = json.load(open(os.path.join(script_dir, "test_files/pinch_detailed_workshop.json")))
-
         test = convert_pinch(data_test, KB(kb))
 
-        #file = open("sampleaaaaaaa.html", "w")
-        #file.write(test['report'])
-        #file.close()
-
-
+        print("Convert Pinch with Source Detailed INFO  Run Successfully")
 
 
     # OPTION 2 - test processes, equipments

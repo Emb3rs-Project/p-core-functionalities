@@ -88,3 +88,13 @@ class SimpleIndustryStreamDataInput(BaseModel):
                 raise Exception("Provide only the profile (kWh), or the schedule data, not both.")
 
         return hourly_generation_profile
+
+    @validator('target_temperature',allow_reuse=True)
+    def check_if_temperatures_are_the_same(cls, target_temperature, values, **kwargs):
+
+        if target_temperature == values["supply_temperature"]:
+            raise Exception("Stream supply and target temperature must be different")
+
+
+        return target_temperature
+

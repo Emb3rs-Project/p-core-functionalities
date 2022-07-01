@@ -10,7 +10,7 @@ def testSinkSimpleUser():
 
     test = simple_user(data_test)
 
-    if test['streams'][0]['capacity'] == 1.25:
+    if test['streams'][0]['capacity'] == 2.0416666666666665:
         print('testSinkSimpleUser - Everything Correct')
     else:
         print('testSinkSimpleUser - Report to CF that something is odd')

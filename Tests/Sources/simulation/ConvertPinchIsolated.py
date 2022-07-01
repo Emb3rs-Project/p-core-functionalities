@@ -14,7 +14,4 @@ def testConvertPinchIsolated():
 
     test = convert_pinch_isolated_streams(data_test, KB(kb))
 
-
-    #file = open("sampleaaaaaaa.html", "w")
-    #file.write(test['report'])
-    #file.close()
+    print("Convert Pinch with Isolated Stream run Successfully")
