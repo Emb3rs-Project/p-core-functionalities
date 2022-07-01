@@ -133,18 +133,19 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                         # Create Split Stream
                         split_hot_stream_mcp = hx_power / (hx_hot_stream_T_hot - hx_hot_stream_T_cold)
 
-                        new_row = hot_stream.copy()  # split stream has same info as original
-                        new_row['mcp'] -= split_hot_stream_mcp  # correct split mcp
-                        new_row.name = (int(hot_stream_index) * 100)  # new ID
+                        if split_hot_stream_mcp < df_streams_in_copy.loc[index_stream_in]['mcp']:
+                            new_row = hot_stream.copy()  # split stream has same info as original
+                            new_row['mcp'] -= split_hot_stream_mcp  # correct split mcp
+                            new_row.name = (int(hot_stream_index) * 100)  # new ID
 
-                        new_row['Split_Check'] = True
+                            new_row['Split_Check'] = True
 
-                        # Add Split Stream to DFs
-                        df_streams_in_copy = pd.concat([df_streams_in_copy, pd.DataFrame([new_row])])
+                            # Add Split Stream to DFs
+                            df_streams_in_copy = pd.concat([df_streams_in_copy, pd.DataFrame([new_row])])
 
-                        # Update DFs
-                        df_streams_in_copy.loc[hot_stream_index, ['Split_Check']] = True
-                        df_streams_in_copy.loc[hot_stream_index, ['mcp']] = split_hot_stream_mcp
+                            # Update DFs
+                            df_streams_in_copy.loc[hot_stream_index, ['Split_Check']] = True
+                            df_streams_in_copy.loc[hot_stream_index, ['mcp']] = split_hot_stream_mcp
 
                     else:
 
@@ -168,17 +169,18 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                         # Create Split Stream
                         split_stream_mcp = hx_power / (cold_stream_T_hot - cold_stream_T_cold)
 
-                        new_row = cold_stream.copy()  # split stream has same info
-                        new_row['mcp'] -= split_stream_mcp  # correct mcp
-                        new_row.name = (int(cold_stream_index) * 165)  # new ID
-                        new_row['Split_Check'] = False
+                        if split_stream_mcp < df_streams_in_copy.loc[index_stream_in]['mcp']:
+                            new_row = cold_stream.copy()  # split stream has same info
+                            new_row['mcp'] -= split_stream_mcp  # correct mcp
+                            new_row.name = (int(cold_stream_index) * 165)  # new ID
+                            new_row['Split_Check'] = False
 
-                        # Add Split Stream to DFs
-                        df_streams_in = pd.concat([df_streams_in, pd.DataFrame([new_row])])
+                            # Add Split Stream to DFs
+                            df_streams_in = pd.concat([df_streams_in, pd.DataFrame([new_row])])
 
-                        # Update DFs
-                        df_streams_in.loc[index_stream_in]['Split_Check'] = True
-                        df_streams_in.loc[cold_stream_index, ['mcp']] = split_stream_mcp
+                            # Update DFs
+                            df_streams_in.loc[index_stream_in]['Split_Check'] = True
+                            df_streams_in.loc[cold_stream_index, ['mcp']] = split_stream_mcp
 
                     combinations_updated.append([df_streams_in_copy, df_streams_out_copy])
 
@@ -291,6 +293,7 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                         hot_stream_index = index_stream_out
                         hot_stream = df_streams_out.loc[index_stream_out]
 
+
                         # stream_out larger mcp than stream_in
                         if df_streams_in_copy.loc[index_stream_in]['mcp'] < df_streams_out_copy.loc[index_stream_out]['mcp']:
 
@@ -306,21 +309,22 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                             # Create Split Stream
                             split_stream_mcp = hx_power / (hot_stream_T_hot - hot_stream_T_cold)
 
-                            new_row = hot_stream.copy()  # split stream has same info
-                            new_row['mcp'] -= split_stream_mcp  # correct mcp
-                            new_row.name = (int(hot_stream_index) * 100)  # new ID
-                            new_row['Split_Check'] = False
+                            if split_stream_mcp < df_streams_out_copy.loc[index_stream_out]['mcp']:
 
-                            # Add Split Stream to DFs
-                            df_streams_out_copy = pd.concat([df_streams_out_copy, pd.DataFrame([new_row])])
+                                new_row = hot_stream.copy()  # split stream has same info
+                                new_row['mcp'] -= split_stream_mcp  # correct mcp
+                                new_row.name = (int(hot_stream_index) * 100)  # new ID
+                                new_row['Split_Check'] = False
+
+                                # Add Split Stream to DFs
+                                df_streams_out_copy = pd.concat([df_streams_out_copy, pd.DataFrame([new_row])])
 
 
-                            # Update DFs
-                            df_streams_out_copy.loc[hot_stream_index]['Split_Check'] = True
-                            df_streams_out_copy.loc[hot_stream_index, ['mcp']] = split_stream_mcp
+                                # Update DFs
+                                df_streams_out_copy.loc[hot_stream_index]['Split_Check'] = True
+                                df_streams_out_copy.loc[hot_stream_index, ['mcp']] = split_stream_mcp
 
                         else:
-
                             # Compute/Check Temperatures
                             if cold_stream_min_T_cold <= (hot_stream_min_T_cold - hx_delta_T):
                                 hot_stream_T_cold = hot_stream_min_T_cold
@@ -333,24 +337,24 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                             # Create Split Stream
                             split_stream_mcp = hx_power / (cold_stream_T_hot - cold_stream_T_cold)
 
-                            new_row = cold_stream.copy()  # split stream has same info
-                            new_row['mcp'] -= split_stream_mcp  # correct mcp
-                            new_row.name = (int(cold_stream_index) * 100)  # new ID
-                            new_row['Split_Check'] = False
+                            if split_stream_mcp < df_streams_in_copy.loc[index_stream_in]['mcp']:
 
-                            # Add Split Stream to DFs
-                            df_streams_in_copy = pd.concat([df_streams_in_copy, pd.DataFrame([new_row])])
+                                new_row = cold_stream.copy()  # split stream has same info
+                                new_row['mcp'] -= split_stream_mcp  # correct mcp
+                                new_row.name = (int(cold_stream_index) * 100)  # new ID
+                                new_row['Split_Check'] = False
 
-                            # Update DFs
-                            df_streams_in_copy.loc[index_stream_in]['Split_Check'] = True
-                            df_streams_in_copy.loc[cold_stream_index, ['mcp']] = split_stream_mcp
+                                # Add Split Stream to DFs
+                                df_streams_in_copy = pd.concat([df_streams_in_copy, pd.DataFrame([new_row])])
+
+                                # Update DFs
+                                df_streams_in_copy.loc[index_stream_in]['Split_Check'] = True
+                                df_streams_in_copy.loc[cold_stream_index, ['mcp']] = split_stream_mcp
 
                     combinations_updated.append([df_streams_in_copy, df_streams_out_copy])
 
 
-
                 all_combinations = combinations_updated
-
                 all_combinations.append([df_streams_in, df_streams_out])
 
 

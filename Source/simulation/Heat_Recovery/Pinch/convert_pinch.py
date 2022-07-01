@@ -250,7 +250,7 @@ def convert_pinch(in_var, kb: KB):
                                            hx_delta_T,
                                            design_id)
 
-    pinch_designed_solutions = []
+
 
     # pinch analysis for all streams COMBINATIONS
     if perform_all_combinations == True:
