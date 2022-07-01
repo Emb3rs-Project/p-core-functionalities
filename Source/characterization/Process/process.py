@@ -80,12 +80,9 @@ class Process:
         except:
             self.cycle_time_percentage = 0.1
 
-        # Startup
-        # startup_data = in_var['startup_data']
-        # self.generate_startup(startup_data)
 
 
-        # Set Point Maintenance
+        # Set Point Maintenance/ Evaporation
         try:
             maintenance_data = in_var['maintenance_data']
             self.generate_maintenance_and_evaporation(maintenance_data)
@@ -102,31 +99,6 @@ class Process:
         # Outflows
         outflow_data = in_var['outflow_data']
         self.generate_outflow(outflow_data)
-
-
-
-    #def generate_startup(self,data):
-    #
-    #    for startup in data:
-    #
-    #        schedule = self.schedule('startup')
-    #
-    #        try:  # batch
-    #            capacity = startup['mass'] / (self.example_of_daily_period * self.cycle_time_percentage * 3600) * \
-    #                       startup['fluid_cp'] * (self.operation_temperature - startup['supply_temperature'])  # [kW]
-    #        except:
-    #            raise Exception('Check STARTUP parameters.')
-    #
-    #
-    #
-    #        self.streams.append(stream_industry(self.id,
-    #                                            'startup',
-    #                                            startup['fluid'],
-    #                                            startup['supply_temperature'],
-    #                                            self.operation_temperature,
-    #                                            startup['mass'] / self.cycle_time_percentage,
-    #                                            capacity,
-    #                                            schedule))
 
 
     def generate_maintenance_and_evaporation(self,data):

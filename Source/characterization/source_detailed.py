@@ -62,12 +62,6 @@ def source_detailed(in_var, kb: KB):
     for index, equipment_info in enumerate(platform_data):
         equipment_info['processes'] = []
 
-        #if equipment_info['processes_id'] is not None:
-        #    for process_id in equipment_info['processes_id']:
-        #        equipment_info['processes'].append(processes_data[str(process_id)])
-#
-        #    equipment_info['processes'] = [vars(process) for process in equipment_info['processes']]
-
         if equipment_info['object_type'] == 'boiler' or equipment_info['object_type'] == 'chp' or equipment_info['object_type'] == 'burner' or equipment_info['object_type'] == 'cooling_equipment':
 
             if equipment_info['object_type'] == 'boiler':
