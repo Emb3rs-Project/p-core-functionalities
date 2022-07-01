@@ -125,8 +125,6 @@ def convert_pinch(in_var, kb: KB):
     lifetime = platform_data.lifetime
     streams_to_analyse = platform_data.streams_to_analyse
 
-    perform_all_combinations = True
-
     ############################################################################################################
     # KB
     fuel_properties = FuelProperties(kb)
@@ -137,8 +135,6 @@ def convert_pinch(in_var, kb: KB):
     objects_to_analyze = []
     streams = []
     subset_not_possible_to_analyze = []
-    individual_equipment_optimization = False  # parameter to only perform equipment heat recovery
-    only_isolated_streams = False  # parameter to check if only isolated streams are given
 
     ############################################################################################################
     # DATA PRE-TREATMENT

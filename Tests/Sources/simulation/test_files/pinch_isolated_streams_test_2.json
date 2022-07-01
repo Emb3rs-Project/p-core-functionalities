@@ -1,5 +1,6 @@
 {
   "platform": {
+    "streams_to_analyse": [8705,2446,74345,5372],
     "all_input_objects":  [
     {
       "id": 8705,
@@ -70395,7 +70396,6 @@
     "location": [
       48.864716,
       2.349014
-    ],
-    "perform_all_combinations": 1
+    ]
   }
 }

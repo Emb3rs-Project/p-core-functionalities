@@ -19,8 +19,8 @@ def convert_pinch_isolated_streams(in_var, kb: KB):
         location : list
             Latitude and Longitude
 
-    :return:
-        best_options : dict.
+    :return: pinch_output:
+        best_options : dict
             Dicts with solutions data for:
                 - 'co2_optimization'
                 - 'energy_recovered_optimization'

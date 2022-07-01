@@ -533,8 +533,6 @@ def make_pinch_design_draw(info):
     plt.gca().text(pinch, y_max - space_between_splits/2, "{:.1f}".format(pinch_hot) + 'ºC', style='italic', ha='right', va='bottom')
     plt.gca().text(pinch, y_min, "{:.1f}".format(pinch_cold) + 'ºC', style='italic', ha='left', va='top')
 
-    #plt.title('- HX NETWORK - PINCH ANALYSIS ('+"{:.1f}".format(pinch_temperature - pinch_delta_temperature/2) + 'ºC)',weight='bold', ha='center', va='top',size='large')
-
     # DRAW MCP
     #plt.gca().text(x_max + 13, y_max+3, 'Original Streams', ha='center', va='center',size='large')#
     #plt.gca().text(x_max + 13, y_max+1, '$mc_p$', weight='bold', ha='center', va='center',size='large')
@@ -593,8 +591,6 @@ def make_pinch_design_draw(info):
 
     # adjust plot size
     fig = plt.gcf()
-    coef = 8.5 / 16
-    y_val = 11
     fig.set_size_inches(11, 6)
     ax = plt.gca()
     ax.set_xlim(x_min - 15, x_max + 15)
