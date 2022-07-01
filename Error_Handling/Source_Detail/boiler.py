@@ -16,17 +16,10 @@ class Boiler(SourceDetailedObject, Schedule):
     open_closed_loop: OpenClosedCircuit
     equipment_supply_temperature: PositiveFloat
     equipment_return_temperature: Optional[PositiveFloat]
-    #processes_id: None
     supply_capacity: PositiveFloat
     global_conversion_efficiency: Optional[confloat(gt=0, lt=1)]
     supply_flowrate: Optional[PositiveFloat]
 
-    #@validator("supply_capacity", always=True)
-    #def provide_supply_capacity_or_processes(cls, v, values, **kwargs):
-    #    if v is None and values['processes_id'] is None:
-    #        raise Exception('Provide equipment supply capacity or the processes associated')
-    #
-    #    return v
 
     @validator("supply_flowrate", always=True)
     def provide_supply_flowrate(cls, supply_flowrate, values, **kwargs):

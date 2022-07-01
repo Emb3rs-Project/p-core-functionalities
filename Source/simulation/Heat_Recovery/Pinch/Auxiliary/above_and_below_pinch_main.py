@@ -226,7 +226,6 @@ def above_and_below_pinch_main(kb, df_streams, pinch_delta_T_min, pinch_T, hx_de
                                                                                               hx_delta_T,
                                                                                               restriction=False)
 
-
                         # append HX designed if all streams_in reach pinch
                         if df_streams_in.empty:
                             utility = 0
