@@ -176,7 +176,7 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
             # give ID to HX
             df_hx['df_hx'].index = df_hx['df_hx'].index + 1
             df_hx['df_hx']['id'] = df_hx['df_hx'].index
-            streams_info =[]
+            streams_info = []
 
             # get list of streams - accounting for splits
             # HOT STREAMS
@@ -197,6 +197,9 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
                      "below_pinch": [],
                      }
                 )
+
+                splits_streams_added = []
+
                 for index, split_stream in df_split_streams.iterrows():
                     hot_pinch_temperature = pinch_point_temperature + pinch_delta_T_min
                     cold_pinch_temperature = pinch_point_temperature - pinch_delta_T_min
@@ -206,11 +209,16 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
                     else:
                         above_below = 'below_pinch'
 
-                    streams_info[-1][above_below].append({
-                                                    "id": split_stream['HX_Hot_Stream'],
-                                                    "flowrate": split_stream['HX_Hot_Stream_flowrate'],
-                                                    "mcp": split_stream['HX_Hot_Stream_mcp']
-                                                   })
+                    if split_stream['HX_Hot_Stream'] not in splits_streams_added:
+
+                        streams_info[-1][above_below].append({
+                                                        "id": split_stream['HX_Hot_Stream'],
+                                                        "flowrate": split_stream['HX_Hot_Stream_flowrate'],
+                                                        "mcp": split_stream['HX_Hot_Stream_mcp']
+                                                       })
+
+                        splits_streams_added.append(split_stream['HX_Hot_Stream'])
+
 
                 ####################
                 # to add main streams of splits
@@ -243,9 +251,7 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
                     })
 
             # COLD STREAMS
-            all_cold_original_stream_id = df_hx['df_hx'][
-                'HX_Original_Cold_Stream'].unique()  # get original streams ID
-
+            all_cold_original_stream_id = df_hx['df_hx']['HX_Original_Cold_Stream'].unique()  # get original streams ID
             cold_index = list(df_streams[df_streams["Stream_Type"] == "Cold"].index.values)
             cold_index.sort()
 
@@ -261,6 +267,7 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
                      }
                 )
 
+                splits_streams_added = []
                 for index, split_stream in df_split_streams.iterrows():
                     hot_pinch_temperature = pinch_point_temperature + pinch_delta_T_min
                     cold_pinch_temperature = pinch_point_temperature - pinch_delta_T_min
@@ -270,11 +277,14 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
                     else:
                         above_below = 'below_pinch'
 
-                    streams_info[-1][above_below].append({
-                        "id": split_stream['HX_Cold_Stream'],
-                        "flowrate": split_stream['HX_Cold_Stream_flowrate'],
-                        "mcp": split_stream['HX_Cold_Stream_mcp']
-                    })
+                    if split_stream['HX_Cold_Stream'] not in splits_streams_added:
+                        streams_info[-1][above_below].append({
+                            "id": split_stream['HX_Cold_Stream'],
+                            "flowrate": split_stream['HX_Cold_Stream_flowrate'],
+                            "mcp": split_stream['HX_Cold_Stream_mcp']
+                        })
+
+                    splits_streams_added.append(split_stream['HX_Cold_Stream'])
 
 
                 ####################
@@ -300,13 +310,13 @@ def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_del
                                                    })
 
                 if (streams_info[-1]['below_pinch'] == [] or streams_info[-1]['id'] not in ids_below_pinch) and streams_info[-1]['temperatures'][1] < pinch_point_temperature - pinch_delta_T_min:
+
                     streams_info[-1]['below_pinch'].append({
                                                     "id": stream_id,
                                                     "flowrate": 0,
                                                     "mcp": df_streams.loc[stream_id]['mcp']
                                                    })
-
-
+                print(streams_info)
 
             detailed_info_pinch_analysis.append({'ID': design_id,
                                                  'analysis_state': 'performed',
