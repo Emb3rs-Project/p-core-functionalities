@@ -73,6 +73,11 @@ def source_detailed(in_var, kb: KB):
         if equipment_info['object_type'] == 'boiler' or equipment_info['object_type'] == 'chp' or equipment_info[
             'object_type'] == 'burner' or equipment_info['object_type'] == 'cooling_equipment':
 
+            if equipment_info['object_type'] == 'boiler' or equipment_info['object_type'] == 'chp' or equipment_info[
+                'object_type'] == 'burner':
+                if equipment_info["fuel_type"] == "none":
+                    raise Exception("Introduce valid Equipment Fuel")
+
             if equipment_info['object_type'] == 'boiler':
                 new_equipment = Boiler(equipment_info, kb)
             elif equipment_info['object_type'] == 'chp':

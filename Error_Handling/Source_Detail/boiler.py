@@ -28,12 +28,7 @@ class Boiler(SourceDetailedObject, Schedule,FuelType):
 
        return boiler_supply_flowrate
 
-    @validator('fuel_type')
-    def check_fuel_type(cls, fuel_type, values, **kwargs):
-       if values['fuel_type'] == "none":
-           raise Exception('Introduce a valid Fuel')
 
-       return fuel_type
 
     @validator('equipment_return_temperature', always=True)
     def check_equipment_return_temperature(cls, equipment_return_temperature, values, **kwargs):
