@@ -55,7 +55,7 @@ from ....General.Auxiliary_General.compute_cop_err import compute_cop_err
 
 class Add_Electric_Chiller():
 
-    def __init__(self, kb: KB, country, consumer_type, supply_capacity, power_fraction, supply_temperature, return_temperature):
+    def __init__(self, kb: KB, fuels_data, supply_capacity, power_fraction, supply_temperature, return_temperature):
 
         # Defined Vars
         self.object_type = 'equipment'
@@ -64,8 +64,7 @@ class Add_Electric_Chiller():
 
 
         # get equipment characteristics
-        fuel_properties = FuelProperties(kb)
-        self.fuel_properties = fuel_properties.get_values(country, self.fuel_type, consumer_type)
+        self.fuel_properties = fuels_data[self.fuel_type]
         self.supply_temperature = supply_temperature  # equipment directly supplies grid/sink/source [ºC]
         self.return_temperature = return_temperature
         self.supply_capacity = supply_capacity  # heat supply capacity [kW]

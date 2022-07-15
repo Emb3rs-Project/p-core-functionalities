@@ -17,7 +17,6 @@ OUTPUT: stream with data corrected
 
 """
 
-from ...Error_Handling.error_building_adjust_capacity import PlatformBuildingAdjustCapacity
 from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 months = [
@@ -36,19 +35,23 @@ months = [
 ]
 
 
-def building_adjust_capacity(in_var):
-    ###############################################################
-    # INPUT
-    # error handling
-    platform_data = PlatformBuildingAdjustCapacity(**in_var['platform'])
+def building_and_greenhouse_adjust_capacity(stream, user_monthly_capacity, user_yearly_capacity):
 
-    if platform_data.user_monthly_capacity is not None:
-        user_monthly_capacity = vars(platform_data.user_monthly_capacity)
+    """
+
+    :param stream:
+    :param user_monthly_capacity:
+    :param user_yearly_capacity:
+    :return:
+
+    """
+
+    if user_monthly_capacity is not None:
+        user_monthly_capacity = vars(user_monthly_capacity)
     else:
-        user_monthly_capacity = platform_data.user_monthly_capacity
+        user_monthly_capacity = user_monthly_capacity
 
-    user_yearly_capacity = platform_data.user_yearly_capacity
-    stream = vars(platform_data.stream)
+    user_yearly_capacity = user_yearly_capacity
 
     ###############################################################
     # COMPUTE
@@ -85,7 +88,7 @@ def monthly_adjust(stream, months_coef):
     for index, month in enumerate(months):
         monthly_coef = months_coef[str(month)]
 
-        if month == 'january' or month =='march' or month =='may' or month =='july' or month =='august' or month =='october' or month =='december':
+        if month == 'january' or month == 'march' or month == 'may' or month == 'july' or month == 'august' or month == 'october' or month == 'december':
             number_days = 31
         elif month == 'february':
             number_days = 29  # year with 366 days considered
@@ -96,14 +99,13 @@ def monthly_adjust(stream, months_coef):
         final = hour_new_month + number_days * 24
 
         if month != 'december':
-            stream["hourly_generation"][initial:final] = [round(i * monthly_coef,2) for i in
+            stream["hourly_generation"][initial:final] = [round(i * monthly_coef, 2) for i in
                                                           stream["hourly_generation"][initial:final]]
         else:
-            stream["hourly_generation"][initial:] = [round(i * monthly_coef, 2)for i in
+            stream["hourly_generation"][initial:] = [round(i * monthly_coef, 2) for i in
                                                      stream["hourly_generation"][initial:]]
         hour_new_month = final
 
         stream['monthly_generation'][index] = round(stream['monthly_generation'][index] * monthly_coef, 2)
-
 
     return stream

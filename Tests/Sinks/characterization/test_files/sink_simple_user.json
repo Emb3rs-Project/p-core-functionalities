@@ -2,19 +2,22 @@
   "platform": {
     "type_of_object": "sink",
     "name": "1",
+    "location": [41.14961, -8.61099],
     "streams": [
       {
+        "ref_system_fuel_type": "natural_gas",
+        "ref_system_eff_equipment": 0.90,
         "name": "stream_1",
         "fluid": "water",
         "flowrate": 100,
         "fluid_cp": 1.5,
         "sunday_on": 1,
         "saturday_on": 1,
-        "daily_periods": "[]",
+        "daily_periods": "[[10,20]]",
         "shutdown_periods": "[]",
         "supply_temperature": "1",
         "target_temperature": "50"
       }
     ]
-}
+  }
 }

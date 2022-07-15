@@ -52,7 +52,7 @@ months = [
 ]
 
 def stream_industry(stream_name,object_linked_id, stream_type, fluid, supply_temperature, target_temperature, mass_flowrate, capacity,
-                    schedule=None, hourly_generation=None, stream_id=None):
+                    schedule=None, hourly_generation=None, stream_id=None, fuel="none", eff_equipment=None):
 
 
     if stream_id == None:
@@ -99,20 +99,24 @@ def stream_industry(stream_name,object_linked_id, stream_type, fluid, supply_tem
 
         hour_new_month = final
 
+
+
     stream_data = {
-        'name': stream_name,
-        'id': stream_id,
-        'object_type': 'stream',
-        'object_linked_id': object_linked_id,  # Object ID associated; e.g. process or equipment ID
-        'stream_type': stream_type,  # e.g. inflow, supply_heat, excess_heat
-        'supply_temperature': supply_temperature,  # T_in  # [ºC]
-        'target_temperature': target_temperature,  # T_out  # [ºC]
-        'fluid': fluid,
-        'flowrate': mass_flowrate,  # [kg/h]
-        'schedule': schedule,  # array with 1 and 0
-        'hourly_generation': hourly_generation,  # [kWh]
-        'capacity': capacity,  # [kW]
-        'monthly_generation': monthly_generation  # [kWh]
+        "name" : stream_name,
+        "id" : stream_id,
+        "object_type" : 'stream',
+        "object_linked_id" : object_linked_id,  # Object ID associated; e.g. process or equipment ID
+        "stream_type" : stream_type,  # e.g. inflow, supply_heat, excess_heat
+        "supply_temperature" : supply_temperature,  # T_in  # [ºC]
+        "target_temperature" : target_temperature,  # T_out  # [ºC]
+        "fluid" : fluid,
+        "flowrate" : mass_flowrate,  # [kg/h]
+        "schedule" : schedule,  # array with 1 and 0
+        "hourly_generation" : hourly_generation,  # [kWh]
+        "capacity" : capacity,  # [kW]
+        "monthly_generation" : monthly_generation, # [kWh],
+        "fuel": fuel,
+        "eff_equipment": eff_equipment
     }
 
     return stream_data

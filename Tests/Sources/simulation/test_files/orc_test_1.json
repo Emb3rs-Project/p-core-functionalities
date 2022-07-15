@@ -1,8 +1,29 @@
 {
   "platform": {
+    "interest_rate": 0.04,
+    "fuels_data": {
+          "natural_gas": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "biomass": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "fuel_oil": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "electricity": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          }
+        },
     "streams": [
       {
         "id": 1,
+        "fuel": "none",
+        "eff_equipment": null,
         "name": "flue gas 108",
         "object_type": "stream",
         "object_id": 5,
@@ -17588,6 +17609,8 @@
       {
         "id": 2,
         "name": "flue gas 56",
+        "fuel": "none",
+        "eff_equipment": null,
         "object_type": "stream",
         "object_id": 5,
         "stream_type": "excess_heat",
@@ -35170,7 +35193,6 @@
         "capacity": 15199.9575
       }
     ],
-    "consumer_type": "non-household",
     "location": [
       41,
       -8

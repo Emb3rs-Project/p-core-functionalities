@@ -1,8 +1,28 @@
 {
   "platform": {
+     "fuels_data": {
+          "natural_gas": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "biomass": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "fuel_oil": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "electricity": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          }
+        },
     "streams_to_analyse": [8705,2446,74345,5372],
     "all_input_objects":  [
     {
+      "fuel": "none",
+      "name": "first",
       "id": 8705,
       "object_type": "stream",
       "object_linked_id": null,
@@ -17600,6 +17620,8 @@
       ]
     },
     {
+      "fuel": "none",
+      "name": "second",
       "id": 2446,
       "object_type": "stream",
       "object_linked_id": null,
@@ -35197,6 +35219,8 @@
       ]
     },
     {
+      "fuel": "none",
+      "name": "third",
       "id": 74345,
       "object_type": "stream",
       "object_linked_id": null,
@@ -52794,6 +52818,8 @@
       ]
     },
     {
+      "fuel": "none",
+      "name": "fourth",
       "id": 5372,
       "object_type": "stream",
       "object_linked_id": null,

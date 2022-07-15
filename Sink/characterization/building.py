@@ -1,95 +1,14 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Building Simulation. Simulates heat an cooling consumptions over the year, according to building specifications
-    and climate weather data
-
-
-##############################
-INPUT: dictionary with:
-
-        Mandatory/Basic User inputs:
-            # latitude  [º]
-            # longitude  [º]
-            # number_floor  []
-            # width_floor [m]
-            # length_floor [m]
-            # height_floor [m]
-            # ratio_wall_N - value between  0 and 1  []
-            # ratio_wall_S
-            # ratio_wall_E
-            # ratio_wall_W
-            # saturday_on - 1 (yes)  or 0 (no)
-            # sunday_on - 1 (yes)  or 0 (no)
-            # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
-            # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
-            # building_type - 'office','residential' or ' hotel'
-            # building_orientation - 'N','S','E' or 'W'
-
-            !!!
-            IMPORTANT -  for Mandatory/Basic User:
-                # if  building_type = 'residential' -> mandatory input -> number_person_per_floor
-                # if  building_type = 'hotel' -> mandatory input -> number_rooms
-                # space_heating_type -> mandatory input for basic user - Expert User should introduce temperatures
-                    -> 0 = Conventional (target_temperature_heat = 75; supply_temperature_heat = 45)
-                    -> 1 = Low temperature (target_temperature_heat = 50; supply_temperature_heat = 30)
-
-        Optional/Expert User inputs:
-            # number_person_per_floor
-            # supply_temperature_heat [ºC]
-            # target_temperature_heat [ºC]
-            # supply_temperature_cool [ºC]
-            # target_temperature_cool [ºC]
-            # T_cool_on [ºC]
-            # T_heat_on [ºC]
-            # T_off_min [ºC]
-            # T_off_max [ºC]
-            # tau_glass - value between  0 and 1  []
-            # alpha_wall
-            # alpha_floor
-            # alpha_glass
-            # u_wall [W/m2.K]
-            # u_roof
-            # u_floor
-            # u_glass
-            # cp_roof [J/m2.K]
-            # cp_wall [J/m2.K]
-            # air_change_hour [1/h]
-            # renewal_air_per_person  [m3/s.person]
-            # vol_dhw_set - daily water consumption [m3]
-            # Q_gain_per_floor  [W]
-            # emissivity_wall  []
-            # emissivity_glass
-
-##############################
-OUTPUT: dict with key 'streams' with streams dictionaries - 'hot_stream' and 'cold_stream'
-
-        Where for example:
-        # 'hot_stream' = {
-        #           'id' - stream id
-        #           'object_type' - stream
-        #           'fluid' - water
-        #           'stream_type' - inflow
-        #           'monthly_generation' - array [kWh]
-        #           'hourly_generation' - array [kWh]
-        #           'supply_temperature' [ºC]
-        #           'target_temperature' [ºC]
-        #           }
-
-
-"""
-
 import math
 from ...utilities.kb import KB
+from ...General.Auxiliary_General.ref_data import ref_data
+from ...General.Auxiliary_General.schedule_hour import schedule_hour
+from ...General.Auxiliary_General.month_last_hour import month_last_hour
+from ...General.Simple_User.adjust_capacity import adjust_capacity
 from .Auxiliary.building_climate_api import building_climate_api
 from .Auxiliary.wall_area import wall_area
-from ...General.Auxiliary_General.schedule_hour import schedule_hour
 from .Auxiliary.surface_outside_rad_heat_loss import surface_outside_rad_heat_loss
 from .Auxiliary.ht_indoor_air import ht_indoor_air
 from .Auxiliary.building_dhw import building_dhw
-from ...General.Auxiliary_General.month_last_hour import month_last_hour
 from .Auxiliary.explicit_computation_component_temperature import explicit_computation_component_temperature
 from .Auxiliary.steady_state_vertical_inner_wall import steady_state_vertical_inner_wall
 from .Auxiliary.steady_state_horizontal_faced_down import steady_state_horizontal_face_down
@@ -104,10 +23,92 @@ from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 def building(in_var, kb : KB):
 
+    """
+    Building Simulation. Simulates heat an cooling consumptions over the year, according to building specifications
+    and climate weather data
+
+    :param in_var: ``dict``: building characterization data
+        - platform: ``dict``: platform data
+                - location : ``list``: location [º]; [latitude,longitude]
+                - number_floor: ``int``: number of floors
+                - width_floor: ``float``: floor width [m]
+                - length_floor: ``float``: floor length	[m]
+                - height_floor: ``float``: floor height [m]
+                - ratio_wall_N: ``float``: ratio of the North wall area in total north facade area (wall + window) []
+                - ratio_wall_S: ``float``: ratio of the South wall area in total north facade area (wall + window) []
+                - ratio_wall_E: ``float``: ratio of the East wall area in total north facade area (wall + window) []
+                - ratio_wall_W: ``float``: ratio of the West wall area in total north facade area (wall + window) []
+                - daily_periods: ``float``: period of daily periods [h]
+                - shutdown_periods: ``list``: period of days stream is not available [day]
+                - saturday_on: ``int``: if available on saturdays - available (1); not available (0)
+                - sunday_on: ``int``: if available on sundays - available (1); not available (0)
+                - building_orientation: ``str``: building’s main facade orientation; "N","S","E" or "W"
+                - space_heating_type: ``int``: Space heating type;
+                           1 = Conventional; heaters working fluid supply temperature of 75ºC,  heaters working fluid return temperature of 45ºC)
+                           2 = Low temperature; heaters working fluid supply temperature of 50ºC,  heaters working fluid return temperature of 30ºC)
+                           3 = Specify Temperatures - Advanced Properties; of supply_temperature_heat and target_temperature_heat
+                - T_cool_on: ``float``: Cooling setpoint temperature [ºC]
+                - T_heat_on: ``float``: Heating setpoint temperature [ºC]
+                - T_off_min: ``float``: Heating setback setpoint temperature [ºC]
+                - T_off_max: ``float``: Cooling setback setpoint temperature  [ºC]
+                - number_person_per_floor: ``int``: [OPTIONAL] Persons per floor
+                - supply_temperature_heat: ``float``: [OPTIONAL] Heating System ReturnTemperature [ºC]
+                - target_temperature_heat: ``float``: [OPTIONAL] Heating System Supply Temperature [ºC]
+                - supply_temperature_cool: ``float``: [OPTIONAL] Cooling System Return Temperature [ºC]
+                - target_temperature_cool: ``float``: [OPTIONAL] Cooling System Supply Temperature [ºC]
+                - tau_glass: ``float``: [OPTIONAL] glass windows transmissivity []
+                - u_wall: ``float``: [OPTIONAL] walls' U value [W/m2.K]
+                - u_roof: ``float``: [OPTIONAL] roof U value [W/m2.K]
+                - u_glass: ``float``: [OPTIONAL] glass windows U value [W/m2.K]
+                - u_floor: ``float``: [OPTIONAL] floor U value [W/m2.K]
+                - alpha_wall: ``float``: [OPTIONAL] walls’ radiation absorption coefficient []
+                - alpha_floor: ``float``: [OPTIONAL] floor’s radiation absorption coefficient []
+                - alpha_glass: ``float``: [OPTIONAL] windows’ radiation absorption coefficient []
+                - cp_floor: ``float``: [OPTIONAL] floor specific heat capacitance [J/kg.K]
+                - cp_roof: ``float``: [OPTIONAL] roof specific heat capacitance [J/kg.K]
+                - cp_wall: ``float``: [OPTIONAL] wall specific heat capacitance [J/kg.K]
+                - air_change_hour: ``float``: [OPTIONAL] air changes per hour due to infiltrations [1/h]
+                - renewal_air_per_person: ``float``: [OPTIONAL] fresh air changer per person [m3/s per person]
+                - vol_dhw_set: ``float``: [OPTIONAL] Volume of daily water consumption [m3]
+                - Q_gain_per_floor: ``float``: [OPTIONAL] Internal Gains [W/m2]
+                - emissivity_wall: ``float``: [OPTIONAL] Walls's emissivity
+                - emissivity_glass: ``float``: [OPTIONAL] Glass Window's emissivity
+                - ref_system_fuel_type_heating: ``str``: Fuel type associated; e.g. "natural_gas","electricity","biomass","fuel_oil","none"
+                - ref_system_fuel_price_heating: ``float``: [OPTIONAL] Fuel Price. If not given, obtained from KB
+                - ref_system_eff_equipment_heating: ``float``: [OPTIONAL] Efficiency of the heating equipment
+                - ref_system_fuel_type_cooling: ``str``: Fuel type associated
+                - ref_system_fuel_price_cooling: ``float``: [OPTIONAL] Fuel Price. If not given, obtained from KB
+                - ref_system_eff_equipment_cooling: ``float``:[OPTIONAL] COP of the cooling equipment
+                - real_heating_monthly_capacity: ``dict``: [OPTIONAL] Real monthly data - for each month of the year
+                - real_heating_yearly_capacity: ``float``: [OPTIONAL] Real yearly data - single value
+                - real_cooling_monthly_capacity: ``dict``: [OPTIONAL] Real monthly data - for each month of the year
+                - real_cooling_yearly_capacity: ``float``: [OPTIONAL] Real yearly data - single value
+
+    :param kb: KB
+
+    :return: output:``dict``: streams data
+                - streams: ``list``: List with dicts of all streams with the following keys:
+                        - id : ``int``: stream ID []
+                        - name : ``str``:
+                        - object_type : ``str``: DEFAULT=stream []
+                        - object_linked_id : `` None``: DEFAULT=NONE, since no equipment/process is assocaited
+                        - stream_type : ``str``: stream designation []; inflow, outflow, excess_heat
+                        - supply_temperature : ``float``: stream's supply/initial temperature [ºC]
+                        - target_temperature : ``float``: stream's target/final temperature [ºC]
+                        - fluid : ``str``: stream fluid name
+                        - flowrate : ``float``: [kg/h]
+                        - schedule : ``list``: hourly values between 0 and 1, according to the hourly capacity
+                        - hourly_generation: ``list``: stream's hourly capacity [kWh]
+                        - capacity : ``float``:  stream's capacity [kW]
+                        - monthly_generation : ``list``: stream's monthly capacity [kWh]
+                        - fuel_co2_emissions : ``float``: fuel CO2 emissions [kgCO2/kWh]
+                        - fuel_price : ``float``: fuel price [€/kWh]
+
+    """
+
     ################################################################################################
     # INPUT ----------------------------------------------
     platform_data = error_building(in_var['platform'], kb)
-
     latitude, longitude = platform_data.location
     number_floor = platform_data.number_floor
     width_floor = platform_data.width_floor
@@ -149,8 +150,20 @@ def building(in_var, kb : KB):
     emissivity_wall = platform_data.emissivity_wall
     emissivity_glass = platform_data.emissivity_glass
 
+    ref_system_eff_equipment_heating = platform_data.ref_system_eff_equipment_heating
+    ref_system_fuel_type_heating = platform_data.ref_system_fuel_type_heating
+    ref_system_eff_equipment_cooling = platform_data.ref_system_eff_equipment_cooling
+    ref_system_fuel_type_cooling = platform_data.ref_system_fuel_type_cooling
+
+    real_heating_monthly_capacity = platform_data.real_heating_monthly_capacity
+    real_heating_yearly_capacity = platform_data.real_heating_yearly_capacity
+    real_cooling_monthly_capacity = platform_data.real_cooling_monthly_capacity
+    real_cooling_yearly_capacity = platform_data.real_cooling_yearly_capacity
+
+
     ################################################################################################
     # DEFINED VARS ----------------------------------------------------------------------------------
+    consumer_type = "household"
     # Simulation Properties
     interpolation_weight = 0.8
 
@@ -611,10 +624,8 @@ def building(in_var, kb : KB):
         profile_hourly_heat = [i * number_floor for i in profile_hourly_heat]
         profile_hourly_cool = [i * number_floor for i in profile_hourly_cool]
 
-        ##############################
-        # OUTPUT
-        streams = {
-            'hot_stream': {
+        # Adjust Capacity
+        stream_hot = {
                 'id': 1,
                 'name': "building heating",
                 'object_type': 'stream',
@@ -625,9 +636,13 @@ def building(in_var, kb : KB):
                 "hourly_generation": profile_hourly_heat,  # [kWh]
                 "supply_temperature": supply_temperature_heat,  # [ºC]
                 "target_temperature": target_temperature_heat,  # [ºC]
-                "schedule": profile
-            },
-            'cold_stream': {
+                "schedule": profile,
+                "fuel": ref_system_fuel_type_heating,
+                "eff_equipment": ref_system_eff_equipment_heating
+        }
+
+
+        stream_cold = {
                 'id': 2,
                 'name': "building cooling",
                 'object_type': 'stream',
@@ -638,10 +653,26 @@ def building(in_var, kb : KB):
                 "hourly_generation": profile_hourly_cool,  # [kWh]
                 "supply_temperature": supply_temperature_cool,  # [ºC]
                 "target_temperature": target_temperature_cool,  # [ºC]
-                "schedule": profile
+                "schedule": profile,
+                "fuel": ref_system_fuel_type_cooling,
+                "eff_equipment": ref_system_eff_equipment_cooling
             }
 
-        }
+        if real_heating_monthly_capacity is not None:
+            stream_hot = adjust_capacity(stream_hot, user_monthly_capacity=vars(real_heating_monthly_capacity))
+        elif real_heating_yearly_capacity is not None:
+            stream_hot = adjust_capacity(stream_hot, user_yearly_capacity=real_heating_yearly_capacity)
+
+        if real_cooling_monthly_capacity is not None:
+            stream_cold = adjust_capacity(stream_cold, user_monthly_capacity=vars(real_cooling_monthly_capacity))
+        elif real_cooling_yearly_capacity is not None:
+            stream_cold = adjust_capacity(stream_cold, user_yearly_capacity=real_cooling_yearly_capacity)
+
+
+        ##############################
+        # OUTPUT
+        output = {'streams': [stream_hot, stream_cold]}
+
 
     except:
         raise ModuleRuntimeException(
@@ -651,7 +682,7 @@ def building(in_var, kb : KB):
         )
 
 
-    return streams
+    return output
 
 
 

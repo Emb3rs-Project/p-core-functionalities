@@ -1,18 +1,17 @@
 from enum import Enum
 from typing import Optional
-
 from pydantic import validator, confloat, PositiveFloat, conint, PositiveInt
-
 from .General.building_orientation import BuildingOrientation
 from .General.location import Location
+from .General.reference_system import ReferenceSystem
 from .General.schedule import Schedule
+from module.Error_Handling.General.error_building_and_greenhouse_adjust_capacity import BuildingandGreenhouseAdjustCapacity
 
 
 class GreenhouseEfficiency(int, Enum):
     tight_cover = 1
     medium_sealing = 2
     loose_cover = 3
-    user_inputs_fc = 4
 
 
 class ArtificalLights_and_ThermalBlanket(int, Enum):
@@ -20,10 +19,9 @@ class ArtificalLights_and_ThermalBlanket(int, Enum):
     does_not_have = 0
 
 
-class PlatformGreenhouse(Schedule, Location):
+class PlatformGreenhouse(Schedule, Location, ReferenceSystem, BuildingandGreenhouseAdjustCapacity):
     # Mandatory
     hours_lights_needed: Optional[conint(gt=0, le=24)] = None
-
     greenhouse_efficiency: GreenhouseEfficiency
     width: PositiveFloat
     length: PositiveFloat
@@ -74,12 +72,12 @@ class PlatformGreenhouse(Schedule, Location):
     def check_heaters_temperatures(cls, supply_temperature_heat, values, **kwargs):
         if values['target_temperature_heat'] >= supply_temperature_heat:
             raise ValueError(
-                'Heating System Supply Temperature must be larger than Heating System Return Temperature.')
+                'Heating System Supply Temperature must be larger than Heating System Return Temperature (Advanced Parameters).')
         return supply_temperature_heat
 
     @validator('artificial_lights_system')
     def check_artificial_lights_system(cls, artificial_lights_system, values, **kwargs):
         if artificial_lights_system == 1 and values['hours_lights_needed'] is None:
             raise ValueError(
-                'When introducing existing artificial lighting system, input daily light hours needed.')
+                'When introducing existing artificial lighting system, input daily light hours needed (Advanced Parameters).')
         return artificial_lights_system

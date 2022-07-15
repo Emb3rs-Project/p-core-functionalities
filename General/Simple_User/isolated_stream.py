@@ -64,7 +64,7 @@ def isolated_stream(streams):
             else:
                 flowrate = stream['flowrate']
 
-        if stream['hourly_generation'] is None:
+        if stream['real_hourly_capacity'] is None:
             schedule = schedule_hour(
                 stream["saturday_on"],
                 stream["sunday_on"],
@@ -74,13 +74,12 @@ def isolated_stream(streams):
             hourly_generation = None
         else:
             schedule = None
-            hourly_generation = stream['hourly_generation']
+            hourly_generation = stream['real_hourly_capacity']
 
         if stream['target_temperature'] > stream["supply_temperature"]:
             stream_type = 'hot_stream'
         else:
             stream_type = 'cold_stream'
-
 
         info_stream = stream_industry(
             stream["name"],
@@ -93,14 +92,14 @@ def isolated_stream(streams):
             capacity,
             schedule=schedule,
             hourly_generation=hourly_generation,
-            stream_id=index_stream
+            stream_id=index_stream,
+            fuel=stream["ref_system_fuel_type"],
+            eff_equipment=stream["ref_system_eff_equipment"]
         )
 
         streams_output.append(info_stream)
 
         info_stream['id'] = stream['id']
-        info_stream['fuel'] = stream['fuel']
-        info_stream['eff_equipment'] = stream['eff_equipment']
 
     output = {'streams': streams_output}
 

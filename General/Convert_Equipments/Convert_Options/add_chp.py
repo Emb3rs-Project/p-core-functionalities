@@ -54,7 +54,7 @@ from ....General.Auxiliary_General.linearize_values import linearize_values
 
 class Add_CHP():
 
-    def __init__(self, kb: KB, fuel_type, country, consumer_type, supply_capacity, power_fraction, supply_temperature,
+    def __init__(self, kb: KB, fuels_data, fuel_type, supply_capacity, power_fraction, supply_temperature,
                  return_temperature):
 
         # Defined Vars
@@ -68,8 +68,7 @@ class Add_CHP():
 
         # get equipment characteristics
         self.fuel_type = fuel_type
-        fuel_properties = FuelProperties(kb)
-        self.fuel_properties = fuel_properties.get_values(country, self.fuel_type, consumer_type)
+        self.fuel_properties = fuels_data[fuel_type]
         self.supply_temperature = supply_temperature  # equipment directly supplies grid
         self.return_temperature = return_temperature
         self.supply_capacity = supply_capacity  # equipment directly supplies grid

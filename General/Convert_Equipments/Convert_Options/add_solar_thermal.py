@@ -66,7 +66,7 @@ from ....utilities.kb import KB
 
 class Add_Solar_Thermal():
 
-    def __init__(self, kb : KB, country, consumer_type, latitude, longitude, stream_available_capacity, power_fraction, supply_temperature, return_temperature,hx_delta_T,hx_efficiency):
+    def __init__(self, kb : KB,fuels_data,  latitude, longitude, stream_available_capacity, power_fraction, supply_temperature, return_temperature,hx_delta_T,hx_efficiency):
 
         # Defined Vars
         self.object_type = 'equipment'
@@ -74,7 +74,7 @@ class Add_Solar_Thermal():
         self.fuel_type = 'electricity'
 
         fuel_properties = FuelProperties(kb)
-        self.fuel_properties = fuel_properties.get_values(country, self.fuel_type, consumer_type)
+        self.fuel_properties = fuels_data[self.fuel_type]
 
         # get equipment characteristics
         self.latitude = latitude

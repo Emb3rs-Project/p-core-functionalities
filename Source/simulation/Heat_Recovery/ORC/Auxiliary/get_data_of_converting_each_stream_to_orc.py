@@ -1,48 +1,38 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Auxiliary function to the main script, with the purpose of designing the ORC according to the stream given and
-      estimate costs.
-
-
-##############################
-INPUT:
-        # stream - stream dictionary with its characteristics, e.g. capacity, fluid, supply_temperature, target_temperature
-        # hx_delta_T  [ºC]
-        # orc_T_cond  [ºC]
-        # orc_T_evap  [ºC]
-        # hx_efficiency  []
-        # power_fraction  []
-        # intermediate_fluid - fluid name
-        # country - country name
-        # consumer_type - e.g. 'household' or 'non_household'
-        # aggregate_streams - if True, it will check the available power of the stream for the intermediate circuit designed;
-         True or False
-
-
-##############################
-OUTPUT:
-        # stream_thermal_capacity_max_power  [kW]
-        # orc_type - orc'
-        # orc_electrical_generation  [kW]
-        # intermediate_turnkey_max_power  [€]
-        # intermediate_om_fix_max_power  [€/year]
-        # intermediate_om_var_max_power  [€/year]
-
-
-"""
-
 from ......Source.simulation.Auxiliary.design_orc import design_orc
 from ......General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from ......General.Convert_Equipments.Convert_Options.add_hx import Add_HX
 
 
 def get_data_of_converting_each_stream_to_orc(kb, stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency,
-                                              power_fraction, intermediate_fluid, country,
-                                              consumer_type, aggregate_streams):
-    # design orc/rc
+                                              power_fraction, intermediate_fluid, fuels_data, aggregate_streams):
+
+    """
+    Auxiliary function with the purpose of designing the ORC according to the stream given, whether it is aggreagated or not,
+    and make techno-economical estimates.
+
+    :param kb: Knowledge Base Data
+    :param stream: ``dict``: stream data
+    :param hx_delta_T: ``float``: minimum heat exchanger temperature difference [ºC]
+    :param orc_T_cond: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=35
+    :param orc_T_evap: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]
+    :param hx_efficiency: ``float``: heat exchangers efficiency []
+    :param power_fraction: ``float``: value to design solution to 2 different capacities and linearize CAPEX (y=ax+b) []
+    :param intermediate_fluid: ``str``: intermediate circuit fluid name []
+    :param country: ``str``: country name []
+    :param consumer_type: `str``: type of consumer tariff []; 'household' or 'non-household'
+    :param aggregate_streams: ``boolean``: if True, it will check the available power of the stream for the intermediate circuit designed
+
+    :return:
+            - stream_thermal_capacity_max_power: ``float``: [kW]
+            - orc_type: ``str``:  DEFAULT="orc"
+            - orc_electrical_generation: ``float``: ORC nominal electrical generation [kW]
+            - intermediate_turnkey_max_power: ``float``: turnkey for intermediate circuit (maximum stream capacity) [€]
+            - intermediate_om_fix_max_power: ``float``: OM fix for intermediate circuit (maximum stream capacity) [€/year]
+            - intermediate_om_var_max_power: ``float``: OM var for intermediate circuit (maximum stream capacity) [€/year]
+
+    """
+
+    # design orc
     orc_type, stream_thermal_capacity_max_power, orc_electrical_generation, overall_thermal_capacity, stream_target_temperature_corrected, intermediate_circuit, hx_intermediate_supply_temperature, hx_intermediate_return_temperature = design_orc(
         stream['capacity'], stream['fluid'], stream['supply_temperature'], stream['target_temperature'],
         hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency, aggregate_streams)
@@ -65,8 +55,7 @@ def get_data_of_converting_each_stream_to_orc(kb, stream, hx_delta_T, orc_T_cond
 
             # add intermediation circulation pumping
             info_pump_intermediate = Add_Pump(kb,
-                                              country,
-                                              consumer_type,
+                                              fuels_data,
                                               intermediate_fluid,
                                               info_hx_intermediate.available_power,
                                               power_fraction,

@@ -1,5 +1,23 @@
 {
   "platform": {
+    "fuels_data": {
+          "natural_gas": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "biomass": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "fuel_oil": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "electricity": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          }
+        },
     "streams_to_analyse": [1,2,3,4] ,
     "streams": [
       {
@@ -12,7 +30,8 @@
         "sunday_on": 1,
         "capacity": 560,
         "shutdown_periods": "[]",
-        "daily_periods": "[[ 0,24 ]]"
+        "daily_periods": "[[ 0,24 ]]",
+        "ref_system_eff_equipment": null
       },
       {
         "name": "stream_2",
@@ -24,7 +43,8 @@
         "saturday_on": 1,
         "sunday_on": 1,
         "shutdown_periods": "[]",
-        "daily_periods": "[[ 0,24 ]]"
+        "daily_periods": "[[ 0,24 ]]",
+        "ref_system_eff_equipment": null
       },
       {
         "name": "stream_3",
@@ -38,7 +58,8 @@
         "shutdown_periods": "[]",
         "fuel": "natural_gas",
         "eff_equipment": "0.9",
-        "daily_periods": "[[ 0,24 ]]"
+        "daily_periods": "[[ 0,24 ]]",
+        "ref_system_eff_equipment": null
       },
       {
         "name": "stream_4",
@@ -52,7 +73,8 @@
         "shutdown_periods": "[]",
         "fuel": "biomass",
         "eff_equipment": "0.8",
-        "daily_periods": "[[ 0,24 ]]"
+        "daily_periods": "[[ 0,24 ]]",
+        "ref_system_eff_equipment": null
       }
     ],
     "pinch_delta_T_min": 50,

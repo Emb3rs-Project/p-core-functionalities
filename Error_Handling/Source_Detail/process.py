@@ -17,7 +17,7 @@ class Inflow(BaseModel):
     def get_flowrate_or_mass(cls, mass, values, **kwargs):
 
         if (mass == None and values["flowrate"] == None) or (mass != None and values["flowrate"] != None):
-            raise Exception('Introduce INFLOW flowrate [kg/h] or mass [kg]')
+            raise Exception('Introduce INFLOW mass flowrate [kg/h] or mass [kg]')
 
         return mass
 
@@ -34,7 +34,7 @@ class Outflow(BaseModel):
     @validator("mass", allow_reuse=True, always=True)
     def get_flowrate_or_mass(cls, mass, values, **kwargs):
         if (mass == None and values["flowrate"] == None) or (mass != None and values["flowrate"] != None):
-            raise Exception('Introduce OUTFLOW flowrate [kg/h] or mass [kg]')
+            raise Exception('Introduce OUTFLOW mass flowrate [kg/h] or mass [kg]')
 
         return mass
 

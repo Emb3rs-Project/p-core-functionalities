@@ -1,15 +1,37 @@
 {
   "platform": {
-    "grid_supply_temperature":90 ,
-    "grid_return_temperature":60,
+    "grid_supply_temperature": 90,
+    "grid_return_temperature": 60,
     "group_of_sinks": [
       {
+        "fuels_data": {
+          "natural_gas": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "biomass": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "fuel_oil": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "electricity": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          }
+        },
         "id": 3,
-        "consumer_type": "non-household",
-        "location": [38.718564, -9.160197],
+        "location": [
+          38.718564,
+          -9.160197
+        ],
         "streams": [
           {
             "id": 50169,
+            "eff_equipment": null,
+            "fuel": "none",
             "object_type": "stream",
             "object_id": null,
             "stream_type": "inflow",
@@ -17594,12 +17616,34 @@
         ]
       },
       {
+        "fuels_data": {
+          "natural_gas": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "biomass": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "fuel_oil": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "electricity": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          }
+        },
         "id": 4,
-        "consumer_type": "non-household",
-        "location": [38.718564, -9.160197],
+        "location": [
+          38.718564,
+          -9.160197
+        ],
         "streams": [
           {
             "id": 14803,
+             "eff_equipment": null,
+            "fuel": "none",
             "object_type": "stream",
             "object_id": null,
             "stream_type": "inflow",

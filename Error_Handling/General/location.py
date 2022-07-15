@@ -10,9 +10,9 @@ class Location(BaseModel):
         latitude, longitude = location
 
         if not -90 <= latitude <= 90:
-            raise ValueError('latitude must be within [-90,90]. location = [latitude,longitude]')
+            raise ValueError('Latitude must be within [-90,90]')
 
         if not -180 <= longitude <= 180:
-            raise ValueError('longitude must be within [-180,180]. location = [latitude,longitude]')
+            raise ValueError('Longitude must be within [-180,180]')
 
         return location

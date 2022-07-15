@@ -14,6 +14,6 @@ def testConvertORC():
     test_1 = convert_orc(data_test_1, KB(kb))
 
     # TEST 2
-    test_2 = convert_orc(data_test_2, KB(kb))
+   # test_2 = convert_orc(data_test_2, KB(kb))
 
     print("Convert ORC run successfully")

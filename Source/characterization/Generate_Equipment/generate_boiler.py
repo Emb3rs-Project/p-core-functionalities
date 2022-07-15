@@ -1,56 +1,43 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Create Boiler Object and characterize its streams.
-
-
-##############################
-INPUT: object with:
-        # id - equipment ID
-        # supply_temperature [ºC]
-        # open_closed_loop - 1 (yes)  or 0 (no)
-            # if open_closed_loop = 1 -> user must input -> return_temperature [ºC]
-        # global_conversion_efficiency  []
-        # fuel_type -  fuel type (natural_gas, fuel_oil, biomass, electricity)
-        # saturday_on - 1 (yes)  or 0 (no)
-        # sunday_on - 1 (yes)  or 0 (no)
-        # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
-        # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
-
-        !!!
-        IMPORTANT
-        To compute excess heat characteristics the equipment supply capacity must be known.
-        The user may choose to add directly the equipment supply_capacity or link processes with the equipment.
-            # supply_capacity [kW]
-            # processes - vector with processes [process_1,process_2,..]; each process contains dictionary with dictionaries of streams;
-
-                Where, e.g, in process_1:
-                    # process_1 = {'streams':[{stream_1_info},{stream_2_info},..]
-
-
-##############################
-OUTPUT: object Boiler.
-
-        !!!
-        IMPORTANT:
-         # boiler.streams important attribute for source simulation - Heat Recovery and Convert
-
-"""
-
+from ....General.Auxiliary_General.get_country import get_country
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
 from ....General.Auxiliary_General.combustion_mass_flows import combustion_mass_flows
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.medium import Medium
 from ....KB_General.equipment_details import EquipmentDetails
+from ....KB_General.fuel_properties import FuelProperties
+
 from ....utilities.kb import KB
 
 
 class Boiler:
 
     def __init__(self, in_var, kb: KB):
+
+        """
+        Create Boiler Object and characterize its streams.
+
+        :param in_var: ``dict``: boiler characterization data
+
+                - id: ``int``: equipment ID []
+                - supply_capacity: ``float``: equipment supply capacity [kW]
+                - equipment_supply_temperature: ``float``: working fluid supply temperature [ºC]
+                - equipment_return_temperature: ``float``: [OPTIONAL] working fluid return temperature [ºC]
+                - open_closed_loop: ``int``: whether is a opens or closed loop boiler; 1 (yes)  or 0 (no)
+                - global_conversion_efficiency: ``float``: equipment efficiency []
+                - fuel_type: ``str``: fuel type []; (natural_gas, fuel_oil, biomass, electricity)
+                - saturday_on: ``int``: if it is available on Saturday []; 1 (yes)  or 0 (no)
+                - sunday_on: ``int``: if it is available on Sunday []; 1 (yes)  or 0 (no)
+                - shutdown_periods: ``list``: list with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
+                - daily_periods: ``list``: list with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
+                - boiler_supply_flowrate: ``float``: [OPTIONAL] working fluid mass flowrate
+                - location: ``list``: [latitude, longitude]
+                - fuel_price: ``float``: [OPTIONAL]
+                - fuel_co2_emissions: ``float``: [OPTIONAL]
+
+        :param kb: Knowledge Base data
+
+        """
 
         ############################################################################################
         # KB
@@ -65,15 +52,14 @@ class Boiler:
         excess_heat_fluid = 'flue_gas'  # Excess heat fluid type
         excess_heat_target_temperature = 120  # flue_gas is usually cooled until 120ºC  due to the formation of condensates
         inflow_target_temperature = 80
-
+        supply_fluid = "water"  # this is only used in the PINCH -> water for both steam/hot water boiler
 
         ############################################################################################
         # INPUT
         self.id = in_var['id']  # equipment ID
         self.fuel_type = in_var['fuel_type']  # Fuel type  (Natural gas, Fuel oil, Biomass)
+
         self.supply_capacity = in_var['supply_capacity']
-
-
         self.global_conversion_efficiency = in_var['global_conversion_efficiency']
         processes = in_var['processes']
         supply_temperature = in_var['equipment_supply_temperature']
@@ -92,9 +78,6 @@ class Boiler:
         # COMPUTE
         # schedule
         schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
-
-        # supply temperature
-        supply_fluid = "water"  # this is only used in the PINCH -> water for both steam/hot water boiler
 
         # supply capacity
         if self.supply_capacity is None:
@@ -119,8 +102,8 @@ class Boiler:
 
         # supply heat stream
         if supply_temperature > 100:
-            supply_flowrate = in_var['supply_flowrate']  # [kg/h]
-            supply_capacity_water = supply_flowrate * 4.2 * (100-return_temperature)
+            supply_flowrate = in_var['boiler_supply_flowrate']  # [kg/h]
+            supply_capacity_water = supply_flowrate * 4.2 * (100 - return_temperature)
         else:
             supply_flowrate = compute_flow_rate(kb,
                                                 supply_fluid,
@@ -135,20 +118,17 @@ class Boiler:
         # excess heat stream
         excess_heat_supply_capacity = thermal_capacity - self.supply_capacity
         excess_heat_flowrate = m_flue_gas
-
-        excess_heat_supply_temperature = excess_heat_target_temperature + excess_heat_supply_capacity/(m_flue_gas/3600*1.4)
-
-
-        ############################################################
-        ############################################################
-        ############################################################
+        excess_heat_supply_temperature = excess_heat_target_temperature + excess_heat_supply_capacity / (
+                    m_flue_gas / 3600 * 1.4)
 
         # inflow stream
         inflow_flowrate = m_air
         inflow_fluid_cp = medium.cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
-        inflow_capacity = inflow_flowrate * (inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp / 3600  # [kW]
+        inflow_capacity = inflow_flowrate * (
+                    inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp / 3600  # [kW]
 
-        # GET STREAMS
+        ############################################################
+        # CHARACTERIZE STREAMS
         # air inflow
         self.streams.append(stream_industry('boiler air inflow',
                                             self.id,
@@ -159,7 +139,9 @@ class Boiler:
                                             inflow_flowrate,
                                             inflow_capacity,
                                             schedule,
-                                            stream_id=1))
+                                            stream_id=1,
+                                            fuel=self.fuel_type,
+                                            eff_equipment=1))
 
         # supply heat
         self.streams.append(stream_industry('boiler circuit',
@@ -171,7 +153,10 @@ class Boiler:
                                             supply_flowrate,
                                             supply_capacity_water,
                                             schedule,
-                                            stream_id=2))
+                                            stream_id=2,
+                                            fuel=self.fuel_type,
+                                            eff_equipment=self.global_conversion_efficiency
+                                            ))
 
         # excess heat
         self.streams.append(stream_industry('boiler flue gas',
@@ -183,5 +168,7 @@ class Boiler:
                                             excess_heat_flowrate,
                                             excess_heat_supply_capacity,
                                             schedule,
-                                            stream_id=3))
-
+                                            stream_id=3,
+                                            fuel="none",
+                                            eff_equipment=None
+                                            ))

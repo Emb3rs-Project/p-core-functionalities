@@ -1,53 +1,3 @@
-"""
-alisboa/jmcunha
-
-##############################
-INFO: Create Process object and characterize its streams.
-
-##############################
-INPUT: object with:
-
-        # id  - process id
-        # equipment - heat/cooling equipment id associated to
-        # operation_temperature  # process operation_temperature [ºC]
-        # saturday_on - 1 (yes)  or 0 (no)
-        # sunday_on - 1 (yes)  or 0 (no)
-        # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
-        # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
-        # schedule_type  - 0=Continuous, 1=Batch
-        # cycle_time_percentage  - Cycle percentage for Startup and Outflow; 0 to 0.9
-        # startup_data - vector with dictionaries
-        # maintenance_data - vector with dictionaries
-        # inflow_data - vector with dictionaries
-        # outflow_data - vector with dictionaries
-
-         Where in startup_data :
-             # fluid - fluid name
-             # initial_temperature [ºC]
-             # mass [kg]
-
-         Where in maintenance_data /evaporation :
-             # capacity [kW]
-
-        Where in inflow_data :
-             # fluid - fluid name
-             # supply_temperature [ºC]
-             # flowrate [kg/h]
-
-        Where in outflow_data :
-             # fluid - fluid name
-             # target_temperature [ºC]
-             # flowrate [kg/h]
-
-
-##############################
-OUTPUT: object Process
-
-        IMPORTANT:
-         # process.streams important attribute for CF Internal Heat Recovery
-
-"""
-
 from ....General.Auxiliary_General.stream_industry import stream_industry
 import datetime
 from ....utilities.kb import KB
@@ -55,6 +5,45 @@ from ....utilities.kb import KB
 class Process:
 
     def __init__(self,in_var, kb : KB):
+
+        """
+        Create Process object and characterize its streams (Inflow/Outflow/Maintenance/Evaporation).
+
+        :param in_var: ``dict``: Process characterization data with the following keys:
+
+                - id: ``int``: process ID []
+                - equipment_id: ``int``: associated equipment ID []
+                - operation_temperature: ``float``: process temperature [ºC]
+                - saturday_on: ``int``: if it is available on Saturday []; 1 (yes)  or 0 (no)
+                - sunday_on: ``int``: if it is available on Sunday []; 1 (yes)  or 0 (no)
+                - shutdown_periods: ``list``: list with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
+                - daily_periods: ``list``: list with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
+                - schedule_type: ``str``: process schedule type; batch (1) or continuous (0)
+                - cycle_time_percentage: ``float``: cycle  percentage for Startup/Inflow/Outflow during batch process
+                - inflow_data: ``list with dict``: inflow ``dict`` with the following keys:
+
+                    - name: ``str``: inflow name
+                    - mass: ``float``: [OPTIONAL] inflow mass [kg]
+                    - flowrate: ``float``: [OPTIONAL] inflow flowrate [kg/h]
+                    - fluid_cp: ``float``: inflow cp [kJ/kg.K]
+                    - supply_temperature: ``float``: inflow supply/initial temperature [ºC]
+
+                - outflow_data ``list with dict``
+
+                    - fluid_cp: ``float``: outflow cp [kJ/kg.K]
+                    - target_temperature: ``float``: outflow target/final temperature [ºC]
+                    - flowrate: ``float``: [OPTIONAL] outflow mass flowrate [kg/h]
+                    - mass: ``float``: [OPTIONAL] outflow mass [kg]
+                    - initial_temperature: ``float``: [OPTIONAL] outflow iniital temperature [ºC]
+
+                - maintenance_data ``list with dict``
+
+                    - name: ``str``: inflow name
+                    - maintenance_capacity: ``float``: maintenance or evaporation capacity [kW]
+
+        :param kb: Knowledge Base data
+
+        """
 
         # defined var
         self.object_type = 'process'
@@ -70,11 +59,13 @@ class Process:
         self.shutdown_periods = in_var['shutdown_periods']  # e.g: [[59,74],[152,172],[362,365]]
         self.daily_periods = in_var['daily_periods']  # e.g: [[8,12],[15,19]]
         self.schedule_type = in_var['schedule_type']  # 0-Continuous, 1-Batch
-
         self.example_of_daily_period = self.daily_periods[0][1] - self.daily_periods[0][0]
+        self.eff_equipment = in_var['eff_equipment']
+        self.fuel = in_var['fuel_type']
 
+        # Cycle percentage for Startup and Outflow (when in Batch)
         try:
-            self.cycle_time_percentage = in_var['cycle_time_percentage']  # Cycle percentage for Startup and Outflow (when in Batch)
+            self.cycle_time_percentage = in_var['cycle_time_percentage']
             if self.cycle_time_percentage >= 1 or self.cycle_time_percentage <= 0:
                 self.cycle_time_percentage = 0.1
         except:
@@ -100,7 +91,6 @@ class Process:
         outflow_data = in_var['outflow_data']
         self.generate_outflow(outflow_data)
 
-
     def generate_maintenance_and_evaporation(self,data):
 
         # Maintenance/Evaporation Info
@@ -116,7 +106,10 @@ class Process:
                                                 None,
                                                 maintenance['maintenance_capacity'],
                                                 schedule,
-                                                stream_id=self.stream_id))
+                                                stream_id=self.stream_id,
+                                                fuel=self.fuel,
+                                                eff_equipment=self.eff_equipment
+                                                ))
 
             self.stream_id += 1
 
@@ -139,7 +132,10 @@ class Process:
                                                 inflow['flowrate'],
                                                 capacity,
                                                 schedule,
-                                                stream_id=self.stream_id))
+                                                stream_id=self.stream_id,
+                                                fuel=self.fuel,
+                                                eff_equipment=self.eff_equipment
+                                                ))
 
             self.stream_id += 1
 
@@ -168,7 +164,10 @@ class Process:
                                                 outflow['flowrate'],
                                                 capacity,
                                                 schedule,
-                                                stream_id=self.stream_id))
+                                                stream_id=self.stream_id,
+                                                fuel="none",
+                                                eff_equipment=None
+                                                ))
 
             self.stream_id += 1
 

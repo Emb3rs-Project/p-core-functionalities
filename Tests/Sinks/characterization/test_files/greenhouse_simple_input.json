@@ -1,17 +1,17 @@
 {
   "platform": {
-    "location": [41.1045, -8.3539],
+    "ref_system_eff_equipment": "0.92",
+    "ref_system_fuel_type": "natural_gas",
+    "location": [
+      41.1045,
+      -8.3539
+    ],
     "greenhouse_orientation": "S",
     "width": 23,
     "length": 50,
     "height": 2.64,
-    "shutdown_periods": [],
-    "daily_periods": [
-      [
-        0,
-        24
-      ]
-    ],
+    "shutdown_periods": "[]",
+    "daily_periods": "[[0, 24 ]]",
     "artificial_lights_system": 0,
     "T_heat_on": 18,
     "T_cool_on": 35,

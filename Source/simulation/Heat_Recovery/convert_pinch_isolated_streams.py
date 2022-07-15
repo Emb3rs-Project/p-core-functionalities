@@ -31,20 +31,25 @@ def convert_pinch_isolated_streams(in_var, kb: KB):
 
     '''
 
+
+
     raw_streams_data = PlatformIsolatedStream(**in_var['platform'])
     streams_data = [vars(stream) for stream in raw_streams_data.streams]
+
 
     # get streams data
     isolated_stream_output = isolated_stream(streams_data)
     streams = isolated_stream_output['streams']
 
+
     # perform pinch analysis
     input_data = {
         "platform": {
+            "fuels_data":  in_var['platform']["fuels_data"],
             "streams_to_analyse": in_var['platform']['streams_to_analyse'],
-            'all_input_objects': streams,
-            'pinch_delta_T_min': in_var['platform']['pinch_delta_T_min'],
-            'location': in_var['platform']['location']}
+            "all_input_objects": streams,
+            "pinch_delta_T_min": in_var['platform']['pinch_delta_T_min'],
+            "location": in_var['platform']['location']}
     }
 
     pinch_output = convert_pinch(input_data, kb)

@@ -1,6 +1,24 @@
 {
   "platform": {
     "type_of_object": "source",
+    "fuels_data": {
+      "natural_gas": {
+        "co2_emissions": 0.2,
+        "price": 0.055
+      },
+      "biomass": {
+        "co2_emissions": 0.2,
+        "price": 0.055
+      },
+      "fuel_oil": {
+        "co2_emissions": 0.2,
+        "price": 0.055
+      },
+      "electricity": {
+        "co2_emissions": 0.2,
+        "price": 0.055
+      }
+    },
     "streams": [
       {
         "name": "source_stream",

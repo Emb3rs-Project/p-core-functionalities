@@ -109,12 +109,11 @@ from ...General.Convert_Equipments.Convert_Options.add_thermal_chiller import Ad
 from ...General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from ...General.Convert_Equipments.Auxiliary.aggregate_technologies_info import aggregate_technologies_info
 from ...General.Convert_Equipments.Convert_Options.add_electric_chiller import Add_Electric_Chiller
-from ...General.Auxiliary_General.get_country import get_country
 from ...General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import coef_solar_thermal_backup
 import numpy as np
 from ...Error_Handling.error_convert_sinks import PlatformConvertSinks
 from ...Error_Handling.runtime_error import ModuleRuntimeException
-
+import copy
 
 def convert_sinks(in_var, kb):
     ##################################################################################################################
@@ -126,6 +125,11 @@ def convert_sinks(in_var, kb):
 
     group_of_sinks = platform_data.group_of_sinks  # e.g. building, greenhouse, streams
     group_of_sinks = [vars(sink) for sink in group_of_sinks]
+
+    for sink in group_of_sinks:
+        sink["fuels_data"] = vars(sink["fuels_data"])
+        for fuel in sink["fuels_data"].keys():
+            sink["fuels_data"][fuel] = vars(sink["fuels_data"][fuel])
 
     for sink in group_of_sinks:
         sink['streams'] = [vars(stream) for stream in sink['streams']]
@@ -216,16 +220,29 @@ def convert_sinks(in_var, kb):
 
     group_latitude /= len(group_of_sinks)
     group_longitude /= len(group_of_sinks)
-    country = get_country(group_latitude, group_longitude)
+
+    # assume average value of fuel cost/co2 emissions of the sinks for the grid specific
+    grid_specific_fuels_data = copy.deepcopy((group_of_sinks[0]['fuels_data']))
+
+    for fuels_keys in grid_specific_fuels_data.keys():
+        for fuel_key in grid_specific_fuels_data[fuels_keys].keys():
+            grid_specific_fuels_data[fuels_keys][fuel_key] = 0
+
+
+    fuels_keys = group_of_sinks[0]['fuels_data'].keys() # fuels names
+    for sink in group_of_sinks:
+        for fuel_key in fuels_keys:
+            grid_specific_fuels_data[fuel_key]["price"] += sink['fuels_data'][fuel_key]["price"] * (1/len(group_of_sinks))
+            grid_specific_fuels_data[fuel_key]["co2_emissions"] += sink['fuels_data'][fuel_key]["co2_emissions"] * (1/len(group_of_sinks))
+
 
     if group_of_sinks_grid_specific_power_heating > 0:
         try:
             # add boiler
             for fuel in boiler_fuel_type:
                 info_technology_group = Add_Boiler(kb,
+                                                   grid_specific_fuels_data,
                                                    fuel,
-                                                   country,
-                                                   'non_household',
                                                    group_of_sinks_grid_specific_power_heating,
                                                    power_fraction,
                                                    grid_supply_temperature,
@@ -245,8 +262,7 @@ def convert_sinks(in_var, kb):
 
             # add heat pump
             info_technology_group_hp = Add_Heat_Pump(kb,
-                                                     country,
-                                                     'non_household',
+                                                     grid_specific_fuels_data,
                                                      power_fraction,
                                                      grid_supply_temperature,
                                                      grid_return_temperature,
@@ -267,8 +283,7 @@ def convert_sinks(in_var, kb):
 
             # add solar thermal + hp
             info_technology_group_solar_thermal = Add_Solar_Thermal(kb,
-                                                                    country,
-                                                                    'non_household',
+                                                                    grid_specific_fuels_data,
                                                                     group_latitude,
                                                                     group_longitude,
                                                                     group_of_sinks_grid_specific_power_heating,
@@ -308,8 +323,7 @@ def convert_sinks(in_var, kb):
        for sink in group_of_sinks:
         output_converted = []
         latitude, longitude = sink['location']
-        country = get_country(latitude, longitude)
-        consumer_type = sink['consumer_type']
+        fuels_data = sink['fuels_data']
 
         # get conversion technologies for each stream
         for stream in sink['streams']:
@@ -327,8 +341,7 @@ def convert_sinks(in_var, kb):
                         teo_equipment_name = 'hp'
 
                         info_technology = Add_Heat_Pump(kb,
-                                                        country,
-                                                        consumer_type,
+                                                        fuels_data,
                                                         power_fraction,
                                                         stream['target_temperature'],
                                                         stream['supply_temperature'],
@@ -338,8 +351,7 @@ def convert_sinks(in_var, kb):
                         power_from_grid = info_technology.evap_capacity
 
                         info_pump_grid = Add_Pump(kb,
-                                                  country,
-                                                  consumer_type,
+                                                  fuels_data,
                                                   grid_fluid,
                                                   power_from_grid,
                                                   power_fraction,
@@ -384,8 +396,7 @@ def convert_sinks(in_var, kb):
 
                         # add circulation pumping to grid
                         info_pump_grid = Add_Pump(kb,
-                                                  country,
-                                                  consumer_type,
+                                                  fuels_data,
                                                   grid_fluid,
                                                   hx_power,
                                                   power_fraction,
@@ -415,9 +426,8 @@ def convert_sinks(in_var, kb):
                             # 1) add boiler
                             for fuel in boiler_fuel_type:
                                 info_technology = Add_Boiler(kb,
+                                                             fuels_data,
                                                              fuel,
-                                                             country,
-                                                             consumer_type,
                                                              needed_supply_capacity,
                                                              power_fraction,
                                                              stream['target_temperature'],
@@ -438,8 +448,7 @@ def convert_sinks(in_var, kb):
 
                             # 2) add solar thermal + boiler as backup
                             info_technology_solar_thermal = Add_Solar_Thermal(kb,
-                                                                              country,
-                                                                              consumer_type,
+                                                                              fuels_data,
                                                                               latitude,
                                                                               longitude,
                                                                               needed_supply_capacity,
@@ -450,9 +459,8 @@ def convert_sinks(in_var, kb):
                                                                               hx_efficiency)
 
                             info_technology_boiler = Add_Boiler(kb,
+                                                                fuels_data,
                                                                 'natural_gas',
-                                                                country,
-                                                                consumer_type,
                                                                 needed_supply_capacity,
                                                                 power_fraction,
                                                                 stream['target_temperature'],
@@ -478,8 +486,7 @@ def convert_sinks(in_var, kb):
 
                             # 3) add solar thermal + heat pump as backup
                             info_technology_heat_pump = Add_Heat_Pump(kb,
-                                                                      country,
-                                                                      consumer_type,
+                                                                      fuels_data,
                                                                       power_fraction,
                                                                       stream['target_temperature'],
                                                                       hx_sink_target_temperature,
@@ -513,8 +520,7 @@ def convert_sinks(in_var, kb):
 
                             # 4) add Heat Pump
                             info_technology = Add_Heat_Pump(kb,
-                                                            country,
-                                                            consumer_type,
+                                                            fuels_data,
                                                             power_fraction,
                                                             stream["target_temperature"],
                                                             stream["supply_temperature"],
@@ -524,8 +530,7 @@ def convert_sinks(in_var, kb):
 
                             # heat pump circulation pumping to grid
                             info_pump_grid = Add_Pump(kb,
-                                                      country,
-                                                      consumer_type,
+                                                      fuels_data,
                                                       grid_fluid,
                                                       info_technology.evap_capacity,
                                                       power_fraction,
@@ -561,8 +566,7 @@ def convert_sinks(in_var, kb):
                         thermal_chiller_supply_capacity = stream_nominal_capacity - electric_chiller_supply_capacity
 
                         info_electric_chiller = Add_Electric_Chiller(kb,
-                                                                     country,
-                                                                     consumer_type,
+                                                                     fuels_data,
                                                                      electric_chiller_supply_capacity,
                                                                      power_fraction,
                                                                      stream['target_temperature'],
@@ -597,8 +601,7 @@ def convert_sinks(in_var, kb):
 
                     # add circulation pumping to grid
                     info_pump_grid = Add_Pump(kb,
-                                              country,
-                                              consumer_type,
+                                              fuels_data,
                                               grid_fluid,
                                               hx_power_supply,
                                               power_fraction,
@@ -610,8 +613,7 @@ def convert_sinks(in_var, kb):
 
                     # add absorption chiller
                     info_technology = Add_Thermal_Chiller(kb,
-                                                          country,
-                                                          consumer_type,
+                                                          fuels_data,
                                                           thermal_chiller_supply_capacity,
                                                           power_fraction)
 
@@ -620,9 +622,8 @@ def convert_sinks(in_var, kb):
                         # add boiler
                         for fuel in boiler_fuel_type:
                             info_boiler = Add_Boiler(kb,
+                                                     fuels_data,
                                                      fuel,
-                                                     country,
-                                                     consumer_type,
                                                      needed_supply_capacity,
                                                      power_fraction,
                                                      thermal_chiller_generator_T_hot,
@@ -658,8 +659,7 @@ def convert_sinks(in_var, kb):
 
                         # add heat pump
                         info_heat_pump = Add_Heat_Pump(kb,
-                                                       country,
-                                                       consumer_type,
+                                                       fuels_data,
                                                        needed_supply_capacity,
                                                        power_fraction,
                                                        thermal_chiller_generator_T_hot,

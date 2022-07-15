@@ -22,6 +22,7 @@ OUTPUT: report HTML
 
 from jinja2 import Environment, FileSystemLoader
 import os
+from datetime import date
 
 def styling(df):
     html = df.to_html(index=False,
@@ -70,6 +71,9 @@ def get_html(stream_table_data, df_overview_data, df_technical_data, df_economic
 
 
 def orc_report(convert_orc_output):
+
+    today = date.today()
+
 
     #############################
     # Get data
@@ -165,11 +169,12 @@ def orc_report(convert_orc_output):
     )
 
     template = env.get_template('index.orc_template.html')
-    report_html = template.render(stream_table=stream_table_data,
-                                  df_overview=df_overview_data,
-                                  df_technical=df_technical_data,
-                                  df_economic=df_economic_data,
-                                  elec_cost=elec_cost_data,
-                                  co2_emission=co2_emission_data)
+    report_html = template.render(
+                                date=today, stream_table=stream_table_data,
+                                df_overview=df_overview_data,
+                                df_technical=df_technical_data,
+                                df_economic=df_economic_data,
+                                elec_cost=elec_cost_data,
+                                co2_emission=co2_emission_data)
 
     return report_html

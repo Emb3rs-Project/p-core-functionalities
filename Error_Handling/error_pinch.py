@@ -2,9 +2,9 @@ from pydantic import BaseModel, validator, PositiveFloat, PositiveInt, conlist, 
     NonNegativeFloat, confloat
 from typing import Optional, List, Union
 from module.Error_Handling.General.location import Location
-from .Source_Detail.fuel_type import FuelType
+from .Source_Detail.error_fueltype import FuelChoices
 from enum import Enum
-
+from .General.fueldata import FuelData
 
 def error_convert_pinch(platform_data):
     class StreamType(str, Enum):
@@ -33,7 +33,7 @@ def error_convert_pinch(platform_data):
         capacity: PositiveFloat
 
         object_linked_id: Optional[float] = None
-        fuel: Optional[FuelType]
+        fuel: FuelChoices
         eff_equipment: Optional[confloat(gt=0, le=1)]
 
         @validator('schedule', allow_reuse=True)
@@ -42,7 +42,7 @@ def error_convert_pinch(platform_data):
             _v = list(filter(lambda num: num > 1, _v))
 
             if len(_v) > 0:
-                raise ValueError('Values not valid found (only 0 or 1)')
+                raise ValueError('Pinch analysis input. Streams schedule values not valid.')
             return v
 
     class TrueFalse(int, Enum):
@@ -55,27 +55,28 @@ def error_convert_pinch(platform_data):
         equipment = "equipment"
 
     class ProcessorEquipment(BaseModel):
+
         id: NonNegativeInt
+        fuel_type: Optional[FuelChoices]
         equipment_id: Optional[NonNegativeInt]
-        fuel_type: Optional[FuelType]
         streams: Optional[List[StreamPinch]]
         global_conversion_efficiency: Optional[confloat(gt=0)]
         object_type: ObjectType
 
+
         @validator("object_type",allow_reuse=True)
         def validate_if_all_info_in_object(cls, object_type, values, **kwargs):
-
             if object_type == "process":
-                if values['equipment_id'] is None:
+                if values['equipment_id'] == None:
                     raise Exception(
                         ' All processes must have an equipment associated (missing Process key:\'equipment_id\').')
 
             elif object_type == "equipment":
-                if values['fuel_type'] is None:
+                if values['fuel_type'] == None:
                     raise Exception(
                         ' All equipment must have a fuel type associated (missing Equipment key:\'fuel_type\').')
 
-                if values['global_conversion_efficiency'] is None:
+                if values['global_conversion_efficiency'] == None:
                     raise Exception(
                         ' All equipment must have a conversion efficiency associated (missing Equipment key:\'global_conversion_efficiency\').')
 
@@ -88,6 +89,7 @@ def error_convert_pinch(platform_data):
     class PlatformPinch(Location):
 
         all_input_objects: List[ObjectData]
+        fuels_data: FuelData
         streams_to_analyse: conlist(int, min_items=1)
         pinch_delta_T_min: Optional[PositiveFloat] = 20
         perform_all_combinations: Optional[TrueFalse] = True
@@ -106,11 +108,13 @@ def error_convert_pinch(platform_data):
     all_objects = []
 
     # isolated streams check
-    for object in platform_data['all_input_objects']:
-        if object['object_type'] == "stream":
-            new_object = StreamPinch(**object)
+    for object_analyze in platform_data['all_input_objects']:
+
+        if object_analyze['object_type'] == "stream":
+            new_object = StreamPinch(**object_analyze)
         else:
-            new_object = ProcessorEquipment(**object)
+
+            new_object = ProcessorEquipment(**object_analyze)
 
             new_object.streams = [vars(stream)
                                   for stream in new_object.streams]

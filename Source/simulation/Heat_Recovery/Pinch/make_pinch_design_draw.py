@@ -1,27 +1,22 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Make Pinch HX Network
-
-
-##############################
-INPUT:
-
-
-##############################
-OUTPUT: HX Network HTML
-
-"""
-
-
-
-
 import matplotlib.pyplot as plt, mpld3
 import matplotlib.lines as mlines
 
 def make_pinch_design_draw(info):
+
+    """
+
+    :param info:
+        - info: ``dict``:
+            - streams_info
+            - pinch_temperature
+            - df_hx
+            - pinch_delta_T_min
+
+
+    :return:
+        - fig_html: ``str``: Pinch Analysis Report HTML report in a string
+
+    """
 
     streams_info = info['streams_info']
     pinch_temperature = info['pinch_temperature']

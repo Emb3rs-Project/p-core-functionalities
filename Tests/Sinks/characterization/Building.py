@@ -12,12 +12,11 @@ def testBuilding():
     # Paper
     test = building(data_1, KB(kb))
 
-    value_heat = int(sum(test['hot_stream']['monthly_generation'])/(data_1['platform']['number_floor'] * data_1['platform']['length_floor'] * data_1['platform']['width_floor']))
-    value_cool = int(sum(test['cold_stream']['monthly_generation'])/(data_1['platform']['number_floor'] * data_1['platform']['length_floor'] * data_1['platform']['width_floor']))
-
+    value_heat = int(sum(test['streams'][0]['monthly_generation'])/(data_1['platform']['number_floor'] * data_1['platform']['length_floor'] * data_1['platform']['width_floor']))
+    value_cool = int(sum(test['streams'][1]['monthly_generation'])/(data_1['platform']['number_floor'] * data_1['platform']['length_floor'] * data_1['platform']['width_floor']))
 
     if int(value_heat) == 35 and int(value_cool) == 20:
         print('Building Test 1 - Everything Correct')
     else:
         print('Building Test 1 - Report to CF that something is odd')
-
+#

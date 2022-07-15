@@ -19,6 +19,7 @@ OUTPUT: report HTML
 import os
 from module.Source.simulation.Heat_Recovery.Pinch.make_pinch_design_draw import make_pinch_design_draw
 import pandas as pd
+from datetime import date
 
 ### GETTING DATA ###
 solutions_data = {
@@ -89,6 +90,11 @@ def convert_to_megawatt(df):
     return df/1000
 
 def pinch_report(data_pinch):
+
+    today = date.today()
+
+    # dd/mm/YY
+    date_today = today.strftime("%d/%m/%Y")
 
     for key in data_pinch:
         category_solutions_data = data_pinch[str(key)]
@@ -226,10 +232,11 @@ def pinch_report(data_pinch):
     )
 
     template = env.get_template('index.pinch_template.html')
-    report_html = template.render(designed_solutions=solutions_data,
-                                       stream_table=df_streams,
-                                       stream_combination_not_feasible=stream_combination_not_feasible_data,
-                                       best_options=best_options_data)
+    report_html = template.render(date=date_today,
+                                  designed_solutions=solutions_data,
+                                  stream_table=df_streams,
+                                  stream_combination_not_feasible=stream_combination_not_feasible_data,
+                                  best_options=best_options_data)
 
     return report_html
 

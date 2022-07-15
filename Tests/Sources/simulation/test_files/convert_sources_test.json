@@ -3,7 +3,24 @@
     "group_of_sources": [
       {
         "id": 1,
-        "consumer_type": "non-household",
+        "fuels_data": {
+          "natural_gas": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "biomass": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "fuel_oil": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "electricity": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          }
+        },
         "location": [
           38.759074,
           -9.125053
@@ -11,6 +28,8 @@
         "streams": [
           {
             "id": 15568,
+            "fuel": "none",
+            "eff_equipment": null,
             "object_type": "stream",
             "object_id": null,
             "stream_type": "excess_heat",
@@ -17596,7 +17615,24 @@
       },
       {
         "id": 2,
-        "consumer_type": "non-household",
+        "fuels_data": {
+          "natural_gas": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "biomass": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "fuel_oil": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "electricity": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          }
+        },
         "location": [
           38.743627,
           -9.1171
@@ -17604,6 +17640,8 @@
         "streams": [
           {
             "id": 94990,
+            "fuel": "none",
+            "eff_equipment": null,
             "object_type": "stream",
             "object_id": null,
             "stream_type": "excess_heat",

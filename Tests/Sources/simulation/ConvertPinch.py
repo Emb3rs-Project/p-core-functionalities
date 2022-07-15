@@ -38,16 +38,19 @@ def testConvertPinch():
     import time
     t0 = time.time()
 
-
     option = 1
 
     # OPTION 1 - test isolated streams
     if option == 1:
-        #data_test = isolatedstreams(2)
+        data_test = isolatedstreams(2)
+        test = convert_pinch(data_test, KB(kb))
+
+        #data_test = json.load(open(os.path.join(script_dir, "test_files/pinch_detailed_workshop.json")))
         #test = convert_pinch(data_test, KB(kb))
 
-        data_test = json.load(open(os.path.join(script_dir, "test_files/pinch_detailed_workshop.json")))
-        test = convert_pinch(data_test, KB(kb))
+        file = open("sample.html", "w")
+        file.write(test["report"])
+        file.close()
 
         print("Convert Pinch with Source Detailed INFO  Run Successfully")
 

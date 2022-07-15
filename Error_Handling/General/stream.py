@@ -11,6 +11,12 @@ class StreamType(str, Enum):
     hot_stream = "hot_stream"
     cold_stream = "cold_stream"
 
+class FuelChoices(str, Enum):
+    electricity = "electricity"
+    natural_gas = "natural_gas"
+    biomass = "biomass"
+    fuel_oil = "fuel_oil"
+    none = "none"
 
 class Stream(BaseModel):
     id: int
@@ -24,8 +30,9 @@ class Stream(BaseModel):
     schedule: conlist(int)
     hourly_generation: conlist(NonNegativeFloat)
     capacity: PositiveFloat
-
     object_linked_id: Optional[float] = None
+    fuel: FuelChoices
+    eff_equipment: Union[PositiveFloat, None]
 
     @validator('schedule', allow_reuse=True)
     def check_if_valid_values(cls, v):

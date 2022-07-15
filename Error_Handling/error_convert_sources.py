@@ -36,7 +36,7 @@ class MainErrorConvertSources(BaseModel):
             @validator('group_of_sources', allow_reuse=True)
             def check_if_there_are_sources(cls, v):
                 if len(v) < 1:
-                    raise ValueError('Introduce at least 1 source')
+                    raise ValueError('Introduce at least 1 source to assess a possible District Heating Network.')
                 return v
 
         return (PlatformConvertSources(**v))
@@ -59,7 +59,7 @@ class MainErrorConvertSources(BaseModel):
             @validator('sink_group_grid_supply_temperature', allow_reuse=True)
             def check_grid_temperatures(cls, v, values, **kwargs):
                 if v < values['sink_group_grid_return_temperature']:
-                    raise ValueError('Grid supply temperature must be larger than the return temperature.')
+                    raise ValueError('District Heating Network supply temperature must be larger than the return temperature.')
                 return v
 
         return (CFConvertSources(**v))

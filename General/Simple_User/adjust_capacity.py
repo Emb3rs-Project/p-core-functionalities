@@ -17,8 +17,7 @@ OUTPUT: stream with 'hourly_generation' and 'monthly_generation' updated
 
 
 
-from ...Error_Handling.runtime_error import ModuleRuntimeException
-from ...Error_Handling.error_su_adjust_capacity import PlatformSUAdjustCapacity
+from module.Error_Handling.runtime_error import ModuleRuntimeException
 
 months = [
     "january"
@@ -36,32 +35,21 @@ months = [
 ]
 
 
-def su_adjust_capacity(in_var):
-
-    #######################
-    # INPUT
-    platform_data = PlatformSUAdjustCapacity(**in_var['platform'])
-
-    if platform_data.user_monthly_capacity is not None:
-        user_monthly_capacity = vars(platform_data.user_monthly_capacity)
-    else:
-        user_monthly_capacity = platform_data.user_monthly_capacity
-
-    user_daily_capacity = platform_data.user_daily_capacity
-
-    user_yearly_capacity = platform_data.user_yearly_capacity
-    stream = vars(platform_data.stream)
+def adjust_capacity(stream, user_daily_capacity=None, user_monthly_capacity=None, user_yearly_capacity=None):
 
     ###############################################################
     # COMPUTE
     months_coef = {}
     try:
+
         if user_yearly_capacity is None and user_daily_capacity is None and user_monthly_capacity is not None:
+
             for index, month_capacity in enumerate(stream['monthly_generation']):
                 if user_monthly_capacity[str(months[index])] is None:
                     months_coef[months[index]] = 1
                 else:
                     months_coef[months[index]] = user_monthly_capacity[str(months[index])] / month_capacity
+
             stream = monthly_adjust(stream, months_coef)
 
         elif user_yearly_capacity is not None and user_daily_capacity is None and user_monthly_capacity is None:
@@ -75,13 +63,12 @@ def su_adjust_capacity(in_var):
     except:
         raise ModuleRuntimeException(
             code="1",
-            type="su_adjust_capacity.py",
-            msg="Adjusting the capacities was infeasible. Please check your inputs. \n "
+            type="adjust_capacity.py",
+            msg="Adjusting the capacities was infeasible. Please check your inputs. "
                 "If all inputs are correct report to the platform."
         )
 
-    dict_stream = {"stream": stream}
-    return dict_stream
+    return stream
 
 def monthly_adjust(stream, months_coef):
     hour_new_month = 0

@@ -59,8 +59,9 @@ class FuelProperties:
         else:
             consumer_type = '0'  # Household
 
-        urlelec = 'https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/ten00117/?time=2019&geo='
-        urlgas = 'https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/ten00118/?time=2019&geo='
+
+        urlelec = 'https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/ten00117/?time=2021&geo='
+        urlgas = 'https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/ten00118/?time=2021&geo='
         urlelec = urlelec + country_acronyms
         urlgas = urlgas + country_acronyms
 
@@ -70,15 +71,30 @@ class FuelProperties:
                     urlopen(urlelec, context=context), "html.parser").text)
                 price = info['value'][consumer_type]  # [€/kWh]
             except:
-                print("Country's electricity cost not found."
-                      "Default: 0.23 [€/kWh]")
-
-                price = 0.23  # [€/kWh]
+                try:
+                    country_acronyms = "EU27_2020"
+                    urlelec = urlelec + country_acronyms
+                    info = json.loads(BeautifulSoup(
+                        urlopen(urlelec, context=context), "html.parser").text)
+                    price = info['value'][consumer_type]  # [€/kWh]
+                except:
+                    price = 0.23  # [€/kWh]
 
         elif fuel_type == "natural_gas":
-            info = json.loads(BeautifulSoup(
-                urlopen(urlgas, context=context), "html.parser").text)
-            price = info['value'][consumer_type] / 277.78  # [€/kWh]
+            try:
+                info = json.loads(BeautifulSoup(
+                    urlopen(urlgas, context=context), "html.parser").text)
+                price = info['value'][consumer_type] / 277.78  # [€/kWh]
+            except:
+                try:
+                    country_acronyms = "EU27_2020"
+                    urlgas = urlgas + country_acronyms
+                    info = json.loads(BeautifulSoup(
+                        urlopen(urlgas, context=context), "html.parser").text)
+                    price = info['value'][consumer_type] / 277.78  # [€/kWh]
+                except:
+                    price = 0.065  # [€/kWh]
+
 
         else:
             fuel_type_cost = fuel_type + '_cost'
@@ -87,9 +103,6 @@ class FuelProperties:
                     data_electricity_ghg_and_fuel_cost_per_country[country][fuel_type_cost])  # [€/kWh]
 
             except:
-                print("Country's fuel data not in the Knowledge Base."
-                      "Default: Portugal set as country")
-
                 price = float(
                     data_electricity_ghg_and_fuel_cost_per_country['Portugal'][fuel_type_cost])  # [€/kWh]
 
@@ -116,8 +129,6 @@ class FuelProperties:
                 co2_emissions = float(data_electricity_ghg_and_fuel_cost_per_country[country]['electricity_emissions']) \
                     / 1000  # [kg CO2/kW]
             except:
-                print("Country's electricity CO2 emissions data not in the Knowledge Base."
-                      "Default: Portugal set as country")
                 co2_emissions = float(data_electricity_ghg_and_fuel_cost_per_country['Portugal'][
                     'electricity_emissions']) / 1000  # [kg CO2/kW]
 

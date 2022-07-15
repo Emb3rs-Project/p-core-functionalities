@@ -151,7 +151,8 @@ def building_climate_api(latitude,longitude):
 
     df_output = pd.DataFrame(new_rows)
 
-    df_output = df_output.append(df_output.tail(n=24), ignore_index=True)
+   # df_output = df_output.concat(df_output.tail(n=24), ignore_index=True)
+    df_output = pd.concat([df_output,df_output.tail(n=24)], ignore_index=True)
 
 
     return df_output

@@ -55,7 +55,7 @@ from ....KB_General.medium import Medium
 
 class Add_Pump():
 
-    def __init__(self, kb: KB, country, consumer_type, fluid, supply_capacity, power_fraction, supply_temperature,
+    def __init__(self, kb: KB, fuels_data,  fluid, supply_capacity, power_fraction, supply_temperature,
                  return_temperature):
         # Defined Vars
         self.object_type = 'equipment'
@@ -63,8 +63,7 @@ class Add_Pump():
         self.fuel_type = 'electricity'
 
         # get equipment characteristics
-        fuel_properties = FuelProperties(kb)
-        self.fuel_properties = fuel_properties.get_values(country, self.fuel_type, consumer_type)
+        self.fuel_properties = fuels_data[self.fuel_type]
         self.fluid = fluid
         self.supply_temperature = supply_temperature
         self.return_temperature = return_temperature

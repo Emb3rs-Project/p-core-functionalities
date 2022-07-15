@@ -57,7 +57,6 @@ def convert_pinch(in_var, kb: KB):
     :param kb: Knowledge Base
 
     :return:
-
         report: str
             HTML report
 
@@ -124,10 +123,8 @@ def convert_pinch(in_var, kb: KB):
     number_output_options = platform_data.number_output_options
     lifetime = platform_data.lifetime
     streams_to_analyse = platform_data.streams_to_analyse
+    fuels_data = platform_data.fuels_data
 
-    ############################################################################################################
-    # KB
-    fuel_properties = FuelProperties(kb)
 
     ############################################################################################################
     # Defined Vars
@@ -143,27 +140,35 @@ def convert_pinch(in_var, kb: KB):
 
     try:
         # create the streams list
-        get_equipment = {str(input_object['id']): input_object for input_object in all_input_objects if
-                         input_object['object_type'] == 'equipment'}
+        #get_equipment = {str(input_object['id']): input_object for input_object in all_input_objects if
+        #                 input_object['object_type'] == 'equipment'}
         for object in all_input_objects:  # objet can be stream/process/equipment
             if object['object_type'] == 'process':  # from processes get streams
                 objects_to_analyze.append(object)
                 for stream in object['streams']:
                     if stream['id'] in streams_to_analyse:
                         if stream['stream_type'] != "outflow":
-                            equipment = get_equipment[str(object['equipment_id'])]
-                            stream['fuel'] = equipment['fuel_type']
-                            stream['eff_equipment'] = equipment['global_conversion_efficiency']
+                            stream['fuel_price'] = fuels_data[stream['fuel']]["price"]
+                            stream['fuel_co2_emissions'] = fuels_data[stream['fuel']]["co2_emissions"]
                         else:
                             stream['fuel'] = None
                             stream['eff_equipment'] = None
+                            object['fuel_co2_emissions'] = None
+                            object['eff_equipment'] = None
 
                         streams.append(stream)
 
             elif object['object_type'] == 'stream':  # isolated streams
                 if object['id'] in streams_to_analyse:
-                    object['fuel'] = object['fuel']
-                    object['eff_equipment'] = object['eff_equipment']
+                    if object['fuel'] != "none":
+                        object['fuel_price'] = fuels_data[object['fuel']]["price"]
+                        object['fuel_co2_emissions'] = fuels_data[object['fuel']]['co2_emissions']
+                    else:
+                        object['fuel'] = None
+                        object['fuel_price'] = None
+                        object['fuel_co2_emissions'] = None
+                        object['eff_equipment'] = None
+
                     streams.append(object)
 
             elif object['object_type'] == 'equipment':
@@ -171,11 +176,13 @@ def convert_pinch(in_var, kb: KB):
                 for stream in object['streams']:
                     if stream['id'] in streams_to_analyse:
                         if stream['stream_type'] == "supply_heat":
-                            stream['fuel'] = object['fuel_type']
-                            stream['eff_equipment'] = object['global_conversion_efficiency']
+                            stream['fuel_co2_emissions'] = fuels_data[stream['fuel']]['co2_emissions']
+                            stream['fuel_price'] = fuels_data[stream['fuel']]['price']
                         else:
                             stream['fuel'] = None
                             stream['eff_equipment'] = None
+                            stream['fuel_price'] = None
+                            stream['fuel_co2_emissions'] = None
 
                         streams.append(stream)
 
@@ -201,7 +208,11 @@ def convert_pinch(in_var, kb: KB):
             'Target_Temperature': stream['target_temperature'],
             'Capacity': stream['capacity'],
             'Fuel': stream['fuel'],
-            'Eff_Equipment': stream['eff_equipment']})
+            'Eff_Equipment': stream['eff_equipment'],
+            'Fuel_Price': stream['fuel_price'],
+            'Fuel_CO2_Emissions': stream['fuel_co2_emissions']
+
+        })
 
 
 
@@ -298,6 +309,7 @@ def convert_pinch(in_var, kb: KB):
 
                 # hot stream
                 if hot_stream_fuel is not None:
+
                     data_stream_hot = fuel_properties.get_values(country, hot_stream_fuel, 'non-household')
                     co2_emission_per_kw_stream_hot = data_stream_hot['co2_emissions']
                     fuel_cost_kwh_stream_hot = data_stream_hot['price']

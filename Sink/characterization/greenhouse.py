@@ -1,76 +1,11 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Greenhouse Simulation. Simulates the heat needs over the year according to the greenhouse specifications
-      and climate weather data of the location
-
-##############################
-INPUT: dictionary with:
-
-        Mandatory/Basic User inputs:
-            # latitude  []
-            # longitude  []
-            # width  [m]
-            # length  [m]
-            # height  [m]
-            # greenhouse_orientation
-            # saturday_on - 1 (yes)  or 0 (no)
-            # sunday_on - 1 (yes)  or 0 (no)
-            # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
-            # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
-            # artificial_lights_system - 1=with lights system ; 0=no lights system
-            # hours_lights_needed - lighting hours in greenhouse (counting with daily illuminance) [h]
-            # thermal_blanket - 1=with ; 0=no without thermal blanket
-
-            !!!
-            IMPORTANT - for Mandatory/Basic User:
-                    #  get  greenhouse_efficiency to compute f_c
-                        1=tight sealed greenhouse
-                        2=medium
-                        3=loose
-
-        Optional/Expert User inputs:
-            # f_c
-            # T_cool_on = in_var.T_cool_on  [ºC]
-            # T_heat_on = in_var.T_heat_on  [ºC]
-            # supply_temperature_heat [ºC]
-            # target_temperature_heat [ºC]
-            # leaf_area_index - ratio of area_plants/area_floor, 0 to 1
-            # rh_air - controlled interior air RH , 0 to 1
-            # u_cover [W/m2.K]
-            # indoor_air_speed [m/s]
-            # leaf_length - characteristic leaf length [m]
-            # tau_cover_long_wave_radiation - 0 to 1
-            # emissivity_cover_long_wave_radiation - 0 to 1
-            # tau_cover_solar_radiation - 0 to 1
-            # power_lights [W/m2]
-
-
-##############################
-OUTPUT: dict with key 'streams' with streams dictionaries, e.g. 'streams' =[stream_1,stream_2, ... :
-
-        Where for example:
-        # stream_1 = {
-        #           'id' - stream id
-        #           'object_type' - stream
-        #           'fluid' - water
-        #           'stream_type' - inflow
-        #           'monthly_generation' - array [kWh]
-        #           'hourly_generation' - array [kWh]
-        #           'supply_temperature' [ºC]
-        #           'target_temperature' [ºC]
-        #           }
-
-"""
-
 import math
 import copy
-from .Auxiliary.building_climate_api import building_climate_api
-from .Auxiliary.wall_area import wall_area
+from ...General.Auxiliary_General.ref_data import ref_data
 from ...General.Auxiliary_General.schedule_hour import schedule_hour
 from ...General.Auxiliary_General.month_last_hour import month_last_hour
+from ...General.Simple_User.adjust_capacity import adjust_capacity
+from .Auxiliary.building_climate_api import building_climate_api
+from .Auxiliary.wall_area import wall_area
 from .Auxiliary.h_convection_horizontal import h_convection_horizontal
 from .Auxiliary.h_convection_vertical import h_convection_vertical
 from .Auxiliary.ht_radiation_equation import ht_radiation_equation
@@ -79,7 +14,69 @@ from ...Error_Handling.error_greenhouse import PlatformGreenhouse
 from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 
-def greenhouse(in_var):
+
+def greenhouse(in_var,kb):
+
+    """
+    Greenhouse Simulation. Simulates the heat needs over the year according to the greenhouse specifications and climate
+    weather data of the location
+
+    :param in_var: ``dict``: greenhouse characterization data
+            - platform: ``dict``: platform data
+                    - location : ``list``: location [º]; [latitude,longitude]
+                    - width: ``float``:  width [m]
+                    - length: ``float``:  length [m]
+                    - height: ``float``:  height [m]
+                    - greenhouse_orientation: ``str``: greenhouse’s main facade orientation; "N","S","E" or "W"
+                    - daily_periods: ``float``: period of daily periods [h]
+                    - shutdown_periods: ``list``: period of days stream is not available [day]
+                    - greenhouse_efficiency: greenhouse air infiltration tightness:
+                                    1 = tight cover with low infiltrations
+                                    2 = medium sealing
+                                    3 = leaky cover
+                    - T_heat_on: ``float``: Heating setpoint temperature [ºC]
+                    - thermal_blanket: If greenhouse has a thermal blanket/curtain being used at night; 1=yes,0=no
+                    - artificial_lights_system: lighting hours in greenhouse; 1=yes,0=no
+                    - hours_lights_needed: hours of light the plant needs (accounting with daily solar hours) [h]
+                    - supply_temperature_heat: ``float``: [OPTIONAL] Heating System ReturnTemperature [ºC]; DEFAULT=30
+                    - target_temperature_heat: ``float``: [OPTIONAL] Heating System Supply Temperature [ºC]; DEFAULT=50
+                    - leaf_area_index: [OPTIONAL] ratio of leaf area over ground area []; DEFAULT=1
+                    - rh_air: [OPTIONAL] relative humidity [%]; DEFAULT=80
+                    - u_cover: [OPTIONAL] cover thermal conductivity [W/m2.K]; DEFAULT=6
+                    - indoor_air_speed: [OPTIONAL] indoor air velocity [m/s]; DEFAULT=0.1
+                    - leaf_length: [OPTIONAL] characteristic length of a plant leaf [m]; DEFAULT=0.027
+                    - tau_cover_long_wave_radiation: [OPTIONAL] Cover transmissivity coefficient to long-wave radiation; DEFAULT=0.3
+                    - emissivity_cover_long_wave_radiation: [OPTIONAL] Cover emissivity coefficient to long-wave radiation; DEFAULT=0.2
+                    - tau_cover_solar_radiation: [OPTIONAL] Cover's transmissivity coefficient to solar radiation []; DEFAULT=0.9
+                    - power_lights: [OPTIONAL] light power per square meter [W/m2]; DEFAULT=20
+                    - ref_system_fuel_type: ``str``: Fuel type associated; e.g. "natural_gas","electricity","biomass","fuel_oil","none"
+                    - ref_system_fuel_price: ``float``: [OPTIONAL] Fuel Price. If ref_system_fuel_type!="none" not given, obtained from KB
+                    - ref_system_eff_equipment: ``float``: [OPTIONAL] COP of the cooling equipment;
+                    - real_monthly_capacity: ``dict``: [OPTIONAL] Real monthly data - for each month of the year
+                    - real_yearly_capacity: ``float``: [OPTIONAL] Real yearly data - single value
+
+    :param kb: KB
+
+    :return: output:``dict``: streams data
+                - streams: ``list``: List with dicts of all streams with the following keys:
+                        - id : ``int``: stream ID []
+                        - name : ``str``:
+                        - object_type : ``str``: DEFAULT=stream []
+                        - object_linked_id : `` None``: DEFAULT=NONE, since no equipment/process is assocaited
+                        - stream_type : ``str``: stream designation []; inflow, outflow, excess_heat
+                        - supply_temperature : ``float``: stream's supply/initial temperature [ºC]
+                        - target_temperature : ``float``: stream's target/final temperature [ºC]
+                        - fluid : ``str``: stream fluid name
+                        - flowrate : ``float``: [kg/h]
+                        - schedule : ``list``: hourly values between 0 and 1, according to the hourly capacity
+                        - hourly_generation: ``list``: stream's hourly capacity [kWh]
+                        - capacity : ``float``:  stream's capacity [kW]
+                        - monthly_generation : ``list``: stream's monthly capacity [kWh]
+                        - fuel_co2_emissions : ``float``: fuel CO2 emissions [kgCO2/kWh]
+                        - fuel_price : ``float``: fuel price [€/kWh]
+    """
+
+
     ##################################################################################################################
     # INPUT ----------------------------------------------
     # validate inputs
@@ -111,6 +108,10 @@ def greenhouse(in_var):
     tau_cover_solar_radiation = platform_data.tau_cover_solar_radiation  # cover transmissivity solar radiation
     power_lights = platform_data.power_lights  # lighting power per square meter [W/m2]
     hours_lights_needed = platform_data.hours_lights_needed  # lighting hours in greenhouse (counting with daily iluminance) [h]
+    real_heating_monthly_capacity = platform_data.real_heating_monthly_capacity
+    real_heating_yearly_capacity = platform_data.real_heating_yearly_capacity
+    ref_system_fuel_type = platform_data.ref_system_fuel_type
+    ref_system_eff_equipment = platform_data.ref_system_eff_equipment
 
     ##################################################################################################################
     # DEFINED VARS ----------------------------------------------------------------------------------
@@ -360,23 +361,28 @@ def greenhouse(in_var):
             # Hourly Profiles
             profile_hourly_heat.append(round(cumulative_heat_hourly, 2))  # space heating demand [kWh]
 
-        ##############################
-        # OUTPUT
-        streams = {
-            'hot_stream': {
-                'id': 1,
-                'name':"greenhouse heating",
-                'object_type': 'stream',
-                'fluid': 'water',
-                'stream_type': 'inflow',
-                'capacity': max(profile_hourly_heat),
-                "monthly_generation": profile_monthly_heat,  # [kWh]
-                "hourly_generation": profile_hourly_heat,  # [kWh]
-                "supply_temperature": supply_temperature_heat,  # [ºC]
-                "target_temperature": target_temperature_heat,  # [ºC]
-                "schedule": profile
-            }
+
+        stream_hot = {
+            "id": 1,
+            "name": "greenhouse heating",
+            "object_type": "stream",
+            "fluid": 'water',
+            "stream_type": "inflow",
+            "capacity": max(profile_hourly_heat),
+            "monthly_generation": profile_monthly_heat,  # [kWh]
+            "hourly_generation": profile_hourly_heat,  # [kWh]
+            "supply_temperature": supply_temperature_heat, # [ºC]
+            "target_temperature": target_temperature_heat, # [ºC]
+            "schedule": profile,
+            "fuel": ref_system_fuel_type,
+            "eff_equipment": ref_system_eff_equipment
+
         }
+
+        if real_heating_monthly_capacity is not None:
+            stream_hot = adjust_capacity(stream_hot, user_monthly_capacity=vars(real_heating_monthly_capacity))
+        elif real_heating_yearly_capacity is not None:
+            stream_hot = adjust_capacity(stream_hot, user_yearly_capacity=real_heating_yearly_capacity)
 
     except:
         raise ModuleRuntimeException(
@@ -386,4 +392,8 @@ def greenhouse(in_var):
                 "If all inputs are correct report to the platform."
         )
 
-    return streams
+    ###############
+    # OUTPUT
+    output = {'streams': [stream_hot]}
+
+    return output

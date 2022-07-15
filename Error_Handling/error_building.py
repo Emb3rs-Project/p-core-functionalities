@@ -1,12 +1,15 @@
 from pydantic import validator, confloat, PositiveFloat, PositiveInt
 from typing import Optional
+
+from .General.reference_system_building import ReferenceSystemBuilding
 from .General.schedule import Schedule
 from .General.location import Location
 from enum import Enum
+
+from module.Error_Handling.General.error_building_and_greenhouse_adjust_capacity import BuildingandGreenhouseAdjustCapacity
 from ..KB_General.building_properties import BuildingProperties
 from ..General.Auxiliary_General.get_country import get_country
 from .General.building_orientation import BuildingOrientation
-
 
 def error_building(platform_data, kb):
     building_properties = BuildingProperties(kb)
@@ -35,10 +38,10 @@ def error_building(platform_data, kb):
         def check_hotel(cls, v, values, **kwargs):
             if v == 'hotel' and values['number_rooms'] == None:
                 raise Exception(
-                    'If building type is hotel, introduce number of rooms per floor in the Advanced Parameters section.')
+                    'If building type is hotel, introduce number of rooms per floor in the ADVANCED PROPERTIES section.')
             elif v == 'residential' and values['number_person_per_floor'] == None:
                 raise Exception(
-                    'If building type is residential, introduce number of persons per floor in the Advanced Parameters section.')
+                    'If building type is residential, introduce number of persons per floor in the ADVANCED PROPERTIES section.')
 
             return v
 
@@ -47,6 +50,7 @@ def error_building(platform_data, kb):
 
     initial_data = PlatformBuildingInitial(**platform_data)
 
+    # give default values
     latitude, longitude = initial_data.location
     building_type = initial_data.building_type
     area_floor = initial_data.width_floor * initial_data.length_floor
@@ -88,7 +92,7 @@ def error_building(platform_data, kb):
     ########################################################################################
     ########################################################################################
 
-    class PlatformBuilding(Schedule, Location):
+    class PlatformBuilding(Schedule, Location, ReferenceSystemBuilding, BuildingandGreenhouseAdjustCapacity):
 
         number_floor: PositiveFloat
         width_floor: PositiveFloat
@@ -140,7 +144,7 @@ def error_building(platform_data, kb):
         def check_unoccupied_temperatures_set_points(cls, supply_temperature_heat, values, **kwargs):
             if values['T_off_min'] >= supply_temperature_heat:
                 raise ValueError(
-                    'Unoccupied periods Heating Setpoint temperature must be lower than the Cooling Setpoint temperature.')
+                    'Unoccupied periods Heating Setback temperature must be lower than the Cooling Setback temperature.')
             return supply_temperature_heat
 
         @validator('supply_temperature_heat', allow_reuse=True)

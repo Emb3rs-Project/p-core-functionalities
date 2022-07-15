@@ -1,6 +1,11 @@
 {
   "platform": {
-    "location": [51.153, -0.182],
+    "ref_system_fuel_type_cooling": "none",
+    "ref_system_fuel_type_heating": "none",
+    "location": [
+      51.153,
+      -0.182
+    ],
     "building_orientation": "S",
     "building_type": "office",
     "number_floor": 3,

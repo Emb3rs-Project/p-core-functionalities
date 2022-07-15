@@ -11,7 +11,7 @@ class PlatformConvertSinks(BaseModel):
     @validator('group_of_sinks')
     def check_if_there_are_sinks(cls, group_of_sinks):
         if len(group_of_sinks) < 1:
-            raise ValueError('Introduce at least 1 sink')
+            raise ValueError('Introduce at least 1 sink to assess a possible District Heating Network.')
         return group_of_sinks
 
     @validator('grid_return_temperature', always=True)
@@ -22,6 +22,6 @@ class PlatformConvertSinks(BaseModel):
 
         elif (grid_return_temperature is None and values['grid_supply_temperature'] is not None) or (
                 grid_return_temperature is not None and values['grid_supply_temperature'] is None):
-            raise ('Introduce both, grid supply and return temperatures, or none.')
+            raise ('Introduce both, District Heating Network supply and return temperatures, or None.')
 
         return grid_return_temperature

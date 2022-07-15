@@ -1,3 +1,13 @@
+"""
+alisboa/jmcunha
+
+
+##############################
+INFO: Source detailed (equipment+processes+unique streams) error handling
+
+
+"""
+
 from pydantic import BaseModel
 from typing import List
 from .Source_Detail.source_detailed_object import SourceDetailedObject
@@ -30,11 +40,11 @@ def error_source_detailed(platform_data):
             new_process = Process(**object_source)  # process input validation
 
             if new_process.inflow_data != None:
-                new_process.inflow_data = [vars(i) for i in new_process.inflow_data ]
+                new_process.inflow_data = [vars(i) for i in new_process.inflow_data]
             if new_process.outflow_data != None:
                 new_process.outflow_data = [vars(i) for i in new_process.outflow_data]
             if new_process.maintenance_data != None:
-                new_process.maintenance_data = [vars(i) for i in new_process.maintenance_data ]
+                new_process.maintenance_data = [vars(i) for i in new_process.maintenance_data]
 
             # get process
             new_process = vars(new_process)
@@ -42,17 +52,16 @@ def error_source_detailed(platform_data):
             processes_equipment_id.append(new_process['equipment_id'])
             index_to_pop.append(i_object_source)
 
-    index_to_pop.sort(reverse=True)
-
     # remove processes from list
+    index_to_pop.sort(reverse=True)
     for i in index_to_pop:
         all_objects_info.pop(i)
-
 
     # check equipment
     index_to_pop = []
     for i_equipment, equipment in enumerate(all_objects_info):
-        if equipment['object_type'] == 'boiler' or equipment['object_type'] == 'chp' or equipment['object_type'] == 'burner' or equipment['object_type'] == 'cooling_equipment':
+        if equipment['object_type'] == 'boiler' or equipment['object_type'] == 'chp' or equipment[
+            'object_type'] == 'burner' or equipment['object_type'] == 'cooling_equipment':
             if equipment['object_type'] == 'boiler':
                 new_equipment = Boiler(**equipment)
             elif equipment['object_type'] == 'chp':
@@ -73,18 +82,16 @@ def error_source_detailed(platform_data):
 
             data.append(vars(new_equipment))
 
-    index_to_pop.sort(reverse=True)
-
     # remove equipment from list
+    index_to_pop.sort(reverse=True)
     for i in index_to_pop:
         all_objects_info.pop(i)
 
-    # check isolated stream - stream by stream
+    # check unique streams - stream by stream
     for i_stream, stream in enumerate(all_objects_info):
         if stream['object_type'] == 'stream':
             stream_ = StreamData(**stream)
             data.append(vars(stream_))
-
 
     ##########################
     for process_equipment_id in processes_equipment_id:

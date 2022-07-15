@@ -46,13 +46,12 @@ RETURN: object with all technology info:
 
 from ....utilities.kb import KB
 from ....KB_General.equipment_details import EquipmentDetails
-from ....KB_General.fuel_properties import FuelProperties
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
 
 class Add_Boiler():
 
-    def __init__(self, kb: KB, fuel_type, country, consumer_type, supply_capacity, power_fraction, supply_temperature,
+    def __init__(self, kb: KB, fuels_data, fuel_type, supply_capacity, power_fraction, supply_temperature,
                  return_temperature):
 
         # Defined Vars
@@ -68,8 +67,7 @@ class Add_Boiler():
         self.supply_temperature = supply_temperature  # equipment directly supplies grid
         self.return_temperature = return_temperature
         self.supply_capacity = supply_capacity
-        fuel_properties = FuelProperties(kb)
-        self.fuel_properties = fuel_properties.get_values(country, self.fuel_type, consumer_type)
+        self.fuel_properties = fuels_data[fuel_type]
 
 
         if fuel_type == 'electricity':

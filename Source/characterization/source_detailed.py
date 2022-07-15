@@ -1,18 +1,3 @@
-"""
-##############################
-INFO: Source detailed User - User that characterizes both processes and equipment. Receives a list with the data needed
-to create each object (process,boiler,chp,burner,cooling equipment) and returns a list with the objects created.
-
-##############################
-INPUT: list with dicts with each object data -> Check inputs in process, generate_boiler, generate_chp,
-generate_cooling_equipment, process, generate_boiler, generate_burner
-
-##############################
-OUTPUT:  list with objects -> Check attributes in process, generate_boiler, generate_chp, generate_cooling_equipment,
-process, generate_boiler, generate_burner
-
-"""
-
 from .Process.process import Process
 from .Generate_Equipment.generate_cooling_equipment import Cooling_Equipment
 from .Generate_Equipment.generate_chp import Chp
@@ -25,6 +10,18 @@ from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 
 def source_detailed(in_var, kb: KB):
+    """
+    User that characterizes both processes and equipment. Receives a list with the data needed to create each object
+    (process,boiler,chp,burner,cooling equipment) and returns a list with the objects created.
+
+    :param in_var: ``list with dict``: dicts with data for each equipment and process. Check inputs in process, generate_boiler,
+    generate_chp, generate_cooling_equipment, process,generate_boiler, generate_burner
+    :param kb: Knowledge Base data
+
+    :return:
+        - objects_list: ``list with dict``: list with processes and equipments
+    """
+
     #################
     # INPUT
     # Validate Inputs
@@ -35,16 +32,26 @@ def source_detailed(in_var, kb: KB):
     objects_list = []  # process + equipment
     processes_data = {}
 
-    # create processes
+    # PROCESS
     index_to_pop = []
 
     try:
         for index, object_info in enumerate(platform_data):
             if object_info['object_type'] == 'process':
+
+                for index_find_equipment, find_equipment in enumerate(platform_data):
+                    if object_info["equipment_id"] == find_equipment["id"]:
+                        object_info["eff_equipment"] = find_equipment["global_conversion_efficiency"]
+                        object_info["fuel_type"] = find_equipment["fuel_type"]
+                        break
+
                 new_process = Process(object_info, kb)
                 objects_list.append(new_process)
                 processes_data[str(new_process.id)] = new_process
                 index_to_pop.append(index)
+
+
+
     except:
         raise ModuleRuntimeException(
             code="1",
@@ -53,6 +60,7 @@ def source_detailed(in_var, kb: KB):
                 "If all inputs are correct report to the platform.")
 
 
+    # remove processes from list
     index_to_pop.sort(reverse=True)
     for i in index_to_pop:
         platform_data.pop(i)
@@ -62,7 +70,8 @@ def source_detailed(in_var, kb: KB):
     for index, equipment_info in enumerate(platform_data):
         equipment_info['processes'] = []
 
-        if equipment_info['object_type'] == 'boiler' or equipment_info['object_type'] == 'chp' or equipment_info['object_type'] == 'burner' or equipment_info['object_type'] == 'cooling_equipment':
+        if equipment_info['object_type'] == 'boiler' or equipment_info['object_type'] == 'chp' or equipment_info[
+            'object_type'] == 'burner' or equipment_info['object_type'] == 'cooling_equipment':
 
             if equipment_info['object_type'] == 'boiler':
                 new_equipment = Boiler(equipment_info, kb)

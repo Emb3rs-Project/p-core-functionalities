@@ -1,59 +1,39 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Create CHP Object and characterize its streams.
-
-
-##############################
-INPUT: object with:
-
-        # id - equipment id
-        # supply_temperature [ºC]
-        # return_temperature [ºC]
-        # global_conversion_efficiency
-        # fuel_type -  fuel type (natural_gas, fuel_oil, biomass, electricity)
-        # saturday_on - 1 (yes)  or 0 (no)
-        # sunday_on - 1 (yes)  or 0 (no)
-        # shutdown_periods - array with day arrays e.g. [[130,140],[289,299]]
-        # daily_periods - array with hour arrays; e.g. [[8,12],[15,19]]
-
-        !!!
-        IMPORTANT
-        1) user can input electrical generation or supply heat capacity, with corresponding conversion efficiencies
-                # thermal_conversion_efficiency (0 to 1) and supply_capacity [kW]
-                # electrical_conversion_efficiency (0 to 1) and electrical_generation [kW]
-
-
-        2) To compute excess heat characteristics the equipment supply capacity must be known.
-        The user may choose to add directly the equipment supply_capacity or link processes with the equipment.
-            # supply_capacity [kW]
-            # processes - vector with processes [process_1,process_2,..]; each process contains dictionary with dictionaries of streams;
-
-                Where, e.g, in process_1:
-                    # process_1 = {'streams':[{stream_1_info},{stream_2_info},..]
-
-
-##############################
-OUTPUT: object CHP.
-
-        !!!
-        IMPORTANT:
-         # chp.streams important attribute for source simulation - Heat Recovery and Convert
-
-"""
-
+from ....General.Auxiliary_General.get_country import get_country
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
-from ....General.Auxiliary_General.combustion_mass_flows import  combustion_mass_flows
+from ....General.Auxiliary_General.combustion_mass_flows import combustion_mass_flows
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.medium import Medium
 from ....utilities.kb import KB
+from ....KB_General.fuel_properties import FuelProperties
 
 
 class Chp:
 
     def __init__(self, in_var, kb: KB):
+
+        """
+        Create CHP Object and characterize its streams.
+
+        :param in_var: ``dict``: CHP characterization data
+
+                - id: ``int``: equipment ID []
+                - fuel_type: ``str``: fuel type []; (natural_gas, fuel_oil, biomass)
+                - supply_capacity: ``float``: [OPTIONAL] equipment supply capacity [kW]
+                - electrical_generation: ``float``: [OPTIONAL] equipment electrical generation capacity [kW]
+                - global_conversion_efficiency: ``float``: equipment efficiency []
+                - thermal_conversion_efficiency: ``float``: [OPTIONAL] CHP thermal efficiency []
+                - electrical_conversion_efficiency: ``float``: CHP electrical efficiency []
+                - saturday_on: ``int``: if it is available on Saturday []; 1 (yes)  or 0 (no)
+                - sunday_on: ``int``: if it is available on Sunday []; 1 (yes)  or 0 (no)
+                - shutdown_periods: ``list``: list with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
+                - daily_periods: ``list``: list with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
+                - location: ``list``: [latitude, longitude]
+                - fuel_price: ``float``: [OPTIONAL]
+                - fuel_co2_emissions: ``float``: [OPTIONAL]
+
+        :param kb: Knowledge Base data
+
+        """
 
         ############################################################################################
         # KB
@@ -70,6 +50,7 @@ class Chp:
         # INPUT
         self.id = in_var['id']  # equipment ID
         self.fuel_type = in_var['fuel_type']  # Fuel type  (Natural gas, Fuel oil, Biomass)
+
         self.equipment_sub_type = 'chp'
         self.supply_capacity = in_var['supply_capacity']
         self.electrical_generation = in_var['electrical_generation']
@@ -111,14 +92,14 @@ class Chp:
                                                                     self.global_conversion_efficiency,
                                                                     self.fuel_type)
 
-
-
         # inflow stream
         inflow_flowrate = m_air
         inflow_fluid_cp = medium.cp(inflow_fluid, (inflow_supply_temperature + inflow_target_temperature) / 2)
-        inflow_capacity = inflow_flowrate * (inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp / 3600  # [kW]
+        inflow_capacity = inflow_flowrate * (
+                inflow_target_temperature - inflow_supply_temperature) * inflow_fluid_cp / 3600  # [kW]
 
-        # GET STREAMS
+        ############################################################################################
+        # CHARACTERIZE STREAMS
         # inflow
         self.streams.append(stream_industry('chp air inflow',
                                             self.id,
@@ -129,4 +110,7 @@ class Chp:
                                             inflow_flowrate,
                                             inflow_capacity,
                                             schedule,
-                                            stream_id=1))
+                                            stream_id=1,
+                                            fuel=self.fuel_type,
+                                            eff_equipment=1
+                                            ))

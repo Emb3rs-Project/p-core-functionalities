@@ -1,7 +1,9 @@
-from pydantic import BaseModel, validator, conlist, PositiveFloat, StrictStr, NonNegativeFloat
+from pydantic import validator, PositiveFloat, StrictStr
 from typing import Optional
 from enum import Enum
 import ast
+from .reference_system import ReferenceSystem
+from module.Error_Handling.General.error_adjust_capacity import AdjustCapacity
 
 
 class ScheduleInfo(int, Enum):
@@ -9,7 +11,8 @@ class ScheduleInfo(int, Enum):
     on = 1
 
 
-class SimpleIndustryStreamDataInput(BaseModel):
+class SimpleIndustryStreamDataInput(ReferenceSystem, AdjustCapacity):
+
     name: str
     supply_temperature: PositiveFloat
     target_temperature: PositiveFloat
@@ -21,7 +24,6 @@ class SimpleIndustryStreamDataInput(BaseModel):
     saturday_on: Optional[ScheduleInfo]
     sunday_on: Optional[ScheduleInfo]
     capacity: Optional[PositiveFloat] = None
-    hourly_generation: Optional[conlist(NonNegativeFloat, min_items=8760, max_items=8760)]
 
     @validator('daily_periods')
     def check_structure_daily_periods(cls, daily_periods):
@@ -31,7 +33,7 @@ class SimpleIndustryStreamDataInput(BaseModel):
                 for period in daily_periods:
                     if len(period) != 2:
                         raise ValueError(
-                            'Only a start and ending hour must be given in each period. Example: [[9,12],[14,19]]')
+                            'Only a start and ending hour must be given in each daily period. Example: [[9,12],[14,19]]')
                     else:
                         period_a, period_b = period
                         if period_b <= period_a:
@@ -39,6 +41,8 @@ class SimpleIndustryStreamDataInput(BaseModel):
                                 'Second value of the daily period must be larger than the first. Example: [[9,12],[14,19]]')
             else:
                 raise TypeError('Provide a list for daily periods.')
+        else:
+            raise TypeError('Provide daily periods in the correct format. Example: [[11,20]] or [[9,12],[14,19]]')
 
         return daily_periods
 
@@ -51,7 +55,7 @@ class SimpleIndustryStreamDataInput(BaseModel):
                 for period in shutdown_periods:
                     if len(period) != 2:
                         raise ValueError(
-                            'Only a start and ending day must be given in each period. Example: [[220,250]]')
+                            'Only a start and ending day must be given in each shutdown period. Example: [[220,250]]')
                     else:
                         period_a, period_b = period
                         if period_b <= period_a:
@@ -69,25 +73,25 @@ class SimpleIndustryStreamDataInput(BaseModel):
         if values["fluid"] == 'steam' and capacity == None:
             raise Exception('When introducing steam as a fluid, introduce the capacity.')
         elif (capacity == None and values['flowrate'] == None and values['fluid_cp'] == None):
-            raise Exception('To characterize a stream, introduce Capacity or Flowrate and Cp.')
+            raise Exception('To characterize a stream, introduce Capacity or Mass Flowrate and Cp.')
         elif (capacity == None and (values['flowrate'] == None or values['fluid_cp'] == None)):
-            raise Exception('To characterize a stream, introduce Capacity or Flowrate and Cp.')
+            raise Exception('To characterize a stream, introduce Capacity or Mass Flowrate and Cp.')
         elif (capacity != None and values['flowrate'] != None and values['fluid_cp'] != None):
-            raise Exception('To characterize a stream, introduce Capacity or Flowrate and Cp.')
+            raise Exception('To characterize a stream, introduce Capacity or Mass Flowrate and Cp.')
         else:
             return capacity
 
-    @validator('hourly_generation')
-    def check_if_generated_or_import_schedule(cls, hourly_generation_profile, values, **kwargs):
+    @validator('real_hourly_capacity')
+    def check_if_generated_or_import_schedule(cls, real_hourly_capacity, values, **kwargs):
 
-        if hourly_generation_profile is None:
+        if real_hourly_capacity is None:
             if values["daily_periods"] is None or values["shutdown_periods"] is None or values["saturday_on"] is None or values["sunday_on"] is None:
                 raise Exception("Import a profile (kWh) for the stream or provide data to estimate one.")
         else:
             if values["daily_periods"] is not None or values["shutdown_periods"] is not None or values["saturday_on"] is not None or values["sunday_on"] is not None:
                 raise Exception("Provide only the profile (kWh), or the schedule data, not both.")
 
-        return hourly_generation_profile
+        return real_hourly_capacity
 
     @validator('target_temperature',allow_reuse=True)
     def check_if_temperatures_are_the_same(cls, target_temperature, values, **kwargs):

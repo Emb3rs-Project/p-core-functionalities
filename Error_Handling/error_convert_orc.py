@@ -3,20 +3,21 @@ from typing import List, Optional
 from .General.stream import Stream
 from .General.location import Location
 from .General.consumer_type_options import ConsumerTypeOptions
-
+from .General.fueldata import FuelData
 
 class PlatformConvertORC(Location):
     streams: List[Stream]
-    consumer_type: ConsumerTypeOptions
     get_best_number: Optional[PositiveInt] = 3
     orc_years_working: Optional[PositiveInt] = 25
     orc_T_evap: Optional[PositiveFloat] = 110
     orc_T_cond: Optional[PositiveFloat] = 35
+    fuels_data: FuelData
+    interest_rate: PositiveFloat
 
     @validator('streams')
     def check_if_there_are_streams(cls, v):
         if len(v) < 1:
-            raise ValueError('Introduce at least 1 stream')
+            raise ValueError('Introduce at least 1 stream to assess a possible ORC.')
         return v
 
     @validator('orc_T_cond')

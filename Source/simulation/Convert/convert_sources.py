@@ -1,94 +1,3 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Sources conversion technologies.
-
-      For each source are designed the conversion technologies needed. The design may be done for each stream individually or
-      it can be made to the aggregated of streams (the user must provide his preference). After the designing, it is known
-      the power available from each source.
-
-      When performing the conversion, three design options may occur:
-            1) when the stream is flue_gas or the supply temperature is larger than the defined safety_temperature=100ºC,
-            it is always designed an intermediate oil circuit between stream and grid, for a more realistic approach
-            (it is safer to implement intermediate circuit)
-            2) when the source streams supply temperature are lower then the desired grid temperature, heating technologies
-            are designed to reach its temperature
-
-     Possible conversions: HX, ORC cascaded, HX + intermediate circuit + HX, heating technology + HX
-
-     !!!!!
-     IMPORTANT: it is expected that this script runs multiple times. The first time without knowing the grid losses and thus
-     overestimating the source power available to be converted to the grid. The remaining times with estimated grid losses
-     by the GIS, which will be used to give a better estimate of the real power available by the sources.
-
-
-##############################
-INPUT:  dict with:
-
-        # group_of_sources = [source_1,source_2,...] each source dictionary
-        # last_iteration_data = [] or output from first iteration - all_sources_info
-        # sink_group_grid_supply_temperature
-        # sink_group_grid_return_temperature
-        # gis_info - array with vectors with grid losses for each stream of source  [[source_1_stream_1_loss, source_1_stream_2_loss],...]
-
-            Where, for example:
-             # source_1 = {
-             #              'id'
-             #              'location' = [latitude,longitude]
-             #              'consumer_type' - 'household' or 'non-household'
-             #              'streams' - array with dictionaries
-             #             }
-
-                     Where, for example:
-                         # streams = {
-                         #              'stream_id'
-                         #              'object_type'
-                         #              'stream_type'
-                         #              'fluid'
-                         #              'capacity'
-                         #              'supply_temperature'
-                         #              'target_temperature'
-                         #              'hourly_generation'
-                         #          }
-
-
-##############################
-OUTPUT: vector with multiple dictionaries [source_1,source_2,...]  [{'source_id', 'stream_id', 'hourly_stream_capacity', 'conversion_technologies'},..]
-
-      Where, for example:
-         # source_1 {
-         #          'source_id',
-         #          'source_grid_supply_temperature',
-         #          'source_grid_return_temperature',
-         #          'streams_converted',
-         #          }
-
-            Where in streams_converted:
-                 # streams_converted = {
-                 #          'stream_id'
-                 #          'hourly_stream_capacity' [kWh]
-                 #          'teo_capacity_factor'
-                 #          'conversion_technologies' - multiple dictionaries with technologies possible to implement
-                 #          }
-
-                  Where in conversion_technologies:
-                     # conversion_technologies = {
-                     #                              'equipment'
-                     #                              'max_capacity'  [kW]
-                     #                              'turnkey_a' [€/kW]
-                     #                              'turnkey_b' [€]
-                     #                              'conversion_efficiency'  []
-                     #                              'om_fix'   [€/year.kW]
-                     #                              'om_var'  [€/kWh]
-                     #                              'emissions'  [kg.CO2/kWh]
-                     #                              'tecnhologies' - technologies info in detail
-                     #                            }
-
-
-"""
-
 from copy import copy
 from ....General.Convert_Equipments.Auxiliary.source_get_hx_temperatures import source_get_hx_temperatures
 from ....General.Convert_Equipments.Convert_Options.add_boiler import Add_Boiler
@@ -100,12 +9,116 @@ from ....General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from ....General.Convert_Equipments.Convert_Options.add_orc_cascaded import Add_ORC_Cascaded
 from ....General.Convert_Equipments.Auxiliary.aggregate_technologies_info import aggregate_technologies_info
 from ....Source.simulation.Auxiliary.design_orc import design_orc
-from ....General.Auxiliary_General.get_country import get_country
 from ....General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import coef_solar_thermal_backup
 from ....Error_Handling.error_convert_sources import MainErrorConvertSources
 from ....Error_Handling.runtime_error import ModuleRuntimeException
 
 def convert_sources(in_var, kb):
+
+    """
+    Sources conversion to the grid - design of technologies.
+
+    For each source are designed the conversion technologies needed. The design may be done for each stream individually
+    or it can be made to the aggregated of streams (the user must provide his preference). After the designing, it is
+    known the power available from each source.
+    When performing the conversion, three design options may occur:
+            1. If the stream supply temperature > grid supply temperature -> HX designed
+            2. If the stream supply temperature > ORC evaporator -> ORC cascaded designed
+            3. If the stream supply temperature < grid supply temperature -> heating technologies are designed
+
+    :param in_var: ``dict``: platform and CF module data, with the following keys:
+                - platform: ``dict``: platform data, with the following keys:
+                        - existing_grid_data: ``list with dict``: [OPTIONAL] existent grid connection point data, with the following keys:
+                                - id: ``int``: existent source or grid connection point ID
+                                - location: ``list``: location [º]; [latitude,longitude]
+                                - levelized_co2_emissions: ``float``: grid levelized CO2 emissions [kg CO2/kWh]
+                                - levelized_om_var: ``float``: grid levelized OM var [€/kWh]
+                                - levelized_om_fix: ``float``: grid levelized OM fix  [€/kWh]
+                        - group_of_sources: ``list with dict``: sources to be analyzed. Each source with the following keys:
+                                - id: ``int``: source ID
+                                - location: ``list``: location [º]; [latitude,longitude]
+                                - fuels_data: ''dict'': fuels price and CO2 emission, with the following keys:
+                                        - natural_gas: ``dict``: with the following keys:
+                                                - co2_emissions: ``float``: fuel CO2 emission [kg CO2/kWh]
+                                                - price: ``float``: fuel price [€/kWh]
+                                        - fuel_oil
+                                        - electricity
+                                        - biomass
+                                - streams: ``list with dict``: source's streams to be analyzed. Each stream with the following keys:
+                                        - stream_id: ``int``: stream ID []
+                                        - object_type: ``str``: DEFAULT=stream []
+                                        - stream_type: ``str``: stream designation []; inflow, outflow, excess_heat
+                                        - fluid: ``str``: stream's fluid []
+                                        - capacity: ``float``: stream's capacity [kW]
+                                        - supply_temperature: ``float``: stream's supply/initial temperature [ºC]
+                                        - target_temperature: ``float``: stream's target/final temperature [ºC]
+                                        - hourly_generation: ``list``: stream's hourly capacity
+
+                - cf_module: ``dict``: CF module data, with the following keys:
+                        - sink_group_grid_supply_temperature: ``float``: grid supply temperature (user input or defined by the sinks)
+                        - sink_group_grid_return_temperature: ``float``: grid return temperature (user input or defined by the sinks)
+
+
+    :param kb: Knowledge Base data
+
+    :return:
+        - all_info: ``dict``: sources conversion data, with the following keys:
+                - all_sources_info: ``list with dict``: sources to be analyzed. Each source with the following keys:
+                        - source_id: ``int``: source ID
+                        - location: ``list``: location [º]; [latitude,longitude]
+                        - source_grid_supply_temperature: ``float``: source-grid supply temperature [ºC]
+                        - source_grid_return_temperature: ``float``: source-grid return temperature [ºC]
+                        - streams_converted : ``list with dict``:  streams conversion data, with the following keys:
+                                - stream_id: ``int``: stream ID
+                                - teo_stream_id: ``str``: TEO specific data; stream ID with source ID []
+                                - input_fuel: ``str``: TEO specific data; TEO input fuel name []
+                                - output_fuel: ``str``: TEO specific data; TEO output fuel name  []
+                                - output: ``int``: TEO specific data; DEFAULT=1 []
+                                - gis_capacity: ``float``: GIS specific data; stream converted/provided capacity to the grid
+                                - hourly_stream_capacity: ``list``: hourly streaem capacity
+                                - teo_capacity_factor: ``int``: TEO specific data;
+                                - max_stream_capacity: ``float``: max stream capacity [kW]
+                                - conversion_technologies: ``list with dict``: conversion solution data (technologies implemented), with the following keys:
+                                        - teo_equipment_name: ``list``: TEO specific data; TEO equipment name []
+                                        - output: ``int``: TEO specific data; DEFAULT=1 []
+                                        - input_fuel: ``str``: TEO specific data; TEO input fuel name []
+                                        - output_fuel: ``str``: TEO specific data; TEO output fuel name  []
+                                        - equipment: ``list``: conversion solution equipment names []
+                                        - max_capacity: ``float``: stream capacity maximum capacity convertible  [kW]
+                                        - turnkey_a: ``float``: conversion solution turnkey a (ax+b)  [€/kW]
+                                        - turnkey_b: ``float``: conversion solution turnkey b (ax+b) [€]
+                                        - conversion_efficiency: ``float``: conversion solution efficiency stream-to-grid []
+                                        - om_fix: ``float``: conversion solution OM fix [€/year.kW]
+                                        - om_var: ``float``: conversion solution OM var [€/kWh]
+                                        - emissions: ``float``: conversion solution CO2 emissions [kg.CO2/kWh]
+                                        - technologies: ``list with dict``:  each technologies info in detail (check each technology routine)
+
+                - ex_grid: ``dict``: TEO specific data; existent grid data
+                        - teo_equipment_name: ``str``: DEFAULT="ex_grid"
+                        - output: ``int``: DEFAULT=1
+                        - input_fuel: ``int``: DEFAULT=None
+                        - output_fuel: ``int``: DEFAULT="dhnwatersupply"
+                        - equipment: ``list``: DEFAULT=[]
+                        - max_capacity: ``float``: DEFAULT=10**8
+                        - turnkey_a: ``float``: DEFAULT=0
+                        - turnkey_b: ``float``: DEFAULT=0
+                        - conversion_efficiency: ``float``: DEFAULT=1
+                        - om_fix: ``int``: DEFAULT=None
+                        - om_var: ``int``: DEFAULT=None
+                        - emissions: ``float``: levelized CO2 emissions [kgCO2/kWh]
+                        - technologies: ``list``: DEFAULT=[]
+
+                - teo_string: ``str``: TEO specific data. DEFAULT="dhn"
+                - input_fuel: ``str``: TEO specific data. DEFAULT="dhnwatersupply"
+                - output_fuel: ``str``: TEO specific data. DEFAULT="dhnwaterdem"
+                - output: ``int``: TEO specific data. DEFAULT=1
+                - input: ``int``: TEO specific data. DEFAULT=1
+                - n_supply_list: ``list with dict``: GIS specific data. Sources location and capacity provided to the grid
+                - teo_capacity_factor_group: ``int``: TEO specific data
+                - teo_dhn: ``dict``: TEO specific data. Parameters TEO
+
+    """
+
     ############################################################################################################
     # INPUT
     # error handling
@@ -163,8 +176,7 @@ def convert_sources(in_var, kb):
         for source_index, source in enumerate(group_of_sources):
             output_converted = []
             latitude, longitude = source['location']
-            country = get_country(latitude, longitude)
-            consumer_type = source['consumer_type']
+            fuels_data = source['fuels_data']
 
             # get conversion technologies for each stream
             for stream_index, stream in enumerate(source['streams']):
@@ -223,8 +235,7 @@ def convert_sources(in_var, kb):
 
                                     # add intermediation circulation pumping
                                     info_pump_intermediate = Add_Pump(kb,
-                                                                      country,
-                                                                      consumer_type,
+                                                                      fuels_data,
                                                                       intermediate_fluid,
                                                                       info_hx_intermediate.available_power,
                                                                       power_fraction,
@@ -245,8 +256,7 @@ def convert_sources(in_var, kb):
 
                                     # add circulation pumping to grid
                                     info_pump_grid = Add_Pump(kb,
-                                                              country,
-                                                              consumer_type,
+                                                              fuels_data,
                                                               grid_fluid,
                                                               info_hx_grid.available_power,
                                                               power_fraction,
@@ -290,8 +300,7 @@ def convert_sources(in_var, kb):
 
                                     # add circulation pumping to grid
                                     info_pump_grid = Add_Pump(kb,
-                                                              country,
-                                                              consumer_type,
+                                                              fuels_data,
                                                               grid_fluid,
                                                               info_hx_grid.available_power,
                                                               power_fraction,
@@ -349,8 +358,7 @@ def convert_sources(in_var, kb):
 
                                         # add circulation pumping to intermediate circuit
                                         info_pump_intermediate = Add_Pump(kb,
-                                                                          country,
-                                                                          consumer_type,
+                                                                          fuels_data,
                                                                           orc_intermediate_fluid,
                                                                           info_hx_intermediate.available_power,
                                                                           power_fraction,
@@ -358,8 +366,7 @@ def convert_sources(in_var, kb):
                                                                           hx_intermediate_return_temperature)
 
                                     info_pump_grid = Add_Pump(kb,
-                                                              country,
-                                                              consumer_type,
+                                                              fuels_data,
                                                               grid_fluid,
                                                               info_technology.supply_capacity,
                                                               power_fraction,
@@ -422,8 +429,7 @@ def convert_sources(in_var, kb):
 
                                     # add circulation pumping to grid
                                     info_pump_grid = Add_Pump(kb,
-                                                              country,
-                                                              consumer_type,
+                                                              fuels_data,
                                                               grid_fluid,
                                                               info_hx_grid.available_power,
                                                               power_fraction,
@@ -434,9 +440,8 @@ def convert_sources(in_var, kb):
                                     # 1) add Boiler
                                     for fuel in boiler_fuel_type:
                                         info_technology = Add_Boiler(kb,
+                                                                     fuels_data,
                                                                      fuel,
-                                                                     country,
-                                                                     consumer_type,
                                                                      needed_supply_capacity,
                                                                      power_fraction,
                                                                      booster_outlet_temperature,
@@ -458,8 +463,7 @@ def convert_sources(in_var, kb):
 
                                     # 2) add Solar Thermal + Boiler as backup
                                     info_technology_solar_thermal = Add_Solar_Thermal(kb,
-                                                                                      country,
-                                                                                      consumer_type,
+                                                                                      fuels_data,
                                                                                       latitude,
                                                                                       longitude,
                                                                                       needed_supply_capacity,
@@ -470,9 +474,8 @@ def convert_sources(in_var, kb):
                                                                                       hx_efficiency)
                                     for fuel in boiler_fuel_type:
                                         info_technology_boiler = Add_Boiler(kb,
+                                                                            fuels_data,
                                                                             fuel,
-                                                                            country,
-                                                                            consumer_type,
                                                                             needed_supply_capacity,
                                                                             power_fraction,
                                                                             booster_outlet_temperature,
@@ -502,8 +505,7 @@ def convert_sources(in_var, kb):
                                     # 3) add solar thermal + heat pump as backup
                                     teo_equipment_name = 'st_' + 'hp'
                                     info_technology_heat_pump = Add_Heat_Pump(kb,
-                                                                              country,
-                                                                              consumer_type,
+                                                                              fuels_data,
                                                                               power_fraction,
                                                                               booster_outlet_temperature,
                                                                               booster_inlet_temperature,
@@ -531,9 +533,8 @@ def convert_sources(in_var, kb):
                                     #4) add chp
                                     for fuel in chp_fuel_type:
                                         info_technology = Add_CHP(kb,
+                                                                  fuels_data,
                                                                   fuel,
-                                                                  country,
-                                                                  consumer_type,
                                                                   needed_supply_capacity,
                                                                   power_fraction,
                                                                   booster_outlet_temperature,
@@ -559,8 +560,7 @@ def convert_sources(in_var, kb):
                                 heat_pump_T_evap = stream['target_temperature'] - hx_delta_T
                                 heat_pump_evap_capacity = stream_nominal_capacity
                                 info_technology = Add_Heat_Pump(kb,
-                                                                country,
-                                                                consumer_type,
+                                                                fuels_data,
                                                                 power_fraction,
                                                                 source_grid_supply_temperature,
                                                                 source_grid_return_temperature,
@@ -587,8 +587,7 @@ def convert_sources(in_var, kb):
 
                                 # hp - add circulation pumping to grid
                                 info_pump_grid = Add_Pump(kb,
-                                                          country,
-                                                          consumer_type,
+                                                          fuels_data,
                                                           grid_fluid,
                                                           info_technology.supply_capacity,
                                                           power_fraction,
@@ -611,16 +610,16 @@ def convert_sources(in_var, kb):
                                 'conversion_efficiency']
 
                             output_converted.append({
-                                'stream_id': stream['id'],
+                                "stream_id": stream['id'],
                                 "teo_stream_id": 'str' + str(stream['id']) + 'sou' + str(source['id']),
                                 "input_fuel": None,
                                 "output_fuel": "eh" + 'str' + str(stream['id']) + 'sou' + str(source['id']),
                                 "output": 1,
-                                'gis_capacity': gis_capacity,  # [kW]
-                                'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
-                                'teo_capacity_factor': teo_capacity_factor,
-                                'max_stream_capacity': max(hourly_stream_capacity),
-                                'conversion_technologies': conversion_technologies,  # [€/kW]
+                                "gis_capacity": gis_capacity,  # [kW]
+                                "hourly_stream_capacity": hourly_stream_capacity,  # [kWh]
+                                "teo_capacity_factor": teo_capacity_factor,
+                                "max_stream_capacity": max(hourly_stream_capacity),
+                                "conversion_technologies": conversion_technologies,  # [€/kW]
                             })
 
                             for index, i in enumerate(teo_group_of_sources_capacity_factor):
@@ -706,14 +705,14 @@ def convert_sources(in_var, kb):
     }
 
     all_info = {
-        'all_sources_info': all_sources_info,
-        'ex_grid': ex_grid,
-        'teo_string': 'dhn',
+        "all_sources_info": all_sources_info,
+        "ex_grid": ex_grid,
+        "teo_string": 'dhn',
         "input_fuel": "dhnwatersupply",
         "output_fuel": "dhnwaterdem",
         "output": 1,
         "input": 1,
-        'n_supply_list': n_supply_list,
+        "n_supply_list": n_supply_list,
         "teo_capacity_factor_group": teo_group_of_sources_capacity_factor,
         "teo_dhn": teo_dhn
     }
