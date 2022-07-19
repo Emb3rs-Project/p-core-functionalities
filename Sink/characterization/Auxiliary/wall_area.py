@@ -1,36 +1,33 @@
-"""
-alisboa/jmcunha
+def wall_area(wall_side, building_orientation, width_floor, length_floor, height_floor):
+    """Compute area
 
-
-##############################
-INFO: Compute wall/glass area.
-
-      * width_floor is the dimension of the wall facing the building's building_orientation; e.g. if it faces North, the
+    * width_floor is the dimension of the wall facing the building's building_orientation; e.g. if it faces North, the
       dimension of that North wall is th width; thus the length would from the East/West wall  (building are assumed to
       be rectangular)
 
-      * For the wall, ratio = ratio_wall
-        For the glass, ratio = ratio_glass
+    Parameters
+    ----------
+    wall_side : str
+        Wall orientation
 
+    building_orientation : str
+        Building orientation
 
-##############################
-INPUT:
-        # wall_side - e.g. 'N','S','E' or 'W'
-        # building_orientation - e.g. 'N','S','E' or 'W'
-        # width_floor  [m]
-        # length_floor [m]
-        # height_floor [m]
+    width_floor : float
+        Width [m]
 
+    length_floor : float
+        Length [m]
 
-##############################
-OUTPUT:
-        # area  [m2]
+    height_floor : float
+        Height [m]
 
+    Returns
+    -------
+    area : float
+        Surface area [m2]
 
-"""
-
-
-def wall_area(wall_side, building_orientation, width_floor, length_floor, height_floor):
+    """
 
     if building_orientation == 'N' or building_orientation == 'S':
         if wall_side == 'N' or wall_side == 'S':

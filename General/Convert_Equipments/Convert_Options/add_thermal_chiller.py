@@ -1,64 +1,71 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: create thermal chiller object with all necessary info when performing sources and sinks conversion to the grid.
-      The most important attribute of the object is data_teo, which contains all the info necessary for TEO module, such
-      as, the equipment turnkey linearized with power, OM fix/variable, emissions, efficiency and others (see below).
-
-
-##############################
-INPUT:
-        # country - country name
-        # consumer_type - e.g. 'household' or 'non-household'
-        # supply_capacity - equipment desired supply capacity  [kW]
-        # power_fraction - design equipment for max and fraction power; value between 0 and 1
-
-
-##############################
-RETURN: object with all technology info:
-        # object_type
-        # equipment_sub_type - equipment name
-        # fuel_type - type of fuel
-        # global_conversion_efficiency  []
-        # thermal_chiller_evap_T_cold  [ºC]
-        # thermal_chiller_evap_T_hot  [ºC]
-        # country
-        # fuel_properties - all fuel properties, dict with e.g. lhv, cost, AFR ..
-        # supply_temperature  [ºC]
-        # return_temperature  [ºC]
-        # data_teo - dictionary with equipment data needed by the TEO
-
-            Where in data_teo, the following keys:
-                #  equipment - equipment name
-                #  fuel_type
-                #  max_input_capacity - max power the equipment can convert [kW]
-                #  turnkey_a  [€/kW]
-                #  turnkey_b  [€]
-                #  conversion_efficiency   []
-                #  om_fix  [€/year.kW]
-                #  om_var  [€/kWh]
-                #  emissions   [kg.CO2/kWh thermal]
-
-"""
-
 from ....utilities.kb import KB
 from ....KB_General.equipment_details import EquipmentDetails
-from ....KB_General.fuel_properties import FuelProperties
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
 
 class Add_Thermal_Chiller():
+    """
+    Create THERMAL CHILLER object with all necessary info when performing sources and sinks conversion to the grid.
+    The most important attribute of the object is 'data_teo'' which contains all the info necessary for TEO module.
+
+    Attributes
+    ----------
+    object_type : str
+        DEFAULT="equipment"
+
+    equipment_sub_type : str
+        Equipment sub type
+
+    fuel_type : str
+        Equipment's fuel
+
+    supply_temperature : float
+        Equipment's circuit supply temperature [ºC]
+
+    return_temperature : float
+        Equipment's circuit return temperature [ºC]
+
+    supply_capacity : float
+        Equipment supply capacity [kW]
+
+    fuel_properties : dict
+        Equipment fuel data
+
+    global_conversion_efficiency :
+        Equipment efficiency []
+
+    data_teo : dict
+        Dictionary with equipment data needed by the TEO
+
+    Methods
+    ----------
+    design_equipment()
+        Get equipment economic data for a specific power fraction
+
+    """
 
     def __init__(self, kb : KB, fuels_data, supply_capacity, power_fraction):
+        """Create THERMAL CHILLER data
+
+        Parameters
+        ----------
+        kb : dict
+            Knowledge Base data
+
+        fuels_data: dict
+            Fuels price and CO2 emission
+
+        supply_capacity : float
+            Equipment supply capacity [kW]
+
+        power_fraction : float
+            Design equipment for max and fraction power; value between 0 and 1 []
+        """
 
         # Defined Vars
         self.object_type = 'equipment'
         self.equipment_sub_type = 'thermal_chiller'
         self.fuel_type = 'electricity'
-        self.thermal_chiller_evap_T_cold = 70
-        self.thermal_chiller_evap_T_hot = 90
         self.supply_temperature = 7  # equipment directly supplies grid/sink/source [ºC]
         self.return_temperature = 12  # [ºC]
 
@@ -96,6 +103,22 @@ class Add_Thermal_Chiller():
 
 
     def design_equipment(self,kb, power_fraction):
+        """Get equipment economic data for a specific power fraction
+
+        Parameters
+        ----------
+        kb : dict
+            Knowledge Base data
+
+        power_fraction : float
+            Design equipment for max and fraction power; value between 0 and 1 []
+
+        Returns
+        -------
+        info : dict
+            Designed equipment economic data
+
+        """
 
         supply_capacity = self.supply_capacity * power_fraction  # thermal power supplied [kWh]
         equipment_details = EquipmentDetails(kb)

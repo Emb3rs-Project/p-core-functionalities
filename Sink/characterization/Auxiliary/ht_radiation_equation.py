@@ -1,33 +1,29 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Compute heat transfer, by radiation, between surfaces and indoor air.
-
-
-##############################
-INPUT:
-        # emissivity  []
-        # area_1  [m2]
-        # T_component_1  [ºC]
-        # T_component_2  [ºC]
-        # F_1_2 - view factor []
-
-        Where in each surface of horizontal_surfaces/vertical_surfaces, the following keys:
-            # temperature  [ºC]
-            # area  [m2]
-            # type - e.g. 'wall' or 'glass'
-
-##############################
-OUTPUT:
-        # Q_convection  [W]
-
-
-"""
-
-
 def ht_radiation_equation(emissivity, area_1, T_component_1, T_component_2, F_1_2):
+    """Compute heat transfer, by radiation, between surfaces and indoor air
+
+    Parameters
+    ----------
+    emissivity : float
+        Surface emissivity []
+
+    area_1 : float
+        Area [m2]
+
+    T_component_1 : float
+        Component temperature [ºC]
+
+    T_component_2 : float
+            Component temperature [ºC]
+
+    F_1_2 : float
+        View factor []
+
+    Returns
+    -------
+    Q_radiation : float
+        Exchanged heat by radiation [W]
+
+    """
 
     stef_Boltzmann = 5.67 * 10 ** (-8)  # [W/m2.K4]
 

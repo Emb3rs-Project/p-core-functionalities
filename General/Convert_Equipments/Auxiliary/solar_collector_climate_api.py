@@ -1,27 +1,3 @@
-""""
-alisboa/jmcunha
-
-
-##############################
-INFO: Get climatic conditions according to the location in a hourly profile.
-
-
-##############################
-INPUT:
-        # latitude  [º]
-        # longitude  [º]
-
-
-##############################
-RETURN: df (year hourly profile) with the following keys:
-        # T_exterior  [ºC]
-        # T_sky  [ºC]
-        # Q_beam_solar_collector  [W/m2]
-        # Q_dif_solar_collector  [W/m2]
-
-
-"""
-
 import numpy as np
 import math
 import pvlib
@@ -30,6 +6,34 @@ import pandas as pd
 
 
 def solar_collector_climate_api(latitude, longitude):
+    """Get climatic conditions according to the location in a hourly profile.
+
+    Parameters
+    ----------
+    latitude : float
+        Location latitude [º]
+
+    longitude : float
+        Location longitude [º]
+
+    Returns
+    -------
+    df_output : df
+        dataframe with climate data, with the following keys:
+
+            T_exterior : float
+                Ambient temperature [ºC]
+
+            T_sky : float
+                Sky temperature [ºC]
+
+            Q_beam_solar_collector : float
+                Direct/Beam solar radiation [W]
+
+            Q_dif_solar_collector : float
+                Diffuse solar radiation [W]
+
+    """
 
     # Defined vars
     solar_collector_inclination = latitude - 15

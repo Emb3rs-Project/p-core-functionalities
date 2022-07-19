@@ -1,6 +1,5 @@
 import math
 import copy
-from ...General.Auxiliary_General.ref_data import ref_data
 from ...General.Auxiliary_General.schedule_hour import schedule_hour
 from ...General.Auxiliary_General.month_last_hour import month_last_hour
 from ...General.Simple_User.adjust_capacity import adjust_capacity
@@ -14,66 +13,161 @@ from ...Error_Handling.error_greenhouse import PlatformGreenhouse
 from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 
+def greenhouse(in_var):
 
-def greenhouse(in_var,kb):
+    """Greenhouse characterization
 
-    """
-    Greenhouse Simulation. Simulates the heat needs over the year according to the greenhouse specifications and climate
+    Simulates the heat needs over the year according to the greenhouse specifications and climate
     weather data of the location
 
-    :param in_var: ``dict``: greenhouse characterization data
-            - platform: ``dict``: platform data
-                    - location : ``list``: location [º]; [latitude,longitude]
-                    - width: ``float``:  width [m]
-                    - length: ``float``:  length [m]
-                    - height: ``float``:  height [m]
-                    - greenhouse_orientation: ``str``: greenhouse’s main facade orientation; "N","S","E" or "W"
-                    - daily_periods: ``float``: period of daily periods [h]
-                    - shutdown_periods: ``list``: period of days stream is not available [day]
-                    - greenhouse_efficiency: greenhouse air infiltration tightness:
-                                    1 = tight cover with low infiltrations
-                                    2 = medium sealing
-                                    3 = leaky cover
-                    - T_heat_on: ``float``: Heating setpoint temperature [ºC]
-                    - thermal_blanket: If greenhouse has a thermal blanket/curtain being used at night; 1=yes,0=no
-                    - artificial_lights_system: lighting hours in greenhouse; 1=yes,0=no
-                    - hours_lights_needed: hours of light the plant needs (accounting with daily solar hours) [h]
-                    - supply_temperature_heat: ``float``: [OPTIONAL] Heating System ReturnTemperature [ºC]; DEFAULT=30
-                    - target_temperature_heat: ``float``: [OPTIONAL] Heating System Supply Temperature [ºC]; DEFAULT=50
-                    - leaf_area_index: [OPTIONAL] ratio of leaf area over ground area []; DEFAULT=1
-                    - rh_air: [OPTIONAL] relative humidity [%]; DEFAULT=80
-                    - u_cover: [OPTIONAL] cover thermal conductivity [W/m2.K]; DEFAULT=6
-                    - indoor_air_speed: [OPTIONAL] indoor air velocity [m/s]; DEFAULT=0.1
-                    - leaf_length: [OPTIONAL] characteristic length of a plant leaf [m]; DEFAULT=0.027
-                    - tau_cover_long_wave_radiation: [OPTIONAL] Cover transmissivity coefficient to long-wave radiation; DEFAULT=0.3
-                    - emissivity_cover_long_wave_radiation: [OPTIONAL] Cover emissivity coefficient to long-wave radiation; DEFAULT=0.2
-                    - tau_cover_solar_radiation: [OPTIONAL] Cover's transmissivity coefficient to solar radiation []; DEFAULT=0.9
-                    - power_lights: [OPTIONAL] light power per square meter [W/m2]; DEFAULT=20
-                    - ref_system_fuel_type: ``str``: Fuel type associated; e.g. "natural_gas","electricity","biomass","fuel_oil","none"
-                    - ref_system_fuel_price: ``float``: [OPTIONAL] Fuel Price. If ref_system_fuel_type!="none" not given, obtained from KB
-                    - ref_system_eff_equipment: ``float``: [OPTIONAL] COP of the cooling equipment;
-                    - real_monthly_capacity: ``dict``: [OPTIONAL] Real monthly data - for each month of the year
-                    - real_yearly_capacity: ``float``: [OPTIONAL] Real yearly data - single value
+    Parameters
+    ----------
+    in_var : dict
+        All necessary data to perform the building characterization data, with the following key:
 
-    :param kb: KB
+        platform: dict
+            Data obtained from the platform, with the following keys:
 
-    :return: output:``dict``: streams data
-                - streams: ``list``: List with dicts of all streams with the following keys:
-                        - id : ``int``: stream ID []
-                        - name : ``str``:
-                        - object_type : ``str``: DEFAULT=stream []
-                        - object_linked_id : `` None``: DEFAULT=NONE, since no equipment/process is assocaited
-                        - stream_type : ``str``: stream designation []; inflow, outflow, excess_heat
-                        - supply_temperature : ``float``: stream's supply/initial temperature [ºC]
-                        - target_temperature : ``float``: stream's target/final temperature [ºC]
-                        - fluid : ``str``: stream fluid name
-                        - flowrate : ``float``: [kg/h]
-                        - schedule : ``list``: hourly values between 0 and 1, according to the hourly capacity
-                        - hourly_generation: ``list``: stream's hourly capacity [kWh]
-                        - capacity : ``float``:  stream's capacity [kW]
-                        - monthly_generation : ``list``: stream's monthly capacity [kWh]
-                        - fuel_co2_emissions : ``float``: fuel CO2 emissions [kgCO2/kWh]
-                        - fuel_price : ``float``: fuel price [€/kWh]
+                 - location : list
+                     Location [º]; [latitude,longitude]
+
+                 - width: float:
+                     Width [m]
+
+                 - length: float:
+                     Length [m]
+
+                 - height: float:
+                     Height [m]
+
+                 - greenhouse_orientation: str:
+                     Greenhouse’s main facade orientation; "N","S","E" or "W"
+
+                 - daily_periods: float:
+                     Period of daily periods [h]
+
+                 - shutdown_periods: list:
+                     Period of days stream is not available [day]
+
+                 - greenhouse_efficiency:
+                     Greenhouse air infiltration tightness:
+                                 1 = tight cover with low infiltrations
+                                 2 = medium sealing
+                                 3 = leaky cover
+
+                 - T_heat_on: float:
+                     Heating setpoint temperature [ºC]
+
+                 - thermal_blanket:
+                     If greenhouse has a thermal blanket/curtain being used at night; 1=yes,0=no
+
+                 - artificial_lights_system:
+                     lighting hours in greenhouse; 1=yes,0=no
+
+                 - ref_system_fuel_type: str
+                     Fuel type associated; e.g. "natural_gas","electricity","biomass","fuel_oil","none"
+
+                 - ref_system_eff_equipment: float, optional
+                     COP of the cooling equipment;
+
+                 - real_monthly_capacity: dict, optional
+                     Real monthly data - for each month of the year
+
+                 - real_yearly_capacity: float, optional
+                     Real yearly data - single value
+
+                 - hours_lights_needed:
+                     hours of light the plant needs (accounting with daily solar hours) [h]
+
+                 - supply_temperature_heat: float, optional
+                     Heating System ReturnTemperature [ºC]; DEFAULT=30
+
+                 - target_temperature_heat: float, optional
+                     Heating System Supply Temperature [ºC]; DEFAULT=50
+
+                 - leaf_area_index, optional
+                     Ratio of leaf area over ground area []; DEFAULT=1
+
+                 - rh_air, optional
+                     Relative humidity [%]; DEFAULT=80
+
+                 - u_cover, optional
+                     Cover thermal conductivity [W/m2.K]; DEFAULT=6
+
+                 - indoor_air_speed, optional
+                     Indoor air velocity [m/s]; DEFAULT=0.1
+
+                 - leaf_length, optional
+                     Characteristic length of a plant leaf [m]; DEFAULT=0.027
+
+                 - tau_cover_long_wave_radiation, optional
+                     Cover transmissivity coefficient to long-wave radiation; DEFAULT=0.3
+
+                 - emissivity_cover_long_wave_radiation, optional
+                     Cover emissivity coefficient to long-wave radiation; DEFAULT=0.2
+
+                 - tau_cover_solar_radiation, optional
+                     Cover's transmissivity coefficient to solar radiation []; DEFAULT=0.9
+
+                 - power_lights, optional
+                     Light power per square meter [W/m2]; DEFAULT=20
+
+    kb : dict
+        Knowledge base data
+
+    Returns
+    -------
+        output : dict
+        Streams data
+
+        - streams : list
+            List with dicts of all streams with the following keys:
+
+                - id : int
+                    stream ID []
+
+                - name : str
+                    Stream name []
+
+                - object_type : str
+                    DEFAULT = "stream" []
+
+                - object_linked_id
+                    None: DEFAULT=NONE, since no equipment/process is associated
+
+                - stream_type : str
+                    Stream designation []; inflow, outflow, excess_heat
+
+                - supply_temperature : float
+                    Stream's supply/initial temperature [ºC]
+
+                - target_temperature : float
+                    Stream's target/final temperature [ºC]
+
+                - fluid : str
+                    Stream fluid name
+
+                - flowrate : float
+                    Stream mass flowrate[kg/h]
+
+                - schedule : list
+                    Hourly values between 0 and 1, according to the capacity ration on that hour
+
+                - hourly_generation: list
+                    Stream's hourly capacity [kWh]
+
+                - capacity : float
+                    Stream's capacity [kW]
+
+                - monthly_generation : list
+                    Stream's monthly capacity [kWh]
+
+                - fuel : str
+                    Associated equipment fuel name []
+
+                - eff_equipment : float
+                    Associated equipment efficiency []
+
     """
 
 

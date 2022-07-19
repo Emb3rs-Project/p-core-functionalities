@@ -1,21 +1,3 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Build Pinch Analysis report HTML
-
-
-##############################
-INPUT:
-
-
-##############################
-OUTPUT: report HTML
-
-"""
-
-
 import os
 from module.Source.simulation.Heat_Recovery.Pinch.make_pinch_design_draw import make_pinch_design_draw
 import pandas as pd
@@ -90,6 +72,20 @@ def convert_to_megawatt(df):
     return df/1000
 
 def pinch_report(data_pinch):
+
+    """Build Pinch Analysis report HTML
+
+    Parameters
+    ----------
+    data_pinch: dict
+        Output from Pinch routine
+
+    Returns
+    -------
+    report_html : str
+        HTML report
+
+    """
 
     today = date.today()
 

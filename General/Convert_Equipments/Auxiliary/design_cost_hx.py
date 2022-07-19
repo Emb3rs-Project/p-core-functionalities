@@ -1,30 +1,3 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: design and cost HX according to hot and cold stream characteristics
-
-
-##############################
-INPUT:
-        # hot_stream_T_hot  [ºC]
-        # hot_stream_T_cold  [ºC]
-        # hot_stream_fluid - fluid type
-        # cold_stream_T_hot  [ºC]
-        # cold_stream_T_cold  [ºC]
-        # cold_stream_fluid - fluid type
-        # hx_power  [kW]
-
-
-##############################
-RETURN:
-        # hx_turnkey  [€]
-        # hx_om_fix  [€/year]
-
-
-"""
-
 from ....KB_General.hx_data import HxData
 from ....KB_General.equipment_details import EquipmentDetails
 from ....General.Auxiliary_General.compute_delta_T_lmtd import compute_delta_T_lmtd_counter
@@ -32,6 +5,45 @@ from ....utilities.kb import KB
 
 
 def design_cost_hx(kb : KB, hot_stream_T_hot, hot_stream_T_cold, hot_stream_fluid, cold_stream_T_hot, cold_stream_T_cold,cold_stream_fluid, hx_power):
+
+    """Design and cost HX according to hot and cold stream characteristics
+
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base data
+
+    hot_stream_T_hot : float
+        Hot stream's hot/higher temperature [ºC]
+
+    hot_stream_T_cold : float
+        Hot stream's cold/lower temperature [ºC]
+
+     hot_stream_fluid : str
+        Hot stream fluid
+
+    cold_stream_T_hot : float
+        Hot stream's hot/higher temperature [ºC]
+
+    cold_stream_T_cold : float
+        Cold stream's cold/lower temperature [ºC]
+
+    cold_stream_fluid : str
+        Cold stream fluid
+
+    hx_power :  float
+        Heat exchanger designed power [kW]
+
+
+    Returns
+    -------
+    hx_turnkey
+        Heat exchanger turnkey [€]
+
+    hx_om_fix
+        Heat exchanger OM Fix [€/year]
+
+    """
 
     # HX info
     hx_data = HxData(kb)
@@ -56,8 +68,8 @@ def design_cost_hx(kb : KB, hot_stream_T_hot, hot_stream_T_cold, hot_stream_flui
             hx_turnkey = 0
             hx_om_fix = 0
     else:
-        print('delta_LMTD ERROR!')
         hx_turnkey = 100 ** 10  # give large value
         hx_om_fix = 100 ** 10
+        raise Exception('design_cost_hx.py error - Delta_LMTD ERROR!')
 
     return hx_turnkey, hx_om_fix

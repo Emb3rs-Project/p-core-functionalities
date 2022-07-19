@@ -1,61 +1,71 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: create ORC object with all necessary info when performing sources and sinks conversion to the grid.
-      The most important attribute of the object is data_teo, which contains all the info necessary for TEO module, such
-      as, the equipment turnkey linearized with power, OM fix/variable, emissions, efficiency and others (see below).
-
-
-##############################
-INPUT:
-        # orc_cond_temperature_supply  [ºC]
-        # equipment_sub_type
-        # overall_thermal_capacity  [kW]
-        # electrical_generation  [kW]
-        # power_fraction - design equipment for max and fraction power; value between 0 and 1
-
-
-##############################
-RETURN: object with all technology info:
-        # object_type
-        # equipment_sub_type - e.g. 'orc' or 'rc'
-        # fuel_type - 'electricity'
-        # supply_temperature  [ºC]
-        # overall_thermal_capacity  [kW]
-        # electrical_generation  [kW]
-        # supply_capacity  [kW]
-        # data_teo - dictionary with equipment data needed by the TEO
-
-            Where in data_teo, the following keys:
-                #  equipment - equipment name
-                #  fuel_type
-                #  max_input_capacity - max power the equipment can convert [kW]
-                #  turnkey_a  [€/kW]
-                #  turnkey_b  [€]
-                #  conversion_efficiency   []
-                #  om_fix  [€/year.kW]
-                #  om_var  [€/kWh]
-                #  emissions   [kg.CO2/kWh thermal]
-
-
-"""
-
 from ....utilities.kb import KB
 from ....KB_General.equipment_details import EquipmentDetails
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
 class Add_ORC_Cascaded():
+    """
+    Create ORC CASCADED object with all necessary info when performing sources and sinks conversion to the grid.
+    The most important attribute of the object is 'data_teo'' which contains all the info necessary for TEO module.
+
+    Attributes
+    ----------
+    object_type : str
+        DEFAULT="equipment"
+
+    equipment_sub_type : str
+        Equipment sub type
+
+    fuel_type : str
+        Equipment's fuel
+
+    supply_temperature : float
+        Equipment's circuit supply temperature [ºC]
+
+    supply_capacity : float
+        Equipment thermal supply capacity [kW]
+
+    overall_thermal_capacity : float
+        Convertible thermal supply capacity [kW]
+
+    electrical_generation
+        Equipment electrical capacity [kWe]
+
+    data_teo : dict
+        Dictionary with equipment data needed by the TEO
+
+    """
 
     def __init__(self, kb : KB, orc_cond_temperature_supply, equipment_sub_type, overall_thermal_capacity, electrical_generation, power_fraction):
+        """Create ORC CASCADED
+
+        Parameters
+        ----------
+        kb : dict
+            Knowledge Base data
+
+        orc_cond_temperature_supply : float
+            ORC condenser temperature [ºC]
+
+        equipment_sub_type : str
+            DEFAULT="orc"
+
+        overall_thermal_capacity : float
+            Convertible thermal supply capacity [kW]
+
+        electrical_generation : float
+            Electrical supply capacity [kWe]
+
+        power_fraction : float
+            Design equipment for max and fraction power; value between 0 and 1 []
+
+        """
 
         # Defined Vars
         self.object_type = 'equipment'
         self.fuel_type = 'electricity'
 
         # get equipment characteristics
-        self.equipment_sub_type = equipment_sub_type  # orc/rc
+        self.equipment_sub_type = equipment_sub_type  # orc
         self.supply_temperature = orc_cond_temperature_supply  # max water temperature
         self.overall_thermal_capacity = overall_thermal_capacity
         self.electrical_generation = electrical_generation  # electrical supply capacity [kW]
@@ -90,6 +100,22 @@ class Add_ORC_Cascaded():
 
 
     def design_equipment(self,kb, power_fraction):
+        """Get equipment economic data for a specific power fraction
+
+        Parameters
+        ----------
+        kb : dict
+            Knowledge Base data
+
+        power_fraction : float
+            Design equipment for max and fraction power; value between 0 and 1 []
+
+        Returns
+        -------
+        info : dict
+            Designed equipment economic data
+
+        """
 
         # Defined Vars
         hx_efficiency = 0.95

@@ -3,9 +3,6 @@ import pandas as pd
 import numpy as np
 from .....Source.simulation.Heat_Recovery.ORC.Auxiliary.get_data_of_converting_each_stream_to_orc import get_data_of_converting_each_stream_to_orc
 from .....KB_General.equipment_details import EquipmentDetails
-from .....General.Auxiliary_General.get_country import get_country
-from .....KB_General.fuel_properties import FuelProperties
-from .....KB_General.get_interest_rate import get_interest_rate
 from .....utilities.kb import KB
 from .....Error_Handling.error_convert_orc import PlatformConvertORC
 from .....Error_Handling.runtime_error import ModuleRuntimeException

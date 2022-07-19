@@ -1,30 +1,3 @@
-"""
-##############################
-INFO: Get building properties according to location and building type for simulation
-
-##############################
-INPUT:  country - country of the location
-        building_type -  type of building residential ('residential) or non residential ( 'office' or 'hotel')
-
-
-##############################
-OUTPUT: all building properties ofr simulation
-      Where:
-         # u_wall [W/m2.K]
-         # u_roof
-         # u_glass
-         # u_floor
-         # tau_glass []
-         # alpha_wall
-         # alpha_floor
-         # alpha_glass
-         # capacitance_wall [J/m2.K]
-         # capacitance_floor
-         # capacitance_roof
-         # air_change_hour [1/h]
-
-"""
-
 from dataclasses import dataclass
 
 
@@ -33,6 +6,61 @@ class BuildingProperties:
     kb_data: dict
 
     def get_values(self, country, building_type):
+        """Get building properties according to location and building type for simulation
+
+        Parameters
+        ----------
+        country : str
+            Country of the location
+
+        building_type : str
+            Type of building residential ('residential) or non residential ( 'office' or 'hotel')
+
+        Returns
+        -------
+        u_wall : float
+            U value [W/m2.K]
+
+        u_roof : float
+            U value [W/m2.K]
+
+        u_glass : float
+            U value [W/m2.K]
+
+        u_floor : float
+            U value [W/m2.K]
+
+        tau_glass : float
+            Transmissivity Glass []
+
+        alpha_wall : float
+            Absorption coefficient wall []
+
+        alpha_floor : float
+            Absorption coefficient floor []
+
+        alpha_glass : float
+            Absorption coefficient glass []
+
+        capacitance_wall : float
+            Capacitance wall [J/kg.K]
+
+        capacitance_floor : float
+            Capacitance floor [J/kg.K]
+
+        capacitance_roof : float
+            Capacitance roof [J/kg.K]
+
+        air_change_hour : float
+            Air change hour [1/h]
+
+        emissivity_wall : float
+            Emissivity wall []
+
+        emissivity_glass : float
+            Emissivity glass []
+
+        """
 
         data = self.kb_data.get('building_properties')
 

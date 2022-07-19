@@ -124,6 +124,7 @@ def convert_pinch(in_var, kb: KB):
     lifetime = platform_data.lifetime
     streams_to_analyse = platform_data.streams_to_analyse
     fuels_data = platform_data.fuels_data
+    interest_rate = platform_data.interest_rate
 
 
     ############################################################################################################
@@ -364,16 +365,16 @@ def convert_pinch(in_var, kb: KB):
     # get best options that recover maximum energy
     energy_recovered = df_optimization.sort_values('energy_recovered', ascending=False).head(number_output_options).copy()
     energy_recovered_options = get_best_x_outputs(pinch_designed_solutions, energy_recovered, country, lifetime, pinch_delta_T_min,
-                                                  kb,stream_table,stream_combination_not_feasible, type='Energy Savings')
+                                                  kb,stream_table,stream_combination_not_feasible, type='Energy Savings', interest_rate=interest_rate)
 
     # get best options that give best energy_recovery/turnkey ratio
     energy_investment = df_optimization.sort_values('energy_investment').head(number_output_options).copy()
     energy_investment_options = get_best_x_outputs(pinch_designed_solutions, energy_investment, country, lifetime,
-                                                   pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible, type='Energy Savings Specific Cost')
+                                                   pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible, type='Energy Savings Specific Cost', interest_rate=interest_rate)
 
     # get best options that save maximum amount of CO2
     co2_savings = df_optimization.sort_values('co2_savings', ascending=False).head(number_output_options).copy()
-    co2_savings_options = get_best_x_outputs(pinch_designed_solutions, co2_savings, country, lifetime, pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible,type='CO<sub>2</sub> Emissions Savings')
+    co2_savings_options = get_best_x_outputs(pinch_designed_solutions, co2_savings, country, lifetime, pinch_delta_T_min, kb,stream_table,stream_combination_not_feasible,type='CO<sub>2</sub> Emissions Savings', interest_rate=interest_rate)
 
 
     # build report

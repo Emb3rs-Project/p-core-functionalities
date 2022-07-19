@@ -1,62 +1,83 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: create circulation pumping object with all necessary info when performing sources and sinks conversion to the grid.
-      The most important attribute of the object is data_teo, which contains all the info necessary for TEO module, such
-      as, the equipment turnkey linearized with power, OM fix/variable, emissions, efficiency and others (see below).
-
-
-##############################
-INPUT:
-        # country
-        # consumer_type - e.g. 'household' or 'non-household'
-        # fluid - fluid name
-        # supply_capacity - equipment desired supply capacity  [kW]
-        # power_fraction - design equipment for max and fraction power; value between 0 and 1
-        # supply_temperature  [ºC]
-        # return_temperature  [ºC]
-
-
-##############################
-RETURN: object with all technology info:
-        # object_type
-        # equipment_sub_type
-        # fuel_type
-        # fuel_properties - all fuel properties, dict with e.g. lhv, cost, AFR ..
-        # fluid - fluid name
-        # supply_temperature  [ºC]
-        # return_temperature  [ºC]
-        # supply_capacity  [kW]
-        # data_teo - dictionary with equipment data needed by the TEO
-
-            Where in data_teo, the following keys:
-                #  equipment - equipment name
-                #  fuel_type
-                #  max_input_capacity - max power the equipment can convert [kW]
-                #  turnkey_a  [€/kW]
-                #  turnkey_b  [€]
-                #  conversion_efficiency   []
-                #  om_fix  [€/year.kW]
-                #  om_var  [€/kWh]
-                #  emissions   [kg.CO2/kWh thermal]
-
-"""
-
 from ....utilities.kb import KB
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....KB_General.equipment_details import EquipmentDetails
-from ....KB_General.fuel_properties import FuelProperties
 from ....KB_General.flowrate_to_power import flowrate_to_power
 from ....General.Auxiliary_General.linearize_values import linearize_values
 from ....KB_General.medium import Medium
 
 
 class Add_Pump():
+    """
+    Create PUMPING object with all necessary info when performing sources and sinks conversion to the grid.
+    The most important attribute of the object is 'data_teo'' which contains all the info necessary for TEO module.
+
+        Attributes
+    ----------
+    object_type : str
+        DEFAULT="equipment"
+
+    equipment_sub_type : str
+        Equipment sub type
+
+    fuel_type : str
+        Equipment's fuel
+
+    supply_temperature : float
+        Equipment's circuit supply temperature [ºC]
+
+    return_temperature : float
+        Equipment's circuit return temperature [ºC]
+
+    supply_capacity : float
+        Equipment supply capacity [kW]
+
+    fuel_properties : dict
+        Equipment fuel data
+
+    global_conversion_efficiency :
+        Equipment efficiency []
+
+    fluid : str
+        Fluid pumped
+
+    data_teo : dict
+        Dictionary with equipment data needed by the TEO
+
+    Methods
+    ----------
+    design_equipment()
+        Get equipment economic data for a specific power fraction
+
+    """
 
     def __init__(self, kb: KB, fuels_data,  fluid, supply_capacity, power_fraction, supply_temperature,
                  return_temperature):
+        """Create PUMPING data
+
+        Parameters
+        ----------
+        kb : dict
+            Knowledge Base data
+
+        fuels_data: dict
+            Fuels price and CO2 emission
+
+        fluid : str
+            Fluid pumped
+
+        supply_capacity : float
+            Equipment supply capacity [kW]
+
+        power_fraction : float
+            Design equipment for max and fraction power; value between 0 and 1 []
+
+        supply_temperature : float
+            Equipment's circuit supply temperature [ºC]
+
+        return_temperature : float
+            Equipment's circuit return temperature [ºC]
+        """
+
         # Defined Vars
         self.object_type = 'equipment'
         self.equipment_sub_type = 'circulation_pumping'
@@ -96,6 +117,23 @@ class Add_Pump():
         }
 
     def design_equipment(self,kb, power_fraction):
+        """Get equipment economic data for a specific power fraction
+
+        Parameters
+        ----------
+        kb : dict
+            Knowledge Base data
+
+        power_fraction : float
+            Design equipment for max and fraction power; value between 0 and 1 []
+
+        Returns
+        -------
+        info : dict
+            Designed equipment economic data
+
+        """
+
         medium = Medium(kb)
         fluid_rho = medium.rho(self.fluid, (self.supply_temperature + self.return_temperature) / 2)  # [kg/m3]
         supply_capacity = self.supply_capacity * power_fraction  # thermal power supplied [kWh]

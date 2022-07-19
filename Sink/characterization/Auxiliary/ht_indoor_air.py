@@ -1,34 +1,33 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Compute heat transfer, by convection, between all surfaces and indoor air.
-
-
-##############################
-INPUT:
-        # T_interior  [ºC]
-        # horizontal_surfaces - array with surfaces dict
-        # vertical_surfaces - array with surfaces dict
-
-        Where in each surface of horizontal_surfaces/vertical_surfaces, the following keys:
-            # temperature  [ºC]
-            # area  [m2]
-
-
-##############################
-OUTPUT:
-        # Q_convection  [W]
-
-
-"""
-
 from .h_convection_vertical import h_convection_vertical
 from .h_convection_horizontal import h_convection_horizontal
 
 
 def ht_indoor_air(T_interior, horizontal_surfaces, vertical_surfaces):
+    """Compute heat transfer, by convection, between all surfaces and indoor air.
+
+    Parameters
+    ----------
+    T_interior : float
+        Indoor air temperature [ºC]
+
+    horizontal_surfaces : list with dicts
+        Every surface temperature and area data; Where in each surface of horizontal_surfaces/vertical_surfaces, the following keys:
+
+            - temperature : float
+                [ºC]
+
+            - area : float
+                [m2]
+
+    vertical_surfaces : list
+
+
+    Returns
+    -------
+    Q_convection : float
+        Exchanged heat by convection [W]
+
+    """
 
     Q_convection = 0
 

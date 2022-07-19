@@ -1,25 +1,3 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Build ORC report HTML
-
-
-##############################
-INPUT:
-        best_options - convert_orc routine output -> best options
-        df_streams - streams converted in ORC
-        co2_emission_data - electricity CO2 emissions
-        elec_cost_data - electricity price
-
-
-##############################
-OUTPUT: report HTML
-
-
-"""
-
 from jinja2 import Environment, FileSystemLoader
 import os
 from datetime import date
@@ -71,9 +49,21 @@ def get_html(stream_table_data, df_overview_data, df_technical_data, df_economic
 
 
 def orc_report(convert_orc_output):
+    """ Build ORC report HTML
+
+    Parameters
+    ----------
+    convert_orc_output: dict
+        Output from ORC routine
+
+    Returns
+    -------
+    report_html : str
+        HTML report
+
+    """
 
     today = date.today()
-
 
     #############################
     # Get data

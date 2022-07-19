@@ -1,26 +1,21 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Horizontal heat transfer coefficient (Walton Unstable Horizontal Or Tilt).
-
-
-##############################
-INPUT:
-        # T_component_1  [ºC]
-        # T_component_2  [ºC]
-
-
-##############################
-OUTPUT:
-        # h_c  [W/m2.K]
-
-
-"""
-
-
 def h_convection_horizontal(T_component_1, T_component_2):
+    """ Horizontal heat transfer coefficient
+
+    Walton Unstable Horizontal Or Tilt
+
+    Parameters
+    ----------
+    T_component_1 : float,
+        Component temperature [ºC]
+
+    T_component_2 : float,
+        Component temperature [ºC]
+
+    Returns
+    -------
+    h_c : float
+        Convection coefficient [W/m2.K]
+    """
 
     delta_T = abs(T_component_1 - T_component_2)
 

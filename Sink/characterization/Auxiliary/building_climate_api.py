@@ -1,34 +1,3 @@
-"""
-alisboa/jmcunha
-
-##############################
-INFO: Get climate data for a specific location.
-      Returns  incident solar radiation in each building' facade [W/m2], ambient and sky temperatures [ºC],
-      and wind speed at 10m [m/s].
-
-
-##############################
-INPUT:
-        # latitude  [º]
-        # longitude  [º]
-
-
-##############################
-OUTPUT: df (year hourly profile) with the following keys:
-
-        # T_exterior
-        # T_sky
-        # Q_sun_N_facade
-        # Q_sun_S_facade
-        # Q_sun_E_facade
-        # Q_sun_W_facade
-        # Q_sun_roof
-        # Q_solar_collector
-        # Wind_speed
-
-
-"""
-
 import math
 import numpy as np
 import pvlib
@@ -37,6 +6,51 @@ import pandas as pd
 
 
 def building_climate_api(latitude,longitude):
+    """Get climate data for a specific location, for the building/greenhouse routine
+
+    Returns  incident solar radiation in each building' facade [W/m2], ambient and sky temperatures [ºC], and wind
+    speed at 10m [m/s].
+
+    Parameters
+    ----------
+    latitude : float
+        Location latitude [º]
+
+    longitude : float
+        Location longitude [º]
+
+    Returns
+    -------
+    df_output : df
+        dataframe with climate data, with the following keys:
+
+            T_exterior : float
+                Ambient temperature [ºC]
+
+            T_sky : float
+                Sky temperature [ºC]
+
+            Q_beam_solar_collector : float
+                Direct/Beam solar radiation [W]
+
+            Q_dif_solar_collector : float
+                Diffuse solar radiation [W]
+
+            Q_sun_N_facade : float
+                Incident solar radiation on the North Facade [W]
+
+            Q_sun_S_facade : float
+
+            Q_sun_E_facade : float
+
+            Q_sun_W_facade : float
+
+            Q_sun_roof : float
+
+            Wind_speed : float
+                Wind speed [m/s]
+
+    """
 
     # Building data
     N_azimuth = 180

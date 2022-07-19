@@ -1,30 +1,30 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Computes domestic hot water flowrate [m3/s] needed for each time step, and the total volume [m3] of water consumed
-      until the considered time step.
-
-
-##############################
-INPUT:
-        # hour
-        # volume_dhw_set - max water volume allowed per day  [m3]
-        # volume_dhw - last time_step water volume  [m3]
-        # flowrate_dhw_set - water flowrate allowed  [m3/s]
-        # time_step  [s]
-
-##############################
-OUTPUT:
-        # flowrate [m3/s]
-        # volume_dhw - current time_step water volume  [m3]
-
-
-"""
-
-
 def building_dhw(hour, volume_dhw_set, volume_dhw, flowrate_dhw_set, time_step):
+    """Computes domestic hot water flowrate [m3/s]
+
+    Computes domestic hot water flowrate [m3/s] needed for each time step, and the total volume [m3] of water consumed
+    until the considered time step.
+
+    Parameters
+    ----------
+    hour: float
+        Current hour [h]
+
+    volume_dhw_set : float
+        Max water volume allowed per day  [m3]
+
+    volume_dhw : float
+        Last time_step water volume  [m3]
+
+    flowrate_dhw_set : float
+        Water flowrate allowed  [m3/s]
+
+    time_step : float
+        Considered time step [s]
+
+    Returns
+    -------
+
+    """
 
     # get hour
     day = round((hour - 11.9) / 24) + 1  # day number; e.g. 1 - 1st January

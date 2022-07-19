@@ -95,6 +95,7 @@ def error_convert_pinch(platform_data):
         perform_all_combinations: Optional[TrueFalse] = True
         lifetime: Optional[PositiveInt] = 20
         number_output_options: Optional[PositiveInt] = 3
+        interest_rate: Optional[PositiveFloat] = 0.04
 
         @validator("perform_all_combinations",allow_reuse=True)
         def check_perform_all_combinations(cls, v):

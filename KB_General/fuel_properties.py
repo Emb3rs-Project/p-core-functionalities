@@ -39,6 +39,27 @@ class FuelProperties:
     kb_data: dict
 
     def get_values(self, country, fuel_type, consumer_type):
+        """ Get fuel properties
+
+        The fuel properties are returned according to the country and consumer type (leads to price differences).
+
+        Parameters
+        ----------
+        country : str
+            Location country
+
+        fuel_type : str
+            Fuel name
+
+        consumer_type : str
+            Consumer type
+
+        Returns
+        -------
+        fuel_data : dict
+            Fuel properties: price, lhv_fuel, excess_air_fuel, air_to_fuel_ratio, co2_emissions, density
+
+        """
         context = ssl._create_unverified_context()
 
         # get KB data

@@ -1,6 +1,5 @@
 import math
 from ...utilities.kb import KB
-from ...General.Auxiliary_General.ref_data import ref_data
 from ...General.Auxiliary_General.schedule_hour import schedule_hour
 from ...General.Auxiliary_General.month_last_hour import month_last_hour
 from ...General.Simple_User.adjust_capacity import adjust_capacity
@@ -22,87 +21,230 @@ from ...Error_Handling.error_building import error_building
 from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 def building(in_var, kb : KB):
+    """Building characterization
 
-    """
-    Building Simulation. Simulates heat an cooling consumptions over the year, according to building specifications
+    Simulates heat an cooling consumptions over the year, according to building specifications
     and climate weather data
 
-    :param in_var: ``dict``: building characterization data
-        - platform: ``dict``: platform data
-                - location : ``list``: location [º]; [latitude,longitude]
-                - number_floor: ``int``: number of floors
-                - width_floor: ``float``: floor width [m]
-                - length_floor: ``float``: floor length	[m]
-                - height_floor: ``float``: floor height [m]
-                - ratio_wall_N: ``float``: ratio of the North wall area in total north facade area (wall + window) []
-                - ratio_wall_S: ``float``: ratio of the South wall area in total north facade area (wall + window) []
-                - ratio_wall_E: ``float``: ratio of the East wall area in total north facade area (wall + window) []
-                - ratio_wall_W: ``float``: ratio of the West wall area in total north facade area (wall + window) []
-                - daily_periods: ``float``: period of daily periods [h]
-                - shutdown_periods: ``list``: period of days stream is not available [day]
-                - saturday_on: ``int``: if available on saturdays - available (1); not available (0)
-                - sunday_on: ``int``: if available on sundays - available (1); not available (0)
-                - building_orientation: ``str``: building’s main facade orientation; "N","S","E" or "W"
-                - space_heating_type: ``int``: Space heating type;
+    Parameters
+    ----------
+    in_var : dict
+        All necessary data to perform the building characterization data, with the following key:
+
+        platform: dict
+            Data obtained from the platform, with the following keys:
+
+                - location : list
+                    location [º]; [latitude,longitude]
+
+                - number_floor: int
+                    number of floors
+
+                - width_floor: float
+                    floor width [m]
+
+                - length_floor: float
+                    floor length	[m]
+
+                - height_floor: float
+                    floor height [m]
+
+                - ratio_wall_N: float
+                    ratio of the North wall area in total north facade area (wall + window) []
+
+                - ratio_wall_S: float
+                    ratio of the South wall area in total north facade area (wall + window) []
+
+                - ratio_wall_E: float
+                    ratio of the East wall area in total north facade area (wall + window) []
+
+                - ratio_wall_W: float
+                    ratio of the West wall area in total north facade area (wall + window) []
+
+                - daily_periods: float
+                    period of daily periods [h]
+
+                - shutdown_periods: list
+                    period of days stream is not available [day]
+
+                - saturday_on: int
+                    if available on saturdays - available (1); not available (0)
+
+                - sunday_on: int
+                    if available on sundays - available (1); not available (0)
+
+                - building_orientation: str
+                    building’s main facade orientation; "N","S","E" or "W"
+
+                - space_heating_type: int
+                    Space heating type;
                            1 = Conventional; heaters working fluid supply temperature of 75ºC,  heaters working fluid return temperature of 45ºC)
                            2 = Low temperature; heaters working fluid supply temperature of 50ºC,  heaters working fluid return temperature of 30ºC)
                            3 = Specify Temperatures - Advanced Properties; of supply_temperature_heat and target_temperature_heat
-                - T_cool_on: ``float``: Cooling setpoint temperature [ºC]
-                - T_heat_on: ``float``: Heating setpoint temperature [ºC]
-                - T_off_min: ``float``: Heating setback setpoint temperature [ºC]
-                - T_off_max: ``float``: Cooling setback setpoint temperature  [ºC]
-                - number_person_per_floor: ``int``: [OPTIONAL] Persons per floor
-                - supply_temperature_heat: ``float``: [OPTIONAL] Heating System ReturnTemperature [ºC]
-                - target_temperature_heat: ``float``: [OPTIONAL] Heating System Supply Temperature [ºC]
-                - supply_temperature_cool: ``float``: [OPTIONAL] Cooling System Return Temperature [ºC]
-                - target_temperature_cool: ``float``: [OPTIONAL] Cooling System Supply Temperature [ºC]
-                - tau_glass: ``float``: [OPTIONAL] glass windows transmissivity []
-                - u_wall: ``float``: [OPTIONAL] walls' U value [W/m2.K]
-                - u_roof: ``float``: [OPTIONAL] roof U value [W/m2.K]
-                - u_glass: ``float``: [OPTIONAL] glass windows U value [W/m2.K]
-                - u_floor: ``float``: [OPTIONAL] floor U value [W/m2.K]
-                - alpha_wall: ``float``: [OPTIONAL] walls’ radiation absorption coefficient []
-                - alpha_floor: ``float``: [OPTIONAL] floor’s radiation absorption coefficient []
-                - alpha_glass: ``float``: [OPTIONAL] windows’ radiation absorption coefficient []
-                - cp_floor: ``float``: [OPTIONAL] floor specific heat capacitance [J/kg.K]
-                - cp_roof: ``float``: [OPTIONAL] roof specific heat capacitance [J/kg.K]
-                - cp_wall: ``float``: [OPTIONAL] wall specific heat capacitance [J/kg.K]
-                - air_change_hour: ``float``: [OPTIONAL] air changes per hour due to infiltrations [1/h]
-                - renewal_air_per_person: ``float``: [OPTIONAL] fresh air changer per person [m3/s per person]
-                - vol_dhw_set: ``float``: [OPTIONAL] Volume of daily water consumption [m3]
-                - Q_gain_per_floor: ``float``: [OPTIONAL] Internal Gains [W/m2]
-                - emissivity_wall: ``float``: [OPTIONAL] Walls's emissivity
-                - emissivity_glass: ``float``: [OPTIONAL] Glass Window's emissivity
-                - ref_system_fuel_type_heating: ``str``: Fuel type associated; e.g. "natural_gas","electricity","biomass","fuel_oil","none"
-                - ref_system_fuel_price_heating: ``float``: [OPTIONAL] Fuel Price. If not given, obtained from KB
-                - ref_system_eff_equipment_heating: ``float``: [OPTIONAL] Efficiency of the heating equipment
-                - ref_system_fuel_type_cooling: ``str``: Fuel type associated
-                - ref_system_fuel_price_cooling: ``float``: [OPTIONAL] Fuel Price. If not given, obtained from KB
-                - ref_system_eff_equipment_cooling: ``float``:[OPTIONAL] COP of the cooling equipment
-                - real_heating_monthly_capacity: ``dict``: [OPTIONAL] Real monthly data - for each month of the year
-                - real_heating_yearly_capacity: ``float``: [OPTIONAL] Real yearly data - single value
-                - real_cooling_monthly_capacity: ``dict``: [OPTIONAL] Real monthly data - for each month of the year
-                - real_cooling_yearly_capacity: ``float``: [OPTIONAL] Real yearly data - single value
 
-    :param kb: KB
+                - T_cool_on: float
+                    Cooling setpoint temperature [ºC]
 
-    :return: output:``dict``: streams data
-                - streams: ``list``: List with dicts of all streams with the following keys:
-                        - id : ``int``: stream ID []
-                        - name : ``str``:
-                        - object_type : ``str``: DEFAULT=stream []
-                        - object_linked_id : `` None``: DEFAULT=NONE, since no equipment/process is assocaited
-                        - stream_type : ``str``: stream designation []; inflow, outflow, excess_heat
-                        - supply_temperature : ``float``: stream's supply/initial temperature [ºC]
-                        - target_temperature : ``float``: stream's target/final temperature [ºC]
-                        - fluid : ``str``: stream fluid name
-                        - flowrate : ``float``: [kg/h]
-                        - schedule : ``list``: hourly values between 0 and 1, according to the hourly capacity
-                        - hourly_generation: ``list``: stream's hourly capacity [kWh]
-                        - capacity : ``float``:  stream's capacity [kW]
-                        - monthly_generation : ``list``: stream's monthly capacity [kWh]
-                        - fuel_co2_emissions : ``float``: fuel CO2 emissions [kgCO2/kWh]
-                        - fuel_price : ``float``: fuel price [€/kWh]
+                - T_heat_on: float
+                    Heating setpoint temperature [ºC]
+
+                - T_off_min: float
+                    Heating setback setpoint temperature [ºC]
+
+                - T_off_max: float
+                    Cooling setback setpoint temperature  [ºC]
+
+                - ref_system_fuel_type_heating: str
+                    Fuel type associated; e.g. "natural_gas","electricity","biomass","fuel_oil","none"
+
+                - ref_system_fuel_price_heating: float, optional
+                    Fuel Price. If not given, obtained from KB
+
+                - ref_system_eff_equipment_heating: float, optional
+                    Efficiency of the heating equipment
+
+                - ref_system_fuel_type_cooling: str
+                    Fuel type associated
+
+                - ref_system_fuel_price_cooling: float, optional
+                    Fuel Price. If not given, obtained from KB
+
+                - ref_system_eff_equipment_cooling: float
+                    OPTIONAL] COP of the cooling equipment
+
+                - real_heating_monthly_capacity: dict, optional
+                    Real monthly data - for each month of the year
+
+                - real_heating_yearly_capacity: float, optional
+                    Real yearly data - single value
+
+                - real_cooling_monthly_capacity: dict, optional
+                    Real monthly data - for each month of the year
+
+                - real_cooling_yearly_capacity: float, optional
+                    Real yearly data - single value
+
+                - number_person_per_floor: int, optional
+                    Persons per floor
+
+                - supply_temperature_heat: float, optional
+                    Heating System ReturnTemperature [ºC]
+
+                - target_temperature_heat: float, optional
+                    Heating System Supply Temperature [ºC]
+
+                - supply_temperature_cool: float, optional
+                    Cooling System Return Temperature [ºC]
+
+                - target_temperature_cool: float, optional
+                    Cooling System Supply Temperature [ºC]
+
+                - tau_glass: float, optional
+                    glass windows transmissivity []
+
+                - u_wall: float, optional
+                    walls' U value [W/m2.K]
+
+                - u_roof: float, optional
+                    roof U value [W/m2.K]
+
+                - u_glass: float, optional
+                    glass windows U value [W/m2.K]
+
+                - u_floor: float, optional
+                    floor U value [W/m2.K]
+
+                - alpha_wall: float, optional
+                    walls’ radiation absorption coefficient []
+
+                - alpha_floor: float, optional
+                    floor’s radiation absorption coefficient []
+
+                - alpha_glass: float, optional
+                    windows’ radiation absorption coefficient []
+
+                - cp_floor: float, optional
+                    floor specific heat capacitance [J/kg.K]
+
+                - cp_roof: float, optional
+                    roof specific heat capacitance [J/kg.K]
+
+                - cp_wall: float, optional
+                    wall specific heat capacitance [J/kg.K]
+
+                - air_change_hour: float, optional
+                    air changes per hour due to infiltrations [1/h]
+
+                - renewal_air_per_person: float, optional
+                    fresh air changer per person [m3/s per person]
+
+                - vol_dhw_set: float, optional
+                    Volume of daily water consumption [m3]
+
+                - Q_gain_per_floor: float, optional
+                    Internal Gains [W/m2]
+
+                - emissivity_wall: float, optional
+                    Walls's emissivity
+
+                - emissivity_glass: float, optional
+                    Glass Window's emissivity
+
+    kb: dict
+        Knowledge Base data
+
+    Returns
+    -------
+    output : dict
+        Streams data
+
+            - streams : list
+                List with dicts of all streams with the following keys:
+
+                    - id : int
+                        stream ID []
+
+                    - name : str
+                        Stream name []
+
+                    - object_type : str
+                        DEFAULT = "stream" []
+
+                    - object_linked_id
+                        None: DEFAULT=NONE, since no equipment/process is associated
+
+                    - stream_type : str
+                        Stream designation []; inflow, outflow, excess_heat
+
+                    - supply_temperature : float
+                        Stream's supply/initial temperature [ºC]
+
+                    - target_temperature : float
+                        Stream's target/final temperature [ºC]
+
+                    - fluid : str
+                        Stream fluid name
+
+                    - flowrate : float
+                        Stream mass flowrate[kg/h]
+
+                    - schedule : list
+                        Hourly values between 0 and 1, according to the capacity ration on that hour
+
+                    - hourly_generation: list
+                        Stream's hourly capacity [kWh]
+
+                    - capacity : float
+                        Stream's capacity [kW]
+
+                    - monthly_generation : list
+                        Stream's monthly capacity [kWh]
+
+                    - fuel : str
+                        Associated equipment fuel name []
+
+                    - eff_equipment : float
+                        Associated equipment efficiency []
 
     """
 
@@ -287,7 +429,7 @@ def building(in_var, kb : KB):
 
     # Simulation Info
     time_step = 15*60  # time step [s]
-    one_hour = int(3600 / time_step)  # time step number
+    time_step_number_in_one_hour = int(3600 / time_step)  # time step number
     max_air_delta_T_per_minute = 1  # 1ºC per min
     max_air_delta_T_allowed = time_step * max_air_delta_T_per_minute / 60
 
@@ -306,11 +448,11 @@ def building(in_var, kb : KB):
             if profile_index == (len(profile) - 1):
                 break
 
-            for i in range(one_hour):
+            for i in range(time_step_number_in_one_hour):
 
                 # CLIMATE DATA --------------------------------------------------------------------------------------
                 T_exterior, T_sky, Q_sun_N_facade, Q_sun_S_facade, Q_sun_E_facade, Q_sun_W_facade, Q_sun_roof, wind_speed = info_time_step_climate_data(
-                    df_climate, profile_index, one_hour, i)
+                    df_climate, profile_index, time_step_number_in_one_hour, i)
 
                 # Correct wind speed
                 z_0 = 0.01  # surface roughness

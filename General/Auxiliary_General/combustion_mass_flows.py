@@ -1,30 +1,35 @@
-"""
-alisboa/jmcunha
-
-
------------------------------- combustion_mass_flows
-##############################
-INFO: characterize equipment combustion fuel, air and flue_gas flowrate.
-
-##############################
-INPUT:
-        # power_equipment  [kW]
-        # eff_equip  []
-        # fuel_type - e.g. natural_gas, fuel_oil,biomass
-
-##############################
-RETURN:
-        # fuel_consumption  [kg/h]
-        # m_air  [kg/h]
-        # m_flue_gas  [kg/h]
-
-"""
-
 from ...KB_General.fuel_properties import FuelProperties
 from ...utilities.kb import KB
 
 
 def combustion_mass_flows(kb : KB, power_equipment, eff_equip, fuel_type):
+    """Characterize equipment combustion fuel, air and flue gas flowrate
+
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base data
+
+    power_equipment :
+
+    eff_equip : float
+        Equipment efficiency []
+
+    fuel_type : str
+        Fuel name
+
+    Returns
+    -------
+    fuel_consumption : float
+        Fuel mass flowrate [kg/h]
+
+    m_air : float
+        Air mass flowrate [kg/h]
+
+    m_flue_gas : float
+        Flue gas mass flowrate [kg/h]
+
+    """
 
     # get fuel data
     fuel_properties = FuelProperties(kb)

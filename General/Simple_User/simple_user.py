@@ -5,59 +5,126 @@ from .adjust_capacity import adjust_capacity
 
 
 def simple_user(in_var):
-    """
-    Simple User streams characterization. Receives user's streams data from the platform and creates a standard stream
+
+    """Simple User streams characterization.
+
+    Receives user's streams data from the platform and creates a standard stream
     data output to be used in other modules.
 
-    :param in_var:``dict``: simple characterization data
-            - platform: ``dict``: platform data
-                - id: ``int``: stream ID
-                - type_of_object: ''str'': 'sink' or 'source'
-                - fuels_data: ''dict'': fuels price and CO2 emission, with the following keys:
-                        - natural_gas: ``dict``: with the following keys:
-                                - co2_emissions: ``float``: fuel CO2 emission [kg CO2/kWh]
-                                - price: ``float``: fuel price [€/kWh]
-                        - fuel_oil
-                        - electricity
-                        - biomass
-                - streams : ``list with dict``: streams to be analyzed. Each stream with the following keys:
-                        - name: ``int``: stream ID []
-                        - supply_temperature: ``str``: stream's supply/initial temperature [ºC]
-                        - target_temperature: ``str``: stream's target/final temperature [ºC]
-                        - fluid: ``str``: stream's fluid []
-                        - capacity: ``float``: stream's capacity [kW] - provide capacity or fluid_cp and flowrate
-                        - fluid_cp: ``float``: stream's fluid cp [kJ/kg.K] - provide capacity or fluid_cp and flowrate
-                        - flowrate: ``float``: stream's mass flowrate [kg/h] - provide capacity or fluid_cp and flowrate
-                        - daily_periods: ``float``: period of daily periods [h]
-                        - shutdown_periods: ``list``: period of days stream is not available [day]
-                        - saturday_on: ``int``: if available on saturdays - available (1); not available (0)
-                        - sunday_on: ``int``: if available on sundays - available (1); not available (0)
-                        - ref_system_fuel_type: ``str``: Fuel type associated
-                        - real_hourly_capacity: ``list``: [OPTIONAL] Real hourly data - for each hour of the year
-                        - real_daily_capacity: ``list``: [OPTIONAL] Real daily data - for each day of the year
-                        - real_monthly_capacity: ``dict``: [OPTIONAL] Real monthly data - for each month of the year
-                        - real_yearly_capacity: ``float``: [OPTIONAL] Real yearly data - single value
+    Parameters
+    ----------
+    in_var : dict
+        All necessary data to perform the simple characterization data, with the following key:
 
+        platform: dict
+            Data obtained from the platform
 
-    :param kb: KB
+                - type_of_object: str
+                    'sink' or 'source'
 
-    :return: output:``dict``: streams data
-                - streams: ``list``: List with dicts of all streams with the following keys:
-                        - id : ``int``: stream ID []
-                        - name : ``str``:
-                        - object_type : ``str``: DEFAULT=stream []
-                        - object_linked_id : `` None``: DEFAULT=NONE, since no equipment/process is associated
-                        - stream_type : ``str``: stream designation []; inflow, outflow, excess_heat
-                        - supply_temperature : ``float``: stream's supply/initial temperature [ºC]
-                        - target_temperature : ``float``: stream's target/final temperature [ºC]
-                        - fluid : ``str``: stream fluid name
-                        - flowrate : ``float``: [kg/h]
-                        - schedule : ``list``: hourly values between 0 and 1, according to the hourly capacity
-                        - hourly_generation: ``list``: stream's hourly capacity [kWh]
-                        - capacity : ``float``:  stream's capacity [kW]
-                        - monthly_generation : ``list``: stream's monthly capacity [kWh]
-                        - fuel_co2_emissions : ``float``: fuel CO2 emissions [kgCO2/kWh]
-                        - fuel_price : ``float``: fuel price [€/kWh]
+                - streams : list with dict
+                    Streams to be analyzed. Each stream with the following keys:
+
+                        - name: int
+                            stream ID []
+
+                        - supply_temperature: str
+                            stream's supply/initial temperature [ºC]
+
+                        - target_temperature: str
+                            stream's target/final temperature [ºC]
+
+                        - fluid: str:
+                            stream's fluid []
+
+                        - capacity: float
+                            stream's capacity [kW] - provide capacity or fluid_cp and flowrate
+
+                        - fluid_cp: float
+                            stream's fluid cp [kJ/kg.K] - provide capacity or fluid_cp and flowrate
+
+                        - flowrate: float
+                            stream's mass flowrate [kg/h] - provide capacity or fluid_cp and flowrate
+
+                        - daily_periods: float
+                            period of daily periods [h]
+
+                        - shutdown_periods: list
+                            period of days stream is not available [day]
+
+                        - saturday_on: int
+                            if available on saturdays - available (1); not available (0)
+
+                        - sunday_on: int
+                            if available on sundays - available (1); not available (0)
+
+                        - ref_system_fuel_type: str
+                            Fuel type associated
+
+                        - real_hourly_capacity: list, optional
+                            Real hourly data - for each hour of the year
+
+                        - real_daily_capacity: list, optional
+                            Real daily data - for each day of the year
+
+                        - real_monthly_capacity: dict, optional
+                            Real monthly data - for each month of the year
+
+                        - real_yearly_capacity: float, optional
+                            Real yearly data - single value
+
+    Returns
+    -------
+    output : dict
+        Streams data
+
+        - streams : list
+            List with dicts of all streams with the following keys:
+
+                - id : int
+                    stream ID []
+
+                - name : str
+                    Stream name []
+
+                - object_type : str
+                    DEFAULT = "stream" []
+
+                - object_linked_id
+                    None: DEFAULT=NONE, since no equipment/process is associated
+
+                - stream_type : str
+                    Stream designation []; inflow, outflow, excess_heat
+
+                - supply_temperature : float
+                    Stream's supply/initial temperature [ºC]
+
+                - target_temperature : float
+                    Stream's target/final temperature [ºC]
+
+                - fluid : str
+                    Stream fluid name
+
+                - flowrate : float
+                    Stream mass flowrate[kg/h]
+
+                - schedule : list
+                    Hourly values between 0 and 1, according to the capacity ration on that hour
+
+                - hourly_generation: list
+                    Stream's hourly capacity [kWh]
+
+                - capacity : float
+                    Stream's capacity [kW]
+
+                - monthly_generation : list
+                    Stream's monthly capacity [kWh]
+
+                - fuel : str
+                    Associated equipment fuel name []
+
+                - eff_equipment : float
+                    Associated equipment efficiency []
 
     """
 

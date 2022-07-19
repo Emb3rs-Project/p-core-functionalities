@@ -1,41 +1,3 @@
-"""
-##############################
-INFO: 'Template' to create stream.
-
-##############################
-INPUT:  object_linked_id - Object ID associated; e.g. process or equipment ID
-        stream_type - e.g. inflow, supply_heat, excess_heat
-        fluid - fluid
-        supply_temperature [ºC]
-        target_temperature [ºC]
-        mass_flowrate [kg/h]
-        capacity  [kW]
-        schedule - vector with 1 and 0 // default:None
-        hourly_generation - [kWh] // default:None
-
-
-##############################
-OUTPUT:  stream dictionary, as below:
-            #  stream_data = {
-            #         'id',
-            #         'object_type' - e.g. 'stream',
-            #         'object_linked_id' - Object ID associated; e.g. process or equipment ID
-            #         'stream_type',  - e.g. inflow, supply_heat, excess_heat
-            #         'supply_temperature',  [ºC]
-            #         'target_temperature',  [ºC]
-            #         'fluid',
-            #         'flowrate'   [kg/h]
-            #         'schedule' -  array with 1 and 0
-            #         'hourly_generation' [kWh]
-            #         'monthly_generation': monthly_generation  # [kWh]
-            #         'capacity'  [kW]
-            #     }
-
-"""
-
-from random import randint
-
-
 months = [
     "january"
     , "february"
@@ -53,6 +15,57 @@ months = [
 
 def stream_industry(stream_name,object_linked_id, stream_type, fluid, supply_temperature, target_temperature, mass_flowrate, capacity,
                     schedule=None, hourly_generation=None, stream_id=None, fuel="none", eff_equipment=None):
+
+    """Template to create stream.
+
+    Parameters
+    ----------
+    stream_name : str
+        Stream name
+
+    object_linked_id :
+        Object ID associated; e.g. process or equipment ID if existent, otherwise None
+
+    stream_type :
+        Stream type; e.g. inflow, supply_heat, excess_heat
+
+    fluid : str
+        Stream fluid name
+
+    supply_temperature : float
+        Stream's supply/initial temperature [ºC]
+
+    target_temperature : float
+        Stream's target/final temperature [ºC]
+
+    mass_flowrate : float
+        Stream mass flowrate[kg/h]
+
+    capacity : float
+        Stream's capacity [kW]
+
+    schedule : list
+        Hourly values between 0 and 1, according to the capacity ration on that hour
+
+    hourly_generation : list
+        Stream's hourly capacity [kWh]
+
+    stream_id : int
+        Stream ID
+
+    fuel : str
+        Associated equipment fuel name
+
+    eff_equipment : float
+        Associated equipment efficiency []
+
+
+    Returns
+    -------
+    stream_data: dict
+        Stream characterization data
+
+    """
 
 
     if stream_id == None:

@@ -1,25 +1,28 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Linearize values
-      Get 'a' and 'b' for y = ax+b
-
-##############################
-INPUT:
-        # values of equation - y2, y1, x2, x1
-
-
-##############################
-RETURN:
-        # values of equation - a,b
-
-
-"""
-
-
 def linearize_values(y2, y1, x2, x1):
+    """Linearize values
+
+    Get 'a' and 'b' for y = ax+b
+
+    Parameters
+    ----------
+    y2 : float
+        Interpolation value
+    y1 : float
+        Interpolation value
+    x2 : float
+        Interpolation value
+    x1 : float
+        Interpolation value
+
+    Returns
+    -------
+    a : float
+        Interpolation value
+
+    b : float
+        Interpolation value
+
+    """
 
     if x2 - x1 != 0:
         a = (y2 - y1) / (x2 - x1)

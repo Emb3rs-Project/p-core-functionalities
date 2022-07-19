@@ -1,72 +1,99 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: create solar thermal with all necessary info when performing sources and sinks conversion to the grid.
-      The most important attribute of the object is data_teo, which contains all the info necessary for TEO module, such
-      as, the equipment turnkey linearized with power, OM fix/variable, emissions, efficiency and others (see below).
-
-
-##############################
-INPUT:
-        # country
-        # consumer_type - e.g. 'household' or 'non-household'
-        # latitude  [º]
-        # longitude  [º]
-        # yearly_capacity - yearly capacity desired to be supplied [kWh]
-        # power_fraction
-        # supply_temperature  [ºC]
-        # return_temperature  [ºC]
-
-
-##############################
-RETURN: object with all technology info:
-        # object_type
-        # equipment_sub_type - 'fresnel', 'evacuated_tube' or 'flat_plate'
-        # supply_fluid - fluid name
-        # fuel_type - fuel name
-        # fuel_properties - all fuel properties, e.g. lhv, cost, AFR ..
-        # fluid - fluid name
-        # supply_temperature  [ºC]
-        # return_temperature  [ºC]
-        # supply_capacity  [kW]
-        # latitude  [º]
-        # longitude  [º]
-        # C0 - solar thermal coefficient
-        # C1
-        # C2
-        # area_ratio  []
-        # yearly_supply_capacity - yearly capacity, before losses, to be supplied [kWh]
-        # data_teo - dictionary with equipment data needed by the TEO
-
-            Where in data_teo, the following keys:
-                #  equipment - equipment name
-                #  fuel_type
-                #  max_input_capacity  # [kW]
-                #  turnkey_a  # [€/kW]
-                #  turnkey_b  # [€]
-                #  conversion_efficiency  # []
-                #  om_fix  # [€/year.kW]
-                #  om_var  # [€/kWh]
-                #  emissions  # [kg.CO2/kWh thermal]
-
-"""
-
 import numpy as np
 from ....General.Convert_Equipments.Auxiliary.solar_collector_climate_api import solar_collector_climate_api
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
+from ....General.Auxiliary_General.linearize_values import linearize_values
 from ....KB_General.equipment_details import EquipmentDetails
 from ....KB_General.fuel_properties import FuelProperties
 from ....KB_General.medium import Medium
 from ....KB_General.flowrate_to_power import flowrate_to_power
-from ....General.Auxiliary_General.linearize_values import linearize_values
 from ....utilities.kb import KB
 
 
 class Add_Solar_Thermal():
+    """
+    Create SOLAR THERMAL object with all necessary info when performing sources and sinks conversion to the grid.
+    The most important attribute of the object is 'data_teo'' which contains all the info necessary for TEO module.
+
+    Attributes
+    ----------
+    object_type : str
+        DEFAULT="equipment"
+
+    supply_fluid : str
+        Solar thermal circuit fluid; DEFAULT="thermal_oil"
+
+    fuel_type : str
+        DEFAULT="electricity"
+
+    fuel_properties : dict
+        Equipment fuel data
+
+    equipment_sub_type : str
+        'fresnel', 'evacuated_tube' or 'flat_plate'
+
+    supply_temperature : float
+        Equipment's circuit supply temperature [ºC]
+
+    return_temperature : float
+        Equipment's circuit return temperature [ºC]
+
+    stream_available_capacity : float
+        Desired nominal supply capacity [kW]
+
+    C0 : float
+        C0 parameter solar thermal
+
+    C1 : float
+        C1 parameter solar thermal
+
+    C2 : float
+        C2 parameter solar thermal
+
+    area_ratio : float
+        Solar thermal panels area to ground area ratio
+
+    data_teo : dict
+        Dictionary with equipment data needed by the TEO
+
+    """
 
     def __init__(self, kb : KB,fuels_data,  latitude, longitude, stream_available_capacity, power_fraction, supply_temperature, return_temperature,hx_delta_T,hx_efficiency):
+
+        """Create SOLAR THERMAL data
+
+        Parameters
+        ----------
+        kb : dict
+            Knowledge Base data
+
+        fuels_data: dict
+            Fuels price and CO2 emission
+
+        latitude : float
+            Location latitude [ºC]
+
+        longitude : float
+            Longitude latitude [ºC]
+
+        stream_available_capacity : float
+            Desired nominal supply capacity [kW]
+
+        power_fraction : float
+            Design equipment for max and fraction power; value between 0 and 1 []
+
+        supply_temperature : float
+            Equipment's circuit supply temperature [ºC]
+
+        return_temperature : float
+            Equipment's circuit return temperature [ºC]
+
+        hx_delta_T : float
+            Heat exchanger temperature difference [ºC]
+
+        hx_efficiency : float
+            Heat exchanger efficiency []
+
+        """
 
         # Defined Vars
         self.object_type = 'equipment'
@@ -135,6 +162,29 @@ class Add_Solar_Thermal():
 
 
     def design_equipment(self,kb, climate, hx_delta_T, hx_efficiency, power_fraction):
+
+        """Get equipment techno-economic data for a specific power fraction
+
+        Parameters
+        ----------
+        kb : dict
+            Knowledge Base data
+
+        hx_delta_T : float
+            Heat exchangers temperature difference [ºC]
+
+        hx_efficiency : float
+            Heat exchangers efficiency []
+
+        power_fraction : float
+            Design equipment for max and fraction power; value between 0 and 1 []
+
+        Returns
+        -------
+        info : dict
+            Designed equipment techno-economic data
+
+        """
 
         # Defined vars
         grid_fluid = 'water'

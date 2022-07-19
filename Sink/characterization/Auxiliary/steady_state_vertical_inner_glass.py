@@ -1,35 +1,46 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Heat balance for the inner horizontal surface of the glass.
-
-
-##############################
-INPUT:
-        # T_glass_in  [ºC]
-        # T_glass  [ºC]
-        # T_interior  [ºC]
-        # u_glass  [W/m2.K]
-        # Q_rad_inner_facade  [W]
-        # ratio_glass  []
-        # area_glass  [m2]
-        # interpolation_weight  []
-
-
-##############################
-OUTPUT:
-        # T_glass_in  [ºC]
-
-
-"""
-
 from .h_convection_vertical import h_convection_vertical
 
 
 def steady_state_vertical_inner_glass(Q_sun, alpha_glass, T_glass_in, T_glass_out, T_interior, u_glass, Q_rad, area_glass,
                                      interpolation_weight):
+
+    """Heat balance for the inner horizontal surface of the glass
+
+    Parameters
+    ----------
+    Q_sun : float
+        Incident solar radiation [W]
+
+    alpha_glass : float
+        Absorption coefficient []
+
+    T_glass_in : float
+        Inner glass temperature [ºC]
+
+    T_glass_out : float
+        Outer glass temperature [ºC]
+
+    T_interior : float
+        Interior air temperature [ºC]
+
+    u_glass : float
+        Glass U value [W/m2.K]
+
+    Q_rad : float
+        Heat exchanged by radiation [W]
+
+    area_glass: float
+        Glass area [m2]
+
+    interpolation_weight : float
+
+
+    Returns
+    -------
+    T_glass_in : float
+        Inner glass temperature [ºC]
+
+    """
 
     h_vertical = h_convection_vertical(T_glass_in, T_interior)
 

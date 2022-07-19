@@ -1,27 +1,30 @@
-"""
-##############################
-INFO: Adjust 'om_var' and 'emissions' of backup technology when joined with solar thermal, according to solar thermal
-supply capacity
-
-
-##############################
-INPUT:
-        # stream_hourly_capacity - list [kWh]
-        # solar_thermal_object - solar thermal technology
-        # heating_technology - backup technology
-
-
-##############################
-OUTPUT: dictionary with:
-        # coef_solar_thermal - percentage of streams yearly capacity fulfilled by solar thermal
-        # heating_technology
-
-
-"""
-
-
-
 def coef_solar_thermal_backup(stream_hourly_capacity, solar_thermal_object, heating_technology):
+
+    """Adjust 'om_var' and 'emissions' of backup technology when joined with solar thermal
+
+    Parameters
+    ----------
+    stream_hourly_capacity : list
+        Stream to be satisfied (source/sink) hourlt capacity [kWh]
+
+    solar_thermal_object : dict
+        Designed solar thermal technology data
+
+    heating_technology : dict
+        Designed backup technology data
+
+
+    Returns
+    -------
+    coef_solar_thermal :
+        Percentage of streams yearly capacity fulfilled by solar thermal
+
+
+    heating_technology :
+        Updated designed backup technology data
+
+    """
+
     solar_thermal_hours_production = solar_thermal_object.data_teo['hourly_supply_capacity']  # solar still production
     power_provided_by_solar_thermal = 0
 

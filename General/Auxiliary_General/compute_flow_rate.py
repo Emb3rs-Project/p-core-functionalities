@@ -22,6 +22,31 @@ from ...utilities.kb import KB
 from ...KB_General.medium import Medium
 
 def compute_flow_rate(kb: KB, fluid,capacity,supply_temperature,return_temperature):
+    """ Compute mass flow rate
+
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base data
+
+    fluid : str
+        Fluid name
+
+    capacity :
+        Stream capacity [kW]
+
+    supply_temperature :
+        Stream supply temperature [ºC]
+
+    return_temperature :
+        Stream return temperature [ºC]
+
+    Returns
+    -------
+    supply_flowrate : float
+        Stream mass flowrate [kg/h]
+
+    """
 
 
     if supply_temperature == return_temperature:

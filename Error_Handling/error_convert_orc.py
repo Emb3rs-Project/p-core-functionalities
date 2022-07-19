@@ -12,7 +12,7 @@ class PlatformConvertORC(Location):
     orc_T_evap: Optional[PositiveFloat] = 110
     orc_T_cond: Optional[PositiveFloat] = 35
     fuels_data: FuelData
-    interest_rate: PositiveFloat
+    interest_rate: Optional[PositiveFloat] = 0.04
 
     @validator('streams')
     def check_if_there_are_streams(cls, v):

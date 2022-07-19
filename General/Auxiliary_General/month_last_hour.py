@@ -1,22 +1,17 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: get month last hour correspondent number, e.g. 31st Jan at 23h = 744
-
-
-##############################
-RETURN:
-        # hour for each month
-
-
-"""
-
 import datetime
 
 
 def month_last_hour():
+    """Get month last hour correspondent number
+
+    E.g 31st Jan at 23h = 744
+
+    Returns
+    -------
+    list
+        hour for each month
+
+    """
     now = datetime.datetime.now()
     year = 2020  # leap year
 

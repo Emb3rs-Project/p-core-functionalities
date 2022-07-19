@@ -1,44 +1,88 @@
-"""
-##############################
-INFO: Aggregate conversion technologies and compute data for TEO
-
-
-##############################
-INPUT:
-        # object_id - source/sink ID or 'grid_specfic'
-        # technologies - dict with technologies
-        # power_fraction
-        # max_power_available - stream max power available before conversion
-        # max_power_convertible - stream power given to the the DHN after conversion
-        # object_type - 'sink' or 'source'
-        # teo_equipment_name
-        # stream_id
-
-
-##############################
-OUTPUT: dictionary with:
-
-            # teo_equipment_name - TEO INFO
-            # output - TEO INFO
-            # input_fuel - TEO INFO
-            # output_fuel - TEO INFO
-            # equipment - all conversion equipments; array with technologies names; e.g. ['hx_plate', 'heat_pump','hx_plate']
-            # max_capacity - stream power (sources- excess heat; sinks - grid heat)  [kW]
-            # turnkey_a - aggregated turnkey [€/kW]
-            # turnkey_b - aggregated om_var[€]
-            # conversion_efficiency - aggregated conversion_efficiency []
-            # om_fix - aggregated om_fix  [€/year.kW]
-            # om_var - aggregated om_var  [€/kWh]
-            # emissions - aggregated emissions  [kg.CO2/kWh]
-            # technologies - each equipment info in detail
-
-"""
-
-
 from ....General.Auxiliary_General.linearize_values import linearize_values
 
 
-def aggregate_technologies_info(object_id,technologies,power_fraction,max_power_available,max_power_convertible,object_type,teo_equipment_name,stream_id):
+def aggregate_technologies_info(object_id, technologies, power_fraction, max_power_available, max_power_convertible,
+                                object_type, teo_equipment_name, stream_id):
+
+    """ Aggregate conversion technologies and compute data for TEO
+
+    Parameters
+    ----------
+    object_id : str
+        Source/sink ID or 'grid_specfic'
+
+    technologies : list with dicts
+        Technologies data
+
+    power_fraction : float
+        Design equipment for max and fraction power; value between 0 and 1 []
+
+
+    max_power_available : float
+        Stream max power available before conversion [kW]
+
+    max_power_convertible : float
+        Stream power given to the the DHN after conversion  [kW]
+
+    object_type : str
+        'sink' or 'source'
+
+    teo_equipment_name : str
+        Specific TEO nomenclature for the technology name
+
+    stream_id : int
+        Stream ID
+
+
+    Returns
+    -------
+    data_teo : dict
+        technologies data for the TEO module, with the following keys:
+
+        - teo_equipment_name :
+            Specific nomenclature for the TEO
+
+        - output :
+            Specific nomenclature for the TEO
+
+        - input_fuel :
+            Specific nomenclature for the TEO
+
+        - output_fuel :
+            Specific nomenclature for the TEO
+
+        - equipment :
+            All conversion equipments; list with technologies names; e.g. ['hx_plate', 'heat_pump','hx_plate']
+
+        - max_capacity : float
+            Stream power (sources- excess heat; sinks - grid heat)  [kW]
+
+        - turnkey_a : float
+            Aggregated turnkey [€/kW]
+
+        - turnkey_b : float
+            Aggregated om_var [€]
+
+        - conversion_efficiency :
+            Aggregated conversion_efficiency []
+
+        - electrical_conversion_efficiency : float
+            ONLY FOR ORC - electrical conversion efficiency []
+
+        - om_fix : float
+            Aggregated om_fix [€/year.kW]
+
+        - om_var : float
+            Aggregated om_var [€/kWh]
+
+        - emissions : float
+            Aggregated emissions [kg.CO2/kWh]
+
+        - technologies : list with dicts
+            Each equipment info in detail
+
+
+    """
 
     turnkey_max_power = 0
     turnkey_power_fraction = 0

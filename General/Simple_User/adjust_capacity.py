@@ -1,23 +1,4 @@
-"""
-##############################
-INFO: Adjust hourly capacity of Simple User stream
-
-##############################
-INPUT:
-        # stream
-        # user_daily_capacity [list with monthly values]/
-         user_monthly_capacity [list with monthly vals]/
-         user_yearly_capacity [float val]
-
-##############################
-OUTPUT: stream with 'hourly_generation' and 'monthly_generation' updated
-
-
-"""
-
-
-
-from module.Error_Handling.runtime_error import ModuleRuntimeException
+from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 months = [
     "january"
@@ -36,6 +17,32 @@ months = [
 
 
 def adjust_capacity(stream, user_daily_capacity=None, user_monthly_capacity=None, user_yearly_capacity=None):
+
+    """ Adjust hourly capacity
+
+    Adjust hourly capacity according to user real data
+
+    Parameters
+    ----------
+    stream: dict
+        Stream data
+
+    user_daily_capacity: list:
+        Real capacity for each hour of the year [kWh]
+
+    user_monthly_capacity: dict
+        Real capacity of each month [kWh]
+
+    user_yearly_capacity: float
+        Real yearly capacity [kWh]
+
+    Returns
+    -------
+    stream: dict
+       Stream data with the key "hourly_generation" adjusted to real data
+
+    """
+
 
     ###############################################################
     # COMPUTE

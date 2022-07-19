@@ -28,10 +28,32 @@ from dataclasses import dataclass
 
 @dataclass
 class Medium:
+    """Get fluid properties
+
+    Fluids and materials properties script. According to the called function, it is possible to get a fluid's density
+    (rho), specific_heat (cp) and state (liquid, solid, gas)
+
+    """
 
     kb_data: dict
 
     def cp(self, fluid_name, temperature):
+        """ Get fluid cp
+
+        Parameters
+        ----------
+        fluid_name : str
+            Fluid name
+
+        temperature : float
+            Fluid temperature [ºC]
+
+        Returns
+        -------
+        fluid_cp :
+            Fluid cp [kJ/kg.K]
+
+        """
 
         data = self.kb_data.get('medium_list')
 
@@ -49,6 +71,21 @@ class Medium:
 
 
     def rho(self, fluid_name, temperature):
+        """ Get fluid tho
+
+        Parameters
+        ----------
+        fluid_name : str
+            Fluid name
+
+        temperature : float
+            Fluid temperature [ºC]
+
+        Returns
+        -------
+        rho : float
+            Fluid density; [kg/m3]
+        """
 
         data = self.kb_data.get('medium_list')
 
@@ -65,6 +102,21 @@ class Medium:
 
 
     def state(self, fluid_name):
+        """ Get fluid state
+
+        Parameters
+        ----------
+        fluid_name : str
+            Fluid name
+
+        temperature : float
+            Fluid temperature [ºC]
+
+        Returns
+        -------
+        state : float
+            Fluid state
+        """
 
         data = self.kb_data.get('medium_list')
 

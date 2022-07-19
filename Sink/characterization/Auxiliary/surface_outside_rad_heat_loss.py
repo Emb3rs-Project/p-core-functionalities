@@ -1,32 +1,33 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Computes building surface's heat losses by radiation to the sky.
-
-
-##############################
-INPUT:
-        # emissivity_surface  []
-        # T_surface  [ºC]
-        # T_sky  [ºC]
-        # T_exterior  [ºC]
-        # surface_angle  [rad]
-
-
-##############################
-OUTPUT:
-        # Q_loss  [W/m2]
-
-
-"""
-
-
 import math
 
 
 def surface_outside_rad_heat_loss(emissivity_surface, T_surface, T_sky, T_exterior, surface_angle):
+    """Computes building surface's heat losses by radiation to the sky
+
+    Parameters
+    ----------
+    emissivity_surface : float
+        Surface emissivity []
+
+    T_surface : float
+        Surface temperature [ºC]
+
+    T_sky : float
+        Sky temperature [ºC]
+
+    T_exterior : float
+        Ambient temperature [ºC]
+
+    surface_angle : float
+        Surface angle [º]
+
+
+    Returns
+    -------
+    Q_loss : float
+        Heat lost by radiation [W/m2]
+
+    """
 
     stef_Boltzmann = 5.67 * 10**(-8)  # [W/m2.K4]
 

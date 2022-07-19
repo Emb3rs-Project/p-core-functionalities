@@ -1,25 +1,3 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Receives heat exchanger working fluids and return appropriate heat exchanger and U value.
-
-
-##############################
-INPUT:
-        # fluids to be analyzed: fluid_1, fluid_2
-
-
-##############################
-OUTPUT:
-        # hx_type - e.g. hx_kettle_boiler, hx_economizer, hx_plate
-        # hx_u_value  [W/m2.K]
-
-
-"""
-
-
 from dataclasses import dataclass
 
 @dataclass
@@ -28,6 +6,25 @@ class HxData:
     kb_data: dict
 
     def get_values(self,fluid_1, fluid_2):
+        """Receives heat exchanger working fluids and return appropriate heat exchanger and U value
+
+        Parameters
+        ----------
+        fluid_1 : str
+            Fluid name
+
+        fluid_2 : str
+            Fluid name
+
+        Returns
+        -------
+        hx_type : str
+            e.g. hx_kettle_boiler, hx_economizer, hx_plate
+
+        hx_u_value : float
+            Heat exchanger U value
+
+        """
 
         data = self.kb_data.get('medium_list')
 
@@ -62,7 +59,7 @@ class HxData:
             hx_u_value = 800
 
         else:
-            print(state_1,state_2)
+            print(state_1, state_2)
             print('When designing heat exchanger, combination of fluids not found.'
                   'Default: hx_u_value = 800')
 

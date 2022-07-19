@@ -1,29 +1,3 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: It were created correlations for the turnkey, om_fix, and equipment efficiency based on the various info from suppliers
-      and the literature. In this script, these equipment characteristics are obtained according to its characteristic parameter
-      (e.g., boilers - power [kW]; hx_plate - area [m2],...)
-
-
-##############################
-INPUT:
-        # equipment - equipment name
-        # equipment_char -  characteristic parameter of the equipment ( check Json_file/equipment_details.json for more info)
-
-
-##############################
-OUTPUT:
-        # global_conversion_efficiency  []
-        # om_fix  [€/kW]
-        # turnkey  [€]
-
-
-"""
-
-
 from dataclasses import dataclass
 
 
@@ -33,6 +7,33 @@ class EquipmentDetails:
     kb_data: dict
 
     def get_values(self, equipment, equipment_char):
+        """ Get equipment data
+
+        It were created correlations for the turnkey, om_fix, and equipment efficiency based on the various info from suppliers
+        and the literature. In this script, these equipment characteristics are obtained according to its characteristic parameter
+        (e.g., boilers - power [kW]; hx_plate - area [m2],...)
+
+        Parameters
+        ----------
+        equipment : str
+            Equipment name
+
+        equipment_char :
+            Characteristic parameter of the equipment (check Json_file/equipment_details.json for more info)
+
+        Returns
+        -------
+        global_conversion_efficiency : float
+            Equipment efficiency []; NOTE: for "chp" -> global_conversion_efficiency = [global_conversion_efficiency,
+             electrical_conversion_efficiency]
+
+        om_fix : float
+            OM Fix [€/kW]
+
+        turnkey : float
+            Turnkey [€]
+
+        """
 
         data = self.kb_data.get("equipment_details")
 

@@ -1,29 +1,34 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Receives user schedule data and returns 1h time step profile  of 1 (operating) and 0 (not operating).
-
-
-##############################
-INPUT:
-        # saturday_on - 1=yes, 0=no
-        # sunday_on- 1=yes, 0=no
-        # shutdown_periods - array with arrays of shutdown days intervals, e.g, [[2,10],[361-365]]
-        # daily_periods  - array with arrays of daily intervals, e.g. [[9,12],[14,17]]
-
-
-##############################
-RETURN:
-        # profile_hour - array with 1 and 0
-
-
-"""
-
 import datetime
 
 def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
+    """Get operating schedule
+
+    Receives user schedule data and returns 1h time step profile  of 1 (operating) and 0 (not operating).
+
+    Parameters
+    ----------
+    saturday_on : int
+        if available or not on Saturday; 1=yes, 0=no
+
+
+    sunday_on : int
+        if available or not on Sunday; 1=yes, 0=no
+
+
+    shutdown_periods : list with lists
+        List with list of shutdown days intervals, e.g, [[2,10],[361-365]]
+
+
+    daily_periods : list with lists
+        List with lists of daily intervals, e.g. [[9,12],[14,17]]
+
+
+    Returns
+    -------
+    profile_hour : list
+        Hourly schedule; with 1 and 0
+
+    """
 
     # Shutdown Periods FROM USER - e.g. shutdown_periods = [[210,240], [255,290]]
     shutdown_start_date = []

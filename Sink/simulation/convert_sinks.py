@@ -100,6 +100,8 @@ OUTPUT: the following dictionary,
 
 """
 
+import numpy as np
+import copy
 from ...General.Convert_Equipments.Auxiliary.sink_get_hx_temperatures import sink_get_hx_temperatures
 from ...General.Convert_Equipments.Convert_Options.add_boiler import Add_Boiler
 from ...General.Convert_Equipments.Convert_Options.add_hx import Add_HX
@@ -110,12 +112,53 @@ from ...General.Convert_Equipments.Convert_Options.add_pump import Add_Pump
 from ...General.Convert_Equipments.Auxiliary.aggregate_technologies_info import aggregate_technologies_info
 from ...General.Convert_Equipments.Convert_Options.add_electric_chiller import Add_Electric_Chiller
 from ...General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import coef_solar_thermal_backup
-import numpy as np
 from ...Error_Handling.error_convert_sinks import PlatformConvertSinks
 from ...Error_Handling.runtime_error import ModuleRuntimeException
-import copy
 
 def convert_sinks(in_var, kb):
+    """
+
+    Parameters
+    ----------
+    in_var
+
+
+    kb : dict
+        Knowledge Base data
+
+
+    Returns
+    -------
+    all_info : dict
+        All sinks data
+
+            -all_sinks_info
+
+                - sink_group_grid_supply_temperature
+
+                - sink_group_grid_return_temperature
+
+                - grid_specific
+
+                - sinks
+
+            -n_grid_specific
+                - id
+                - coords
+                - cap
+
+            -n_demand_list
+                Same keys as "n_grid_specific"
+
+            -n_thermal_storage
+                Same keys as "n_grid_specific"
+
+
+            -teo_demand_factor_group
+
+
+
+    """
     ##################################################################################################################
     # INPUT
     platform_data = PlatformConvertSinks(**in_var['platform'])

@@ -1,59 +1,80 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: create heat pump object with all necessary info when performing sources and sinks conversion to the grid.
-      The most important attribute of the object is data_teo, which contains all the info necessary for TEO module, such
-      as, the equipment turnkey linearized with power, OM fix/variable, emissions, efficiency and others (see below).
-
-
-##############################
-INPUT:
-        # country
-        # consumer_type - e.g. 'household' or 'non-household'
-        # supply_capacity - equipment desired supply capacity  [kW]
-        # power_fraction - design equipment for max and fraction power; value between 0 and 1
-        # supply_temperature  [ºC]
-        # return_temperature  [ºC]
-
-
-##############################
-RETURN: object with all technology info:
-        # object_type
-        # equipment_sub_type
-        # fuel_type
-        # country
-        # global_conversion_efficiency
-        # fuel_properties
-        # supply_temperature  [ºC]
-        # return_temperature  [ºC]
-        # data_teo - dictionary with equipment data needed by the TEO
-
-            Where in data_teo, the following keys:
-                #  equipment - equipment name
-                #  fuel_type
-                #  max_input_capacity  # [kW]
-                #  turnkey_a  # [€/kW]
-                #  turnkey_b  # [€]
-                #  conversion_efficiency  # []
-                #  om_fix  # [€/year.kW]
-                #  om_var  # [€/kWh]
-                #  emissions  # [kg.CO2/kWh thermal]
-
-"""
-
 from ....utilities.kb import KB
 from ....KB_General.equipment_details import EquipmentDetails
-from ....KB_General.fuel_properties import FuelProperties
 from ....General.Auxiliary_General.linearize_values import linearize_values
-from ....General.Auxiliary_General.compute_cop_err import compute_cop_err
+from ....General.Auxiliary_General.compute_cop_eer import compute_cop_eer
 
 
 class Add_Heat_Pump():
+    """
+    Create HEAT PUMP object with all necessary info when performing sources and sinks conversion to the grid.
+    The most important attribute of the object is 'data_teo'' which contains all the info necessary for TEO module.
+
+
+    Attributes
+    ----------
+    object_type : str
+        DEFAULT="equipment"
+
+    equipment_sub_type : str
+        equipment sub type
+
+    fuel_type : str
+        equipment's fuel
+
+    supply_temperature : float
+        equipment's circuit supply temperature [ºC]
+
+    return_temperature : float
+        equipment's circuit return temperature [ºC]
+
+    fuel_properties : dict
+        equipment fuel data
+
+    supply_capacity : float
+        equipment supply capacity [kW]
+
+    evap_capacity :
+        equipment's evaporator capacity [kW]
+
+    global_conversion_efficiency :
+        equipment efficiency; EER []
+
+    data_teo : dict
+        dictionary with equipment data needed by the TEO
+
+
+    """
 
     def __init__(self, kb: KB, fuels_data, power_fraction, supply_temperature, return_temperature,evaporator_temperature, supply_capacity=None,evap_capacity=None):
+        """Create HEAT PUMP data
 
+        Parameters
+        ----------
+        kb : dict
+            Knowledge Base data
+
+        fuels_data: dict:
+            Fuels price and CO2 emission
+
+        power_fraction : float
+            Design equipment for max and fraction power; value between 0 and 1 []
+
+        supply_temperature : float
+            Equipment's supply temperature; considered as the fluid temperature leaving the condenser temperature  [ºC]
+
+        return_temperature : float
+            Equipment's return temperature; considered as the fluid temperature entering the condenser temperature [ºC]
+
+        evaporator_temperature :
+            Equipment's evaporator temperature [ºC]
+
+        supply_capacity :
+            Equipment's supply capacity [kW]
+
+        evap_capacity :
+            Equipment's evaporator capacity [kW]
+
+        """
         # Defined Vars
         self.object_type = 'equipment'
         self.equipment_sub_type = 'heat_pump'
@@ -64,7 +85,7 @@ class Add_Heat_Pump():
         self.supply_temperature = supply_temperature
         self.return_temperature = return_temperature
 
-        self.global_conversion_efficiency = compute_cop_err(self.equipment_sub_type, condenser_temperature=self.supply_temperature, evaporator_temperature=evaporator_temperature)  # get ERR
+        self.global_conversion_efficiency = compute_cop_eer(self.equipment_sub_type, condenser_temperature=self.supply_temperature, evaporator_temperature=evaporator_temperature)  # get ERR
 
         try:
             self.supply_capacity = evap_capacity/(1-1/self.global_conversion_efficiency)  # heat supply capacity [kW]
@@ -100,7 +121,22 @@ class Add_Heat_Pump():
 
 
     def design_equipment(self,kb,power_fraction):
+        """Get equipment economic data for a specific power fraction
 
+        Parameters
+        ----------
+        kb : dict
+            Knowledge Base data
+
+        power_fraction : float
+            Design equipment for max and fraction power; value between 0 and 1 []
+
+        Returns
+        -------
+        info : dict
+            Designed equipment economic data
+
+        """
         supply_capacity = self.supply_capacity * power_fraction  # thermal power supplied [kW]
         electric_power_equipment = supply_capacity / self.global_conversion_efficiency
 

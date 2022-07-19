@@ -50,19 +50,14 @@ RETURN:
 
 """
 
-from ......KB_General.get_interest_rate import get_interest_rate
 
 
-def get_best_x_outputs(info_pinch, df_optimization, country, lifetime, pinch_delta_T_min, kb, stream_table,stream_combination_not_feasible,type):
+def get_best_x_outputs(info_pinch, df_optimization, country, lifetime, pinch_delta_T_min, kb, stream_table,stream_combination_not_feasible,type,interest_rate):
 
 
     best_x_options = []
 
-    interest_rate = get_interest_rate(country,kb)
-
     solution_order = 1
-
-
 
     for index, row in df_optimization.iterrows():
 

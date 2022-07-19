@@ -1,33 +1,39 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: compute for the hx between a grid and sink, its temperatures, according to the sink's streams temperature needs
+def sink_get_hx_temperatures(grid_supply_temperature, grid_return_temperature, stream_supply_temperature, stream_target_temperature, hx_delta_T):
+    """Compute for the hx between a grid and sink, its temperatures, according to the sink's streams temperature needs
       and the grid temperatures
 
+    Parameters
+    ----------
+    grid_supply_temperature : float
+        Grid supply temperature [ºC]
 
-##############################
-INPUT:
-        # grid_supply_temperature  [ºC]
-        # grid_return_temperature  [ºC]
-        # stream_supply_temperature  [ºC]
-        # stream_target_temperature  [ºC]
-        # hx_delta_T
+    grid_return_temperature : float
+        Grid return temperature [ºC]
 
+    stream_supply_temperature : float
+        Stream supply temperature [ºC]
 
-##############################
-RETURN:
-        # hx_grid_supply_temperature  [ºC]
-        # hx_grid_target_temperature  [ºC]
-        # hx_sink_supply_temperature  [ºC]
-        # hx_sink_target_temperature  [ºC]
+    stream_target_temperature : float
+        Stream target temperature [ºC]
 
+    hx_delta_T : float
+        Heat exchanger minimum temperature difference [ºC]
 
-"""
+    Returns
+    -------
+    hx_grid_supply_temperature : float
+        Heat exchanger grid supply [ºC]
 
+    hx_grid_target_temperature : float
+        Heat exchanger grid target [ºC]
 
-def sink_get_hx_temperatures(grid_supply_temperature, grid_return_temperature, stream_supply_temperature, stream_target_temperature, hx_delta_T):
+    hx_sink_supply_temperature : float
+        Heat exchanger stream supply [ºC]
+
+    hx_sink_target_temperature : float
+        Heat exchanger stream target [ºC]
+
+    """
 
     hx_grid_supply_temperature = grid_supply_temperature
 
