@@ -1,47 +1,57 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Main function to match remaining streams. Matching is done depending on being above/below pinch and if there are
-      restrictions or not. An iterative computation was done to design each iteration the most powerful HX.
-      To achieve this, every possible match combination between streams available was done and the respective HX designed.
-      At the end, the HX with larger power was chosen and df_streams_in and df_streams_out updated ("tick off rule").
-      The process, then, repeats itself.
-
-      Due to the use of this "ticking of rule" when matching the remaining streams, more complex cases may lead to the
-      streams_in not reaching their 'Supply_Temperature' (remember that the matches are designed from the pinch temperature
-      outwards). This means no solution of the pinch analysis, since df_streams_in are not satisfied.
-
-      ** "Tick of rule" - heuristic of maximising the heat load on an interchanger by completely satisfying the heat load
-      on one stream (Kemp, Pinch Analysis and Process Integration) **
-
-
-##############################
-INPUT:
-        # df_streams_in
-        # df_streams_out
-        # df_hx
-        # above_pinch
-        # hx_delta_T
-        # restriction
-
-
-##############################
-RETURN:
-        # df_streams_in - updated
-        # df_streams_out - updated
-        # df_hx - updated
-
-
-"""
-
 import pandas as pd
-from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_match_remaining_streams import above_pinch_match_remaining_streams
-from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_match_remaining_streams import below_pinch_match_remaining_streams
+from ..Above_Pinch.above_pinch_match_remaining_streams import above_pinch_match_remaining_streams
+from ..Below_Pinch.below_pinch_match_remaining_streams import below_pinch_match_remaining_streams
 
 
-def match_remaining_streams_main(kb, df_streams_in,df_streams_out,df_hx,above_pinch,hx_delta_T,restriction):
+def match_remaining_streams_main(kb, df_streams_in, df_streams_out, df_hx, above_pinch, hx_delta_T, restriction):
+    """Main function to match remaining streams.
+
+    Matching is done depending on being above/below pinch and if there are restrictions or not. An iterative computation
+    was done to design each iteration the most powerful HX. To achieve this, every possible match combination between
+    streams available was done and the respective HX designed. At the end, the HX with larger power was chosen and
+    df_streams_in and df_streams_out updated ("tick off rule"). The process, then, repeats itself.
+
+    Due to the use of this "ticking of rule" when matching the remaining streams, more complex cases may lead to the
+    streams_in not reaching their 'Supply_Temperature' (remember that the matches are designed from the pinch temperature
+    outwards). This means no solution of the pinch analysis, since df_streams_in are not satisfied.
+
+    ** "Tick of rule" - heuristic of maximising the heat load on an interchanger by completely satisfying the heat load
+    on one stream (Kemp, Pinch Analysis and Process Integration) **
+
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base Data
+
+    df_streams_in : df
+        DF with streams going into the pinch
+
+    df_streams_out : df
+        DF with streams going out of the pinch
+
+    df_hx : df
+        DF with heat exchangers data
+
+    above_pinch : boolean
+
+    hx_delta_T : float
+        Minimum heat exchanger temperature difference
+
+    restriction : boolean
+        Consider restrictions (TRUE] or not (FALSE)
+
+    Returns
+    -------
+    df_streams_in : df
+        DF updated
+
+    df_streams_out : df
+        DF updated
+
+    df_hx : df
+        DF updated
+
+    """
 
     # check if above/below pinch
     if above_pinch == True:

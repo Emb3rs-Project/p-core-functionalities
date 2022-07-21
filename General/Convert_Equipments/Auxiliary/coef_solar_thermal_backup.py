@@ -7,10 +7,10 @@ def coef_solar_thermal_backup(stream_hourly_capacity, solar_thermal_object, heat
     stream_hourly_capacity : list
         Stream to be satisfied (source/sink) hourlt capacity [kWh]
 
-    solar_thermal_object : dict
+    solar_thermal_object : dict, object
         Designed solar thermal technology data
 
-    heating_technology : dict
+    heating_technology : dict, object
         Designed backup technology data
 
 

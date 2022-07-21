@@ -6,29 +6,63 @@ from ......General.Convert_Equipments.Convert_Options.add_hx import Add_HX
 def get_data_of_converting_each_stream_to_orc(kb, stream, hx_delta_T, orc_T_cond, orc_T_evap, hx_efficiency,
                                               power_fraction, intermediate_fluid, fuels_data, aggregate_streams):
 
-    """
-    Auxiliary function with the purpose of designing the ORC according to the stream given, whether it is aggreagated or not,
+    """Get stream to ORC conversion technical data
+
+    Auxiliary function with the purpose of designing the ORC according to the stream given, whether it is aggregated or not,
     and make techno-economical estimates.
 
-    :param kb: Knowledge Base Data
-    :param stream: ``dict``: stream data
-    :param hx_delta_T: ``float``: minimum heat exchanger temperature difference [ºC]
-    :param orc_T_cond: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=35
-    :param orc_T_evap: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]
-    :param hx_efficiency: ``float``: heat exchangers efficiency []
-    :param power_fraction: ``float``: value to design solution to 2 different capacities and linearize CAPEX (y=ax+b) []
-    :param intermediate_fluid: ``str``: intermediate circuit fluid name []
-    :param country: ``str``: country name []
-    :param consumer_type: `str``: type of consumer tariff []; 'household' or 'non-household'
-    :param aggregate_streams: ``boolean``: if True, it will check the available power of the stream for the intermediate circuit designed
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base Data
 
-    :return:
-            - stream_thermal_capacity_max_power: ``float``: [kW]
-            - orc_type: ``str``:  DEFAULT="orc"
-            - orc_electrical_generation: ``float``: ORC nominal electrical generation [kW]
-            - intermediate_turnkey_max_power: ``float``: turnkey for intermediate circuit (maximum stream capacity) [€]
-            - intermediate_om_fix_max_power: ``float``: OM fix for intermediate circuit (maximum stream capacity) [€/year]
-            - intermediate_om_var_max_power: ``float``: OM var for intermediate circuit (maximum stream capacity) [€/year]
+    stream : dict
+        Stream data
+
+    hx_delta_T : float
+        Minimum heat exchanger temperature difference [ºC]
+
+    orc_T_cond : float, optional
+        ORC evaporator temperature [ºC]; DEFAULT=35
+
+    orc_T_evap : float, optional
+        ORC evaporator temperature [ºC]
+
+    hx_efficiency : float
+        Heat exchangers efficiency []
+
+    power_fraction : float
+        Value to design solution to 2 different capacities and linearize CAPEX (y=ax+b) []
+
+    intermediate_fluid : str
+        Intermediate circuit fluid name []
+
+    fuels_data : str
+        Country name []
+
+    aggregate_streams : str
+        Type of consumer tariff []; 'household' or 'non-household'
+
+
+    Returns
+    -------
+    stream_thermal_capacity_max_power: float
+        [kW]
+
+    orc_type: str
+        DEFAULT="orc"
+
+    orc_electrical_generation: float
+        ORC nominal electrical generation [kW]
+
+    intermediate_turnkey_max_power: float
+        turnkey for intermediate circuit (maximum stream capacity) [€]
+
+    intermediate_om_fix_max_power: float
+        OM fix for intermediate circuit (maximum stream capacity) [€/year]
+
+    intermediate_om_var_max_power: float
+        OM var for intermediate circuit (maximum stream capacity) [€/year]
 
     """
 

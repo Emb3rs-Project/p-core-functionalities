@@ -1,63 +1,69 @@
-"""
-alisboa/jmcunha
 
-
-##############################
-INFO: The pinch design is always made from the pinch temperature to outwards. Thus, it is important to guarantee that all
-      streams reaching pinch are well matched and that none is left.
-
-      This script works similarly ot decision tree, where the function all_first_match_pinch_combinations acts as main
-      which runs the recursive function make_combinations. This recursive function will make all possible match
-      combinations of streams that reach pinch until all streams_in have been matched. This recursive function,
-      maximizes pinch design variability by making all possible combinations between streams_in and streams_out, which
-      may incur in new stream splits, and affect the following match. Even though it can be time consuming when a large
-      number of streams is given, it has an added benefit of proposing more pinch designs.
-
-      In brief when running make_combinations (which acts similarly to a decision tree), step by step:
-        1) ** new state **
-        2) get available streams_in and streams_out
-        3) for cycle - fetch one stream_in
-            4) for cycle - fetch one stream_out
-                5) match and design hx (stream split may occur, adding new stream to respective df_streams_in or df_streams_out)
-                6) update df_streams_in or df_streams_out
-
-                if df_streams in not yet empty (meaning there are still streams_in reaching pinch):
-                    7) call make_combinations and provide df_streams_in and df_streams_out updated - go to step 1
-                else:
-                    8) append design solution
-
-        '9') when both for cycles reach the end, return to previous state (step 7 and jump to  step 4 or step 3)
-
-    ** new state used here as the state of which the decision tree is **
-
-
-##############################
-INPUT:
-        # df_streams_in
-        # df_streams_out
-        # df_hx
-        # hx_delta_T
-        # above_pinch
-
-
-##############################
-RETURN:
-        # all_combinations - array with arrays of [df_streams_in, df_streams_out, df_hx] updated
-
-
-"""
+from ..Above_Pinch.above_pinch_hx_temperatures import above_pinch_hx_temperatures
+from ..HX.design_hx import design_hx
+from ..Above_Pinch.above_pinch_stream_info import above_pinch_stream_info
+from ..Below_Pinch.below_pinch_stream_info import below_pinch_stream_info
+from ..Below_Pinch.below_pinch_hx_temperatures import below_pinch_hx_temperatures
 import pandas as pd
-
-from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_hx_temperatures import above_pinch_hx_temperatures
-from ......Source.simulation.Heat_Recovery.Pinch.HX.design_hx import design_hx
-from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_stream_info import above_pinch_stream_info
-from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_stream_info import below_pinch_stream_info
-from ......Source.simulation.Heat_Recovery.Pinch.Below_Pinch.below_pinch_hx_temperatures import below_pinch_hx_temperatures
 from copy import deepcopy
 import numpy as np
 
 
 def first_match_reach_pinch(kb, df_streams_in, df_streams_out, df_hx, hx_delta_T, above_pinch):
+    """Match streams which reach pinch temperature
+
+    The pinch design is always made from the pinch temperature to outwards. Thus, it is important to guarantee that all
+    streams reaching pinch are well matched and that none is left.
+
+    This script works similarly ot decision tree, where the function all_first_match_pinch_combinations acts as main
+    which runs the recursive function make_combinations. This recursive function will make all possible match
+    combinations of streams that reach pinch until all streams_in have been matched. This recursive function,
+    maximizes pinch design variability by making all possible combinations between streams_in and streams_out, which
+    may incur in new stream splits, and affect the following match. Even though it can be time consuming when a large
+    number of streams is given, it has an added benefit of proposing more pinch designs.
+
+    In brief when running make_combinations (which acts similarly to a decision tree), step by step:
+      1) ** new state **
+      2) get available streams_in and streams_out
+      3) for cycle - fetch one stream_in
+          4) for cycle - fetch one stream_out
+              5) match and design hx (stream split may occur, adding new stream to respective df_streams_in or df_streams_out)
+              6) update df_streams_in or df_streams_out
+
+               if df_streams in not yet empty (meaning there are still streams_in reaching pinch):
+                   7) call make_combinations and provide df_streams_in and df_streams_out updated - go to step 1
+               else:
+                   8) append design solution
+
+    '9') when both for cycles reach the end, return to previous state (step 7 and jump to  step 4 or step 3)
+
+    ** new state used here as the state of which the decision tree is **
+
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base Data
+
+    df_streams_in : df
+        DF with streams going into the pinch
+
+    df_streams_out : df
+        DF with streams going out of the pinch
+
+    df_hx : df
+        DF with heat exchangers data
+
+    hx_delta_T :float
+        Minimum HX temperature difference [ºC]
+
+    above_pinch : boolean
+
+    Returns
+    -------
+    all_combinations : list
+        All combinations with [df_streams_in, df_streams_out,df_hx] updated
+
+    """
 
     original_combination = deepcopy([df_streams_in, df_streams_out, df_hx])
 

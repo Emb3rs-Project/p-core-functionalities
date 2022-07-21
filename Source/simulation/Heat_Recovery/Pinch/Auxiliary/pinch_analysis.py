@@ -1,99 +1,52 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Perform Pinch Analysis.
-      Step by step:
-          1) compute heat cascade
-          2) get pinch point
-          3) separate streams into above and below pinch point
-          4) perform pinch analysis and design storage (above and below pinch point)
-          5) make combinations between above and below designs
-          6) create clean output with detailed information regarding each option
-
-      Important:
-        - Very specific/complex cases may not be solved, sending an empty output.
-
-
-##############################
-INPUT:
-        # df_streams_profile - DF with all streams schedules (hourly schedule with 1 and 0)
-        # pinch_delta_T_min - delta temperature for pinch analysis divided by 2 [ºC]
-        # hx_delta_T - heat exchangers minimum delta T [ºC]
-        # design_id  [ID]
-        # df_streams - DF with stream operating and its characteristics
-
-            Where in df_streams, the following keys:
-                # Fluid - fluid type
-                # Flowrate  [kg/h]
-                # Supply_Temperature  [ºC]
-                # Target_Temperature  [ºC]
-                # Cp  [kJ/kg.K]
-                # mcp  [kW/K]
-                # Stream_Type - hot or cold
-                # Supply_Shift  [ºC]
-                # Target_Shift  [ºC]
-
-
-##############################
-RETURN:
-        # detailed_info_pinch_analysis - list with the cases designed as dictionaries
-        # design_id - last ID for next iteration [ID]
-
-        Where in each array position of detailed_info_pinch_analysis
-            Each one provides the following keys:
-                # ID - design ID [ID]
-                # analysis_state - shows message: 'error in performing - probably specific/complex case' or 'performed'
-                # streams - streams ID  [ID]
-                # streams_info - to know the final streams, and respective splits, above and below pinch
-                # theo_minimum_hot_utility - minimum theoretical hot utility  [kW]
-                # hot_utility  [kW]
-                # theo_minimum_cold_utility - minimum theoretical cold utility  [kW]
-                # cold_utility  [kW]
-                # pinch_temperature  [ºC]
-                # df_hx  [kg CO2/kWh]
-
-                Where in streams_info, multiple dicts with :
-                    # id - original stream_id
-                    # above_pinch - dict with keys
-                            # flowrate - final flowrate
-                            # split streams - array with dicts with "id" and "flowrate"
-                    # below_pinch - same as above_pinch
-
-
-                Where in df_hx, the following keys:
-                    # Power  [kW]
-                    # HX_Hot_Stream  [ID]
-                    # HX_Cold_Stream  [ID]
-                    # HX_Original_Hot_Stream  [ID]
-                    # HX_Original_Cold_Stream  [ID]
-                    # HX_Hot_Stream_flowrate [kg/h]
-                    # HX_Cold_Stream_flowrate  [kg/h]
-                    # HX_Type  [hx type]
-                    # HX_Turnkey_Cost  [€]
-                    # HX_OM_Fix_Cost  [€/year]
-                    # HX_Hot_Stream_T_Hot  [ºC]
-                    # HX_Hot_Stream_T_Cold  [ºC]
-                    # HX_Cold_Stream_T_Hot  [ºC]
-                    # HX_Cold_Stream_T_Cold  [ºC]
-                    # Storage  [m3]
-                    # Storage_Satisfies  [%]
-                    # Storage_Turnkey_Cost  [€]
-                    # Total_Turnkey_Cost  [€]
-                    # Recovered_Energy  [kWh/year]
-
-"""
-
-
 import pandas as pd
 from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.table_heat_cascade import table_heat_cascade
 from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.pinch_point import pinch_point
-from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.above_and_below_pinch_main import above_and_below_pinch_main
+from ......Source.simulation.Heat_Recovery.Pinch.Auxiliary.above_and_below_pinch_main import above_and_below_pinch_main
 from ......Source.simulation.Heat_Recovery.Pinch.HX.design_hx_storage import design_hx_storage
 
 
 def pinch_analysis(kb, df_streams, df_streams_profile, pinch_delta_T_min, hx_delta_T, design_id):
+    """Perform Pinch Analysis
+
+    Step by step:
+        1) compute heat cascade
+        2) get pinch point
+        3) separate streams into above and below pinch point
+        4) perform pinch analysis and design storage (above and below pinch point)
+        5) make combinations between above and below designs
+        6) create clean output with detailed information regarding each option
+
+    Important:
+        - Very specific/complex cases may not be solved, sending an empty output.
+
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base Data
+
+    df_streams : df
+        DF with all streams
+
+    df_streams_profile : df
+        DF with all streams schedules (hourly schedule with 1 and 0)
+
+    pinch_delta_T_min : float
+        Temperature for pinch analysis [ºC]
+
+    hx_delta_T : float
+        Heat exchangers minimum delta T [ºC]
+
+    design_id : int
+
+    Returns
+    -------
+    detailed_info_pinch_analysis : list
+        Solutions data
+
+    design_id  : int
+        Last ID for next iteration
+
+    """
 
 
     # get heat cascade

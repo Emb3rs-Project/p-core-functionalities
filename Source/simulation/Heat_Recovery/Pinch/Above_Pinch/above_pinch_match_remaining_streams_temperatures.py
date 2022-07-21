@@ -1,33 +1,3 @@
-""""
-alisboa/jmcunha
-
-
-##############################
-INFO: Design HX temperatures for streams above pinch.
-      Iterative process to find temperatures.
-
-
-##############################
-INPUT:
-        # hot_stream_T_cold
-        # hot_stream_max_T_hot
-        # hot_stream_mcp
-        # cold_stream_T_cold
-        # cold_stream_max_T_hot
-        # cold_stream_mcp
-        # hx_delta_T
-
-
-##############################
-RETURN:
-        # hx_power
-        # hx_hot_stream_T_cold
-        # hx_hot_stream_T_hot
-        # hx_cold_stream_T_cold
-        # hx_cold_stream_T_hot
-
-"""
-
 import copy
 
 
@@ -35,6 +5,51 @@ def above_pinch_match_remaining_streams_temperatures(
         hot_stream_T_cold, hot_stream_max_T_hot, hot_stream_mcp, cold_stream_T_cold, cold_stream_max_T_hot,
         cold_stream_mcp, hx_delta_T):
 
+    """Design HX temperatures for streams above pinch.
+
+    Iterative process to find temperatures.
+
+    Parameters
+    ----------
+    hot_stream_T_cold : float
+        [ºC]
+
+    hot_stream_max_T_hot : float
+        [ºC]
+
+    hot_stream_mcp : float
+        [kW/K]
+
+    cold_stream_T_cold : float
+        [ºC]
+
+    cold_stream_max_T_hot : float
+        [ºC]
+
+    cold_stream_mcp : float
+        [kW/K]
+
+    hx_delta_T : float
+        [ºC]
+
+    Returns
+    -------
+    hx_power : float
+        [kW]
+
+    hx_hot_stream_T_cold : float
+        [ºC]
+
+    hx_hot_stream_T_hot : float
+        [ºC]
+
+    hx_cold_stream_T_cold : float
+        [ºC]
+
+    hx_cold_stream_T_hot : float
+        [ºC]
+
+    """
 
     find_T_vector = [5, 1, 0.1]
     cold_stream_T_hot_init = cold_stream_T_cold + 0.001  # initial guess

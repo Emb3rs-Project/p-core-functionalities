@@ -31,7 +31,7 @@ class Stream(BaseModel):
     hourly_generation: conlist(NonNegativeFloat)
     capacity: PositiveFloat
     object_linked_id: Optional[float] = None
-    fuel: FuelChoices
+    fuel: Optional[FuelChoices] = "none"
     eff_equipment: Union[PositiveFloat, None]
 
     @validator('schedule', allow_reuse=True)

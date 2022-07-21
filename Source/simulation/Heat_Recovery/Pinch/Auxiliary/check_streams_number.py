@@ -1,43 +1,49 @@
-""""
-alisboa/jmcunha
-
-
-##############################
-INFO: This function aims to check one of the pinch analysis rule, which is that the number of streams_in <= streams_out.
-      If this does not occur, multiple combinations and stream splits will be made to ensure that the number of
-      streams_in and streams_out is equal.
-
-      It was implemented the parameter reach_pinch, that is used at a first instance as reach_pinch=True to ensure that
-      when all_first_match_pinch_combinations runs, all streams_in can be matched. At a second instance with
-      reach_pinch=False, after all the first matches have been done.
-
-      The function check_streams_number acts as main which runs split_streams as many time as the existent surplus number
-      of streams in.
-
-
-##############################
-INPUT:
-        # df_streams_in
-        # df_streams_out
-        # above_pinch
-        # delta_T_min
-        # reach_pinch  [True or False]
-
-
-##############################
-RETURN:
-        # all_combinations - array with arrays of [df_streams_in, df_streams_out] updated
-
-"""
 
 import numpy as np
 from copy import deepcopy
-
 import pandas as pd
 
 
 def check_streams_number(df_streams_in, df_streams_out, above_pinch, delta_T_min, reach_pinch,check_time):
+    """Check stream number rule
 
+    This function aims to check one of the pinch analysis rule, which is that the number of streams_in <= streams_out.
+    If this does not occur, multiple combinations and stream splits will be made to ensure that the number of
+    streams_in and streams_out is equal.
+
+    It was implemented the parameter reach_pinch, that is used at a first instance as reach_pinch=True to ensure that
+    when all_first_match_pinch_combinations runs, all streams_in can be matched. At a second instance with
+    reach_pinch=False, after all the first matches have been done.
+
+    The function check_streams_number acts as main which runs split_streams as many time as the existent surplus number
+    of streams in.
+
+    Parameters
+    ----------
+    df_streams_in : df
+        DF with streams going into the pinch
+
+    df_streams_out : df
+        DF with streams going out of the pinch
+
+    above_pinch : boolean
+        If above (TRUE) or below (FALSE) pinch analysis
+
+    delta_T_min : float
+        Minimum temperature difference [ºC]
+
+    reach_pinch : boolean
+        Whether streams reaches pinch temperature
+
+    check_time : float
+        Multiplier. To identify in which routine there is a stream split
+
+    Returns
+    -------
+    all_combinations : list
+        All combinations with [df_streams_in, df_streams_out] updated
+
+    """
     ############################################################################################
     # Get info
 

@@ -1,43 +1,23 @@
-""""
-alisboa/jmcunha
-
-##############################
-INFO: Compute heat cascade. The heat cascade is a net enthalpy heat balance which allow us to compute the minimum
-      hot and cold utility, as well as the pinch point.
-
-
-##############################
-INPUT:
-        # df_operating - DF with the characteristics of operating streams
-
-             Where in df_operating, the following keys:
-                # Fluid - fluid type
-                # Flowrate  [kg/h]
-                # Supply_Temperature  [ºC]
-                # Target_Temperature  [ºC]
-                # Cp  [kJ/kg.K]
-                # mcp  [kW/K]
-                # Stream_Type - hot or cold
-                # Supply_Shift  [ºC]
-                # Target_Shift  [ºC]
-
-
-##############################
-RETURN:
-        # df_heat_cascade - info necessary to compute pinch point
-
-            Where in df_heat_cascade, the following keys:
-                # delta_T_cascade - temperature intervals on the heat cascade
-                # mcp_cascade  [kW/K]
-                # dH - enthalpy computed for each temperature interval  [kW]
-
-"""
-
 import pandas as pd
 import numpy as np
 
 
 def table_heat_cascade(df_operating):
+    """Compute heat cascade.
+
+    The heat cascade is a net enthalpy heat balance which allow us to compute the minimum hot and cold utility,
+    as well as the pinch point.
+
+    Parameters
+    ----------
+    df_operating : df
+        DF with the characteristics of operating streams
+
+    Returns
+    -------
+    df_heat_cascade : df
+        DF with the heat cascade data
+    """
 
     # vector wih unique temperatures sorted
     temperature_vector = np.unique(np.append(df_operating["Supply_Shift"].values, df_operating["Target_Shift"].values))

@@ -1,45 +1,42 @@
-"""
-alisboa/jmcunha
-
-##############################
-INFO: Compute storage needed for each HX according to hot and cold stream schedules.
-      Three situations may occur:
-        1) coincident cold and hot streams hours
-        2) surplus hours of hot streams
-        3) surplus cold stream hours
-
-      For the first case no storage is designed.
-      For the second case, since there is a surplus of hot stream hours, it is designed the minimum storage required
-      to satisfy 100% the cold stream.
-      For the third case, since there is a surplus of cold stream hours, it is designed a storage that can recover
-      maximum energy from the hot stream working alone hours
-
-
-##############################
-INPUT:
-        # df_profile - DF with all streams schedules (hourly schedule with 1 and 0)
-        # info_df_hx - list with all designed options for above or below the pinch
-
-
-##############################
-RETURN:
-        # info_df_hx - each df_hx is updated
-
-        Where the updated keys are:
-            # Storage [m3]
-            # Storage_Satisfies - percentage fo the deficit hours the storage covers [%]
-            # Storage_Turnkey_Cost - storage turnkey for each HX [€]
-            # Total_Turnkey_Cost - total turnkey = hx + storage [€]
-            # Recovered_Energy - yearly total recovered energy [kWh]
-
-"""
-
 from ......KB_General.equipment_details import EquipmentDetails
 from ......KB_General.medium import Medium
 from ......utilities.kb import KB
 
 
 def design_hx_storage(kb : KB, df_profile, info_df_hx, storage_delta_T=5):
+    """Compute storage needed for each HX according to hot and cold stream schedules.
+
+    Three situations may occur:
+      1) coincident cold and hot streams hours
+      2) surplus hours of hot streams
+      3) surplus cold stream hours
+
+    For the first case no storage is designed.
+    For the second case, since there is a surplus of hot stream hours, it is designed the minimum storage required
+    to satisfy 100% the cold stream.
+    For the third case, since there is a surplus of cold stream hours, it is designed a storage that can recover
+    maximum energy from the hot stream working alone hours
+
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base Data
+
+    df_profile : df
+        DF with all streams schedules (hourly schedule with 1 and 0)
+
+    info_df_hx : list
+        List with designed solutions data;
+
+    storage_delta_T : float
+        Temperature difference between stream and storage [ºC]
+
+    Returns
+    -------
+    info_df_hx : list
+        List with designed solutions data; updated each HX with the respective storage
+
+    """
 
     ###############################################################
     # Defined vars

@@ -1,93 +1,74 @@
-""""
-alisboa/jmcunha
-
-
-##############################
-INFO: In this function are designed various possible combinations of HX match between hot and cold streams, above or
-      below the pinch temperature, respecting the pinch rules. The pinch rules being, number of streams_out at pinch
-      equal/larger than streams_in and when matching streams, the mcp of the stream_out has to be equal/larger than
-      stream_in mcp (this rule is not only applied at the step 6, see below). The matches are always done with the
-      purpose of designing away from the pinch, meaning that the HX are designed from closes to the pinch temperature
-      to the stream_in supply temperature.
-
-      To try to solve majority of cases and also give different design solutions, at special_case/check_streams_number/
-      first_match_reach_pinch, all the possible combinations of streams are done. Even though it can be time consuming
-      when a large number of streams is given, it has the benefit of proposing more pinch designs.
-
-      The pinch analysis can be a complex decision/design analysis according to the streams given, thus it was
-      implemented a code structure that is thought to best perform in the majority of cases.
-      Summary of the Pinch analysis chain of thought step by step :
-        1) data treatment
-        1) check if special cases (** special_case)
-        2) check number_streams_out < number_streams_in (** check_streams_number)
-        3) perform first match (** first_match_reach_pinch)
-        4) check number_streams_out < number_streams_in (** check_streams_number)
-        5) match remaining streams according to power - without split and respecting mcp_in<mcp_out (** match_remaining_streams_main)
-        6) match remaining streams according to power - without split (** match_remaining_streams_main)
-
-      ** detailed information about each function in its script **
-
-
-     !!!!!!!!!!
-     IMPORTANT: More complex cases (many streams or specific cases not thought of) may lead to no pinch design solutions,
-     this because design solutions are only considered if they get all streams_in to theirs 'Supply_Temperature' (remember
-     that the matches are designed from the pinch temperature outwards).
-
-
-
-##############################
-INPUT:
-        # df_streams
-        # pinch_delta_T_min - delta temperature for pinch analysis  [ºC]
-        # pinch_T  [ºC]
-        # hx_delta_T - heat exchangers minimum delta T  [ºC]
-        # above_pinch -  [True or False]
-
-        Where in df_streams, the necessary following keys:
-            # Fluid - fluid type
-            # Flowrate  [kg/h]
-            # Supply_Temperature  [ºC]
-            # Target_Temperature  [ºC]
-            # mcp  [kW/K]
-            # Stream_Type - hot or cold
-            # Supply_Shift  [ºC]
-            # Target_Shift  [ºC]
-
-
-##############################
-RETURN:
-        # all_designs - array with different hx design (df_hx)  possibilities, e.g. all_designs=[df_hx_1,df_hx_2,..]
-        # pinch_analysis_possible - check if it was possible to perform pinch analysis above/below pinch [True or False]
-
-        Where in each df_hx, the following keys:
-            # 'HX_Power'  [kW]
-            # 'HX_Hot_Stream'  [ID]
-            # 'HX_Cold_Stream'  [ID]
-            # 'HX_Original_Hot_Stream'  [ID]
-            # 'HX_Original_Cold_Stream'  [ID]
-            # 'HX_Hot_Stream_flowrate', [kg/h]
-            # 'HX_Cold_Stream_flowrate',  [kg/h]
-            # 'HX_Type'  [hx type]
-            # 'HX_Turnkey_Cost'  [€]
-            # 'HX_OM_Fix_Cost'  [€/year]
-            # 'HX_Hot_Stream_T_Hot'  [ºC]
-            # 'HX_Hot_Stream_T_Cold'  [ºC]
-            # 'HX_Cold_Stream_T_Hot'  [ºC]
-            # 'HX_Cold_Stream_T_Cold'  [ºC]
-            # 'Storage'  [m3]
-
-
-"""
-
-from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.match_remaining_streams_main import match_remaining_streams_main
-from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.special_cases import special_cases
-from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.check_streams_number import check_streams_number
-from module.Source.simulation.Heat_Recovery.Pinch.Auxiliary.first_match_reach_pinch import first_match_reach_pinch
+from .match_remaining_streams_main import match_remaining_streams_main
+from .special_cases import special_cases
+from .check_streams_number import check_streams_number
+from .first_match_reach_pinch import first_match_reach_pinch
 from copy import deepcopy
 import pandas as pd
 
 
 def above_and_below_pinch_main(kb, df_streams, pinch_delta_T_min, pinch_T, hx_delta_T, above_pinch):
+    """
+
+    In this function are designed various possible combinations of HX match between hot and cold streams, above or
+    below the pinch temperature, respecting the pinch rules. The pinch rules being, number of streams_out at pinch
+    equal/larger than streams_in and when matching streams, the mcp of the stream_out has to be equal/larger than
+    stream_in mcp (this rule is not only applied at the step 6, see below). The matches are always done with the
+    purpose of designing away from the pinch, meaning that the HX are designed from closes to the pinch temperature
+    to the stream_in supply temperature.
+
+    To try to solve majority of cases and also give different design solutions, at special_case/check_streams_number/
+    first_match_reach_pinch, all the possible combinations of streams are done. Even though it can be time consuming
+    when a large number of streams is given, it has the benefit of proposing more pinch designs.
+
+    The pinch analysis can be a complex decision/design analysis according to the streams given, thus it was
+    implemented a code structure that is thought to best perform in the majority of cases.
+    Summary of the Pinch analysis chain of thought step by step :
+      1) data treatment
+      1) check if special cases (** special_case)
+      2) check number_streams_out < number_streams_in (** check_streams_number)
+      3) perform first match (** first_match_reach_pinch)
+      4) check number_streams_out < number_streams_in (** check_streams_number)
+      5) match remaining streams according to power - without split and respecting mcp_in<mcp_out (** match_remaining_streams_main)
+      6) match remaining streams according to power - without split (** match_remaining_streams_main)
+
+    ** detailed information about each function in its script **
+
+
+    !!!!!!!!!
+    MPORTANT: More complex cases (many streams or specific cases not thought of) may lead to no pinch design solutions,
+    his because design solutions are only considered if they get all streams_in to theirs 'Supply_Temperature' (remember
+    hat the matches are designed from the pinch temperature outwards).
+
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base data
+
+    df_streams : df
+        DF with streams to be analyzed
+
+    pinch_delta_T_min : float
+        Minimum temperature difference for pinch analysis  [ºC]
+
+    pinch_T : float
+        Pinch temperature [ºC]
+
+    hx_delta_T : float
+        Minimum HX temperature difference [ºC]
+
+    above_pinch : boolean
+        If above (TRUE) or below (FALSE) pinch analysis
+
+    Returns
+    -------
+    all_designs : list
+        All designed solutions data
+
+    pinch_analysis_possible : boolean
+        If a final solution is achieved for the set of streams
+
+
+    """
 
     ################################################################################
     # Init Arrays

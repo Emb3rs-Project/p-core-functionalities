@@ -1,48 +1,47 @@
-""""
-alisboa/jmcunha
+import pandas as pd
 
-
-##############################
-INFO: After testing the code, two specific/special cases could occur that would not be solved due to the pinch analysis
-      thought chain.
-      These special cases were:
+def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
+    """
+    After testing the code, two specific/special cases could occur that would not be solved due to the pinch analysis
+    thought chain.
+    These special cases were:
         Case 1) when there is an equal number of streams_in and streams_out (above or below pinch) and there is one
         stream_in with larger mcp than all streams_out
         Case 2) when there is a stream_out with smaller mcp than all streams_in
 
-      Solution:
-      Case 1 - first, make all combinations between streams_in, with larger mcp, and streams_out, which respect the
-      streams temperature intervals. Then, split the stream_in according to the maximum power available to be given to
-      the stream_out.
-      Case 2 - first, similarly to case 1, all combinations between streams_in and streams_out are analyzed ( this time,
-      without mcp restrictions). Then according to mcp of both streams, the stream_out will be split if has larger mcp
-      than stream_in and vice-versa. This option, may make splits on both df_streams_in and df_streams_out, since it was
-      tested that it could give more final design options
+    Solution:
+        Case 1 - first, make all combinations between streams_in, with larger mcp, and streams_out, which respect the
+        streams temperature intervals. Then, split the stream_in according to the maximum power available to be given to
+        the stream_out.
+        Case 2 - first, similarly to case 1, all combinations between streams_in and streams_out are analyzed ( this time,
+        without mcp restrictions). Then according to mcp of both streams, the stream_out will be split if has larger mcp
+        than stream_in and vice-versa. This option, may make splits on both df_streams_in and df_streams_out, since it was
+        tested that it could give more final design options
 
-      Lastly, update the correspondent df_streams_in df_streams_out with the split stream
+    Lastly, update the correspondent df_streams_in df_streams_out with the split stream
 
-      Both solutions will create an additional stream, due to the split. Case 1 makes number of streams_in larger than
-      number of streams_out, which will be corrected on the next function on the above_below_pinch_main, named
-      testing_check_streams_number.
+    Both solutions will create an additional stream, due to the split. Case 1 makes number of streams_in larger than
+    number of streams_out, which will be corrected on the next function on the above_below_pinch_main, named
+    testing_check_streams_number.
 
+    Parameters
+    ----------
+    df_streams_in : df
+        DF with streams going into the pinch
 
-##############################
-INPUT:
-        # df_streams_in
-        # df_streams_out
-        # above_pinch
-        # hx_delta_T
+    df_streams_out : df
+        DF with streams going out of the pinch
 
+    above_pinch : boolean
 
-##############################
-RETURN:
-        # all_combinations - array with arrays of [df_streams_in, df_streams_out] updated
+    hx_delta_T :float
+        Minimum HX temperature difference [ºC]
+    Returns
+    -------
+    all_combinations : list
+        List with list of [df_streams_in, df_streams_out] with split streams, if needed
 
-"""
-
-import pandas as pd
-
-def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
+    """
 
 
     # initial value

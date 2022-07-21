@@ -1,48 +1,3 @@
-"""
-alisboa/jmcunha
-
-##############################
-INFO:  Design and cost HX according to streams info
-
-
-##############################
-INPUT:
-        # hot_stream_index,
-        # cold_stream_index
-        # hx_hot_stream_T_hot  [ºC]
-        # hx_hot_stream_T_cold  [ºC]
-        # hot_stream_fluid
-        # hx_cold_stream_T_hot  [ºC]
-        # hx_cold_stream_T_cold  [ºC]
-        # cold_stream_fluid
-        # hx_power  [kW]
-        # original_hot_stream_index
-        # original_cold_stream_index
-
-
-##############################
-RETURN: a new_hx_row to add to the df_hx,
-
-        Where,
-            # new_hx_row = {
-            #               'HX_Power', - hx power [kW]
-            #               'HX_Hot_Stream', - stream ID, may be equal to Original_Hot_Stream or different if split occurred
-            #               'HX_Cold_Stream', - stream ID
-            #               'HX_Hot_Stream_flowrate',
-            #               'HX_Cold_Stream_flowrate',
-            #               'HX_Hot_Stream_T_Hot',  [ºC]
-            #               'HX_Hot_Stream_T_Cold',  [ºC]
-            #               'HX_Type', - type of hx, e.g. hx_plate, hx_shell_and_tubes, hx_kettle_boiler
-            #               'HX_Turnkey_Cost',  [€]
-            #               'HX_OM_Fix_Cost',  [€/year]
-            #               'HX_Original_Hot_Stream', - original stream ID
-            #               'HX_Original_Cold_Stream', - original stream ID
-            #               'Hot_Split', - if split stream or not; True or False
-            #               'Cold_Split',
-            #               }
-
-"""
-
 from ......General.Convert_Equipments.Auxiliary.design_cost_hx import design_cost_hx
 from ......KB_General.hx_data import HxData
 from ......KB_General.medium import Medium
@@ -52,6 +7,41 @@ from ......utilities.kb import KB
 def design_hx(kb : KB ,hot_stream_index, cold_stream_index, hx_hot_stream_T_hot, hx_hot_stream_T_cold, hot_stream_fluid,
               hx_cold_stream_T_hot, hx_cold_stream_T_cold, cold_stream_fluid, hx_power, original_hot_stream_index,
               original_cold_stream_index):
+
+    """Design and cost HX according to streams info
+
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base data
+
+    hot_stream_index : int
+
+    cold_stream_index : int
+
+    hx_hot_stream_T_hot : float
+
+    hx_hot_stream_T_cold : float
+
+    hot_stream_fluid : str
+
+    hx_cold_stream_T_hot : float
+
+    hx_cold_stream_T_cold : float
+
+    cold_stream_fluid : str
+
+    hx_power : float
+
+    original_hot_stream_index : int
+
+    original_cold_stream_index : int
+
+    Returns
+    -------
+    new_hx_row : dict
+        New designed heat exchanger details
+    """
 
     # info KB
     hx_data = HxData(kb)

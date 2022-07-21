@@ -1,42 +1,59 @@
-""""
-alisboa/jmcunha
-
-
-##############################
-INFO: Design HX for streams given above pinch. Stream split not allowed for match_remaining_streams.
-        1) When restriction=True, pinch analysis rule concerning concerning mcp_in<=mcp_out respected
-        2) When restriction=False, pinch analysis rule concerning concerning mcp_in<=mcp_out not respected
-
-
-##############################
-INPUT:
-        # hot_stream_index
-        # hot_stream
-        # cold_stream_index
-        # cold_stream
-        # df_cold_streams
-        # df_hot_streams
-        # hx_delta_T
-        # restriction  [True or False]
-
-
-##############################
-RETURN:
-        # df_cold_streams - updated
-        # df_hot_streams - updated
-        # new_hx_row - design HX for the streams provided
-
-"""
-
-
 from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_hx_temperatures import above_pinch_hx_temperatures
 from ......Source.simulation.Heat_Recovery.Pinch.HX.design_hx import design_hx
 from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_stream_info import above_pinch_stream_info
-from module.Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_match_remaining_streams_temperatures import above_pinch_match_remaining_streams_temperatures
+from ......Source.simulation.Heat_Recovery.Pinch.Above_Pinch.above_pinch_match_remaining_streams_temperatures import above_pinch_match_remaining_streams_temperatures
 
 
 def above_pinch_match_remaining_streams(kb, hot_stream_index, hot_stream, cold_stream_index, cold_stream, df_cold_streams,
                                         df_hot_streams, hx_delta_T, restriction):
+
+    """Design HX for streams given above pinch. S
+
+    Stream split not allowed for match_remaining_streams.
+        1) When restriction=True, pinch analysis rule concerning concerning mcp_in<=mcp_out respected
+        2) When restriction=False, pinch analysis rule concerning concerning mcp_in<=mcp_out not respected
+
+    Parameters
+    ----------
+    kb : dict
+        Knowledge Base data
+
+    hot_stream_index :
+        Hot stream ID
+
+    hot_stream : dict
+        Hot stream info
+
+    cold_stream_index :
+        Cold stream ID
+
+    cold_stream : dict
+        Cold stream info
+
+    df_cold_streams : df
+        Cold streams df
+
+    df_hot_streams : df
+        Hot streams df
+
+    hx_delta_T : float
+        Heat exchanger minimum temperature difference [ºC]
+
+    restriction : boolean
+        Consider restrictions (TRUE] or not (FALSE)
+
+    Returns
+    -------
+    df_cold_streams : df
+        Cold streams df updated
+
+    df_hot_streams : df
+        Hot streams df updated
+
+    new_hx_row : df
+        New HX designed for the streams provided
+
+    """
 
     hx_hot_stream_T_hot = -200  # just to run
     hx_cold_stream_T_hot = -200  # just to run

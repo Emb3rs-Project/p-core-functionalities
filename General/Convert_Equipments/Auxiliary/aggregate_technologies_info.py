@@ -30,7 +30,7 @@ def aggregate_technologies_info(object_id, technologies, power_fraction, max_pow
     teo_equipment_name : str
         Specific TEO nomenclature for the technology name
 
-    stream_id : int
+    stream_id : int, str
         Stream ID
 
 

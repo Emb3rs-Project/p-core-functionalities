@@ -39,6 +39,31 @@ RETURN:
 import numpy as np
 
 def pinch_point(df_heat_cascade, df_operating):
+    """Get pinch point
+
+    Find theoretical minimum heat and cold utilities.
+
+    Parameters
+    ----------
+    df_heat_cascade : df
+        DF with the heat cascade data
+
+    df_operating : df
+        DF with streams operating and its characteristics
+
+    Returns
+    -------
+    pinch_point_T : float
+        [ºC]
+
+    theo_minimum_hot_utility : float
+        Minimum theoretical hot utility [kW]
+
+    theo_minimum_cold_utility : float
+        Minimum theoretical cold utility [kW]
+
+
+    """
 
     heat_sum = 0
     minimum = 0

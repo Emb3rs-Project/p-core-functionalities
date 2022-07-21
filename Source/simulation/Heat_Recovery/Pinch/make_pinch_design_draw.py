@@ -2,19 +2,29 @@ import matplotlib.pyplot as plt, mpld3
 import matplotlib.lines as mlines
 
 def make_pinch_design_draw(info):
+    """Make pinch analysis diagram
 
-    """
+    Parameters
+    ----------
+    info : dict
+        Data from "convert_pinch" to make draw
 
-    :param info:
-        - info: ``dict``:
-            - streams_info
-            - pinch_temperature
-            - df_hx
-            - pinch_delta_T_min
+            streams_info : list
+                List with streams dict, with the following keys
 
+            pinch_temperature : float
+                Pinch temperature [ºC]
 
-    :return:
-        - fig_html: ``str``: Pinch Analysis Report HTML report in a string
+            pinch_delta_T_min : float
+                Minimum temperature difference considered for pinch analysis
+
+            df_hx : df
+                Designed heat exchangers data
+
+    Returns
+    -------
+    fig_html: str
+        HTML report
 
     """
 

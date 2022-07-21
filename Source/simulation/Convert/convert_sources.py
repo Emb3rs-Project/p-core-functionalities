@@ -14,9 +14,7 @@ from ....Error_Handling.error_convert_sources import MainErrorConvertSources
 from ....Error_Handling.runtime_error import ModuleRuntimeException
 
 def convert_sources(in_var, kb):
-
-    """
-    Sources conversion to the grid - design of technologies.
+    """Sources conversion to the grid - design of technologies.
 
     For each source are designed the conversion technologies needed. The design may be done for each stream individually
     or it can be made to the aggregated of streams (the user must provide his preference). After the designing, it is
@@ -26,7 +24,18 @@ def convert_sources(in_var, kb):
             2. If the stream supply temperature > ORC evaporator -> ORC cascaded designed
             3. If the stream supply temperature < grid supply temperature -> heating technologies are designed
 
-    :param in_var: ``dict``: platform and CF module data, with the following keys:
+    Parameters
+    ----------
+    in_var
+    kb
+
+    Returns
+    -------
+
+    """
+
+    """
+   :param in_var: ``dict``: platform and CF module data, with the following keys:
                 - platform: ``dict``: platform data, with the following keys:
                         - existing_grid_data: ``list with dict``: [OPTIONAL] existent grid connection point data, with the following keys:
                                 - id: ``int``: existent source or grid connection point ID
@@ -454,7 +463,7 @@ def convert_sources(in_var, kb):
                                                                             info_pump_grid],
                                                                            power_fraction,
                                                                            stream_available_capacity,
-                                                                           info_pump_grid.supply_capacity,
+                                                                           info_pump_grid.supply_capacity + needed_supply_capacity,
                                                                            'sou',
                                                                            teo_equipment_name,
                                                                            stream['id'])
@@ -494,7 +503,7 @@ def convert_sources(in_var, kb):
                                                                             info_pump_grid],
                                                                            power_fraction,
                                                                            stream_available_capacity,
-                                                                           info_pump_grid.supply_capacity,
+                                                                           info_pump_grid.supply_capacity + needed_supply_capacity,
                                                                            'sou',
                                                                            teo_equipment_name,
                                                                            stream['id'])
@@ -522,7 +531,7 @@ def convert_sources(in_var, kb):
                                                                         info_pump_grid],
                                                                        power_fraction,
                                                                        stream_available_capacity,
-                                                                       info_pump_grid.supply_capacity,
+                                                                       info_pump_grid.supply_capacity + needed_supply_capacity,
                                                                        'sou',
                                                                        teo_equipment_name,
                                                                        stream['id'])
@@ -548,7 +557,7 @@ def convert_sources(in_var, kb):
                                                                             info_pump_grid],
                                                                            power_fraction,
                                                                            stream_available_capacity,
-                                                                           info_pump_grid.supply_capacity,
+                                                                           info_pump_grid.supply_capacity + needed_supply_capacity,
                                                                            'sou',
                                                                            teo_equipment_name,
                                                                            stream['id'])

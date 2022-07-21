@@ -1,42 +1,61 @@
-""""
-alisboa/jmcunha
-
-
-##############################
-INFO: Get streams above pinch info
-
-
-##############################
-INPUT:
-        # hot_stream
-        # cold_stream
-
-        Where in hot_stream/cold_stream, the following keys:
-            # Closest_Pinch_Temperature
-            # Supply_Temperature
-            # Target_Temperature
-            # mcp
-            # Fluid
-            # Original_Stream
-
-
-##############################
-RETURN:
-        # hot_stream_min_T_cold  [ºC]
-        # hot_stream_T_hot  [ºC]
-        # hot_stream_mcp  [kW/K]
-        # hot_stream_fluid  [fluid]
-        # original_hot_stream_index  [ID]
-        # cold_stream_min_T_cold  [ºC]
-        # cold_stream_T_hot  [ºC]
-        # cold_stream_mcp  [kW/K]
-        # cold_stream_fluid  [fluid]
-        # original_cold_stream_index  [ID]
-
-"""
-
-
 def below_pinch_stream_info(hot_stream, cold_stream):
+    """Get streams below pinch info
+
+    Parameters
+    ----------
+    hot_stream : dict
+        Hot stream data, with the following keys:
+
+            Closest_Pinch_Temperature : float
+                [ºC]
+
+            Supply_Temperature : float
+                [ºC]
+
+            Target_Temperature : float
+                [ºC]
+
+            mcp : float
+                [kW/K]
+
+            Fluid : str
+                Fluid name
+
+            Original_Stream : int
+                Stream ID
+
+    cold_stream : dict
+        Cold stream data. Similar keys to "hot_stream"
+
+    Returns
+    -------
+    hot_stream_min_T_cold : float
+        [ºC]
+
+    hot_stream_T_hot : float
+        [ºC]
+
+    hot_stream_mcp : float
+        [kW/K]
+
+    hot_stream_fluid : str
+
+    cold_stream_min_T_cold : float
+        [ºC]
+
+    cold_stream_T_hot : float
+        [ºC]
+
+    cold_stream_mcp : float
+        [kW/K]
+
+    cold_stream_fluid : str
+
+    original_hot_stream_index : int
+
+    original_cold_stream_index : int
+
+    """
 
     hot_stream_min_T_cold = hot_stream['Target_Temperature']
     hot_stream_T_hot = hot_stream['Closest_Pinch_Temperature']

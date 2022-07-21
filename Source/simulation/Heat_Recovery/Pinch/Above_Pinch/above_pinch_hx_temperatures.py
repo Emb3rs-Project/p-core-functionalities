@@ -1,35 +1,49 @@
-""""
-alisboa/jmcunha
-
-
-##############################
-INFO: Design HX power and temperatures for stream matches above pinch point. Design for maximum power exchange while
-      checking temperatures feasibility on both streams.
-
-
-##############################
-INPUT:
-        # hot_stream_T_cold  [ºC]
-        # hot_stream_max_T_hot  [ºC]
-        # hot_stream_mcp  [kW/K]
-        # cold_stream_T_cold  [ºC]
-        # cold_stream_max_T_hot  [ºC]
-        # cold_stream_mcp  [kW/K]
-
-
-##############################
-RETURN:
-        # hx_power  [kW]
-        # hx_hot_stream_T_cold  [ºC]
-        # hx_hot_stream_T_hot  [ºC]
-        # hx_cold_stream_T_cold  [ºC]
-        # hx_cold_stream_T_hot  [ºC]
-
-"""
-
-
 def above_pinch_hx_temperatures(hot_stream_T_cold, hot_stream_max_T_hot, hot_stream_mcp, cold_stream_T_cold,
                                 cold_stream_max_T_hot, cold_stream_mcp):
+
+    """Design HX power and temperatures for stream matches above pinch point.
+
+    Design for maximum power exchange while checking temperatures feasibility on both streams.
+
+    Parameters
+    ----------
+    hot_stream_T_cold : float
+        [ºC]
+
+    hot_stream_max_T_hot : float
+        [ºC]
+
+    hot_stream_mcp : float
+        [kW/K]
+
+    cold_stream_T_cold : float
+        [ºC]
+
+    cold_stream_max_T_hot : float
+        [ºC]
+
+    cold_stream_mcp : float
+        [kW/K]
+
+
+    Returns
+    -------
+    hx_power : float
+        [kW]
+
+    hx_hot_stream_T_cold : float
+        [ºC]
+
+    hx_hot_stream_T_hot : float
+        [ºC]
+
+    hx_cold_stream_T_cold : float
+        [ºC]
+
+    hx_cold_stream_T_hot : float
+        [ºC]
+
+    """
 
     # max power available
     hx_hot_stream_T_cold = hot_stream_T_cold

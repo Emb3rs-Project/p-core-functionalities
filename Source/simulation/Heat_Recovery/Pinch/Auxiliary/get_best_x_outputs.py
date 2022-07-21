@@ -1,58 +1,36 @@
-"""
-alisboa/jmcunha
+def get_best_x_outputs(info_pinch, df_optimization, lifetime, pinch_delta_T_min, stream_table,stream_combination_not_feasible,interest_rate):
+    """Get best options
 
-##############################
-INFO: Get best x (depends on the number of options desired) design solutions according to inputs.
-      Compute all info for the Business module.
+    Get best x (depends on the number of options desired) design solutions according to inputs.
+    Compute all info for the Business module.
 
+    Parameters
+    ----------
+    info_pinch : df
+        Designed heat exchangers data
 
-##############################
-INPUT:
-        # info_pinch
-        # df_optimization
-        # country
-        # lifetime
+    df_optimization : df
+        Techno economical parameters to evaluate best options
 
-        Where in df_optimization, the following keys:
-            # index - designed solution ID  [ID]
-            # co2_savings [kg CO2/year]
-            # money_savings [€/year]
-            # energy_recovered  [kWh/year]
-            # energy_investment  [€/kWh]
-            # turnkey - design solution turnkey/capex [€]
-            # om_fix - solution om fix  [€/year]
+    lifetime : int
 
+    pinch_delta_T_min : float
 
-##############################
-RETURN:
-        # best_x_options - list with best x design solutions, e.g. best_x_options=[best_option_1,best_option_2,...]
+    stream_table : df
+        All streams characterization data
 
-        Where in each solution, for example:
-        # best_option_1 = {
-        #                 'ID' - designed solution ID  [ID]
-        #                 'streams' - streams in pinch design ID [ID]
-        #                 'capex'  [€]
-        #                 'om_fix' - yearly om fix costs [€/year]
-        #                 'hot_utility' - power of the hot utility needed, so that the cold streams reach their target_temperature  [kW]
-        #                 'cold_utility' - power of the cold utility needed, so that the hot streams reach their target_temperature  [kW]
-        #                 'lifetime' - considered lifetime  [year]
-        #                 'co2_savings' - annualized co2 savings by implementing the pinch design [kg CO2/kWh]
-        #                 'money_savings' - annualized energy savings by implementing the pinch design  [€/kWh]
-        #                 'energy_dispatch' - yearly energy recovered by implementing the pinch design [kWh/year]
-        #                 'discount_rate'  []
-        #                 'pinch_temperature' - design pinch temperature [ºC]
-        #                 'theo_minimum_hot_utility' - theoretical power of the hot utility needed, so that the cold streams reach their target_temperature  [kW]
-        #                 'theo_minimum_cold_utility' - theoretical power of the cold utility needed, so that the hot streams reach their target_temperature  [kW]
-        #                 'equipment_detailed_savings', - list with equipment details saving when implementing the pinch design
-        #                 'pinch_hx_data' - list with pinch design data
-        #                 }
+    stream_combination_not_feasible : list
+        Streams ID
 
+    interest_rate : float
+        []
 
-"""
+    Returns
+    -------
+    best_x_options : list
+        Best options detailed data
 
-
-
-def get_best_x_outputs(info_pinch, df_optimization, country, lifetime, pinch_delta_T_min, kb, stream_table,stream_combination_not_feasible,type,interest_rate):
+    """
 
 
     best_x_options = []
