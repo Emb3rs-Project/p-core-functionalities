@@ -1,9 +1,6 @@
 def design_orc(stream_capacity, stream_fluid, stream_supply_temperature, stream_target_temperature, hx_delta_T, orc_T_cond,
                orc_T_evap, hx_efficiency, aggregate_streams):
-
-
-    """
-    Design ORC according to the excess heat streams given.
+    """Design ORC according to the excess heat streams given.
 
     The following assumptions are implemented:
         - 120 ºC is the minimum temperature flue_gas can be cooled. Design constraint - lower flue_gas temperatures mean
@@ -12,28 +9,64 @@ def design_orc(stream_capacity, stream_fluid, stream_supply_temperature, stream_
      The conversion design can be for a unique stream  or the aggregated of multiple streams. If the excess streams are
      to be aggregated to enhance the power available to convert in the ORC, a intermediate circuit is designed.
 
-    :param stream_capacity: ``float``: given stream capacity (it may be corrected) [kW]
-    :param stream_fluid: ``str``: stream fluid []
-    :param stream_supply_temperature: ``float``: stream supply/initial temperature [ºC]
-    :param stream_target_temperature: ``float``: given stream target/final temeprature (it may be corrected) [ºC]
-    :param hx_delta_T: ``float``: minimum heat exchangers temperature difference [ºC]
-    :param orc_T_cond: ``float``: ORC condenser temperature [ºC]
-    :param orc_T_evap: ``float``: ORC evaporator temperature [ºC]
-    :param hx_efficiency: ``float``: heat exchanger efficiency []
-    :param aggregate_streams: ``boolean``: design ORC for the aggregate of multiple streams or not
 
-    :return:
-        - orc_type: ``str``: DEFAULT="orc"
-        - stream_thermal_capacity_max_power: ``float``: maximum convertible stream capacity [kW]
-        - orc_electrical_generation: ``float``:  ORC nominal electrical generation [kW]
-        - overall_thermal_capacity: ``float``: thermal conversion efficiency []
-        - stream_target_temperature_corrected: ``float``: stream target/final temeprature (it may be corrected) [ºC]
-        - intermediate_circuit_exist: ``boolean``: whether intermediate circuit should be designed
-        - intermediate_T_hot: ``float``: intermediate circuit fluid' highest temperature [ºC]
-        - intermediate_T_cold: ``float``: intermediate circuit fluid' lowest temperature [ºC]
+    Parameters
+    ----------
+    stream_capacity : float
+        given stream capacity (it may be corrected) [kW]
+
+    stream_fluid : str
+        stream fluid []
+
+    stream_supply_temperature : float
+        stream supply/initial temperature [ºC]
+
+    stream_target_temperature : float
+        given stream target/final temeprature (it may be corrected) [ºC]
+
+    hx_delta_T : float
+        minimum heat exchangers temperature difference [ºC]
+
+    orc_T_cond : float
+        ORC condenser temperature [ºC]
+
+    orc_T_evap : float
+        ORC evaporator temperature [ºC]
+
+    hx_efficiency : float
+        heat exchanger efficiency []
+
+    aggregate_streams : boolean
+        design ORC for the aggregate of multiple streams or not
+
+
+    Returns
+    -------
+    orc_type : str
+        DEFAULT="orc"
+
+    stream_thermal_capacity_max_power : float
+        Maximum convertible stream capacity [kW]
+
+    orc_electrical_generation : float
+        ORC nominal electrical generation [kW]
+
+    overall_thermal_capacity : float
+        Thermal conversion efficiency []
+
+    stream_target_temperature_corrected : float
+        Stream target/final temeprature (it may be corrected) [ºC]
+
+    intermediate_circuit_exist : boolean
+        Whether intermediate circuit should be designed
+
+    intermediate_T_hot : float
+        Intermediate circuit fluid' highest temperature [ºC]
+
+    intermediate_T_cold : float
+        Intermediate circuit fluid' lowest temperature [ºC]
 
     """
-
 
     ################################################
     # Defined vars

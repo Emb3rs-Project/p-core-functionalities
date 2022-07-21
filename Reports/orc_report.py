@@ -87,7 +87,7 @@ def orc_report(convert_orc_output):
 
     # Designed Solutions
     df_solutions["electrical_generation_yearly"] = get_int(df_solutions["electrical_generation_yearly"])
-    df_solutions["turnkey"] = get_int(df_solutions["turnkey"])
+    df_solutions["capex"] = get_int(df_solutions["capex"])
     df_solutions["om_fix"] = get_int(df_solutions["om_fix"])
     df_solutions["ID"] = get_int(df_solutions["ID"])
     df_solutions["electrical_generation_nominal"] = get_int(df_solutions["electrical_generation_nominal"])
@@ -103,7 +103,7 @@ def orc_report(convert_orc_output):
 
     # Overview Data
     df_overview_data = df_solutions[
-        ["ID", "streams_id", "CO2 Savings", "Money Savings", "electrical_generation_yearly", "turnkey",
+        ["ID", "streams_id", "CO2 Savings", "Money Savings", "electrical_generation_yearly", "capex",
          "om_fix"]].copy()
 
 
@@ -134,7 +134,7 @@ def orc_report(convert_orc_output):
                                  "T condenser [ºC]"]
 
     # Economic Data
-    df_economic_data = df_solutions[["ID", "turnkey", "om_fix", "om_var"]].copy()
+    df_economic_data = df_solutions[["ID", "capex", "om_fix", "om_var"]].copy()
 
     df_economic_data['om_var'] = df_economic_data['om_var'] * df_solutions["electrical_generation_yearly"]
     df_economic_data['om_var'] = get_int(df_economic_data['om_var'])

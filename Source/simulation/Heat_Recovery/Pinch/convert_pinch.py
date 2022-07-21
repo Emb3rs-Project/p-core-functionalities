@@ -1,10 +1,5 @@
-"""
-alisboa/jmcunha
-"""
-
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.pinch_analysis import pinch_analysis
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.get_best_x_outputs import get_best_x_outputs
-from .....KB_General.fuel_properties import FuelProperties
 from .....General.Auxiliary_General.get_country import get_country
 import itertools
 import pandas as pd
@@ -15,100 +10,189 @@ from .....Reports.pinch_report import pinch_report
 
 
 def convert_pinch(in_var, kb: KB):
-    """
-    Main function of Heat Recovery Module.
+    """Main function of Pinch Analysis
+
     Includes data pretreatment, pinch analysis, and economic/co2 analysis of the options designed.
     Return the best three solutions for: minimum CO2 emissions ,maximize energy recovery, and energy recovery specific cost.
 
-    :param in_var:
+    Parameters
+    ----------
+    in_var : dict
+        Data for pinch analysis, with the following key:
 
-        streams_to_analyse: list
-            List with streams ID to analyse
+            platform :  dict
+                Platform Data
 
-        pinch_delta_T_min: float
-            Minimum delta temperature for pinch analysis
-            Use ºC
+                    streams_to_analyse : list
+                        List with streams ID to analyse
 
-        all_input_objects: list
-            List with:
-                - equipments (check Source/characterization/Generate_Equipment)
-                - processes (check Source/characterization/Process/process)
-                - isolated streams
-                       id,
-                       fluid - fluid name
-                       flowrate  [kg/h]
-                       supply_temperature  [ºC]
-                       target_temperature  [ºC]
-                       object_id - associated process/equipment ID
-                       schedule - array with hourly schedule, 1=operating and 0_not_operating
-                       hourly_generation - array with hourly power [kWh]
+                    pinch_delta_T_min: float
+                        Minimum delta temperature for pinch analysis [ºC]
 
-        location: list
-            [latitude, longitude]
+                    all_input_objects : list
+                        List with:
+                            - equipments (check Source/characterization/Generate_Equipment)
+                            - processes (check Source/characterization/Process/process)
+                            - isolated streams (check General/Simple_User/isolated_stream)
 
-        lifetime: int [OPTIONAL]
-            Heat exchangers lifetime
+                    location:  list
+                        [latitude, longitude] [º]
 
-        number_output_options: int [OPTIONAL]
-            Number of solutions of each category to return
-            Assumed number_output_options=3
+                    lifetime : int, optional
+                        Heat exchangers lifetime. DEFAULT=20
+
+                    fuels_data: dict:
+                        Fuels price and CO2 emission, with the following keys:
+
+                            - natural_gas: dict
+                                Natural gas data
+
+                                    - co2_emissions: float:
+                                        Fuel CO2 emission [kg CO2/kWh]
+
+                                    - price: float:
+                                        Fuel price [€/kWh]
+
+                            - fuel_oil
+                                Same keys as "natural_gas"
+
+                            - electricity
+                                Same keys as "natural_gas"
+
+                            - biomass
+                                Same keys as "natural_gas"
+
+                    number_output_options: int, optional
+                        Number of solutions of each category to return. DEFAULT=3
+
+                    interest_rate : float, optional
+                        Interest rate considered for BM
+
+    kb : dict
+        Knowledge Base
+
+    Returns
+    -------
+    pinch_output : dict
+        Pinch analysis, with the following keys:
+
+            best_options : dict
+                Three categories, with the respective following keys:
+
+                    co2_optimization : list
+                        List with dicts, with best design options that minimize CO2 emissions. Each solution with the following
+                        keys:
+
+                            ID : int
+                                Designed solution ID
+
+                            streams : list
+                                Streams ID in pinch design
+
+                            streams_info : list
+                                array with dicts
+
+                            capex : float
+                                Solution capex [€]
+
+                            om_fix : float
+                                Yearly OM fix costs [€/year]
+
+                            hot_utility : float
+                                Power of the hot utility needed, so that the cold streams reach their target_temperature [kW]
+
+                            cold_utility : float
+                                Power of the cold utility needed, so that the hot streams reach their target_temperature [kW]
+
+                            lifetime : float
+                                Considered lifetime  [year]
+
+                            co2_savings : float
+                                Annualized co2 savings by implementing the pinch design [kg CO2/kWh]
+
+                            money_savings : float
+                                Annualized energy savings by implementing the pinch design  [€/kWh]
+
+                            energy_dispatch : float
+                                Yearly energy recovered by implementing the pinch design [kWh/year]
+
+                            discount_rate : float
+                                Financial parameter for the BM []
+
+                            pinch_temperature : float
+                                Design pinch temperature [ºC]
+
+                            theo_minimum_hot_utility : float
+                                Theoretical power of the hot utility needed, so that the cold streams reach their target temperature [kW]
+
+                            theo_minimum_cold_utility : float
+                                Theoretical power of the cold utility needed, so that the hot streams reach their target temperature [kW]
+
+                            pinch_hx_data : list
+                                Each heat exchanger technical/economical dat,with the following keys:
+
+                                    - HX_Power : float
+                                        Heat exchanger power [kW]
+
+                                    - HX_Hot_Stream : int
+                                        Hot stream ID
+
+                                    - HX_Cold_Stream : int
+                                        Cold stream ID
+
+                                    - HX_Original_Hot_Stream : int
+                                        Hot stream ID (there might be a split, meaning that  HX_Original_Hot_Stream != HX_Hot_Stream)
+
+                                    - HX_Original_Cold_Stream : int
+                                        Cold stream ID (there might be a split, meaning that  HX_Original_Cold_Stream != HX_Cold_Stream)
+
+                                    - HX_Type : str
+                                        Heat exchanger type
+
+                                    - HX_Turnkey_Cost : float
+                                        Heat exchanger capex [€]
+
+                                    - HX_OM_Fix_Cost : float
+                                        Heat exchanger OM Fix [€/year]
+
+                                    - HX_Hot_Stream_T_Hot : float
+                                        Hot stream hot temperature[ºC]
+
+                                    - HX_Hot_Stream_T_Cold : float
+                                        Hot stream cold temperature[ºC]
+
+                                    - HX_Cold_Stream_T_Hot : float
+                                        Cold stream hot temperature[ºC]
+
+                                    - HX_Cold_Stream_T_Cold : float
+                                        Cold stream cold temperature[ºC]
+
+                                    - Storage : float
+                                        Storage volume [m3]
+
+                                    - Storage_Satisfies : float
+                                        Percentage of capacity in mismatch hours that storaeg satisfies [%]
+
+                                    - Storage_Turnkey_Cost : float
+                                        Storage capex [€]
+
+                                    - Total_Turnkey_Cost : float
+                                        Heat exchanger + storage copex [€]
+
+                                    - Recovered_Energy : float
+                                        Amount of energy recovered [kWh]
 
 
-    :param kb: Knowledge Base
+                    energy_recovered_optimization : list
+                        List with best design options of the respective category -> similar to "co2_optimization"
 
-    :return:
-        report: str
-            HTML report
+                    energy_investment_optimization : list
+                        List with best design options of the respective category -> similar to "co2_optimization"
 
-        best_options: dict
-            Categories with list of dicts of the best solutions:
-                co2_optimization
-                energy_recovered_optimization
-                energy_investment_optimization
-
-            Each one provides the best design options in dicts, with the following keys:
-            For example in :
-                co2_option_1 = {
-                                'ID' - designed solution ID  [ID]
-                                'streams' - streams in pinch design ID [ID]
-                                'streams_info' - array with dicts
-                                'capex'  [€]
-                                'om_fix' - yearly om fix costs [€/year]
-                                'hot_utility' - power of the hot utility needed, so that the cold streams reach their target_temperature  [kW]
-                                'cold_utility' - power of the cold utility needed, so that the hot streams reach their target_temperature  [kW]
-                                'lifetime' - considered lifetime  [year]
-                                'co2_savings' - annualized co2 savings by implementing the pinch design [kg CO2/kWh]
-                                'money_savings' - annualized energy savings by implementing the pinch design  [€/kWh]
-                                'energy_dispatch' - yearly energy recovered by implementing the pinch design [kWh/year]
-                                'discount_rate'  []
-                                'pinch_temperature' - design pinch temperature [ºC]
-                                'theo_minimum_hot_utility' - theoretical power of the hot utility needed, so that the cold streams reach their target_temperature  [kW]
-                                'theo_minimum_cold_utility' - theoretical power of the cold utility needed, so that the hot streams reach their target_temperature  [kW]
-                                'pinch_hx_data' - list with pinch design data
-                                }
-
-                Where in pinch_hx_data various dict with HX designed, e.g. pinch_hx_data=[hx_1,hx_2,...] :
-                For example:
-                    hx_1 = {
-                            'HX_Power'  [kW]
-                            'HX_Hot_Stream'  [ID]
-                            'HX_Cold_Stream'  [ID]
-                            'HX_Original_Hot_Stream'  [ID]
-                            'HX_Original_Cold_Stream'  [ID]
-                            'HX_Type'  [hx type]
-                            'HX_Turnkey_Cost'  [€]
-                            'HX_OM_Fix_Cost'  [€/year]
-                            'HX_Hot_Stream_T_Hot'  [ºC]
-                            'HX_Hot_Stream_T_Cold'  [ºC]
-                            'HX_Cold_Stream_T_Hot'  [ºC]
-                            'HX_Cold_Stream_T_Cold'  [ºC]
-                            'Storage'  [m3]
-                            'Storage_Satisfies'  [%]
-                            'Storage_Turnkey_Cost'  [€]
-                            'Total_Turnkey_Cost'  [€]
-                            'Recovered_Energy'  [kWh/year]
-                             }
+            report : str
+                HTML Report
     """
+
 
     ############################################################################################################
     # INPUT

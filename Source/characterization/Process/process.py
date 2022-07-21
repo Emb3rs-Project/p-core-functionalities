@@ -3,45 +3,123 @@ import datetime
 from ....utilities.kb import KB
 
 class Process:
+    """Create Process object
+
+    Attributes
+    ----------
+    id : int
+        Process ID
+
+    object_type : str
+        DEFAULT = "process"
+
+    streams : list
+        Data of the streams associated to this equipment
+
+    equipment_id : int
+        Equipment ID associated
+
+    operation_temperature : float
+        Operation temperature [ºC]
+
+    schedule_type: int
+        Process schedule type; batch (1) or continuous (0)
+
+    example_of_daily_period : list
+        Hours in a daily period [h]
+
+    eff_equipment : float
+        Efficiency of the equipment associated []
+
+    fuel : str
+        Fuel of the equipment associated
+
+    cycle_time_percentage : float
+        Process cycle time percentage []
+    """
 
     def __init__(self,in_var, kb : KB):
+        """Create Process object and characterize its streams (Inflow/Outflow/Maintenance/Evaporation).
 
-        """
-        Create Process object and characterize its streams (Inflow/Outflow/Maintenance/Evaporation).
+        Parameters
+        ----------
+        in_var : dict
+            Process characterization data, with the following keys:
 
-        :param in_var: ``dict``: Process characterization data with the following keys:
+                - id: int
+                    Process ID []
 
-                - id: ``int``: process ID []
-                - equipment_id: ``int``: associated equipment ID []
-                - operation_temperature: ``float``: process temperature [ºC]
-                - saturday_on: ``int``: if it is available on Saturday []; 1 (yes)  or 0 (no)
-                - sunday_on: ``int``: if it is available on Sunday []; 1 (yes)  or 0 (no)
-                - shutdown_periods: ``list``: list with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
-                - daily_periods: ``list``: list with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
-                - schedule_type: ``str``: process schedule type; batch (1) or continuous (0)
-                - cycle_time_percentage: ``float``: cycle  percentage for Startup/Inflow/Outflow during batch process
-                - inflow_data: ``list with dict``: inflow ``dict`` with the following keys:
+                - equipment_id: int
+                    Associated equipment ID []
 
-                    - name: ``str``: inflow name
-                    - mass: ``float``: [OPTIONAL] inflow mass [kg]
-                    - flowrate: ``float``: [OPTIONAL] inflow flowrate [kg/h]
-                    - fluid_cp: ``float``: inflow cp [kJ/kg.K]
-                    - supply_temperature: ``float``: inflow supply/initial temperature [ºC]
+                - operation_temperature: float
+                    process temperature [ºC]
 
-                - outflow_data ``list with dict``
+                - saturday_on: int
+                    If it is available on Saturday []; 1 (yes)  or 0 (no)
 
-                    - fluid_cp: ``float``: outflow cp [kJ/kg.K]
-                    - target_temperature: ``float``: outflow target/final temperature [ºC]
-                    - flowrate: ``float``: [OPTIONAL] outflow mass flowrate [kg/h]
-                    - mass: ``float``: [OPTIONAL] outflow mass [kg]
-                    - initial_temperature: ``float``: [OPTIONAL] outflow iniital temperature [ºC]
+                - sunday_on: int
+                    If it is available on Sunday []; 1 (yes)  or 0 (no)
 
-                - maintenance_data ``list with dict``
+                - shutdown_periods: list
+                    List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
 
-                    - name: ``str``: inflow name
-                    - maintenance_capacity: ``float``: maintenance or evaporation capacity [kW]
+                - daily_periods: list
+                    List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
 
-        :param kb: Knowledge Base data
+                - schedule_type: int
+                    Process schedule type; batch (1) or continuous (0)
+
+                - cycle_time_percentage: float
+                    Cycle  percentage for Startup/Inflow/Outflow during batch process
+
+                - inflow_data: list
+                    Inflow streams dicts, with the following keys:
+
+                        - name: str
+                            Inflow name
+
+                        - mass: float, optional
+                            Inflow mass [kg]; Provide flowrate or mass
+
+                        - flowrate: float, optional
+                            Inflow flowrate [kg/h]; Provide flowrate or mass
+
+                        - fluid_cp: float
+                            Inflow cp [kJ/kg.K]
+
+                        - supply_temperature: float
+                            Inflow supply/initial temperature [ºC]
+
+                - outflow_data : list
+                    Outflow data dicts, with the following keys:
+
+                        - fluid_cp: float
+                            Outflow cp [kJ/kg.K]
+
+                        - target_temperature: float
+                            Outflow target/final temperature [ºC]
+
+                        - flowrate: float, optional
+                            Outflow mass flowrate [kg/h]
+
+                        - mass: float, optional
+                            Outflow mass [kg]
+
+                        - initial_temperature: float, optional
+                            Outflow initIal temperature [ºC]
+
+                - maintenance_data : list
+                    Maintenance data dicts, with the following keys:
+
+                        - name: str
+                            Name
+
+                        - maintenance_capacity: float
+                            Maintenance or evaporation capacity [kW]
+
+        kb : dict
+            Knowledge Base data
 
         """
 

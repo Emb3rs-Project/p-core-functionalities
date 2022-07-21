@@ -1,3 +1,4 @@
+from ....General.Auxiliary_General.compute_cop_eer import compute_cop_eer
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....General.Auxiliary_General.stream_industry import stream_industry
@@ -7,26 +8,77 @@ from ....utilities.kb import KB
 
 
 class Cooling_Equipment:
+    """Create Cooling Equipment Object
+
+    Attributes
+    ----------
+    id : int
+        Equipment ID
+
+    object_type : str
+        DEFAULT = "equipment"
+
+    streams : list
+        Data of the streams associated to this equipment
+
+    fuel_type : str
+        Fuel type
+
+    supply_capacity : float
+        Equipment supply capacity [kW]
+
+    global_conversion_efficiency : float
+        Equipment efficiency []
+
+    equipment_sub_type  : str
+        Equipment designation
+
+    """
 
     def __init__(self, in_var, kb: KB):
+        """Create Cooling Equipment Object and characterize its streams
 
+        Parameters
+        ----------
+        in_var : dict
+            Equipment characterization data, with the following keys:
+
+                id : int
+                    Equipment ID
+
+                fuel_type : str
+                    Fuel type
+
+                object_type : str
+                    Equipment type: "process", "boiler","chp", "burner", "cooling_equipment", "stream"
+
+                global_conversion_efficiency : float
+                    Chiller COP []
+
+                supply_capacity : float
+                    Equipment supply capacity [kW]
+
+                cooling_equipment_sub_type : str
+                    Type of cooling equipment; 'co2_chiller', 'cooling_tower', 'compression_chiller'
+
+                processes : list
+                    List of processes objects associated to the equipment
+
+                saturday_on : int
+                    If it is available on Saturday []; 1 (yes)  or 0 (no)
+
+                sunday_on : int
+                    If it is available on Sunday []; 1 (yes)  or 0 (no)
+
+                shutdown_periods : list
+                    List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
+
+                daily_periods : list
+                    List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
+
+        kb : dict
+            Knowledge Base data
         """
-        Create Cooling Equipment Object and characterize its streams.
-
-        :param in_var: ``dict``: cooling equipment characterization data
-                - id: ``int``: equipment ID []
-                - global_conversion_efficiency: ``float``: COP []
-                - cooling_equipment_sub_type: ``str``: type of cooling equipment; 'co2_chiller', 'cooling_tower', 'compression_chiller'
-                - supply_capacity: ``float``: equipment supply capacity [kW]
-                - saturday_on: ``int``: if it is available on Saturday []; 1 (yes)  or 0 (no)
-                - sunday_on: ``int``: if it is available on Sunday []; 1 (yes)  or 0 (no)
-                - shutdown_periods: ``list``: list with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
-                - daily_periods: ``list``: list with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
-
-        :param kb: Knowledge Base data
-
-        """
-
         ############################################################################################
         # KB
         equipment_details = EquipmentDetails(kb)
@@ -68,7 +120,7 @@ class Cooling_Equipment:
         # COP
         if self.global_conversion_efficiency is None:
             if self.equipment_sub_type == 'compression_chiller':
-                cop = compute_cop_err(self.equipment_sub_type)
+                cop = compute_cop_eer(self.equipment_sub_type)
             else:
                 cop, om_fix, turnkey = equipment_details.get_values(self.equipment_sub_type, self.supply_capacity)
 
@@ -116,7 +168,7 @@ class Cooling_Equipment:
                                             excess_heat_target_temperature,
                                             excess_heat_flowrate,
                                             excess_heat_supply_capacity,
-                                            schedule,
+                                            schedule=schedule,
                                             stream_id=1,
                                             fuel="none",
                                             eff_equipment=None

@@ -10,16 +10,28 @@ from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 
 def source_detailed(in_var, kb: KB):
-    """
+    """User that characterizes both processes and equipment
+
     User that characterizes both processes and equipment. Receives a list with the data needed to create each object
     (process,boiler,chp,burner,cooling equipment) and returns a list with the objects created.
 
-    :param in_var: ``list with dict``: dicts with data for each equipment and process. Check inputs in process, generate_boiler,
-    generate_chp, generate_cooling_equipment, process,generate_boiler, generate_burner
-    :param kb: Knowledge Base data
+    Parameters
+    ----------
+    in_var : dict
+        Data from the platform to perform detailed characterization
 
-    :return:
-        - objects_list: ``list with dict``: list with processes and equipments
+            platform : list
+                List with dicts with data for each equipment and process. Check inputs in thr routines: process,
+                generate_boiler, generate_chp,generate_cooling_equipment, isolated_stream.
+
+    kb : dict
+        Knowledge Base
+
+    Returns
+    -------
+    objects_list : list
+        List with processes and equipments objects
+
     """
 
     #################

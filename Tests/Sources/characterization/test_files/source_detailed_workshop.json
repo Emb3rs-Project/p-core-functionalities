@@ -29,6 +29,7 @@
       },
       {
         "object_type": "boiler",
+        "boiler_equipment_sub_type": "hot_water_boiler",
         "id": 1001,
         "saturday_on": 0,
         "sunday_on": 0,

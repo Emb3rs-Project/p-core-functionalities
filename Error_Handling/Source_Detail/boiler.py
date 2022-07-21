@@ -10,6 +10,9 @@ class OpenClosedCircuit(int, Enum):
     open_circuit = 0
     closed_circuit = 1
 
+class BoilerType(str, Enum):
+    steam_boiler = "steam_boiler"
+    hot_water_boiler = "hot_water_boiler"
 
 class Boiler(SourceDetailedObject, Schedule,FuelType):
 
@@ -19,6 +22,7 @@ class Boiler(SourceDetailedObject, Schedule,FuelType):
     equipment_return_temperature: Optional[PositiveFloat]
     global_conversion_efficiency: Optional[confloat(gt=0, lt=1)]
     boiler_supply_flowrate: Optional[PositiveFloat]
+    boiler_equipment_sub_type: BoilerType
 
 
     @validator("boiler_supply_flowrate", always=True)

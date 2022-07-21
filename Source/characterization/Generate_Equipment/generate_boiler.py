@@ -1,42 +1,96 @@
-from ....General.Auxiliary_General.get_country import get_country
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
 from ....General.Auxiliary_General.combustion_mass_flows import combustion_mass_flows
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.medium import Medium
 from ....KB_General.equipment_details import EquipmentDetails
-from ....KB_General.fuel_properties import FuelProperties
-
 from ....utilities.kb import KB
 
 
 class Boiler:
+    """Create Boiler Object
+
+    Attributes
+    ----------
+    id : int
+        Equipment ID
+
+    object_type : str
+        DEFAULT = "equipment"
+
+    streams : list
+        Data of the streams associated to this equipment
+
+    fuel_type : str
+        Fuel type
+
+    supply_capacity : float
+        Equipment supply capacity [kW]
+
+    global_conversion_efficiency : float
+        Equipment efficiency []
+
+    equipment_sub_type  : str
+        Equipment designation
+
+    """
 
     def __init__(self, in_var, kb: KB):
 
-        """
-        Create Boiler Object and characterize its streams.
+        """Create Boiler Object and characterize its streams
 
-        :param in_var: ``dict``: boiler characterization data
+        Parameters
+        ----------
+        in_var : dict
+            Equipment characterization data, with the following keys:
 
-                - id: ``int``: equipment ID []
-                - supply_capacity: ``float``: equipment supply capacity [kW]
-                - equipment_supply_temperature: ``float``: working fluid supply temperature [ºC]
-                - equipment_return_temperature: ``float``: [OPTIONAL] working fluid return temperature [ºC]
-                - open_closed_loop: ``int``: whether is a opens or closed loop boiler; 1 (yes)  or 0 (no)
-                - global_conversion_efficiency: ``float``: equipment efficiency []
-                - fuel_type: ``str``: fuel type []; (natural_gas, fuel_oil, biomass, electricity)
-                - saturday_on: ``int``: if it is available on Saturday []; 1 (yes)  or 0 (no)
-                - sunday_on: ``int``: if it is available on Sunday []; 1 (yes)  or 0 (no)
-                - shutdown_periods: ``list``: list with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
-                - daily_periods: ``list``: list with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
-                - boiler_supply_flowrate: ``float``: [OPTIONAL] working fluid mass flowrate
-                - location: ``list``: [latitude, longitude]
-                - fuel_price: ``float``: [OPTIONAL]
-                - fuel_co2_emissions: ``float``: [OPTIONAL]
+                id : int
+                    Equipment ID
 
-        :param kb: Knowledge Base data
+                object_type : str
+                    Equipment type: "process", "boiler","chp", "burner", "cooling_equipment", "stream"
 
+                fuel_type : str
+                    Fuel type
+
+                boiler_equipment_sub_type: str
+                    Options: "steam_boiler" or "hot_water_boiler"
+
+                supply_capacity : float
+                    Equipment supply capacity [kW]
+
+                global_conversion_efficiency : float
+                    Conversion efficiency []
+
+                processes : list
+                    List of processes objects associated to the equipment
+
+                equipment_supply_temperature : float
+                    Equipment circuit supply temperature [ºC]
+
+                open_closed_loop : int
+                    Whether is a opens or closed loop boiler; 1 (yes)  or 0 (no)
+
+                saturday_on : int
+                    If it is available on Saturday []; 1 (yes)  or 0 (no)
+
+                sunday_on : int
+                    If it is available on Sunday []; 1 (yes)  or 0 (no)
+
+                shutdown_periods : list
+                    List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
+
+                daily_periods : list
+                    List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
+
+                equipment_return_temperature : float, optional
+                    Equipment working fluid return temperature [ºC]
+
+                boiler_supply_flowrate : float, optional
+                    Equipment working fluid mass flowrate. Only for steam boilers.
+
+        kb : dict
+            Knowledge Base data
         """
 
         ############################################################################################
@@ -58,7 +112,7 @@ class Boiler:
         # INPUT
         self.id = in_var['id']  # equipment ID
         self.fuel_type = in_var['fuel_type']  # Fuel type  (Natural gas, Fuel oil, Biomass)
-
+        self.equipment_sub_type = in_var['boiler_equipment_sub_type']
         self.supply_capacity = in_var['supply_capacity']
         self.global_conversion_efficiency = in_var['global_conversion_efficiency']
         processes = in_var['processes']

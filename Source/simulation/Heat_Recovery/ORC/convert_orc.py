@@ -209,7 +209,7 @@ def convert_orc(in_var, kb: KB):
                         'electrical_generation_yearly': electrical_generation_yearly,# electric generation per year [kWh]
                         'excess_heat_supply_capacity': stream_thermal_capacity_total,  # [kW]
                         'conversion_efficiency': eff_carnot_corrected,  # [%]
-                        'turnkey': total_turnkey,  # [€]
+                        'capex': total_turnkey,  # [€]
                         'om_fix': om_fix_total,  # yearly om fix costs [€/year]
                         'om_var': om_var_total / electrical_generation_yearly,  # [€/kWh]
                         'electrical_generation_yearly_turnkey': total_turnkey / electrical_generation_yearly,

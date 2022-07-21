@@ -1,37 +1,104 @@
-from ....General.Auxiliary_General.get_country import get_country
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
 from ....General.Auxiliary_General.combustion_mass_flows import combustion_mass_flows
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.medium import Medium
 from ....utilities.kb import KB
-from ....KB_General.fuel_properties import FuelProperties
 
 
 class Chp:
+    """Create CHP Object
+
+    Attributes
+    ----------
+    id : int
+        Equipment ID
+
+    object_type : str
+        DEFAULT = "equipment"
+
+    streams : list
+        Data of the streams associated to this equipment
+
+    fuel_type : str
+        Fuel type
+
+    supply_capacity : float
+        Equipment supply capacity [kW]
+
+    global_conversion_efficiency : float
+        Equipment efficiency []
+
+    equipment_sub_type  : str
+        Equipment designation
+
+    thermal_conversion_efficiency : float
+        Thermal conversion efficiency []
+
+    electrical_conversion_efficiency : float
+        Electrical conversion efficiency []
+    """
 
     def __init__(self, in_var, kb: KB):
-
         """
-        Create CHP Object and characterize its streams.
 
-        :param in_var: ``dict``: CHP characterization data
+        Parameters
+        ----------
+        in_var : dict
+            Equipment characterization data, with the following keys:
 
-                - id: ``int``: equipment ID []
-                - fuel_type: ``str``: fuel type []; (natural_gas, fuel_oil, biomass)
-                - supply_capacity: ``float``: [OPTIONAL] equipment supply capacity [kW]
-                - electrical_generation: ``float``: [OPTIONAL] equipment electrical generation capacity [kW]
-                - global_conversion_efficiency: ``float``: equipment efficiency []
-                - thermal_conversion_efficiency: ``float``: [OPTIONAL] CHP thermal efficiency []
-                - electrical_conversion_efficiency: ``float``: CHP electrical efficiency []
-                - saturday_on: ``int``: if it is available on Saturday []; 1 (yes)  or 0 (no)
-                - sunday_on: ``int``: if it is available on Sunday []; 1 (yes)  or 0 (no)
-                - shutdown_periods: ``list``: list with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
-                - daily_periods: ``list``: list with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
-                - location: ``list``: [latitude, longitude]
-                - fuel_price: ``float``: [OPTIONAL]
-                - fuel_co2_emissions: ``float``: [OPTIONAL]
+                - id : int
+                    Equipment ID
 
-        :param kb: Knowledge Base data
+                - fuel_type : str
+                    Fuel type
+
+                object_type : str
+                    Equipment type: "process", "boiler","chp", "burner", "cooling_equipment", "stream"
+
+                - equipment_sub_type: str
+                    Options: "steam_boiler" or "hot_water_boiler"
+
+                - supply_capacity : float, optional
+                    Equipment supply capacity [kW]; Provide thermal or electrical supply capacity
+
+                - electrical_generation : float, optional
+                    CHP electrical generation capacity [kWe]; Provide thermal or electrical supply capacity
+
+                - thermal_conversion_efficiency : float, optional
+                    CHP thermal efficiency []; Provide thermal or electrical conversion efficiency
+
+                - electrical_conversion_efficiency : float, optional
+                    CHP electrical efficiency []; Provide thermal or electrical conversion efficiency
+
+                - global_conversion_efficiency : float
+                    Conversion efficiency []
+
+                - processes : list, optional
+                    List of processes objects associated to the equipment;
+
+                - equipment_supply_temperature : float
+                    Equipment circuit supply temperature [ºC]
+
+                - open_closed_loop : int
+                    Whether is a opens or closed loop boiler; 1 (yes)  or 0 (no)
+
+                - saturday_on : int
+                    If it is available on Saturday []; 1 (yes)  or 0 (no)
+
+                - sunday_on : int
+                    If it is available on Sunday []; 1 (yes)  or 0 (no)
+
+                - shutdown_periods : list
+                    List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
+
+                - daily_periods : list
+                    List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
+
+                - equipment_return_temperature : float, optional
+                    Equipment working fluid return temperature [ºC]
+
+        kb : dict
+            Knowledge Base data
 
         """
 

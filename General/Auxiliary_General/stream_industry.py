@@ -56,7 +56,7 @@ def stream_industry(stream_name,object_linked_id, stream_type, fluid, supply_tem
     fuel : str
         Associated equipment fuel name
 
-    eff_equipment : float
+    eff_equipment : float, None
         Associated equipment efficiency []
 
 

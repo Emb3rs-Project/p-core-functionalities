@@ -39,19 +39,19 @@ def aggregate_technologies_info(object_id, technologies, power_fraction, max_pow
     data_teo : dict
         technologies data for the TEO module, with the following keys:
 
-        - teo_equipment_name :
+        - teo_equipment_name : str
             Specific nomenclature for the TEO
 
-        - output :
+        - output : str
             Specific nomenclature for the TEO
 
-        - input_fuel :
+        - input_fuel : str
             Specific nomenclature for the TEO
 
-        - output_fuel :
+        - output_fuel : str
             Specific nomenclature for the TEO
 
-        - equipment :
+        - equipment : list
             All conversion equipments; list with technologies names; e.g. ['hx_plate', 'heat_pump','hx_plate']
 
         - max_capacity : float
@@ -79,7 +79,7 @@ def aggregate_technologies_info(object_id, technologies, power_fraction, max_pow
             Aggregated emissions [kg.CO2/kWh]
 
         - technologies : list with dicts
-            Each equipment info in detail
+            Each equipment info in detail (check General/Convert_Equipments/Convert_Options)
 
 
     """

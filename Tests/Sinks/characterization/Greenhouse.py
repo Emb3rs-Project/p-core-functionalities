@@ -9,7 +9,7 @@ data = json.load(open(os.path.join(script_dir, "test_files/greenhouse_simple_inp
 
 def testGreenhouse():
 
-    test = greenhouse(data, KB(kb))
+    test = greenhouse(data)
 
     value_heat = sum(test['streams'][0]['monthly_generation'])
 

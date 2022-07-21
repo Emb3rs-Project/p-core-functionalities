@@ -1,40 +1,88 @@
-from ....General.Auxiliary_General.get_country import get_country
 from ....General.Auxiliary_General.schedule_hour import schedule_hour
 from ....General.Auxiliary_General.combustion_mass_flows import combustion_mass_flows
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.medium import Medium
 from ....utilities.kb import KB
-from ....KB_General.fuel_properties import FuelProperties
 
 
 class Burner:
+    """Create Burner Object
+
+    Attributes
+    ----------
+    id : int
+        Equipment ID
+
+    object_type : str
+        DEFAULT = "equipment"
+
+    streams : list
+        Data of the streams associated to this equipment
+
+    fuel_type : str
+        Fuel type
+
+    supply_capacity : float
+        Equipment supply capacity [kW]
+
+    global_conversion_efficiency : float
+        Equipment efficiency []
+
+    equipment_sub_type  : str
+        Equipment designation
+
+    """
 
     def __init__(self, in_var, kb: KB):
         """
-        Create Burner Object and characterize its streams.
 
-        :param in_var: ``dict``: burner characterization data with the following keys:
+        Parameters
+        ----------
+        in_var : dict
+            Equipment characterization data, with the following keys:
 
-                - id: ``int``: equipment ID []
-                - burner_equipment_sub_type: ``str``: if direct_burner or indirect_burner
-                - fuel_type: ``str``: fuel type []; (natural_gas, fuel_oil, biomass, electricity)
-                - global_conversion_efficiency: ``float``: equipment efficiency []
-                - supply_capacity: ``float``: equipment supply capacity [kW]
-                - burner_excess_heat_supply_temperature: ``float``: recoverable excess heat supply/initial temperature [ºC]
-                - burner_excess_heat_flowrate: ``float``: recoverable excess heat supply/initial mass flowrate [kg/h]
-                - saturday_on: ``int``: if it is available on Saturday []; 1 (yes)  or 0 (no)
-                - sunday_on: ``int``: if it is available on Sunday []; 1 (yes)  or 0 (no)
-                - shutdown_periods: ``list``: list with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
-                - daily_periods: ``list``: list with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
-                - location: ``list``: [latitude, longitude]
-                - fuel_price: ``float``: [OPTIONAL]
-                - fuel_co2_emissions: ``float``: [OPTIONAL]
+                id : int
+                    Equipment ID
 
-        :param kb: Knowledge Base data
+                fuel_type : str
+                    Fuel type
+
+                object_type : str
+                    Equipment type: "process", "boiler","chp", "burner", "cooling_equipment", "stream"
+
+                global_conversion_efficiency : float
+                    Conversion efficiency []
+
+                supply_capacity : float
+                    Equipment supply capacity [kW]
+
+                processes : list
+                    List of processes objects associated to the equipment
+
+                saturday_on : int
+                    If it is available on Saturday []; 1 (yes)  or 0 (no)
+
+                sunday_on : int
+                    If it is available on Sunday []; 1 (yes)  or 0 (no)
+
+                shutdown_periods : list
+                    List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]
+
+                daily_periods : list
+                    List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]
+
+                burner_equipment_sub_type : str
+                    Options: "indirect_burner" or "direct_burner"
+
+                burner_excess_heat_supply_temperature : float
+                    Burner recoverable excess heat temperature [ºC]
+
+                burner_excess_heat_flowrate : float
+                    Burner recoverable excess heat mass flowrate [kg/h]
+
+        kb : dict
+            Knowledge Base data
         """
-
-
-
         ############################################################################################
         # KB
         medium = Medium(kb)

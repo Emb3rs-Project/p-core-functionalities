@@ -1,105 +1,3 @@
-"""
-alisboa/jmcunha
-
-
-##############################
-INFO: Sinks conversion technologies.
-
-      For the group of sinks given, it is set the grid supply and return temperatures. Moreover, grid specific technologies
-      are designed to meet the heating/cooling requirements of the group.
-
-      For each sink are designed the conversion technologies needed. The design may be done for each stream individually or
-      it can be made to the aggregated of streams (the user must provide his preference).
-      When performing the conversion, three design options may occur:
-
-          Sink needs HEATING
-            1) the grid temperature meets the sink target temperature requirements, thus only a grid-sink HX and correspondent
-            circulation pumping is needed
-            2) the grid temperature does not meet the sink target temperature requirements, thus adding to the grid-sink HX
-            and correspondent circulation pumping, it is also necessary to add a technology to raise the temperature (chp,
-            solar thermal, heat pump, boiler)
-
-          Sink needs COOLING
-            3) it is always necessary to add a cooling technology (thermal_chiller), since we are only designing DHNs
-
-
-      Possible conversions: HX, HX + heating/cooling technology + HX
-
-
-##############################
-INPUT: group_of_sinks = [sink_1,sink_2,...] each sink with a dict
-
-      Where, for example:
-        # sink_1 {
-        #       'id'
-        #       'location' = [latitude,longitude]
-        #       'consumer_type' - 'household' or 'non-household'
-        #       'streams' - array with dictionaries with {id, object_type, stream_type, fluid, capacity, supply_temperature,target_temperature, hourly_generation}
-        #    }
-
- 
-
-##############################
-OUTPUT: the following dictionary,
-
-         # all_sinks_info = {
-         #              'sink_group_grid_supply_temperature' [ºC]
-         #              'sink_group_grid_return_temperature' [ºC]
-         #              'grid_specific' -  dictionary with 'heating' and 'cooling'
-         #              'sinks' - dictionary
-         #        }
-
-             Where in grid_specific:
-                # grid_specific = {
-                #               'heating' - array with dictionaries of the technologies
-                #               'cooling'
-                #               }
-
-                    In each technology dictionary:
-                          #  {
-                          #   'equipment',
-                          #   'fuel_type',
-                          #   'max_input_capacity'  [kW]
-                          #   'turnkey_a' [€/kW]
-                          #   'turnkey_b' [€]
-                          #   'conversion_efficiency' []
-                          #   'om_fix' [€/year.kW]
-                          #   'om_var' [€/kWh]
-                          #   'emissions' [kg.CO2/kWh]
-                          #   },
-
-
-            Where in sinks:
-                # sinks = {
-                #          'sink_id'
-                #          'streams'
-                #          }
-
-                 Where in streams:
-                 # streams = {
-                 #          'stream_id'
-                 #          'hourly_stream_capacity' [kWh]
-                 #          'teo_demand_factor'
-                 #          'teo_yearly_demand'
-                 #          'conversion_technologies' - multiple dictionaries with technologies possible to implement
-                 #          }
-
-                  Where in conversion_technologies:
-                     # conversion_technologies = {
-                     #                              'equipment'
-                     #                              'max_capacity'  [kW]
-                     #                              'turnkey_a' [€/kW]
-                     #                              'turnkey_b' [€]
-                     #                              'conversion_efficiency'  []
-                     #                              'om_fix'   [€/year.kW]
-                     #                              'om_var'  [€/kWh]
-                     #                              'emissions'  [kg.CO2/kWh]
-                     #                              'tecnhologies' - technologies info in detail, - RIGHT NOW, NOT AN OUTPUT
-                     #                            }
-
-
-"""
-
 import numpy as np
 import copy
 from ...General.Convert_Equipments.Auxiliary.sink_get_hx_temperatures import sink_get_hx_temperatures
@@ -116,47 +14,239 @@ from ...Error_Handling.error_convert_sinks import PlatformConvertSinks
 from ...Error_Handling.runtime_error import ModuleRuntimeException
 
 def convert_sinks(in_var, kb):
-    """
+    """Design of Grid - Sinks conversion technologies.
+
+    For the group of sinks given, it is set the grid supply and return temperatures. Moreover, grid specific technologies
+    are designed to meet the heating/cooling requirements of the group.
+
+    For each sink are designed the conversion technologies needed. The design may be done for each stream individually or
+    it can be made to the aggregated of streams (the user must provide his preference).
+    When performing the conversion, three design options may occur:
+        Sink needs HEATING
+          1) the grid temperature meets the sink target temperature requirements, thus only a grid-sink HX and correspondent
+          circulation pumping is needed
+          2) the grid temperature does not meet the sink target temperature requirements, thus adding to the grid-sink HX
+          and correspondent circulation pumping, it is also necessary to add a technology to raise the temperature (chp,
+          solar thermal, heat pump, boiler)
+        Sink needs COOLING
+          3) it is always necessary to add a cooling technology (thermal_chiller), since we are only designing DHNs
+
+    Possible conversions: HX, HX + heating/cooling technology + HX
 
     Parameters
     ----------
-    in_var
+    in_var :  All necessary data to perform the grid to sinks conversion with the following key:
 
+        platform: dict
+            Data obtained from the platform
+
+                - grid_supply_temperature : float, optional
+                    Grid supply temperature provided by the user [ºC]
+
+                - grid_return_temperature : float, optional
+                    Grid return temperature provided by the user [ºC]
+
+                - group_of_sinks : list with dict
+                    List with all sinks to be analyzed; each with the following keys:
+
+                        - id : int
+                            Sink ID []
+
+                        - location : list
+                            [latitude, longitude] [º]
+
+                        - fuels_data: dict:
+                            Fuels price and CO2 emission, with the following keys:
+
+                                - natural_gas: dict
+                                    Natural gas data
+
+                                        - co2_emissions: float:
+                                            Fuel CO2 emission [kg CO2/kWh
+
+                                        - price: float:
+                                            Fuel price [€/kWh
+
+                                - fuel_oil
+                                    Same keys as "natural_gas"
+
+                                - electricity
+                                    Same keys as "natural_gas"
+
+                                - biomass
+                                    Same keys as "natural_gas"
+
+                        - streams : list with dict
+                            Streams to be analyzed. Each stream with the following keys:
+
+                                - id : int
+                                    Stream ID []
+
+                                - name : str
+                                    Stream name []
+
+                                - object_type : str
+                                    DEFAULT = "stream" []
+
+                                - object_linked_id
+                                    None: DEFAULT=NONE, since no equipment/process is associated
+
+                                - stream_type : str
+                                    Stream designation []; inflow, outflow, excess_heat
+
+                                - supply_temperature : float
+                                    Stream's supply/initial temperature [ºC]
+
+                                - target_temperature : float
+                                    Stream's target/final temperature [ºC]
+
+                                - fluid : str
+                                    Stream fluid name
+
+                                - flowrate : float
+                                    Stream mass flowrate[kg/h]
+
+                                - schedule : list
+                                    Hourly values between 0 and 1, according to the capacity ration on that hour
+
+                                - hourly_generation: list
+                                    Stream's hourly capacity [kWh]
+
+                                - capacity : float
+                                    Stream's capacity [kW]
+
+                                - fuel : str
+                                    Associated equipment fuel name []
+
+                                - eff_equipment : float
+                                    Associated equipment efficiency []
 
     kb : dict
         Knowledge Base data
 
-
     Returns
     -------
     all_info : dict
-        All sinks data
+        All conversion data
 
-            -all_sinks_info
+            - all_sinks_info : list
+                Each sink conversion data
 
-                - sink_group_grid_supply_temperature
+                    -sink_group_grid_supply_temperature : float
+                       Grid supply temperature [ºC]
 
-                - sink_group_grid_return_temperature
+                    - sink_group_grid_return_temperature : float
+                       Grid return temperature [ºC]
 
-                - grid_specific
+                    - grid_specific : list
+                        List with Grid Specific technologies, each technology with the following keys:
 
-                - sinks
+                            - teo_equipment_name : str
+                                Specific nomenclature for the TEO
 
-            -n_grid_specific
-                - id
-                - coords
-                - cap
+                            - output : str
+                                Specific nomenclature for the TEO
 
-            -n_demand_list
-                Same keys as "n_grid_specific"
+                            - input_fuel : str
+                                Specific nomenclature for the TEO
 
-            -n_thermal_storage
-                Same keys as "n_grid_specific"
+                            - output_fuel : str
+                                Specific nomenclature for the TEO
 
+                            - equipment : list
+                                All conversion equipments; list with technologies names; e.g. ['hx_plate', 'heat_pump','hx_plate']
 
-            -teo_demand_factor_group
+                            - max_capacity : float
+                                Stream power (sources- excess heat; sinks - grid heat)  [kW]
 
+                            - turnkey_a : float
+                                Aggregated turnkey a [€/kW]
 
+                            - turnkey_b : float
+                                Aggregated turnkey b [€]
+
+                            - conversion_efficiency :
+                                Aggregated conversion_efficiency []
+
+                            - electrical_conversion_efficiency : float
+                                ONLY FOR ORC - electrical conversion efficiency []
+
+                            - om_fix : float
+                                Aggregated om_fix [€/year.kW]
+
+                            - om_var : float
+                                Aggregated om_var [€/kWh]
+
+                            - emissions : float
+                                Aggregated emissions [kg.CO2/kWh]
+
+                            - technologies : list with dicts
+                                Each equipment info in detail (check General/Convert_Equipments/Convert_Options)
+
+                    - sinks : list with dict
+                        List with each sink data, with the following keys:
+
+                            - sink_id : str
+                                Sink ID
+
+                            - location : list
+                                [latitude, longitude] [º]
+
+                            - streams : list with dict
+                                Each stream of the sink, with the following keys:
+
+                                    - stream_id : str
+                                        Stream ID
+
+                                    - demand_fuel : str
+                                        TEO specific data
+
+                                    - gis_capacity : float
+                                        Sink nominal capacity [kWh]
+
+                                    - hourly_stream_capacity : list
+                                        Stream hourly capacity [kWh]
+
+                                    - teo_demand_factor : list
+                                        Stream's hourly capacity divided by yearly capacity [kWh]
+
+                                    - teo_yearly_demand : float
+                                        Stream yearly demand [kWh]
+
+                                    - conversion_technologies : list
+                                        List with multiple dictionaries with the solution of technologies possible to
+                                        implement; same keys as the "grid_specific" technologies
+
+            - n_demand_list : list with dicts
+                Sinks data for GIS, with the following keys:
+
+                - id : str
+                    Object ID
+
+                - coords : list
+                    [latitude, longitude] [º]
+
+                - cap : float
+                    Object nominal capacity [kW]
+
+            - n_grid_specific : list with dicts
+                Grid specific data for GIS, with the following keys:
+
+                    - id : int
+                        Object ID
+
+                    - coords : list
+                        Same keys as "n_demand_list"
+
+                    - cap : float
+                        Same keys as "n_demand_list"
+
+            - n_thermal_storage : list with dicts
+                Thermal storage data for GIS; Same keys as "n_grid_specific"
+
+            - teo_demand_factor_group : list
+                Every hour of the year with dicts in each hour with TEO Sink ID and corresponding
+                hourly_capacity/yearly_capacity; e.g. [{"sink1":0.5,"sink2":0,...},{{"sink1":0.6,"sink2":0,...},...]
 
     """
     ##################################################################################################################
