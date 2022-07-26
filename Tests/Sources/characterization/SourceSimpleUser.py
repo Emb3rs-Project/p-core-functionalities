@@ -1,4 +1,4 @@
-from module.src.General.Simple_User.simple_user import simple_user
+from ....src.General.Simple_User.simple_user import simple_user
 import json
 import os
 

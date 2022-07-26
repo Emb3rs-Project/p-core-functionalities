@@ -1,6 +1,6 @@
-from module.src.Source.simulation.Convert.convert_sources import convert_sources
-from module.src.utilities.kb import KB
-from module.src.utilities.kb_data import kb
+from ....src.Source.simulation.Convert.convert_sources import convert_sources
+from ....src.utilities.kb import KB
+from ....src.utilities.kb_data import kb
 import json
 import os
 

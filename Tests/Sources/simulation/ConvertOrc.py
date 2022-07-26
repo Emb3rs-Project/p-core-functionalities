@@ -1,6 +1,6 @@
-from module.src.Source.simulation.Heat_Recovery.ORC.convert_orc import convert_orc
-from module.src.utilities.kb import KB
-from module.src.utilities.kb_data import kb
+from ....src.Source.simulation.Heat_Recovery.ORC.convert_orc import convert_orc
+from ....src.utilities.kb import KB
+from ....src.utilities.kb_data import kb
 import json
 import os
 

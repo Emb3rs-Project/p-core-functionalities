@@ -1,6 +1,6 @@
-from module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams import convert_pinch_isolated_streams
-from module.src.utilities.kb import KB
-from module.src.utilities.kb_data import kb
+from ....src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams import convert_pinch_isolated_streams
+from ....src.utilities.kb import KB
+from ....src.utilities.kb_data import kb
 import os
 import json
 

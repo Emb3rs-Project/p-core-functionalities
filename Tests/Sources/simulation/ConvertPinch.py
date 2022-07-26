@@ -1,6 +1,6 @@
-from module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch import convert_pinch
-from module.src.utilities.kb import KB
-from module.src.utilities.kb_data import kb
+from ....src.Source.simulation.Heat_Recovery.Pinch.convert_pinch import convert_pinch
+from ....src.utilities.kb import KB
+from ....src.utilities.kb_data import kb
 import os
 import json
 
