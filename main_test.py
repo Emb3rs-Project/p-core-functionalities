@@ -19,3 +19,4 @@ testConvertORC()
 testConvertPinch()
 from module.Tests.Sources.simulation.ConvertPinchIsolated import testConvertPinchIsolated
 testConvertPinchIsolated()
+

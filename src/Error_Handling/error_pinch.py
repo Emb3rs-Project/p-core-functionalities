@@ -1,7 +1,7 @@
 from pydantic import BaseModel, validator, PositiveFloat, PositiveInt, conlist, NonNegativeInt, StrictStr, \
     NonNegativeFloat, confloat
 from typing import Optional, List, Union
-from module.src.Error_Handling.General.location import Location
+from .General.location import Location
 from .Source_Detail.error_fueltype import FuelChoices
 from enum import Enum
 from .General.fueldata import FuelData

@@ -5,7 +5,7 @@ from .General.building_orientation import BuildingOrientation
 from .General.location import Location
 from .General.reference_system import ReferenceSystem
 from .General.schedule import Schedule
-from module.src.Error_Handling.General.error_building_and_greenhouse_adjust_capacity import BuildingandGreenhouseAdjustCapacity
+from .General.error_building_and_greenhouse_adjust_capacity import BuildingandGreenhouseAdjustCapacity
 
 
 class GreenhouseEfficiency(int, Enum):

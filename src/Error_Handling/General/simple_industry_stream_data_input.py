@@ -3,7 +3,7 @@ from typing import Optional
 from enum import Enum
 import ast
 from .reference_system import ReferenceSystem
-from module.src.Error_Handling.General.error_adjust_capacity import AdjustCapacity
+from ..General.error_adjust_capacity import AdjustCapacity
 
 
 class ScheduleInfo(int, Enum):

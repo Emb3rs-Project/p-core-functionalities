@@ -6,7 +6,7 @@ from .General.schedule import Schedule
 from .General.location import Location
 from enum import Enum
 
-from module.src.Error_Handling.General.error_building_and_greenhouse_adjust_capacity import BuildingandGreenhouseAdjustCapacity
+from .General.error_building_and_greenhouse_adjust_capacity import BuildingandGreenhouseAdjustCapacity
 from ..KB_General.building_properties import BuildingProperties
 from ..General.Auxiliary_General.get_country import get_country
 from .General.building_orientation import BuildingOrientation

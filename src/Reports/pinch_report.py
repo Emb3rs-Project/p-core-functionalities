@@ -1,5 +1,5 @@
 import os
-from module.src.Source.simulation.Heat_Recovery.Pinch.make_pinch_design_draw import make_pinch_design_draw
+from ..Source.simulation.Heat_Recovery.Pinch.make_pinch_design_draw import make_pinch_design_draw
 import pandas as pd
 from datetime import date
 
