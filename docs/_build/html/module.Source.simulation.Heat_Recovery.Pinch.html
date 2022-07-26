@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pinch Analysis &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pinch Analysis - QUICK INPUTS" href="module.Source.simulation.Heat_Recovery.PinchQuick.html" />
+    <link rel="prev" title="Organic Rankine Cycle (ORC)" href="module.Source.simulation.Heat_Recovery.ORC.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="module.Source.simulation.Convert.html">Convert Sources</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.html">Internal Heat Recovery</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.ORC.html">Organic Rankine Cycle (ORC)</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Pinch Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.PinchQuick.html">Pinch Analysis - QUICK INPUTS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source%20Simulation.html">Source Simulation</a> &raquo;</li>
+          <li><a href="module.Source.simulation.Heat_Recovery.html">Internal Heat Recovery</a> &raquo;</li>
+      <li>Pinch Analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/module.Source.simulation.Heat_Recovery.Pinch.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch">
+<span id="pinch-analysis"></span><h1>Pinch Analysis<a class="headerlink" href="#module-module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch.convert_pinch">
+<span class="sig-prename descclassname"><span class="pre">module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch.</span></span><span class="sig-name descname"><span class="pre">convert_pinch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/simulation/Heat_Recovery/Pinch/convert_pinch.html#convert_pinch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch.convert_pinch" title="Permalink to this definition"></a></dt>
+<dd><p>Main function of Pinch Analysis</p>
+<p>Includes data pretreatment, pinch analysis, and economic/co2 analysis of the options designed.
+Return the best three solutions for: minimum CO2 emissions ,maximize energy recovery, and energy recovery specific cost.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> (<em>dict</em>) – <p>Data for pinch analysis, with the following key:</p>
+<blockquote>
+<div><dl>
+<dt>platform<span class="classifier">dict</span></dt><dd><p>Platform Data</p>
+<blockquote>
+<div><dl>
+<dt>streams_to_analyse<span class="classifier">list</span></dt><dd><p>List with streams ID to analyse</p>
+</dd>
+<dt>pinch_delta_T_min: float</dt><dd><p>Minimum delta temperature for pinch analysis [ºC]</p>
+</dd>
+<dt>all_input_objects<span class="classifier">list</span></dt><dd><dl class="simple">
+<dt>List with:</dt><dd><ul>
+<li><p>equipments (check Source/characterization/Generate_Equipment)</p></li>
+<li><p>processes (check Source/characterization/Process/process)</p></li>
+<li><p>isolated streams (check General/Simple_User/isolated_stream)</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>location:  list</dt><dd><p>[latitude, longitude] [º]</p>
+</dd>
+<dt>lifetime<span class="classifier">int, optional</span></dt><dd><p>Heat exchangers lifetime. DEFAULT=20</p>
+</dd>
+<dt>fuels_data: dict:</dt><dd><p>Fuels price and CO2 emission, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>natural_gas: dict</dt><dd><p>Natural gas data</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>co2_emissions: float:</dt><dd><p>Fuel CO2 emission [kg CO2/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>price: float:</dt><dd><p>Fuel price [€/kWh]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fuel_oil</dt><dd><p>Same keys as “natural_gas”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electricity</dt><dd><p>Same keys as “natural_gas”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>biomass</dt><dd><p>Same keys as “natural_gas”</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>number_output_options: int, optional</dt><dd><p>Number of solutions of each category to return. DEFAULT=3</p>
+</dd>
+<dt>interest_rate<span class="classifier">float, optional</span></dt><dd><p>Interest rate considered for BM</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><strong>pinch_output</strong> –</p>
+<p>Pinch analysis, with the following keys:</p>
+<blockquote>
+<div><dl>
+<dt>best_options<span class="classifier">dict</span></dt><dd><p>Three categories, with the respective following keys:</p>
+<blockquote>
+<div><dl>
+<dt>co2_optimization<span class="classifier">list</span></dt><dd><p>List with dicts, with best design options that minimize CO2 emissions. Each solution with the following
+keys:</p>
+<blockquote>
+<div><dl>
+<dt>ID<span class="classifier">int</span></dt><dd><p>Designed solution ID</p>
+</dd>
+<dt>streams<span class="classifier">list</span></dt><dd><p>Streams ID in pinch design</p>
+</dd>
+<dt>streams_info<span class="classifier">list</span></dt><dd><p>array with dicts</p>
+</dd>
+<dt>capex<span class="classifier">float</span></dt><dd><p>Solution capex [€]</p>
+</dd>
+<dt>om_fix<span class="classifier">float</span></dt><dd><p>Yearly OM fix costs [€/year]</p>
+</dd>
+<dt>hot_utility<span class="classifier">float</span></dt><dd><p>Power of the hot utility needed, so that the cold streams reach their target_temperature [kW]</p>
+</dd>
+<dt>cold_utility<span class="classifier">float</span></dt><dd><p>Power of the cold utility needed, so that the hot streams reach their target_temperature [kW]</p>
+</dd>
+<dt>lifetime<span class="classifier">float</span></dt><dd><p>Considered lifetime  [year]</p>
+</dd>
+<dt>co2_savings<span class="classifier">float</span></dt><dd><p>Annualized co2 savings by implementing the pinch design [kg CO2/kWh]</p>
+</dd>
+<dt>money_savings<span class="classifier">float</span></dt><dd><p>Annualized energy savings by implementing the pinch design  [€/kWh]</p>
+</dd>
+<dt>energy_dispatch<span class="classifier">float</span></dt><dd><p>Yearly energy recovered by implementing the pinch design [kWh/year]</p>
+</dd>
+<dt>discount_rate<span class="classifier">float</span></dt><dd><p>Financial parameter for the BM []</p>
+</dd>
+<dt>pinch_temperature<span class="classifier">float</span></dt><dd><p>Design pinch temperature [ºC]</p>
+</dd>
+<dt>theo_minimum_hot_utility<span class="classifier">float</span></dt><dd><p>Theoretical power of the hot utility needed, so that the cold streams reach their target temperature [kW]</p>
+</dd>
+<dt>theo_minimum_cold_utility<span class="classifier">float</span></dt><dd><p>Theoretical power of the cold utility needed, so that the hot streams reach their target temperature [kW]</p>
+</dd>
+<dt>pinch_hx_data<span class="classifier">list</span></dt><dd><p>Each heat exchanger technical/economical data,with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>HX_Power<span class="classifier">float</span></dt><dd><p>Heat exchanger power [kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_Hot_Stream<span class="classifier">int</span></dt><dd><p>Hot stream ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_Cold_Stream<span class="classifier">int</span></dt><dd><p>Cold stream ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_Original_Hot_Stream<span class="classifier">int</span></dt><dd><p>Hot stream ID (there might be a split, meaning that  HX_Original_Hot_Stream != HX_Hot_Stream)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_Original_Cold_Stream<span class="classifier">int</span></dt><dd><p>Cold stream ID (there might be a split, meaning that  HX_Original_Cold_Stream != HX_Cold_Stream)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_Type<span class="classifier">str</span></dt><dd><p>Heat exchanger type</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_Turnkey_Cost<span class="classifier">float</span></dt><dd><p>Heat exchanger capex [€]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_OM_Fix_Cost<span class="classifier">float</span></dt><dd><p>Heat exchanger OM Fix [€/year]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_Hot_Stream_T_Hot<span class="classifier">float</span></dt><dd><p>Hot stream hot temperature[ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_Hot_Stream_T_Cold<span class="classifier">float</span></dt><dd><p>Hot stream cold temperature[ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_Cold_Stream_T_Hot<span class="classifier">float</span></dt><dd><p>Cold stream hot temperature[ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>HX_Cold_Stream_T_Cold<span class="classifier">float</span></dt><dd><p>Cold stream cold temperature[ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Storage<span class="classifier">float</span></dt><dd><p>Storage volume [m3]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Storage_Satisfies<span class="classifier">float</span></dt><dd><p>Percentage of capacity in mismatch hours that storaeg satisfies [%]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Storage_Turnkey_Cost<span class="classifier">float</span></dt><dd><p>Storage capex [€]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Total_Turnkey_Cost<span class="classifier">float</span></dt><dd><p>Heat exchanger + storage copex [€]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Recovered_Energy<span class="classifier">float</span></dt><dd><p>Amount of energy recovered [kWh]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><p>dict</p>
+<blockquote>
+<div><dl class="simple">
+<dt>energy_recovered_optimization<span class="classifier">list</span></dt><dd><p>List with best design options of the respective category -&gt; similar to “co2_optimization”</p>
+</dd>
+<dt>energy_investment_optimization<span class="classifier">list</span></dt><dd><p>List with best design options of the respective category -&gt; similar to “co2_optimization”</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>report<span class="classifier">str</span></dt><dd><p>HTML Report</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="module.Source.simulation.Heat_Recovery.ORC.html" class="btn btn-neutral float-left" title="Organic Rankine Cycle (ORC)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="module.Source.simulation.Heat_Recovery.PinchQuick.html" class="btn btn-neutral float-right" title="Pinch Analysis - QUICK INPUTS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

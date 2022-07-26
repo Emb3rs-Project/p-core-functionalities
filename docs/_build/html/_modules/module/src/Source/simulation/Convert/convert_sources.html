@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>module.src.Source.simulation.Convert.convert_sources &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../../index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../../index.html">Module code</a> &raquo;</li>
+      <li>module.src.Source.simulation.Convert.convert_sources</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for module.src.Source.simulation.Convert.convert_sources</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">....General.Convert_Equipments.Auxiliary.source_get_hx_temperatures</span> <span class="kn">import</span> <span class="n">source_get_hx_temperatures</span>
+<span class="kn">from</span> <span class="nn">....General.Convert_Equipments.Convert_Options.add_boiler</span> <span class="kn">import</span> <span class="n">Add_Boiler</span>
+<span class="kn">from</span> <span class="nn">....General.Convert_Equipments.Convert_Options.add_hx</span> <span class="kn">import</span> <span class="n">Add_HX</span>
+<span class="kn">from</span> <span class="nn">....General.Convert_Equipments.Convert_Options.add_solar_thermal</span> <span class="kn">import</span> <span class="n">Add_Solar_Thermal</span>
+<span class="kn">from</span> <span class="nn">....General.Convert_Equipments.Convert_Options.add_heat_pump</span> <span class="kn">import</span> <span class="n">Add_Heat_Pump</span>
+<span class="kn">from</span> <span class="nn">....General.Convert_Equipments.Convert_Options.add_chp</span> <span class="kn">import</span> <span class="n">Add_CHP</span>
+<span class="kn">from</span> <span class="nn">....General.Convert_Equipments.Convert_Options.add_pump</span> <span class="kn">import</span> <span class="n">Add_Pump</span>
+<span class="kn">from</span> <span class="nn">....General.Convert_Equipments.Convert_Options.add_orc_cascaded</span> <span class="kn">import</span> <span class="n">Add_ORC_Cascaded</span>
+<span class="kn">from</span> <span class="nn">....General.Convert_Equipments.Auxiliary.aggregate_technologies_info</span> <span class="kn">import</span> <span class="n">aggregate_technologies_info</span>
+<span class="kn">from</span> <span class="nn">....Source.simulation.Auxiliary.design_orc</span> <span class="kn">import</span> <span class="n">design_orc</span>
+<span class="kn">from</span> <span class="nn">....General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup</span> <span class="kn">import</span> <span class="n">coef_solar_thermal_backup</span>
+<span class="kn">from</span> <span class="nn">....Error_Handling.error_convert_sources</span> <span class="kn">import</span> <span class="n">MainErrorConvertSources</span>
+<span class="kn">from</span> <span class="nn">....Error_Handling.runtime_error</span> <span class="kn">import</span> <span class="n">ModuleRuntimeException</span>
+
+<div class="viewcode-block" id="convert_sources"><a class="viewcode-back" href="../../../../../../module.Source.simulation.Convert.html#module.src.Source.simulation.Convert.convert_sources.convert_sources">[docs]</a><span class="k">def</span> <span class="nf">convert_sources</span><span class="p">(</span><span class="n">in_var</span><span class="p">,</span> <span class="n">kb</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sources conversion to the grid - design of technologies.</span>
+
+<span class="sd">    For each source are designed the conversion technologies needed. The design may be done for each stream individually</span>
+<span class="sd">    or it can be made to the aggregated of streams (the user must provide his preference). After the designing, it is</span>
+<span class="sd">    known the power available from each source.</span>
+<span class="sd">    When performing the conversion, three design options may occur:</span>
+<span class="sd">            1. If the stream supply temperature &gt; grid supply temperature -&gt; HX designed</span>
+<span class="sd">            2. If the stream supply temperature &gt; ORC evaporator -&gt; ORC cascaded designed</span>
+<span class="sd">            3. If the stream supply temperature &lt; grid supply temperature -&gt; heating technologies are designed</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_var : dict</span>
+<span class="sd">        platform and CF module data, with the following keys:</span>
+
+<span class="sd">            - platform: dict</span>
+<span class="sd">                Platform data, with the following keys:</span>
+
+<span class="sd">                    - existing_grid_data: list with dict [OPTIONAL]</span>
+<span class="sd">                        Existent grid connection point data, with the following keys:</span>
+
+<span class="sd">                            - id: int</span>
+<span class="sd">                                Existent source or grid connection point ID</span>
+
+<span class="sd">                            - location: list</span>
+<span class="sd">                                Location [º]; [latitude,longitude]</span>
+
+<span class="sd">                            - levelized_co2_emissions: float</span>
+<span class="sd">                                Grid levelized CO2 emissions [c]</span>
+
+<span class="sd">                            - levelized_om_var: float</span>
+<span class="sd">                                Grid levelized OM var [€/kWh]</span>
+
+<span class="sd">                            - levelized_om_fix: float</span>
+<span class="sd">                                Grid levelized OM fix  [€/kWh]</span>
+
+<span class="sd">                    - group_of_sources: list with dict</span>
+<span class="sd">                        Sources to be analyzed. Each source with the following keys:</span>
+
+<span class="sd">                            - id: int:</span>
+<span class="sd">                                Source ID</span>
+
+<span class="sd">                            - location: list</span>
+<span class="sd">                                Location [º]; [latitude,longitude]</span>
+
+<span class="sd">                            - fuels_data: dict</span>
+<span class="sd">                                Fuels price and CO2 emission, with the following keys:</span>
+
+<span class="sd">                                    - natural_gas: dict</span>
+<span class="sd">                                        with the following keys:</span>
+
+<span class="sd">                                        - co2_emissions: float:</span>
+<span class="sd">                                            Fuel CO2 emission [kg CO2/kWh]</span>
+
+<span class="sd">                                        - price: float:</span>
+<span class="sd">                                            Fuel price [€/kWh]</span>
+
+<span class="sd">                                    - fuel_oil : dict</span>
+<span class="sd">                                        Similar to &quot;natural_gas&quot;</span>
+
+<span class="sd">                                    - electricity : dict</span>
+<span class="sd">                                        Similar to &quot;natural_gas&quot;</span>
+
+<span class="sd">                                    - biomass : dict</span>
+<span class="sd">                                        Similar to &quot;natural_gas&quot;</span>
+
+<span class="sd">                            - streams: list with dict</span>
+<span class="sd">                                Source&#39;s streams to be analyzed. Each stream with the following keys:</span>
+
+<span class="sd">                                    - stream_id: int</span>
+<span class="sd">                                        Stream ID []</span>
+
+<span class="sd">                                    - object_type: str</span>
+<span class="sd">                                        DEFAULT=stream []</span>
+
+<span class="sd">                                    - stream_type: str</span>
+<span class="sd">                                        Stream designation []; inflow, outflow, excess_heat</span>
+
+<span class="sd">                                    - fluid: str</span>
+<span class="sd">                                        Stream&#39;s fluid []</span>
+
+<span class="sd">                                    - capacity: float</span>
+<span class="sd">                                        Stream&#39;s capacity [kW]</span>
+
+<span class="sd">                                    - supply_temperature: float</span>
+<span class="sd">                                        Stream&#39;s supply/initial temperature [ºC]</span>
+
+<span class="sd">                                    - target_temperature: float</span>
+<span class="sd">                                        Stream&#39;s target/final temperature [ºC]</span>
+
+<span class="sd">                                    - hourly_generation: list</span>
+<span class="sd">                                        Stream&#39;s hourly capacity [kWh]</span>
+
+<span class="sd">                - cf_module: dict</span>
+<span class="sd">                    CF module data, with the following keys:</span>
+
+<span class="sd">                        - sink_group_grid_supply_temperature: float</span>
+<span class="sd">                            Grid supply temperature (user input or defined by the &quot;convert_sinks&quot;) [ºC]</span>
+
+<span class="sd">                        - sink_group_grid_return_temperature: float</span>
+<span class="sd">                            Grid return temperature (user input or defined by the &quot;convert_sinks&quot;) [ºC]</span>
+
+<span class="sd">    kb :dict</span>
+<span class="sd">        Knowledge Base data</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    all_info: dict:</span>
+<span class="sd">        Sources conversion data, with the following keys:</span>
+
+<span class="sd">            - all_sources_info: list</span>
+<span class="sd">                Sources dicts to be analyzed. Each source with the following keys:</span>
+
+<span class="sd">                    - source_id: int:</span>
+<span class="sd">                        Source ID</span>
+
+<span class="sd">                    - location: list:</span>
+<span class="sd">                        Location [º]; [latitude,longitude]</span>
+
+<span class="sd">                    - source_grid_supply_temperature: float</span>
+<span class="sd">                        Source-grid supply temperature [ºC]</span>
+
+<span class="sd">                    - source_grid_return_temperature: float</span>
+<span class="sd">                        Source-grid return temperature [ºC]</span>
+
+<span class="sd">                    - streams_converted : list</span>
+<span class="sd">                        Streams conversion data dicts, with the following keys:</span>
+
+<span class="sd">                            - stream_id: int</span>
+<span class="sd">                                Stream ID</span>
+
+<span class="sd">                            - teo_stream_id: str</span>
+<span class="sd">                                TEO specific data; stream ID with source ID []</span>
+
+<span class="sd">                            - input_fuel: str</span>
+<span class="sd">                                TEO specific data; TEO input fuel name []</span>
+
+<span class="sd">                            - output_fuel: str</span>
+<span class="sd">                                TEO specific data; TEO output fuel name  []</span>
+
+<span class="sd">                            - output: int</span>
+<span class="sd">                                TEO specific data; DEFAULT=1 []</span>
+
+<span class="sd">                            - gis_capacity: float</span>
+<span class="sd">                                GIS specific data; stream converted/provided capacity to the grid</span>
+
+<span class="sd">                            - hourly_stream_capacity: list</span>
+<span class="sd">                                Hourly stream capacity [kWh]</span>
+
+<span class="sd">                            - teo_capacity_factor: list</span>
+<span class="sd">                                TEO specific data</span>
+
+<span class="sd">                            - max_stream_capacity: float</span>
+<span class="sd">                                Max stream capacity [kW]</span>
+
+<span class="sd">                            - conversion_technologies: list</span>
+<span class="sd">                                Conversion solution data dicts (technologies implemented), with the following keys:</span>
+
+<span class="sd">                                    - teo_equipment_name: str</span>
+<span class="sd">                                        TEO specific data; TEO equipment name []</span>
+
+<span class="sd">                                    - output: int</span>
+<span class="sd">                                        TEO specific data; DEFAULT=1 []</span>
+
+<span class="sd">                                    - input_fuel: str</span>
+<span class="sd">                                        TEO specific data; TEO input fuel name []</span>
+
+<span class="sd">                                    - output_fuel: str</span>
+<span class="sd">                                        TEO specific data; TEO output fuel name  []</span>
+
+<span class="sd">                                    - equipment: list</span>
+<span class="sd">                                        Conversion solution equipment names []</span>
+
+<span class="sd">                                    - max_capacity: float</span>
+<span class="sd">                                        Stream capacity maximum capacity convertible  [kW]</span>
+
+<span class="sd">                                    - turnkey_a: float</span>
+<span class="sd">                                        Conversion solution turnkey a (ax+b)  [€/kW]</span>
+
+<span class="sd">                                    - turnkey_b: float</span>
+<span class="sd">                                        Conversion solution turnkey b (ax+b) [€]</span>
+
+<span class="sd">                                    - conversion_efficiency: float</span>
+<span class="sd">                                        Conversion solution efficiency stream-to-grid []</span>
+
+<span class="sd">                                    - om_fix: float</span>
+<span class="sd">                                        Conversion solution OM fix [€/year.kW]</span>
+
+<span class="sd">                                    - om_var: float</span>
+<span class="sd">                                        Conversion solution OM var [€/kWh]</span>
+
+<span class="sd">                                    - emissions: float</span>
+<span class="sd">                                        Conversion solution CO2 emissions [kg.CO2/kWh]</span>
+
+<span class="sd">                                    - technologies: list</span>
+<span class="sd">                                        Each technologies info in detail dicts (check each technology routine for more details)</span>
+
+<span class="sd">            - ex_grid: dict, list</span>
+<span class="sd">                TEO specific data; existent grid data</span>
+
+<span class="sd">                    - teo_equipment_name: str</span>
+<span class="sd">                        DEFAULT=&quot;ex_grid&quot;</span>
+
+<span class="sd">                    - output: int</span>
+<span class="sd">                        DEFAULT=1</span>
+
+<span class="sd">                    - input_fuel: None</span>
+<span class="sd">                        DEFAULT=None</span>
+
+<span class="sd">                    - output_fuel: str</span>
+<span class="sd">                        DEFAULT=&quot;dhnwatersupply&quot;</span>
+
+<span class="sd">                    - equipment: list</span>
+<span class="sd">                        DEFAULT=[]</span>
+
+<span class="sd">                    - max_capacity: float</span>
+<span class="sd">                        DEFAULT=10**8</span>
+
+<span class="sd">                    - turnkey_a: float</span>
+<span class="sd">                        DEFAULT=0</span>
+
+<span class="sd">                    - turnkey_b: float</span>
+<span class="sd">                        DEFAULT=0</span>
+
+<span class="sd">                    - conversion_efficiency: float</span>
+<span class="sd">                        DEFAULT=1</span>
+
+<span class="sd">                    - om_fix: int</span>
+<span class="sd">                        Levelized OM Var [€/year]</span>
+
+<span class="sd">                    - om_var: int</span>
+<span class="sd">                        Levelized OM Var [€/kWh]</span>
+
+<span class="sd">                    - emissions: float</span>
+<span class="sd">                        Levelized CO2 emissions [kgCO2/kWh]</span>
+
+<span class="sd">                    - technologies: list</span>
+<span class="sd">                        DEFAULT=[]</span>
+
+<span class="sd">            - teo_string: str</span>
+<span class="sd">                TEO specific data. DEFAULT=&quot;dhn&quot;</span>
+
+<span class="sd">            - input_fuel: str</span>
+<span class="sd">                TEO specific data. DEFAULT=&quot;dhnwatersupply&quot;</span>
+
+<span class="sd">            - output_fuel: str</span>
+<span class="sd">                TEO specific data. DEFAULT=&quot;dhnwaterdem&quot;</span>
+
+<span class="sd">            - output: int</span>
+<span class="sd">                TEO specific data. DEFAULT=1</span>
+
+<span class="sd">            - input: int</span>
+<span class="sd">                TEO specific data. DEFAULT=1</span>
+
+<span class="sd">            - n_supply_list: list</span>
+<span class="sd">                GIS specific data. Sources location and capacity provided to the grid</span>
+
+<span class="sd">            - teo_capacity_factor_group: int</span>
+<span class="sd">                TEO specific data</span>
+
+<span class="sd">            - teo_dhn: dict</span>
+<span class="sd">                TEO specific data. Parameters TEO</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">############################################################################################################</span>
+    <span class="c1"># INPUT</span>
+    <span class="c1"># error handling</span>
+    <span class="n">MainErrorConvertSources</span><span class="p">(</span><span class="o">**</span><span class="n">in_var</span><span class="p">)</span>
+
+    <span class="n">group_of_sources</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s1">&#39;group_of_sources&#39;</span><span class="p">]</span>
+    <span class="n">sink_group_grid_supply_temperature</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;cf_module&#39;</span><span class="p">][</span><span class="s1">&#39;sink_group_grid_supply_temperature&#39;</span><span class="p">]</span>
+    <span class="n">sink_group_grid_return_temperature</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;cf_module&#39;</span><span class="p">][</span><span class="s1">&#39;sink_group_grid_return_temperature&#39;</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">existing_grid_data</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s1">&#39;existing_grid_data&#39;</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">existing_grid_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+    <span class="c1">############################################################################################################</span>
+    <span class="c1"># Defined vars</span>
+    <span class="n">ambient_temperature</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">delta_T_buffer</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># sources to grid delta_T buffer</span>
+
+    <span class="c1"># Grid Characteristics</span>
+    <span class="n">max_grid_temperature</span> <span class="o">=</span> <span class="mi">120</span>  <span class="c1"># defined maximum hot water grid temperature [ºC]</span>
+    <span class="n">grid_fluid</span> <span class="o">=</span> <span class="s1">&#39;water&#39;</span>
+
+    <span class="c1"># HX Characteristics</span>
+    <span class="n">hx_efficiency</span> <span class="o">=</span> <span class="mf">0.95</span>
+    <span class="n">hx_delta_T</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">intermediate_fluid</span> <span class="o">=</span> <span class="s1">&#39;thermal_oil&#39;</span>
+
+    <span class="c1"># ORC Cascaded Characteristics</span>
+    <span class="n">orc_intermediate_fluid</span> <span class="o">=</span> <span class="s1">&#39;water&#39;</span>
+    <span class="n">orc_evap_cond_delta_T</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># temperature difference between condenser and evaporator</span>
+
+    <span class="c1"># Convert_Options Characteristics</span>
+    <span class="n">safety_temperature</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># if heat stream above this temperature, use intermediate oil circuit [ºC]</span>
+    <span class="n">minimum_coef_solar_thermal</span> <span class="o">=</span> <span class="mf">0.3</span>  <span class="c1"># solar thermal has to provide at least 30% of streams demand to be considered for TEO</span>
+    <span class="n">power_fraction</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># default value; equipment are designed for max_power and power_fraction*max_power</span>
+    <span class="n">boiler_fuel_type</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;electricity&#39;</span><span class="p">,</span> <span class="s1">&#39;natural_gas&#39;</span><span class="p">,</span> <span class="s1">&#39;fuel_oil&#39;</span><span class="p">,</span> <span class="s1">&#39;biomass&#39;</span><span class="p">]</span>  <span class="c1"># types of fuel</span>
+    <span class="n">chp_fuel_type</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;natural_gas&#39;</span><span class="p">,</span> <span class="s1">&#39;fuel_oil&#39;</span><span class="p">,</span> <span class="s1">&#39;biomass&#39;</span><span class="p">]</span>
+    <span class="n">fuels_teo_nomenclature</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;natural_gas&#39;</span><span class="p">:</span> <span class="s1">&#39;ng&#39;</span><span class="p">,</span> <span class="s1">&#39;fuel_oil&#39;</span><span class="p">:</span> <span class="s1">&#39;oil&#39;</span><span class="p">,</span> <span class="s1">&#39;biomass&#39;</span><span class="p">:</span> <span class="s1">&#39;bio&#39;</span><span class="p">,</span> <span class="s1">&#39;electricity&#39;</span><span class="p">:</span> <span class="s1">&#39;el&#39;</span><span class="p">}</span>
+
+    <span class="c1"># Initialize array</span>
+    <span class="n">all_sources_info</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">source_index</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">group_of_sources</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">stream_index</span><span class="p">,</span> <span class="n">stream</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]):</span>
+            <span class="n">hourly_stream_capacity</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">]</span>
+            <span class="k">break</span>
+        <span class="k">break</span>
+
+    <span class="n">teo_group_of_sources_capacity_factor</span> <span class="o">=</span> <span class="nb">list</span><span class="p">({}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hourly_stream_capacity</span><span class="p">)))</span>
+
+    <span class="c1">############################################################################################################</span>
+    <span class="c1"># ROUTINE</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">source_index</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">group_of_sources</span><span class="p">):</span>
+            <span class="n">output_converted</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span>
+            <span class="n">fuels_data</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;fuels_data&#39;</span><span class="p">]</span>
+
+            <span class="c1"># get conversion technologies for each stream</span>
+            <span class="k">for</span> <span class="n">stream_index</span><span class="p">,</span> <span class="n">stream</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]):</span>
+                <span class="n">conversion_technologies</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">source_grid_supply_temperature</span> <span class="o">=</span> <span class="n">sink_group_grid_supply_temperature</span> <span class="o">+</span> <span class="n">delta_T_buffer</span>
+                <span class="n">source_grid_return_temperature</span> <span class="o">=</span> <span class="n">sink_group_grid_return_temperature</span> <span class="o">-</span> <span class="n">delta_T_buffer</span>
+
+                <span class="c1"># only convert sources where grid supply temperature is inferior to max_grid_temperature</span>
+                <span class="k">if</span> <span class="n">source_grid_supply_temperature</span> <span class="o">&lt;=</span> <span class="n">max_grid_temperature</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;stream_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;excess_heat&#39;</span> <span class="ow">or</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;stream_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;outflow&#39;</span><span class="p">:</span>
+                        <span class="n">hourly_stream_capacity</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">]</span>
+                        <span class="n">stream_nominal_capacity</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">hourly_stream_capacity</span><span class="p">)</span>  <span class="c1"># [kW]</span>
+
+                        <span class="c1"># design technologies</span>
+                        <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]:</span>
+
+                            <span class="c1"># get HX grid temperatures</span>
+                            <span class="n">hx_source_supply_temperature</span> <span class="o">=</span> <span class="n">source_grid_supply_temperature</span> <span class="o">+</span> <span class="n">hx_delta_T</span>
+
+                            <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">safety_temperature</span><span class="p">:</span>
+                                <span class="n">hx_number</span> <span class="o">=</span> <span class="mi">2</span>
+                                <span class="n">intermediate_circuit</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">hx_number</span> <span class="o">=</span> <span class="mi">1</span>
+                                <span class="n">intermediate_circuit</span> <span class="o">=</span> <span class="kc">False</span>
+
+                            <span class="c1"># heating technologies not needed</span>
+                            <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">hx_source_supply_temperature</span> <span class="o">+</span> <span class="n">hx_delta_T</span> <span class="o">*</span> <span class="n">hx_number</span><span class="p">:</span>
+
+                                <span class="c1">#  check if intermediate circuit is needed</span>
+                                <span class="k">if</span> <span class="n">intermediate_circuit</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                                    <span class="c1"># get intermediate circuit temperatures</span>
+                                    <span class="n">hx_intermediate_supply_temperature</span> <span class="o">=</span> <span class="n">source_grid_supply_temperature</span> <span class="o">+</span> <span class="n">hx_delta_T</span>
+                                    <span class="n">hx_intermediate_return_temperature</span> <span class="o">=</span> <span class="n">source_grid_return_temperature</span> <span class="o">+</span> <span class="n">hx_delta_T</span>
+
+                                    <span class="c1"># add HX intermediate</span>
+                                    <span class="n">hx_intermediate_supply_temperature</span><span class="p">,</span> <span class="n">hx_intermediate_return_temperature</span><span class="p">,</span> <span class="n">hx_stream_supply_temperature</span><span class="p">,</span> <span class="n">hx_stream_target_temperature</span> <span class="o">=</span> <span class="n">source_get_hx_temperatures</span><span class="p">(</span>
+                                        <span class="n">hx_intermediate_supply_temperature</span><span class="p">,</span> <span class="n">hx_intermediate_return_temperature</span><span class="p">,</span>
+                                        <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">],</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span> <span class="n">hx_delta_T</span><span class="p">)</span>
+                                    <span class="n">hx_power</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span> <span class="o">*</span> <span class="p">(</span>
+                                            <span class="nb">abs</span><span class="p">(</span><span class="n">hx_stream_supply_temperature</span> <span class="o">-</span> <span class="n">hx_stream_target_temperature</span><span class="p">)</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span>
+                                        <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]))</span>
+
+                                    <span class="n">stream_available_capacity</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">hx_power</span><span class="p">)</span>
+
+                                    <span class="n">info_hx_intermediate</span> <span class="o">=</span> <span class="n">Add_HX</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                  <span class="n">hx_stream_supply_temperature</span><span class="p">,</span>
+                                                                  <span class="n">hx_stream_target_temperature</span><span class="p">,</span>
+                                                                  <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span>
+                                                                  <span class="n">hx_intermediate_supply_temperature</span><span class="p">,</span>
+                                                                  <span class="n">hx_intermediate_return_temperature</span><span class="p">,</span>
+                                                                  <span class="n">intermediate_fluid</span><span class="p">,</span>
+                                                                  <span class="n">hx_power</span><span class="p">,</span>
+                                                                  <span class="n">power_fraction</span><span class="p">)</span>
+
+                                    <span class="c1"># add intermediation circulation pumping</span>
+                                    <span class="n">info_pump_intermediate</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                      <span class="n">fuels_data</span><span class="p">,</span>
+                                                                      <span class="n">intermediate_fluid</span><span class="p">,</span>
+                                                                      <span class="n">info_hx_intermediate</span><span class="o">.</span><span class="n">available_power</span><span class="p">,</span>
+                                                                      <span class="n">power_fraction</span><span class="p">,</span>
+                                                                      <span class="n">hx_intermediate_supply_temperature</span><span class="p">,</span>
+                                                                      <span class="n">hx_intermediate_return_temperature</span><span class="p">)</span>
+
+                                    <span class="c1"># add HX to grid</span>
+                                    <span class="n">hx_power</span> <span class="o">=</span> <span class="n">info_hx_intermediate</span><span class="o">.</span><span class="n">available_power</span>
+                                    <span class="n">info_hx_grid</span> <span class="o">=</span> <span class="n">Add_HX</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                          <span class="n">hx_intermediate_supply_temperature</span><span class="p">,</span>
+                                                          <span class="n">hx_intermediate_return_temperature</span><span class="p">,</span>
+                                                          <span class="n">intermediate_fluid</span><span class="p">,</span>
+                                                          <span class="n">source_grid_supply_temperature</span><span class="p">,</span>
+                                                          <span class="n">source_grid_return_temperature</span><span class="p">,</span>
+                                                          <span class="n">grid_fluid</span><span class="p">,</span>
+                                                          <span class="n">hx_power</span><span class="p">,</span>
+                                                          <span class="n">power_fraction</span><span class="p">)</span>
+
+                                    <span class="c1"># add circulation pumping to grid</span>
+                                    <span class="n">info_pump_grid</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                              <span class="n">fuels_data</span><span class="p">,</span>
+                                                              <span class="n">grid_fluid</span><span class="p">,</span>
+                                                              <span class="n">info_hx_grid</span><span class="o">.</span><span class="n">available_power</span><span class="p">,</span>
+                                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                                              <span class="n">source_grid_supply_temperature</span><span class="p">,</span>
+                                                              <span class="n">source_grid_return_temperature</span><span class="p">)</span>
+
+                                    <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;mhex&#39;</span>
+                                    <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                                       <span class="p">[</span><span class="n">info_hx_intermediate</span><span class="p">,</span>
+                                                                        <span class="n">info_pump_intermediate</span><span class="p">,</span> <span class="n">info_hx_grid</span><span class="p">,</span>
+                                                                        <span class="n">info_pump_grid</span><span class="p">],</span>
+                                                                       <span class="n">power_fraction</span><span class="p">,</span>
+                                                                       <span class="n">stream_available_capacity</span><span class="p">,</span>
+                                                                       <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                                       <span class="s1">&#39;sou&#39;</span><span class="p">,</span>
+                                                                       <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                                       <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                                    <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="c1"># add HX to grid</span>
+                                    <span class="n">hx_grid_supply_temperature</span><span class="p">,</span> <span class="n">hx_grid_return_temperature</span><span class="p">,</span> <span class="n">hx_stream_supply_temperature</span><span class="p">,</span> <span class="n">hx_stream_target_temperature</span> <span class="o">=</span> <span class="n">source_get_hx_temperatures</span><span class="p">(</span>
+                                        <span class="n">source_grid_supply_temperature</span><span class="p">,</span> <span class="n">source_grid_return_temperature</span><span class="p">,</span>
+                                        <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">],</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span> <span class="n">hx_delta_T</span><span class="p">)</span>
+                                    <span class="n">hx_power</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span> <span class="o">/</span> <span class="p">(</span>
+                                        <span class="nb">abs</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]))</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span>
+                                        <span class="n">hx_stream_supply_temperature</span> <span class="o">-</span> <span class="n">hx_stream_target_temperature</span><span class="p">)</span>
+
+                                    <span class="n">stream_available_capacity</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">hx_power</span><span class="p">)</span>
+
+                                    <span class="n">info_hx_grid</span> <span class="o">=</span> <span class="n">Add_HX</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                          <span class="n">hx_stream_supply_temperature</span><span class="p">,</span>
+                                                          <span class="n">hx_stream_target_temperature</span><span class="p">,</span>
+                                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span>
+                                                          <span class="n">source_grid_supply_temperature</span><span class="p">,</span>
+                                                          <span class="n">source_grid_return_temperature</span><span class="p">,</span>
+                                                          <span class="n">grid_fluid</span><span class="p">,</span>
+                                                          <span class="n">hx_power</span><span class="p">,</span>
+                                                          <span class="n">power_fraction</span><span class="p">)</span>
+
+                                    <span class="c1"># add circulation pumping to grid</span>
+                                    <span class="n">info_pump_grid</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                              <span class="n">fuels_data</span><span class="p">,</span>
+                                                              <span class="n">grid_fluid</span><span class="p">,</span>
+                                                              <span class="n">info_hx_grid</span><span class="o">.</span><span class="n">available_power</span><span class="p">,</span>
+                                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                                              <span class="n">hx_grid_supply_temperature</span><span class="p">,</span>
+                                                              <span class="n">hx_grid_return_temperature</span><span class="p">)</span>
+
+                                    <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;shex&#39;</span>
+
+                                    <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                                       <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">],</span>
+                                                                       <span class="n">power_fraction</span><span class="p">,</span>
+                                                                       <span class="n">stream_available_capacity</span><span class="p">,</span>
+                                                                       <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                                       <span class="s1">&#39;sou&#39;</span><span class="p">,</span>
+                                                                       <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                                       <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                                    <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                                <span class="c1"># add ORC cascaded</span>
+                                <span class="n">orc_T_cond</span> <span class="o">=</span> <span class="n">source_grid_supply_temperature</span> <span class="o">+</span> <span class="n">hx_delta_T</span>
+                                <span class="n">orc_T_evap</span> <span class="o">=</span> <span class="n">orc_T_cond</span> <span class="o">+</span> <span class="n">orc_evap_cond_delta_T</span>
+                                <span class="n">orc_type</span><span class="p">,</span> <span class="n">stream_available_capacity</span><span class="p">,</span> <span class="n">orc_electrical_generation</span><span class="p">,</span> <span class="n">overall_thermal_capacity</span><span class="p">,</span> <span class="n">hx_stream_target_temperature</span><span class="p">,</span> <span class="n">intermediate_circuit</span><span class="p">,</span> <span class="n">hx_intermediate_supply_temperature</span><span class="p">,</span> <span class="n">hx_intermediate_return_temperature</span> <span class="o">=</span> <span class="n">design_orc</span><span class="p">(</span>
+                                    <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;capacity&#39;</span><span class="p">],</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">],</span>
+                                    <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span> <span class="n">hx_delta_T</span><span class="p">,</span> <span class="n">orc_T_cond</span><span class="p">,</span> <span class="n">orc_T_evap</span><span class="p">,</span> <span class="n">hx_efficiency</span><span class="p">,</span>
+                                    <span class="n">aggregate_streams</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+                                <span class="k">if</span> <span class="n">intermediate_circuit</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                                    <span class="n">hx_number</span> <span class="o">=</span> <span class="mi">2</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">hx_number</span> <span class="o">=</span> <span class="mi">1</span>
+
+                                <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">orc_T_evap</span> <span class="o">+</span> <span class="n">hx_delta_T</span> <span class="o">*</span> <span class="n">hx_number</span><span class="p">):</span>
+                                    <span class="n">info_technology</span> <span class="o">=</span> <span class="n">Add_ORC_Cascaded</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                       <span class="n">orc_T_cond</span><span class="p">,</span>
+                                                                       <span class="n">orc_type</span><span class="p">,</span>
+                                                                       <span class="n">overall_thermal_capacity</span><span class="p">,</span>
+                                                                       <span class="n">orc_electrical_generation</span><span class="p">,</span>
+                                                                       <span class="n">power_fraction</span><span class="p">)</span>
+
+                                    <span class="c1"># get intermediate circuit</span>
+                                    <span class="k">if</span> <span class="n">intermediate_circuit</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                                        <span class="c1"># add HX intermediate</span>
+                                        <span class="n">hx_stream_supply_temperature</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span>
+                                        <span class="n">hx_power</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">stream_available_capacity</span><span class="p">)</span>
+                                        <span class="n">info_hx_intermediate</span> <span class="o">=</span> <span class="n">Add_HX</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                      <span class="n">hx_stream_supply_temperature</span><span class="p">,</span>
+                                                                      <span class="n">hx_stream_target_temperature</span><span class="p">,</span>
+                                                                      <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span>
+                                                                      <span class="n">hx_intermediate_supply_temperature</span><span class="p">,</span>
+                                                                      <span class="n">hx_intermediate_return_temperature</span><span class="p">,</span>
+                                                                      <span class="n">intermediate_fluid</span><span class="p">,</span>
+                                                                      <span class="n">hx_power</span><span class="p">,</span>
+                                                                      <span class="n">power_fraction</span><span class="p">)</span>
+
+                                        <span class="c1"># add circulation pumping to intermediate circuit</span>
+                                        <span class="n">info_pump_intermediate</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                          <span class="n">fuels_data</span><span class="p">,</span>
+                                                                          <span class="n">orc_intermediate_fluid</span><span class="p">,</span>
+                                                                          <span class="n">info_hx_intermediate</span><span class="o">.</span><span class="n">available_power</span><span class="p">,</span>
+                                                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                                                          <span class="n">hx_intermediate_supply_temperature</span><span class="p">,</span>
+                                                                          <span class="n">hx_intermediate_return_temperature</span><span class="p">)</span>
+
+                                    <span class="n">info_pump_grid</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                              <span class="n">fuels_data</span><span class="p">,</span>
+                                                              <span class="n">grid_fluid</span><span class="p">,</span>
+                                                              <span class="n">info_technology</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                                              <span class="n">source_grid_supply_temperature</span><span class="p">,</span>
+                                                              <span class="n">source_grid_return_temperature</span><span class="p">)</span>
+                                    <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;orc&#39;</span>
+
+                                    <span class="k">if</span> <span class="n">intermediate_circuit</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                                        <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                                           <span class="p">[</span><span class="n">info_hx_intermediate</span><span class="p">,</span>
+                                                                            <span class="n">info_pump_intermediate</span><span class="p">,</span>
+                                                                            <span class="n">info_technology</span><span class="p">,</span>
+                                                                            <span class="n">info_pump_grid</span><span class="p">],</span>
+                                                                           <span class="n">power_fraction</span><span class="p">,</span>
+                                                                           <span class="n">stream_available_capacity</span><span class="p">,</span>
+                                                                           <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                                           <span class="s1">&#39;sou&#39;</span><span class="p">,</span>
+                                                                           <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                                           <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+                                    <span class="k">else</span><span class="p">:</span>
+                                        <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                                           <span class="p">[</span><span class="n">info_technology</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">],</span>
+                                                                           <span class="n">power_fraction</span><span class="p">,</span>
+                                                                           <span class="n">stream_available_capacity</span><span class="p">,</span>
+                                                                           <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                                           <span class="s1">&#39;sou&#39;</span><span class="p">,</span>
+                                                                           <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                                           <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                                    <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                            <span class="c1"># heating technologies needed; source cannot meet DHN temperature</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">source_grid_return_temperature</span> <span class="o">+</span> <span class="n">hx_delta_T</span><span class="p">:</span>
+                                    <span class="c1"># get heat extra needed to be supplied</span>
+                                    <span class="n">booster_outlet_temperature</span> <span class="o">=</span> <span class="n">source_grid_supply_temperature</span>
+                                    <span class="n">booster_inlet_temperature</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">hx_delta_T</span>
+                                    <span class="n">needed_supply_capacity</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;capacity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">booster_outlet_temperature</span> <span class="o">-</span> <span class="n">booster_inlet_temperature</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span> <span class="s1">&#39;target_temperature&#39;</span><span class="p">])</span>
+
+                                    <span class="c1"># get data HX Source-Grid</span>
+                                    <span class="n">hx_grid_supply_temperature</span><span class="p">,</span> <span class="n">hx_grid_return_temperature</span><span class="p">,</span> <span class="n">hx_stream_supply_temperature</span><span class="p">,</span> <span class="n">hx_stream_target_temperature</span><span class="p">,</span> <span class="o">=</span> <span class="n">source_get_hx_temperatures</span><span class="p">(</span>
+                                        <span class="n">booster_inlet_temperature</span><span class="p">,</span> <span class="n">source_grid_return_temperature</span><span class="p">,</span>
+                                        <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">],</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span> <span class="n">hx_delta_T</span><span class="p">)</span>
+
+                                    <span class="n">hx_power</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">hx_stream_supply_temperature</span> <span class="o">-</span> <span class="n">hx_stream_target_temperature</span><span class="p">))</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">])</span>
+
+                                    <span class="n">info_hx_grid</span> <span class="o">=</span> <span class="n">Add_HX</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                          <span class="n">hx_stream_supply_temperature</span><span class="p">,</span>
+                                                          <span class="n">hx_stream_target_temperature</span><span class="p">,</span>
+                                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span>
+                                                          <span class="n">source_grid_supply_temperature</span><span class="p">,</span>
+                                                          <span class="n">source_grid_return_temperature</span><span class="p">,</span>
+                                                          <span class="n">grid_fluid</span><span class="p">,</span>
+                                                          <span class="n">hx_power</span><span class="p">,</span>
+                                                          <span class="n">power_fraction</span><span class="p">)</span>
+
+                                    <span class="n">stream_available_capacity</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="nb">abs</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">hx_stream_target_temperature</span><span class="p">))</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span>
+                                        <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">])</span>
+
+                                    <span class="c1"># add circulation pumping to grid</span>
+                                    <span class="n">info_pump_grid</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                              <span class="n">fuels_data</span><span class="p">,</span>
+                                                              <span class="n">grid_fluid</span><span class="p">,</span>
+                                                              <span class="n">info_hx_grid</span><span class="o">.</span><span class="n">available_power</span><span class="p">,</span>
+                                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                                              <span class="n">booster_inlet_temperature</span><span class="p">,</span>
+                                                              <span class="n">source_grid_return_temperature</span><span class="p">)</span>
+
+                                    <span class="c1"># DESIGN BOOSTING TECHNOLOGIES</span>
+                                    <span class="c1"># 1) add Boiler</span>
+                                    <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">boiler_fuel_type</span><span class="p">:</span>
+                                        <span class="n">info_technology</span> <span class="o">=</span> <span class="n">Add_Boiler</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                     <span class="n">fuels_data</span><span class="p">,</span>
+                                                                     <span class="n">fuel</span><span class="p">,</span>
+                                                                     <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                                     <span class="n">power_fraction</span><span class="p">,</span>
+                                                                     <span class="n">booster_outlet_temperature</span><span class="p">,</span>
+                                                                     <span class="n">booster_inlet_temperature</span><span class="p">)</span>
+
+                                        <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="n">fuels_teo_nomenclature</span><span class="p">[</span><span class="n">info_technology</span><span class="o">.</span><span class="n">fuel_type</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_whrb&#39;</span>
+
+                                        <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                                           <span class="p">[</span><span class="n">info_technology</span><span class="p">,</span> <span class="n">info_hx_grid</span><span class="p">,</span>
+                                                                            <span class="n">info_pump_grid</span><span class="p">],</span>
+                                                                           <span class="n">power_fraction</span><span class="p">,</span>
+                                                                           <span class="n">stream_available_capacity</span><span class="p">,</span>
+                                                                           <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span> <span class="o">+</span> <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                                           <span class="s1">&#39;sou&#39;</span><span class="p">,</span>
+                                                                           <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                                           <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                                        <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                                    <span class="c1"># 2) add Solar Thermal + Boiler as backup</span>
+                                    <span class="n">info_technology_solar_thermal</span> <span class="o">=</span> <span class="n">Add_Solar_Thermal</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                                      <span class="n">fuels_data</span><span class="p">,</span>
+                                                                                      <span class="n">latitude</span><span class="p">,</span>
+                                                                                      <span class="n">longitude</span><span class="p">,</span>
+                                                                                      <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                                                      <span class="n">power_fraction</span><span class="p">,</span>
+                                                                                      <span class="n">booster_outlet_temperature</span><span class="p">,</span>
+                                                                                      <span class="n">booster_inlet_temperature</span><span class="p">,</span>
+                                                                                      <span class="n">hx_delta_T</span><span class="p">,</span>
+                                                                                      <span class="n">hx_efficiency</span><span class="p">)</span>
+                                    <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">boiler_fuel_type</span><span class="p">:</span>
+                                        <span class="n">info_technology_boiler</span> <span class="o">=</span> <span class="n">Add_Boiler</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                            <span class="n">fuels_data</span><span class="p">,</span>
+                                                                            <span class="n">fuel</span><span class="p">,</span>
+                                                                            <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                                            <span class="n">power_fraction</span><span class="p">,</span>
+                                                                            <span class="n">booster_outlet_temperature</span><span class="p">,</span>
+                                                                            <span class="n">booster_inlet_temperature</span><span class="p">)</span>
+
+                                        <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;st_&#39;</span> <span class="o">+</span> <span class="n">fuels_teo_nomenclature</span><span class="p">[</span>
+                                            <span class="n">info_technology_boiler</span><span class="o">.</span><span class="n">fuel_type</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_boiler&#39;</span>
+
+                                        <span class="n">coef_solar_thermal</span><span class="p">,</span> <span class="n">info_technology_boiler</span> <span class="o">=</span> <span class="n">coef_solar_thermal_backup</span><span class="p">(</span>
+                                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">],</span> <span class="n">info_technology_solar_thermal</span><span class="p">,</span>
+                                            <span class="n">info_technology_boiler</span><span class="p">)</span>
+
+                                        <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                                           <span class="p">[</span><span class="n">info_technology_solar_thermal</span><span class="p">,</span>
+                                                                            <span class="n">info_technology_boiler</span><span class="p">,</span> <span class="n">info_hx_grid</span><span class="p">,</span>
+                                                                            <span class="n">info_pump_grid</span><span class="p">],</span>
+                                                                           <span class="n">power_fraction</span><span class="p">,</span>
+                                                                           <span class="n">stream_available_capacity</span><span class="p">,</span>
+                                                                           <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span> <span class="o">+</span> <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                                           <span class="s1">&#39;sou&#39;</span><span class="p">,</span>
+                                                                           <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                                           <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                                        <span class="k">if</span> <span class="n">coef_solar_thermal</span> <span class="o">&gt;=</span> <span class="n">minimum_coef_solar_thermal</span><span class="p">:</span>
+                                            <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                                    <span class="c1"># 3) add solar thermal + heat pump as backup</span>
+                                    <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;st_&#39;</span> <span class="o">+</span> <span class="s1">&#39;hp&#39;</span>
+                                    <span class="n">info_technology_heat_pump</span> <span class="o">=</span> <span class="n">Add_Heat_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                              <span class="n">fuels_data</span><span class="p">,</span>
+                                                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                                                              <span class="n">booster_outlet_temperature</span><span class="p">,</span>
+                                                                              <span class="n">booster_inlet_temperature</span><span class="p">,</span>
+                                                                              <span class="n">ambient_temperature</span><span class="p">,</span>
+                                                                              <span class="n">supply_capacity</span><span class="o">=</span><span class="n">needed_supply_capacity</span><span class="p">)</span>
+
+                                    <span class="n">coef_solar_thermal</span><span class="p">,</span> <span class="n">info_technology_heat_pump</span> <span class="o">=</span> <span class="n">coef_solar_thermal_backup</span><span class="p">(</span>
+                                        <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">],</span> <span class="n">info_technology_solar_thermal</span><span class="p">,</span>
+                                        <span class="n">info_technology_heat_pump</span><span class="p">)</span>
+
+                                    <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                                       <span class="p">[</span><span class="n">info_technology_solar_thermal</span><span class="p">,</span>
+                                                                        <span class="n">info_technology_heat_pump</span><span class="p">,</span> <span class="n">info_hx_grid</span><span class="p">,</span>
+                                                                        <span class="n">info_pump_grid</span><span class="p">],</span>
+                                                                       <span class="n">power_fraction</span><span class="p">,</span>
+                                                                       <span class="n">stream_available_capacity</span><span class="p">,</span>
+                                                                       <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span> <span class="o">+</span> <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                                       <span class="s1">&#39;sou&#39;</span><span class="p">,</span>
+                                                                       <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                                       <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                                    <span class="k">if</span> <span class="n">coef_solar_thermal</span> <span class="o">&gt;=</span> <span class="n">minimum_coef_solar_thermal</span><span class="p">:</span>
+                                        <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                                    <span class="c1">#4) add chp</span>
+                                    <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">chp_fuel_type</span><span class="p">:</span>
+                                        <span class="n">info_technology</span> <span class="o">=</span> <span class="n">Add_CHP</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                  <span class="n">fuels_data</span><span class="p">,</span>
+                                                                  <span class="n">fuel</span><span class="p">,</span>
+                                                                  <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                                  <span class="n">power_fraction</span><span class="p">,</span>
+                                                                  <span class="n">booster_outlet_temperature</span><span class="p">,</span>
+                                                                  <span class="n">booster_inlet_temperature</span><span class="p">)</span>
+
+                                        <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;chp_&#39;</span> <span class="o">+</span> <span class="n">fuels_teo_nomenclature</span><span class="p">[</span>
+                                            <span class="n">info_technology</span><span class="o">.</span><span class="n">fuel_type</span><span class="p">]</span>
+
+                                        <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                                           <span class="p">[</span><span class="n">info_technology</span><span class="p">,</span> <span class="n">info_hx_grid</span><span class="p">,</span>
+                                                                            <span class="n">info_pump_grid</span><span class="p">],</span>
+                                                                           <span class="n">power_fraction</span><span class="p">,</span>
+                                                                           <span class="n">stream_available_capacity</span><span class="p">,</span>
+                                                                           <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span> <span class="o">+</span> <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                                           <span class="s1">&#39;sou&#39;</span><span class="p">,</span>
+                                                                           <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                                           <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                                        <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                                <span class="c1"># add Heat Pump (with intermediate HX between stream and HP)</span>
+                                <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;hp&#39;</span>
+                                <span class="n">heat_pump_T_evap</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">hx_delta_T</span>
+                                <span class="n">heat_pump_evap_capacity</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span>
+                                <span class="n">info_technology</span> <span class="o">=</span> <span class="n">Add_Heat_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                <span class="n">fuels_data</span><span class="p">,</span>
+                                                                <span class="n">power_fraction</span><span class="p">,</span>
+                                                                <span class="n">source_grid_supply_temperature</span><span class="p">,</span>
+                                                                <span class="n">source_grid_return_temperature</span><span class="p">,</span>
+                                                                <span class="n">heat_pump_T_evap</span><span class="p">,</span>
+                                                                <span class="n">evap_capacity</span><span class="o">=</span><span class="n">heat_pump_evap_capacity</span><span class="p">)</span>
+
+                                <span class="c1"># add HX to hp</span>
+                                <span class="n">hx_hp_supply_temperature</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">hx_delta_T</span>
+                                <span class="n">hx_hp_return_temperature</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">hx_delta_T</span>
+                                <span class="n">hx_stream_supply_temperature</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span>
+                                <span class="n">hx_stream_target_temperature</span><span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span>
+
+                                <span class="n">hx_power</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span>
+
+                                <span class="n">info_hx_pump</span> <span class="o">=</span> <span class="n">Add_HX</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                      <span class="n">hx_stream_supply_temperature</span><span class="p">,</span>
+                                                      <span class="n">hx_stream_target_temperature</span><span class="p">,</span>
+                                                      <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span>
+                                                      <span class="n">hx_hp_supply_temperature</span><span class="p">,</span>
+                                                      <span class="n">hx_hp_return_temperature</span><span class="p">,</span>
+                                                      <span class="s1">&#39;water&#39;</span><span class="p">,</span>
+                                                      <span class="n">hx_power</span><span class="p">,</span>
+                                                      <span class="n">power_fraction</span><span class="p">)</span>
+
+                                <span class="c1"># hp - add circulation pumping to grid</span>
+                                <span class="n">info_pump_grid</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                          <span class="n">fuels_data</span><span class="p">,</span>
+                                                          <span class="n">grid_fluid</span><span class="p">,</span>
+                                                          <span class="n">info_technology</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                                          <span class="n">source_grid_supply_temperature</span><span class="p">,</span>
+                                                          <span class="n">source_grid_return_temperature</span><span class="p">)</span>
+
+                                <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                                   <span class="p">[</span><span class="n">info_hx_pump</span><span class="p">,</span> <span class="n">info_technology</span><span class="p">,</span>  <span class="n">info_pump_grid</span><span class="p">],</span>
+                                                                   <span class="n">power_fraction</span><span class="p">,</span>
+                                                                   <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                                   <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                                   <span class="s1">&#39;sou&#39;</span><span class="p">,</span>
+                                                                   <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                                   <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                                <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                            <span class="n">teo_capacity_factor</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">hourly_stream_capacity</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">hourly_stream_capacity</span><span class="p">]</span>
+                            <span class="n">gis_capacity</span> <span class="o">=</span> <span class="n">conversion_technologies</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;max_capacity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">conversion_technologies</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span>
+                                <span class="s1">&#39;conversion_efficiency&#39;</span><span class="p">]</span>
+
+                            <span class="n">output_converted</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                <span class="s2">&quot;stream_id&quot;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                <span class="s2">&quot;teo_stream_id&quot;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;sou&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]),</span>
+                                <span class="s2">&quot;input_fuel&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="s2">&quot;output_fuel&quot;</span><span class="p">:</span> <span class="s2">&quot;eh&quot;</span> <span class="o">+</span> <span class="s1">&#39;str&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;sou&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]),</span>
+                                <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                <span class="s2">&quot;gis_capacity&quot;</span><span class="p">:</span> <span class="n">gis_capacity</span><span class="p">,</span>  <span class="c1"># [kW]</span>
+                                <span class="s2">&quot;hourly_stream_capacity&quot;</span><span class="p">:</span> <span class="n">hourly_stream_capacity</span><span class="p">,</span>  <span class="c1"># [kWh]</span>
+                                <span class="s2">&quot;teo_capacity_factor&quot;</span><span class="p">:</span> <span class="n">teo_capacity_factor</span><span class="p">,</span>
+                                <span class="s2">&quot;max_stream_capacity&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">hourly_stream_capacity</span><span class="p">),</span>
+                                <span class="s2">&quot;conversion_technologies&quot;</span><span class="p">:</span> <span class="n">conversion_technologies</span><span class="p">,</span>  <span class="c1"># [€/kW]</span>
+                            <span class="p">})</span>
+
+                            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">teo_group_of_sources_capacity_factor</span><span class="p">):</span>
+                                <span class="n">teo_id</span> <span class="o">=</span> <span class="s1">&#39;str&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;sou&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+                                <span class="n">i</span><span class="p">[</span><span class="n">teo_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">teo_capacity_factor</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+            <span class="c1"># get conversion for each source</span>
+            <span class="k">if</span> <span class="n">output_converted</span> <span class="o">!=</span> <span class="p">[]:</span>
+                <span class="n">all_sources_info</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s1">&#39;source_id&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">],</span>
+                    <span class="s1">&#39;source_grid_supply_temperature&#39;</span><span class="p">:</span> <span class="n">source_grid_supply_temperature</span><span class="p">,</span>
+                    <span class="s1">&#39;source_grid_return_temperature&#39;</span><span class="p">:</span> <span class="n">source_grid_return_temperature</span><span class="p">,</span>
+                    <span class="s1">&#39;streams_converted&#39;</span><span class="p">:</span> <span class="n">output_converted</span>
+                <span class="p">})</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModuleRuntimeException</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;convert_sources.py&quot;</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Source&#39; streams conversion infeasible. Check sources&#39; streams. </span><span class="se">\n</span><span class="s2"> &quot;</span>
+                <span class="s2">&quot;If all inputs are correct report to the platform.&quot;</span>
+        <span class="p">)</span>
+
+
+    <span class="c1">############################</span>
+    <span class="k">if</span> <span class="n">existing_grid_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">grid_id</span> <span class="o">=</span> <span class="n">existing_grid_data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="n">existing_grid_data</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span>
+        <span class="n">levelized_co2_emissions</span> <span class="o">=</span> <span class="n">existing_grid_data</span><span class="p">[</span><span class="s1">&#39;levelized_co2_emissions&#39;</span><span class="p">]</span>
+        <span class="n">levelized_om_var</span> <span class="o">=</span> <span class="n">existing_grid_data</span><span class="p">[</span><span class="s1">&#39;levelized_om_var&#39;</span><span class="p">]</span>
+        <span class="n">levelized_om_fix</span> <span class="o">=</span> <span class="n">existing_grid_data</span><span class="p">[</span><span class="s1">&#39;levelized_om_fix&#39;</span><span class="p">]</span>
+
+        <span class="n">ex_grid</span> <span class="o">=</span> <span class="p">{</span>
+                      <span class="s2">&quot;teo_equipment_name&quot;</span><span class="p">:</span> <span class="s2">&quot;ex_grid&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                      <span class="s2">&quot;input_fuel&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="s2">&quot;output_fuel&quot;</span><span class="p">:</span> <span class="s2">&quot;dhnwatersupply&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;equipment&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                      <span class="s2">&quot;max_capacity&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span>
+                      <span class="s2">&quot;turnkey_a&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                      <span class="s2">&quot;turnkey_b&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                      <span class="s2">&quot;conversion_efficiency&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                      <span class="s2">&quot;om_fix&quot;</span><span class="p">:</span> <span class="n">levelized_om_fix</span><span class="p">,</span>
+                      <span class="s2">&quot;om_var&quot;</span><span class="p">:</span> <span class="n">levelized_om_var</span><span class="p">,</span>
+                      <span class="s2">&quot;emissions&quot;</span><span class="p">:</span> <span class="n">levelized_co2_emissions</span><span class="p">,</span>
+                      <span class="s2">&quot;technologies&quot;</span><span class="p">:</span> <span class="p">[]</span>
+            <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ex_grid</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1">##############################</span>
+    <span class="c1"># OUTPUT</span>
+    <span class="n">n_supply_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">all_sources_info</span><span class="p">:</span>
+        <span class="n">total_cap</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;streams_converted&#39;</span><span class="p">]:</span>
+            <span class="n">total_cap</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;gis_capacity&#39;</span><span class="p">])</span>  <span class="c1"># [kW]</span>
+
+        <span class="k">if</span> <span class="n">total_cap</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">gis_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;source_id&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;coords&#39;</span><span class="p">:</span> <span class="n">source</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;cap&#39;</span><span class="p">:</span> <span class="n">total_cap</span>
+            <span class="p">}</span>
+
+            <span class="n">n_supply_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gis_dict</span><span class="p">)</span>
+
+    <span class="n">teo_dhn</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;technology&quot;</span><span class="p">:</span> <span class="s2">&quot;dhn&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;input_fuel&quot;</span><span class="p">:</span> <span class="s2">&quot;dhnwatersupply&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;output_fuel&quot;</span><span class="p">:</span> <span class="s2">&quot;dhnwaterdemand&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;max_capacity&quot;</span><span class="p">:</span> <span class="mf">1000000.1</span><span class="p">,</span>
+        <span class="s2">&quot;turnkey_a&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s2">&quot;conversion_efficiency&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;om_fix&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s2">&quot;om_var&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s2">&quot;emissions_factor&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s2">&quot;emissions&quot;</span><span class="p">:</span> <span class="s2">&quot;co2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;emission&quot;</span><span class="p">:</span> <span class="s2">&quot;co2&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">all_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;all_sources_info&quot;</span><span class="p">:</span> <span class="n">all_sources_info</span><span class="p">,</span>
+        <span class="s2">&quot;ex_grid&quot;</span><span class="p">:</span> <span class="n">ex_grid</span><span class="p">,</span>
+        <span class="s2">&quot;teo_string&quot;</span><span class="p">:</span> <span class="s1">&#39;dhn&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;input_fuel&quot;</span><span class="p">:</span> <span class="s2">&quot;dhnwatersupply&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;output_fuel&quot;</span><span class="p">:</span> <span class="s2">&quot;dhnwaterdem&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;n_supply_list&quot;</span><span class="p">:</span> <span class="n">n_supply_list</span><span class="p">,</span>
+        <span class="s2">&quot;teo_capacity_factor_group&quot;</span><span class="p">:</span> <span class="n">teo_group_of_sources_capacity_factor</span><span class="p">,</span>
+        <span class="s2">&quot;teo_dhn&quot;</span><span class="p">:</span> <span class="n">teo_dhn</span>
+    <span class="p">}</span>
+
+
+    <span class="k">return</span> <span class="n">all_info</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

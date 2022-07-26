@@ -1,6 +1,6 @@
-from ....Source.simulation.Heat_Recovery.Pinch.convert_pinch import convert_pinch
-from ....utilities.kb import KB
-from ....utilities.kb_data import kb
+from module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch import convert_pinch
+from module.src.utilities.kb import KB
+from module.src.utilities.kb_data import kb
 import os
 import json
 
@@ -48,9 +48,9 @@ def testConvertPinch():
         #data_test = json.load(open(os.path.join(script_dir, "test_files/pinch_detailed_workshop.json")))
         #test = convert_pinch(data_test, KB(kb))
 
-        file = open("sample.html", "w")
-        file.write(test["report"])
-        file.close()
+        #file = open("sample.html", "w")
+        #file.write(test["report"])
+        #file.close()
 
         print("Convert Pinch with Source Detailed INFO  Run Successfully")
 

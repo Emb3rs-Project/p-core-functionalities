@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../../" id="documentation_options" src="../../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../../../index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../../index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../../../index.html">Module code</a> &raquo;</li>
+      <li>module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.....Source.simulation.Heat_Recovery.Pinch.Auxiliary.pinch_analysis</span> <span class="kn">import</span> <span class="n">pinch_analysis</span>
+<span class="kn">from</span> <span class="nn">.....Source.simulation.Heat_Recovery.Pinch.Auxiliary.get_best_x_outputs</span> <span class="kn">import</span> <span class="n">get_best_x_outputs</span>
+<span class="kn">from</span> <span class="nn">.....General.Auxiliary_General.get_country</span> <span class="kn">import</span> <span class="n">get_country</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">.....utilities.kb</span> <span class="kn">import</span> <span class="n">KB</span>
+<span class="kn">from</span> <span class="nn">.....Error_Handling.runtime_error</span> <span class="kn">import</span> <span class="n">ModuleRuntimeException</span>
+<span class="kn">from</span> <span class="nn">.....Error_Handling.error_pinch</span> <span class="kn">import</span> <span class="n">error_convert_pinch</span>
+<span class="kn">from</span> <span class="nn">.....Reports.pinch_report</span> <span class="kn">import</span> <span class="n">pinch_report</span>
+
+
+<div class="viewcode-block" id="convert_pinch"><a class="viewcode-back" href="../../../../../../../module.Source.simulation.Heat_Recovery.Pinch.html#module.src.Source.simulation.Heat_Recovery.Pinch.convert_pinch.convert_pinch">[docs]</a><span class="k">def</span> <span class="nf">convert_pinch</span><span class="p">(</span><span class="n">in_var</span><span class="p">,</span> <span class="n">kb</span><span class="p">:</span> <span class="n">KB</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Main function of Pinch Analysis</span>
+
+<span class="sd">    Includes data pretreatment, pinch analysis, and economic/co2 analysis of the options designed.</span>
+<span class="sd">    Return the best three solutions for: minimum CO2 emissions ,maximize energy recovery, and energy recovery specific cost.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_var : dict</span>
+<span class="sd">        Data for pinch analysis, with the following key:</span>
+
+<span class="sd">            platform :  dict</span>
+<span class="sd">                Platform Data</span>
+
+<span class="sd">                    streams_to_analyse : list</span>
+<span class="sd">                        List with streams ID to analyse</span>
+
+<span class="sd">                    pinch_delta_T_min: float</span>
+<span class="sd">                        Minimum delta temperature for pinch analysis [ºC]</span>
+
+<span class="sd">                    all_input_objects : list</span>
+<span class="sd">                        List with:</span>
+<span class="sd">                            - equipments (check Source/characterization/Generate_Equipment)</span>
+<span class="sd">                            - processes (check Source/characterization/Process/process)</span>
+<span class="sd">                            - isolated streams (check General/Simple_User/isolated_stream)</span>
+
+<span class="sd">                    location:  list</span>
+<span class="sd">                        [latitude, longitude] [º]</span>
+
+<span class="sd">                    lifetime : int, optional</span>
+<span class="sd">                        Heat exchangers lifetime. DEFAULT=20</span>
+
+<span class="sd">                    fuels_data: dict:</span>
+<span class="sd">                        Fuels price and CO2 emission, with the following keys:</span>
+
+<span class="sd">                            - natural_gas: dict</span>
+<span class="sd">                                Natural gas data</span>
+
+<span class="sd">                                    - co2_emissions: float:</span>
+<span class="sd">                                        Fuel CO2 emission [kg CO2/kWh]</span>
+
+<span class="sd">                                    - price: float:</span>
+<span class="sd">                                        Fuel price [€/kWh]</span>
+
+<span class="sd">                            - fuel_oil</span>
+<span class="sd">                                Same keys as &quot;natural_gas&quot;</span>
+
+<span class="sd">                            - electricity</span>
+<span class="sd">                                Same keys as &quot;natural_gas&quot;</span>
+
+<span class="sd">                            - biomass</span>
+<span class="sd">                                Same keys as &quot;natural_gas&quot;</span>
+
+<span class="sd">                    number_output_options: int, optional</span>
+<span class="sd">                        Number of solutions of each category to return. DEFAULT=3</span>
+
+<span class="sd">                    interest_rate : float, optional</span>
+<span class="sd">                        Interest rate considered for BM</span>
+
+<span class="sd">    kb : dict</span>
+<span class="sd">        Knowledge Base</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pinch_output : dict</span>
+<span class="sd">        Pinch analysis, with the following keys:</span>
+
+<span class="sd">            best_options : dict</span>
+<span class="sd">                Three categories, with the respective following keys:</span>
+
+<span class="sd">                    co2_optimization : list</span>
+<span class="sd">                        List with dicts, with best design options that minimize CO2 emissions. Each solution with the following</span>
+<span class="sd">                        keys:</span>
+
+<span class="sd">                            ID : int</span>
+<span class="sd">                                Designed solution ID</span>
+
+<span class="sd">                            streams : list</span>
+<span class="sd">                                Streams ID in pinch design</span>
+
+<span class="sd">                            streams_info : list</span>
+<span class="sd">                                array with dicts</span>
+
+<span class="sd">                            capex : float</span>
+<span class="sd">                                Solution capex [€]</span>
+
+<span class="sd">                            om_fix : float</span>
+<span class="sd">                                Yearly OM fix costs [€/year]</span>
+
+<span class="sd">                            hot_utility : float</span>
+<span class="sd">                                Power of the hot utility needed, so that the cold streams reach their target_temperature [kW]</span>
+
+<span class="sd">                            cold_utility : float</span>
+<span class="sd">                                Power of the cold utility needed, so that the hot streams reach their target_temperature [kW]</span>
+
+<span class="sd">                            lifetime : float</span>
+<span class="sd">                                Considered lifetime  [year]</span>
+
+<span class="sd">                            co2_savings : float</span>
+<span class="sd">                                Annualized co2 savings by implementing the pinch design [kg CO2/kWh]</span>
+
+<span class="sd">                            money_savings : float</span>
+<span class="sd">                                Annualized energy savings by implementing the pinch design  [€/kWh]</span>
+
+<span class="sd">                            energy_dispatch : float</span>
+<span class="sd">                                Yearly energy recovered by implementing the pinch design [kWh/year]</span>
+
+<span class="sd">                            discount_rate : float</span>
+<span class="sd">                                Financial parameter for the BM []</span>
+
+<span class="sd">                            pinch_temperature : float</span>
+<span class="sd">                                Design pinch temperature [ºC]</span>
+
+<span class="sd">                            theo_minimum_hot_utility : float</span>
+<span class="sd">                                Theoretical power of the hot utility needed, so that the cold streams reach their target temperature [kW]</span>
+
+<span class="sd">                            theo_minimum_cold_utility : float</span>
+<span class="sd">                                Theoretical power of the cold utility needed, so that the hot streams reach their target temperature [kW]</span>
+
+<span class="sd">                            pinch_hx_data : list</span>
+<span class="sd">                                Each heat exchanger technical/economical data,with the following keys:</span>
+
+<span class="sd">                                    - HX_Power : float</span>
+<span class="sd">                                        Heat exchanger power [kW]</span>
+
+<span class="sd">                                    - HX_Hot_Stream : int</span>
+<span class="sd">                                        Hot stream ID</span>
+
+<span class="sd">                                    - HX_Cold_Stream : int</span>
+<span class="sd">                                        Cold stream ID</span>
+
+<span class="sd">                                    - HX_Original_Hot_Stream : int</span>
+<span class="sd">                                        Hot stream ID (there might be a split, meaning that  HX_Original_Hot_Stream != HX_Hot_Stream)</span>
+
+<span class="sd">                                    - HX_Original_Cold_Stream : int</span>
+<span class="sd">                                        Cold stream ID (there might be a split, meaning that  HX_Original_Cold_Stream != HX_Cold_Stream)</span>
+
+<span class="sd">                                    - HX_Type : str</span>
+<span class="sd">                                        Heat exchanger type</span>
+
+<span class="sd">                                    - HX_Turnkey_Cost : float</span>
+<span class="sd">                                        Heat exchanger capex [€]</span>
+
+<span class="sd">                                    - HX_OM_Fix_Cost : float</span>
+<span class="sd">                                        Heat exchanger OM Fix [€/year]</span>
+
+<span class="sd">                                    - HX_Hot_Stream_T_Hot : float</span>
+<span class="sd">                                        Hot stream hot temperature[ºC]</span>
+
+<span class="sd">                                    - HX_Hot_Stream_T_Cold : float</span>
+<span class="sd">                                        Hot stream cold temperature[ºC]</span>
+
+<span class="sd">                                    - HX_Cold_Stream_T_Hot : float</span>
+<span class="sd">                                        Cold stream hot temperature[ºC]</span>
+
+<span class="sd">                                    - HX_Cold_Stream_T_Cold : float</span>
+<span class="sd">                                        Cold stream cold temperature[ºC]</span>
+
+<span class="sd">                                    - Storage : float</span>
+<span class="sd">                                        Storage volume [m3]</span>
+
+<span class="sd">                                    - Storage_Satisfies : float</span>
+<span class="sd">                                        Percentage of capacity in mismatch hours that storaeg satisfies [%]</span>
+
+<span class="sd">                                    - Storage_Turnkey_Cost : float</span>
+<span class="sd">                                        Storage capex [€]</span>
+
+<span class="sd">                                    - Total_Turnkey_Cost : float</span>
+<span class="sd">                                        Heat exchanger + storage copex [€]</span>
+
+<span class="sd">                                    - Recovered_Energy : float</span>
+<span class="sd">                                        Amount of energy recovered [kWh]</span>
+
+
+<span class="sd">                    energy_recovered_optimization : list</span>
+<span class="sd">                        List with best design options of the respective category -&gt; similar to &quot;co2_optimization&quot;</span>
+
+<span class="sd">                    energy_investment_optimization : list</span>
+<span class="sd">                        List with best design options of the respective category -&gt; similar to &quot;co2_optimization&quot;</span>
+
+<span class="sd">            report : str</span>
+<span class="sd">                HTML Report</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="c1">############################################################################################################</span>
+    <span class="c1"># INPUT</span>
+    <span class="n">platform_data</span> <span class="o">=</span> <span class="n">error_convert_pinch</span><span class="p">(</span><span class="n">in_var</span><span class="p">[</span><span class="s2">&quot;platform&quot;</span><span class="p">])</span>
+
+    <span class="n">all_input_objects</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">all_input_objects</span>  <span class="c1"># equipments/processes/isolated streams</span>
+    <span class="n">all_input_objects</span> <span class="o">=</span> <span class="p">[</span><span class="nb">vars</span><span class="p">(</span><span class="n">new_object</span><span class="p">)</span> <span class="k">for</span> <span class="n">new_object</span> <span class="ow">in</span> <span class="n">all_input_objects</span><span class="p">]</span>
+
+    <span class="n">pinch_delta_T_min</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">pinch_delta_T_min</span>
+    <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">location</span>
+    <span class="n">perform_all_combinations</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">perform_all_combinations</span>  <span class="c1"># parameter to only perform all combinations for isolated streams and processes.</span>
+    <span class="n">number_output_options</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">number_output_options</span>
+    <span class="n">lifetime</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">lifetime</span>
+    <span class="n">streams_to_analyse</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">streams_to_analyse</span>
+    <span class="n">fuels_data</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">fuels_data</span>
+    <span class="n">interest_rate</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">interest_rate</span>
+
+
+    <span class="c1">############################################################################################################</span>
+    <span class="c1"># Defined Vars</span>
+    <span class="n">country</span> <span class="o">=</span> <span class="n">get_country</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">)</span>
+    <span class="n">objects_to_analyze</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">streams</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">subset_not_possible_to_analyze</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1">############################################################################################################</span>
+    <span class="c1"># DATA PRE-TREATMENT</span>
+    <span class="n">hx_delta_T</span> <span class="o">=</span> <span class="n">pinch_delta_T_min</span>
+    <span class="n">pinch_delta_T_min</span> <span class="o">=</span> <span class="n">pinch_delta_T_min</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># create the streams list</span>
+        <span class="c1">#get_equipment = {str(input_object[&#39;id&#39;]): input_object for input_object in all_input_objects if</span>
+        <span class="c1">#                 input_object[&#39;object_type&#39;] == &#39;equipment&#39;}</span>
+        <span class="k">for</span> <span class="nb">object</span> <span class="ow">in</span> <span class="n">all_input_objects</span><span class="p">:</span>  <span class="c1"># objet can be stream/process/equipment</span>
+            <span class="k">if</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;object_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;process&#39;</span><span class="p">:</span>  <span class="c1"># from processes get streams</span>
+                <span class="n">objects_to_analyze</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">streams_to_analyse</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;stream_type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;outflow&quot;</span><span class="p">:</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel_price&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuels_data</span><span class="p">[</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]][</span><span class="s2">&quot;price&quot;</span><span class="p">]</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel_co2_emissions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuels_data</span><span class="p">[</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]][</span><span class="s2">&quot;co2_emissions&quot;</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;eff_equipment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;fuel_co2_emissions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;eff_equipment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+                        <span class="n">streams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;object_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;stream&#39;</span><span class="p">:</span>  <span class="c1"># isolated streams</span>
+                <span class="k">if</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">streams_to_analyse</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+                        <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;fuel_price&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuels_data</span><span class="p">[</span><span class="nb">object</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]][</span><span class="s2">&quot;price&quot;</span><span class="p">]</span>
+                        <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;fuel_co2_emissions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuels_data</span><span class="p">[</span><span class="nb">object</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]][</span><span class="s1">&#39;co2_emissions&#39;</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;fuel_price&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;fuel_co2_emissions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;eff_equipment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+                    <span class="n">streams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;object_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;equipment&#39;</span><span class="p">:</span>
+                <span class="n">objects_to_analyze</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">streams_to_analyse</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;stream_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;supply_heat&quot;</span><span class="p">:</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel_co2_emissions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuels_data</span><span class="p">[</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]][</span><span class="s1">&#39;co2_emissions&#39;</span><span class="p">]</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel_price&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fuels_data</span><span class="p">[</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]][</span><span class="s1">&#39;price&#39;</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;eff_equipment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel_price&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel_co2_emissions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+                        <span class="n">streams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModuleRuntimeException</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;convert_pinch.py&quot;</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Error obtaining streams to analyze. Check your inputs. </span><span class="se">\n</span><span class="s2"> &quot;</span>
+                <span class="s2">&quot;If all inputs are correct report to the platform.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># create DF with streams characteristics (df_char) and  DF with only streams profiles (df_profile)</span>
+    <span class="n">list_char</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">list_profile_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
+        <span class="n">list_char</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;schedule&#39;</span><span class="p">])</span>
+        <span class="n">list_profile_data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;Fluid&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;Supply_Temperature&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;Target_Temperature&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;Capacity&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;capacity&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;Fuel&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;Eff_Equipment&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;eff_equipment&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;Fuel_Price&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel_price&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;Fuel_CO2_Emissions&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fuel_co2_emissions&#39;</span><span class="p">]</span>
+
+        <span class="p">})</span>
+
+
+
+
+    <span class="n">df_profile_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">list_char</span><span class="p">)</span>
+    <span class="n">df_char</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">list_profile_data</span><span class="p">)</span>
+    <span class="n">df_profile</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_profile_data</span><span class="p">)</span>  <span class="c1"># create df</span>
+    <span class="n">df_profile</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df_char</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+    <span class="c1"># get all streams info necessary for pinch analysis</span>
+    <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Stream_Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_char</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="s1">&#39;Hot&#39;</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Supply_Temperature&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Target_Temperature&#39;</span><span class="p">]</span>
+        <span class="k">else</span> <span class="s1">&#39;Cold&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Supply_Shift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_char</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Supply_Temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">pinch_delta_T_min</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Stream_Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Hot&#39;</span>
+        <span class="k">else</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Supply_Temperature&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">pinch_delta_T_min</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Target_Shift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_char</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Target_Temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">pinch_delta_T_min</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Stream_Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Hot&#39;</span>
+        <span class="k">else</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Target_Temperature&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">pinch_delta_T_min</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;mcp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Capacity&#39;</span><span class="p">]</span> <span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Supply_Shift&#39;</span><span class="p">]</span><span class="o">-</span> <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Target_Shift&#39;</span><span class="p">])</span>  <span class="c1"># [kW/K]</span>
+
+
+
+    <span class="c1">############################################################################################################</span>
+    <span class="c1"># PINCH ANALYSIS</span>
+    <span class="n">design_id</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># give each design an ID - initial value</span>
+    <span class="n">df_operating</span> <span class="o">=</span> <span class="n">df_char</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># pinch analysis for all streams</span>
+    <span class="n">pinch_designed_solutions</span><span class="p">,</span> <span class="n">design_id</span> <span class="o">=</span> <span class="n">pinch_analysis</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                           <span class="n">df_operating</span><span class="p">,</span>
+                                           <span class="n">df_profile</span><span class="p">,</span>
+                                           <span class="n">pinch_delta_T_min</span><span class="p">,</span>
+                                           <span class="n">hx_delta_T</span><span class="p">,</span>
+                                           <span class="n">design_id</span><span class="p">)</span>
+
+
+
+    <span class="c1"># pinch analysis for all streams COMBINATIONS</span>
+    <span class="k">if</span> <span class="n">perform_all_combinations</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">L</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">df_char</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">df_char</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">L</span><span class="p">):</span>
+
+                <span class="n">index_see</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+                <span class="n">index_print</span> <span class="o">=</span> <span class="n">df_char</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index_see</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+
+                <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span> <span class="o">!=</span> <span class="p">[]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">subset</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">df_operating</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_char</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">subset</span><span class="p">)]</span>
+
+                    <span class="k">if</span> <span class="n">df_operating</span><span class="p">[</span><span class="n">df_operating</span><span class="p">[</span><span class="s1">&#39;Stream_Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Hot&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">empty</span> <span class="o">==</span> <span class="kc">False</span> \
+                            <span class="ow">and</span> <span class="n">df_operating</span><span class="p">[</span><span class="n">df_operating</span><span class="p">[</span><span class="s1">&#39;Stream_Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Cold&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">empty</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+
+                        <span class="k">try</span><span class="p">:</span>
+
+                            <span class="n">df_hx_hourly</span><span class="p">,</span> <span class="n">design_id</span> <span class="o">=</span> <span class="n">pinch_analysis</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                     <span class="n">df_operating</span><span class="p">,</span>
+                                                                     <span class="n">df_profile</span><span class="p">,</span>
+                                                                     <span class="n">pinch_delta_T_min</span><span class="p">,</span>
+                                                                     <span class="n">hx_delta_T</span><span class="p">,</span>
+                                                                     <span class="n">design_id</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">df_hx_hourly</span> <span class="o">!=</span> <span class="p">[]:</span>
+                                <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">df_hx_hourly</span><span class="p">:</span>
+                                    <span class="n">pinch_designed_solutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="n">subset_not_possible_to_analyze</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">index_print</span><span class="p">))</span>
+
+
+    <span class="c1">############################################################################################################</span>
+    <span class="c1"># ECONOMIC/CO2 EMISSIONS ANALYSIS</span>
+    <span class="n">list_df_optimization</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Isolated streams</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pinch_designed_solutions</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;analysis_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;performed&#39;</span><span class="p">:</span>
+            <span class="n">df_hx</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;df_hx&#39;</span><span class="p">]</span>
+            <span class="n">total_co2_emissions_savings</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">total_money_savings</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">index_df_hx</span><span class="p">,</span> <span class="n">row_df_hx</span> <span class="ow">in</span> <span class="n">df_hx</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+                <span class="n">original_hot_stream_id</span> <span class="o">=</span> <span class="n">row_df_hx</span><span class="p">[</span><span class="s1">&#39;HX_Original_Hot_Stream&#39;</span><span class="p">]</span>
+                <span class="n">original_cold_stream_id</span> <span class="o">=</span> <span class="n">row_df_hx</span><span class="p">[</span><span class="s1">&#39;HX_Original_Cold_Stream&#39;</span><span class="p">]</span>
+
+                <span class="n">hot_stream_fuel</span> <span class="o">=</span> <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Fuel&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_char</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">original_hot_stream_id</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">cold_stream_fuel</span> <span class="o">=</span> <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Fuel&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_char</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">original_cold_stream_id</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="c1"># hot stream</span>
+                <span class="k">if</span> <span class="n">hot_stream_fuel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                    <span class="n">data_stream_hot</span> <span class="o">=</span> <span class="n">fuel_properties</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">hot_stream_fuel</span><span class="p">,</span> <span class="s1">&#39;non-household&#39;</span><span class="p">)</span>
+                    <span class="n">co2_emission_per_kw_stream_hot</span> <span class="o">=</span> <span class="n">data_stream_hot</span><span class="p">[</span><span class="s1">&#39;co2_emissions&#39;</span><span class="p">]</span>
+                    <span class="n">fuel_cost_kwh_stream_hot</span> <span class="o">=</span> <span class="n">data_stream_hot</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">]</span>
+                    <span class="n">eff_equipment</span> <span class="o">=</span> <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Eff_Equipment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_char</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">original_hot_stream_id</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                    <span class="n">total_co2_emissions_savings</span> <span class="o">+=</span> <span class="n">co2_emission_per_kw_stream_hot</span> <span class="o">*</span> <span class="n">row_df_hx</span><span class="p">[</span>
+                        <span class="s1">&#39;Recovered_Energy&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">eff_equipment</span>
+                    <span class="n">total_money_savings</span> <span class="o">+=</span> <span class="n">fuel_cost_kwh_stream_hot</span> <span class="o">*</span> <span class="n">row_df_hx</span><span class="p">[</span><span class="s1">&#39;Recovered_Energy&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">eff_equipment</span>
+
+                <span class="c1"># cold stream</span>
+                <span class="k">if</span> <span class="n">cold_stream_fuel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">data_stream_cold</span> <span class="o">=</span> <span class="n">fuel_properties</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">cold_stream_fuel</span><span class="p">,</span> <span class="s1">&#39;non-household&#39;</span><span class="p">)</span>
+                    <span class="n">co2_emission_per_kw_stream_cold</span> <span class="o">=</span> <span class="n">data_stream_cold</span><span class="p">[</span><span class="s1">&#39;co2_emissions&#39;</span><span class="p">]</span>
+                    <span class="n">fuel_cost_kwh_stream_cold</span> <span class="o">=</span> <span class="n">data_stream_cold</span><span class="p">[</span><span class="s1">&#39;price&#39;</span><span class="p">]</span>
+                    <span class="n">eff_equipment</span> <span class="o">=</span> <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Eff_Equipment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_char</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">original_cold_stream_id</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                    <span class="n">total_co2_emissions_savings</span> <span class="o">+=</span> <span class="n">co2_emission_per_kw_stream_cold</span> <span class="o">*</span> <span class="n">row_df_hx</span><span class="p">[</span>
+                        <span class="s1">&#39;Recovered_Energy&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">eff_equipment</span>
+                    <span class="n">total_money_savings</span> <span class="o">+=</span> <span class="n">fuel_cost_kwh_stream_cold</span> <span class="o">*</span> <span class="n">row_df_hx</span><span class="p">[</span><span class="s1">&#39;Recovered_Energy&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">eff_equipment</span>
+
+            <span class="n">list_df_optimization</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="n">index</span><span class="p">,</span>
+                <span class="s1">&#39;co2_savings&#39;</span><span class="p">:</span> <span class="n">total_co2_emissions_savings</span><span class="p">,</span>
+                <span class="s1">&#39;money_savings&#39;</span><span class="p">:</span> <span class="n">total_money_savings</span><span class="p">,</span>
+                <span class="s1">&#39;energy_recovered&#39;</span><span class="p">:</span> <span class="n">df_hx</span><span class="p">[</span><span class="s1">&#39;Recovered_Energy&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+                <span class="s1">&#39;energy_investment&#39;</span><span class="p">:</span> <span class="n">df_hx</span><span class="p">[</span><span class="s1">&#39;Total_Turnkey_Cost&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">df_hx</span><span class="p">[</span><span class="s1">&#39;Recovered_Energy&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+                <span class="s1">&#39;capex&#39;</span><span class="p">:</span> <span class="n">df_hx</span><span class="p">[</span><span class="s1">&#39;Total_Turnkey_Cost&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+                <span class="s1">&#39;om_fix&#39;</span><span class="p">:</span> <span class="n">df_hx</span><span class="p">[</span><span class="s1">&#39;HX_OM_Fix_Cost&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="p">})</span>
+
+
+    <span class="n">df_optimization</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">list_df_optimization</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">df_optimization</span><span class="o">.</span><span class="n">empty</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Heat Recovery solutions were not found.&#39;</span><span class="p">)</span>
+
+
+    <span class="n">df_optimization</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_optimization</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># drop duplicates</span>
+    <span class="n">df_optimization</span> <span class="o">=</span> <span class="n">df_optimization</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;co2_savings&#39;</span><span class="p">,</span> <span class="s1">&#39;energy_recovered&#39;</span><span class="p">,</span> <span class="s1">&#39;energy_investment&#39;</span><span class="p">,</span> <span class="s1">&#39;capex&#39;</span><span class="p">])</span>
+
+    <span class="c1"># info for HTML</span>
+    <span class="n">df_char</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Supply_Shift&#39;</span><span class="p">,</span><span class="s1">&#39;Target_Shift&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df_char</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">),</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Fluid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_char</span><span class="p">[</span><span class="s1">&#39;Fluid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">))</span>
+    <span class="n">stream_table</span> <span class="o">=</span> <span class="n">df_char</span>
+
+    <span class="n">stream_combination_not_feasible</span> <span class="o">=</span> <span class="n">subset_not_possible_to_analyze</span>
+
+
+    <span class="c1"># get best options that recover maximum energy</span>
+    <span class="n">energy_recovered</span> <span class="o">=</span> <span class="n">df_optimization</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;energy_recovered&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">number_output_options</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">energy_recovered_options</span> <span class="o">=</span> <span class="n">get_best_x_outputs</span><span class="p">(</span><span class="n">pinch_designed_solutions</span><span class="p">,</span> <span class="n">energy_recovered</span><span class="p">,</span>  <span class="n">lifetime</span><span class="p">,</span> <span class="n">pinch_delta_T_min</span><span class="p">,</span>
+                                                  <span class="n">stream_table</span><span class="p">,</span><span class="n">stream_combination_not_feasible</span><span class="p">,</span> <span class="n">interest_rate</span><span class="o">=</span><span class="n">interest_rate</span><span class="p">)</span>
+
+    <span class="c1"># get best options that give best energy_recovery/turnkey ratio</span>
+    <span class="n">energy_investment</span> <span class="o">=</span> <span class="n">df_optimization</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;energy_investment&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">number_output_options</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">energy_investment_options</span> <span class="o">=</span> <span class="n">get_best_x_outputs</span><span class="p">(</span><span class="n">pinch_designed_solutions</span><span class="p">,</span> <span class="n">energy_investment</span><span class="p">,</span> <span class="n">lifetime</span><span class="p">,</span>
+                                                   <span class="n">pinch_delta_T_min</span><span class="p">,</span> <span class="n">stream_table</span><span class="p">,</span><span class="n">stream_combination_not_feasible</span><span class="p">,</span> <span class="n">interest_rate</span><span class="o">=</span><span class="n">interest_rate</span><span class="p">)</span>
+
+    <span class="c1"># get best options that save maximum amount of CO2</span>
+    <span class="n">co2_savings</span> <span class="o">=</span> <span class="n">df_optimization</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;co2_savings&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">number_output_options</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">co2_savings_options</span> <span class="o">=</span> <span class="n">get_best_x_outputs</span><span class="p">(</span><span class="n">pinch_designed_solutions</span><span class="p">,</span> <span class="n">co2_savings</span><span class="p">,</span> <span class="n">lifetime</span><span class="p">,</span> <span class="n">pinch_delta_T_min</span><span class="p">,</span> <span class="n">stream_table</span><span class="p">,</span><span class="n">stream_combination_not_feasible</span><span class="p">,</span> <span class="n">interest_rate</span><span class="o">=</span><span class="n">interest_rate</span><span class="p">)</span>
+
+
+    <span class="c1"># build report</span>
+    <span class="n">output_pinch</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;co2_optimization&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;best_options&quot;</span><span class="p">:</span> <span class="n">co2_savings</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">),</span>
+            <span class="s2">&quot;solutions&quot;</span><span class="p">:</span> <span class="n">co2_savings_options</span><span class="p">},</span>
+        <span class="s1">&#39;energy_recovered_optimization&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;best_options&quot;</span><span class="p">:</span> <span class="n">energy_recovered</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">),</span>
+            <span class="s2">&quot;solutions&quot;</span><span class="p">:</span> <span class="n">energy_recovered_options</span><span class="p">},</span>
+        <span class="s1">&#39;energy_investment_optimization&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;best_options&quot;</span><span class="p">:</span> <span class="n">energy_investment</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">),</span>
+            <span class="s2">&quot;solutions&quot;</span><span class="p">:</span> <span class="n">energy_investment_options</span><span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="n">report_html</span> <span class="o">=</span> <span class="n">pinch_report</span><span class="p">(</span><span class="n">output_pinch</span><span class="p">)</span>
+
+    <span class="n">new_co2_savings_options</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">co2_savings_options</span><span class="p">:</span>
+        <span class="n">new_co2_savings_options</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">your_key</span><span class="p">:</span> <span class="n">option</span><span class="p">[</span><span class="n">your_key</span><span class="p">]</span> <span class="k">for</span> <span class="n">your_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;capex&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;om_fix&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;lifetime&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;co2_savings&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;money_savings&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;energy_dispatch&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;discount_rate&quot;</span><span class="p">]})</span>
+    <span class="n">new_energy_investment_options</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">energy_investment_options</span><span class="p">:</span>
+        <span class="n">new_energy_investment_options</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">your_key</span><span class="p">:</span> <span class="n">option</span><span class="p">[</span><span class="n">your_key</span><span class="p">]</span> <span class="k">for</span> <span class="n">your_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;capex&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;om_fix&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;lifetime&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;co2_savings&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;money_savings&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;energy_dispatch&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;discount_rate&quot;</span><span class="p">]})</span>
+
+    <span class="n">new_energy_recovered_options</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">energy_recovered_options</span><span class="p">:</span>
+        <span class="n">new_energy_recovered_options</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">your_key</span><span class="p">:</span> <span class="n">option</span><span class="p">[</span><span class="n">your_key</span><span class="p">]</span> <span class="k">for</span> <span class="n">your_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;capex&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;om_fix&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;lifetime&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;co2_savings&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;money_savings&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;energy_dispatch&quot;</span><span class="p">,</span>
+                                                                           <span class="s2">&quot;discount_rate&quot;</span><span class="p">]})</span>
+
+    <span class="c1"># output</span>
+    <span class="n">output_pinch</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;co2_optimization&#39;</span><span class="p">:</span> <span class="n">new_co2_savings_options</span><span class="p">,</span>
+        <span class="s1">&#39;energy_recovered_optimization&#39;</span><span class="p">:</span> <span class="n">new_energy_recovered_options</span><span class="p">,</span> <span class="c1"># energy_recovered.to_dict(orient=&#39;records&#39;),</span>
+        <span class="s1">&#39;energy_investment_optimization&#39;</span><span class="p">:</span> <span class="n">new_energy_investment_options</span>  <span class="c1">#energy_investment.to_dict(orient=&#39;records&#39;)</span>
+    <span class="p">}</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;best_options&#39;</span><span class="p">:</span> <span class="n">output_pinch</span><span class="p">,</span>
+            <span class="s1">&#39;report&#39;</span><span class="p">:</span> <span class="n">report_html</span>
+    <span class="p">}</span>
+
+
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

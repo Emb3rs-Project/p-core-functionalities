@@ -1,6 +1,6 @@
-from ....Source.simulation.Heat_Recovery.convert_pinch_isolated_streams import convert_pinch_isolated_streams
-from ....utilities.kb import KB
-from ....utilities.kb_data import kb
+from module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams import convert_pinch_isolated_streams
+from module.src.utilities.kb import KB
+from module.src.utilities.kb_data import kb
 import os
 import json
 
@@ -13,5 +13,6 @@ def testConvertPinchIsolated():
     data_test = json.load(open(os.path.join(script_dir, "test_files/pinch_isolated_raw.json")))
 
     test = convert_pinch_isolated_streams(data_test, KB(kb))
+
 
     print("Convert Pinch with Isolated Stream run Successfully")

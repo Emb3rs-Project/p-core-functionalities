@@ -1,0 +1,341 @@
+{
+  "all_sources_info": [
+    {
+      "source_id": 1,
+      "location": [
+        39.397222,
+        22.804167
+      ],
+      "source_grid_supply_temperature": 106,
+      "source_grid_return_temperature": 64,
+      "streams_converted": [
+        {
+          "stream_id": 9347,
+          "teo_stream_id": "str9347sou1",
+          "input_fuel": null,
+          "output_fuel": "ehstr9347sou1",
+          "output": 1,
+          "gis_capacity": 395.076,
+          "max_stream_capacity": 438.0,
+          "conversion_technologies": [
+            {
+              "teo_equipment_name": "sou1str9347mhex",
+              "output": 1,
+              "input_fuel": "ehstr9347sou1",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 438.0,
+              "turnkey_a": 66.814,
+              "turnkey_b": 3621.774,
+              "conversion_efficiency": 0.902,
+              "om_fix": 0.751,
+              "om_var": 0.0,
+              "emissions": 0.001
+            },
+            {
+              "teo_equipment_name": "sou1str9347orc",
+              "output": 1,
+              "input_fuel": "ehstr9347sou1",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 214.62,
+              "turnkey_a": 547.572,
+              "turnkey_b": 11168.734,
+              "conversion_efficiency": 0.814,
+              "electrical_conversion_efficiency": 0.051,
+              "om_fix": 5.996,
+              "om_var": 0.0,
+              "emissions": 0.001
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 2,
+      "location": [
+        39.393056,
+        22.803611
+      ],
+      "source_grid_supply_temperature": 106,
+      "source_grid_return_temperature": 64,
+      "streams_converted": [
+        {
+          "stream_id": 15621,
+          "teo_stream_id": "str15621sou2",
+          "input_fuel": null,
+          "output_fuel": "ehstr15621sou2",
+          "output": 1,
+          "gis_capacity": 26.505,
+          "max_stream_capacity": 279.0,
+          "conversion_technologies": [
+            {
+              "teo_equipment_name": "sou2str15621electricitywhrb",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 2017.107,
+              "turnkey_b": 11223.633,
+              "conversion_efficiency": 0.95,
+              "om_fix": 24.194,
+              "om_var": 3.356,
+              "emissions": 25.364
+            },
+            {
+              "teo_equipment_name": "sou2str15621ngwhrb",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 2017.107,
+              "turnkey_b": 11223.633,
+              "conversion_efficiency": 0.95,
+              "om_fix": 24.194,
+              "om_var": 1.434,
+              "emissions": 10.771
+            },
+            {
+              "teo_equipment_name": "sou2str15621oilwhrb",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 2017.107,
+              "turnkey_b": 11223.633,
+              "conversion_efficiency": 0.95,
+              "om_fix": 24.194,
+              "om_var": 2.174,
+              "emissions": 13.658
+            },
+            {
+              "teo_equipment_name": "sou2str15621biomasswhrb",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 2017.107,
+              "turnkey_b": 11223.633,
+              "conversion_efficiency": 0.95,
+              "om_fix": 24.194,
+              "om_var": 1.982,
+              "emissions": 0.567
+            },
+            {
+              "teo_equipment_name": "sou2str15621stelectricityboiler",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 46695.438,
+              "turnkey_b": -21220.931,
+              "conversion_efficiency": 0.95,
+              "om_fix": 459.348,
+              "om_var": 17.509,
+              "emissions": 20.018
+            },
+            {
+              "teo_equipment_name": "sou2str15621stngboiler",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 46695.438,
+              "turnkey_b": -21220.931,
+              "conversion_efficiency": 0.95,
+              "om_fix": 459.348,
+              "om_var": 16.304,
+              "emissions": 10.876
+            },
+            {
+              "teo_equipment_name": "sou2str15621stoilboiler",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 46695.438,
+              "turnkey_b": -21220.931,
+              "conversion_efficiency": 0.95,
+              "om_fix": 459.348,
+              "om_var": 16.768,
+              "emissions": 12.684
+            },
+            {
+              "teo_equipment_name": "sou2str15621stbiomassboiler",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 46695.438,
+              "turnkey_b": -21220.931,
+              "conversion_efficiency": 0.95,
+              "om_fix": 459.348,
+              "om_var": 16.648,
+              "emissions": 4.483
+            },
+            {
+              "teo_equipment_name": "sou2str15621sthp",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 50856.41,
+              "turnkey_b": -18141.689,
+              "conversion_efficiency": 0.95,
+              "om_fix": 502.469,
+              "om_var": 16.493,
+              "emissions": 8.021
+            },
+            {
+              "teo_equipment_name": "sou2str15621hp",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 6497.732,
+              "turnkey_b": 7526.899,
+              "conversion_efficiency": 14.061,
+              "om_fix": 70.747,
+              "om_var": 0.811,
+              "emissions": 1.754
+            },
+            {
+              "teo_equipment_name": "sou2str15621chpng",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 90827.24,
+              "turnkey_b": 104808.902,
+              "conversion_efficiency": 14.061,
+              "om_fix": 945.838,
+              "om_var": 1.969,
+              "emissions": 20.343
+            },
+            {
+              "teo_equipment_name": "sou2str15621chpoil",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 90827.24,
+              "turnkey_b": 104808.902,
+              "conversion_efficiency": 14.061,
+              "om_fix": 945.838,
+              "om_var": 2.988,
+              "emissions": 25.802
+            },
+            {
+              "teo_equipment_name": "sou2str15621chpbiomass",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 27.9,
+              "turnkey_a": 90827.24,
+              "turnkey_b": 104808.902,
+              "conversion_efficiency": 14.061,
+              "om_fix": 945.838,
+              "om_var": 2.723,
+              "emissions": 1.051
+            },
+            {
+              "teo_equipment_name": "sou2str15621boosthp",
+              "output": 1,
+              "input_fuel": "ehstr15621sou2",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 279.0,
+              "turnkey_a": 654.882,
+              "turnkey_b": 8040.705,
+              "conversion_efficiency": 1.406,
+              "om_fix": 7.144,
+              "om_var": 0.081,
+              "emissions": 0.175
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 3,
+      "location": [
+        39.398611,
+        22.804444
+      ],
+      "source_grid_supply_temperature": 106,
+      "source_grid_return_temperature": 64,
+      "streams_converted": [
+        {
+          "stream_id": 51253,
+          "teo_stream_id": "str51253sou3",
+          "input_fuel": null,
+          "output_fuel": "ehstr51253sou3",
+          "output": 1,
+          "gis_capacity": 65.846,
+          "max_stream_capacity": 73.0,
+          "conversion_technologies": [
+            {
+              "teo_equipment_name": "sou3str51253mhex",
+              "output": 1,
+              "input_fuel": "ehstr51253sou3",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 73.0,
+              "turnkey_a": 110.858,
+              "turnkey_b": 1998.308,
+              "conversion_efficiency": 0.902,
+              "om_fix": 1.382,
+              "om_var": 0.0,
+              "emissions": 0.001
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": 4,
+      "location": [
+        39.385556,
+        22.806944
+      ],
+      "source_grid_supply_temperature": 106,
+      "source_grid_return_temperature": 64,
+      "streams_converted": [
+        {
+          "stream_id": 5457,
+          "teo_stream_id": "str5457sou4",
+          "input_fuel": null,
+          "output_fuel": "ehstr5457sou4",
+          "output": 1,
+          "gis_capacity": 2472.382,
+          "max_stream_capacity": 2741.0,
+          "conversion_technologies": [
+            {
+              "teo_equipment_name": "sou4str5457mhex",
+              "output": 1,
+              "input_fuel": "ehstr5457sou4",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 2741.0,
+              "turnkey_a": 40.807,
+              "turnkey_b": 9444.364,
+              "conversion_efficiency": 0.902,
+              "om_fix": 0.443,
+              "om_var": 0.0,
+              "emissions": 0.001
+            },
+            {
+              "teo_equipment_name": "sou4str5457orc",
+              "output": 1,
+              "input_fuel": "ehstr5457sou4",
+              "output_fuel": "dhnwatersupply",
+              "max_capacity": 2741.0,
+              "turnkey_a": 241.084,
+              "turnkey_b": 61991.171,
+              "conversion_efficiency": 0.814,
+              "electrical_conversion_efficiency": 0.051,
+              "om_fix": 2.637,
+              "om_var": 0.0,
+              "emissions": 0.001
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Greenhouse" href="Greenhouse.html" />
+    <link rel="prev" title="Sink Characterization" href="SinkCharacterization.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Source.html">Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Sink.html">Sink</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="SinkCharacterization.html">Sink Characterization</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="SimpleCharacterization.html">Simple Characterization</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Building</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Greenhouse.html">Greenhouse</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SinkSimulation.html">Sink Simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="Sink.html">Sink</a> &raquo;</li>
+          <li><a href="SinkCharacterization.html">Sink Characterization</a> &raquo;</li>
+      <li>Building</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Building.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-module.src.Sink.characterization.building">
+<span id="building"></span><h1>Building<a class="headerlink" href="#module-module.src.Sink.characterization.building" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="module.src.Sink.characterization.building.building">
+<span class="sig-prename descclassname"><span class="pre">module.src.Sink.characterization.building.</span></span><span class="sig-name descname"><span class="pre">building</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Sink/characterization/building.html#building"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Sink.characterization.building.building" title="Permalink to this definition"></a></dt>
+<dd><p>Building characterization</p>
+<p>Simulates heat an cooling consumptions over the year, according to building specifications
+and climate weather data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> (<em>dict</em>) – <p>All necessary data to perform the building characterization data, with the following key:</p>
+<dl>
+<dt>platform: dict</dt><dd><p>Data obtained from the platform, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt>location<span class="classifier">list</span></dt><dd><p>location [º]; [latitude,longitude]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>number_floor: int</dt><dd><p>number of floors</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>width_floor: float</dt><dd><p>floor width [m]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>length_floor: float</dt><dd><p>floor length        [m]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>height_floor: float</dt><dd><p>floor height [m]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ratio_wall_N: float</dt><dd><p>ratio of the North wall area in total north facade area (wall + window) []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ratio_wall_S: float</dt><dd><p>ratio of the South wall area in total north facade area (wall + window) []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ratio_wall_E: float</dt><dd><p>ratio of the East wall area in total north facade area (wall + window) []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ratio_wall_W: float</dt><dd><p>ratio of the West wall area in total north facade area (wall + window) []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>daily_periods: float</dt><dd><p>period of daily periods [h]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>shutdown_periods: list</dt><dd><p>period of days stream is not available [day]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>saturday_on: int</dt><dd><p>if available on saturdays - available (1); not available (0)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>sunday_on: int</dt><dd><p>if available on sundays - available (1); not available (0)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>building_orientation: str</dt><dd><p>building’s main facade orientation; “N”,”S”,”E” or “W”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>space_heating_type: int</dt><dd><dl class="simple">
+<dt>Space heating type;</dt><dd><p>1 = Conventional; heaters working fluid supply temperature of 75ºC,  heaters working fluid return temperature of 45ºC)
+2 = Low temperature; heaters working fluid supply temperature of 50ºC,  heaters working fluid return temperature of 30ºC)
+3 = Specify Temperatures - Advanced Properties; of supply_temperature_heat and target_temperature_heat</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>T_cool_on: float</dt><dd><p>Cooling setpoint temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>T_heat_on: float</dt><dd><p>Heating setpoint temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>T_off_min: float</dt><dd><p>Heating setback setpoint temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>T_off_max: float</dt><dd><p>Cooling setback setpoint temperature  [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ref_system_fuel_type_heating: str</dt><dd><p>Fuel type associated; e.g. “natural_gas”,”electricity”,”biomass”,”fuel_oil”,”none”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ref_system_fuel_price_heating: float, optional</dt><dd><p>Fuel Price. If not given, obtained from KB</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ref_system_eff_equipment_heating: float, optional</dt><dd><p>Efficiency of the heating equipment</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ref_system_fuel_type_cooling: str</dt><dd><p>Fuel type associated</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ref_system_fuel_price_cooling: float, optional</dt><dd><p>Fuel Price. If not given, obtained from KB</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ref_system_eff_equipment_cooling: float</dt><dd><p>OPTIONAL] COP of the cooling equipment</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>real_heating_monthly_capacity: dict, optional</dt><dd><p>Real monthly data - for each month of the year</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>real_heating_yearly_capacity: float, optional</dt><dd><p>Real yearly data - single value</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>real_cooling_monthly_capacity: dict, optional</dt><dd><p>Real monthly data - for each month of the year</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>real_cooling_yearly_capacity: float, optional</dt><dd><p>Real yearly data - single value</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>number_person_per_floor: int, optional</dt><dd><p>Persons per floor</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>supply_temperature_heat: float, optional</dt><dd><p>Heating System ReturnTemperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>target_temperature_heat: float, optional</dt><dd><p>Heating System Supply Temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>supply_temperature_cool: float, optional</dt><dd><p>Cooling System Return Temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>target_temperature_cool: float, optional</dt><dd><p>Cooling System Supply Temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>tau_glass: float, optional</dt><dd><p>glass windows transmissivity []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>u_wall: float, optional</dt><dd><p>walls’ U value [W/m2.K]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>u_roof: float, optional</dt><dd><p>roof U value [W/m2.K]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>u_glass: float, optional</dt><dd><p>glass windows U value [W/m2.K]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>u_floor: float, optional</dt><dd><p>floor U value [W/m2.K]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>alpha_wall: float, optional</dt><dd><p>walls’ radiation absorption coefficient []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>alpha_floor: float, optional</dt><dd><p>floor’s radiation absorption coefficient []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>alpha_glass: float, optional</dt><dd><p>windows’ radiation absorption coefficient []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>cp_floor: float, optional</dt><dd><p>floor specific heat capacitance [J/kg.K]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>cp_roof: float, optional</dt><dd><p>roof specific heat capacitance [J/kg.K]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>cp_wall: float, optional</dt><dd><p>wall specific heat capacitance [J/kg.K]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>air_change_hour: float, optional</dt><dd><p>air changes per hour due to infiltrations [1/h]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>renewal_air_per_person: float, optional</dt><dd><p>fresh air changer per person [m3/s per person]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>vol_dhw_set: float, optional</dt><dd><p>Volume of daily water consumption [m3]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Q_gain_per_floor: float, optional</dt><dd><p>Internal Gains [W/m2]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>emissivity_wall: float, optional</dt><dd><p>Walls’s emissivity</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>emissivity_glass: float, optional</dt><dd><p>Glass Window’s emissivity</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><strong>output</strong> –</p>
+<p>Streams data</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>streams<span class="classifier">list</span></dt><dd><p>List with dicts of all streams with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>id<span class="classifier">int</span></dt><dd><p>stream ID []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>name<span class="classifier">str</span></dt><dd><p>Stream name []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>object_type<span class="classifier">str</span></dt><dd><p>DEFAULT = “stream” []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>object_linked_id</dt><dd><p>None: DEFAULT=NONE, since no equipment/process is associated</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>stream_type<span class="classifier">str</span></dt><dd><p>Stream designation []; inflow, outflow, excess_heat</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>supply_temperature<span class="classifier">float</span></dt><dd><p>Stream’s supply/initial temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>target_temperature<span class="classifier">float</span></dt><dd><p>Stream’s target/final temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fluid<span class="classifier">str</span></dt><dd><p>Stream fluid name</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>flowrate<span class="classifier">float</span></dt><dd><p>Stream mass flowrate[kg/h]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>schedule<span class="classifier">list</span></dt><dd><p>Hourly values between 0 and 1, according to the capacity ration on that hour</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>hourly_generation: list</dt><dd><p>Stream’s hourly capacity [kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>capacity<span class="classifier">float</span></dt><dd><p>Stream’s capacity [kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>monthly_generation<span class="classifier">list</span></dt><dd><p>Stream’s monthly capacity [kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fuel<span class="classifier">str</span></dt><dd><p>Associated equipment fuel name []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>eff_equipment<span class="classifier">float</span></dt><dd><p>Associated equipment efficiency []</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="SinkCharacterization.html" class="btn btn-neutral float-left" title="Sink Characterization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Greenhouse.html" class="btn btn-neutral float-right" title="Greenhouse" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

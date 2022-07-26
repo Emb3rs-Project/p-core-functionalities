@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generate Equipment &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Process" href="Process.html" />
+    <link rel="prev" title="Detailed Characterization" href="DetailedCharacterization.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="SimpleCharacterization.html">Simple Characterization</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="DetailedCharacterization.html">Detailed Characterization</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Generate Equipment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Process.html">Process</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source%20Characterization.html">Source Characterization</a> &raquo;</li>
+          <li><a href="DetailedCharacterization.html">Detailed Characterization</a> &raquo;</li>
+      <li>Generate Equipment</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Generate_Equipment.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="generate-equipment">
+<h1>Generate Equipment<a class="headerlink" href="#generate-equipment" title="Permalink to this heading"></a></h1>
+<section id="module-module.src.Source.characterization.Generate_Equipment.generate_boiler">
+<span id="boiler"></span><h2>Boiler<a class="headerlink" href="#module-module.src.Source.characterization.Generate_Equipment.generate_boiler" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Generate_Equipment.generate_boiler.</span></span><span class="sig-name descname"><span class="pre">Boiler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Generate_Equipment/generate_boiler.html#Boiler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Create Boiler Object and characterize its streams</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.id" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.object_type" title="Permalink to this definition"></a></dt>
+<dd><p>DEFAULT = “equipment”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.streams">
+<span class="sig-name descname"><span class="pre">streams</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.streams" title="Permalink to this definition"></a></dt>
+<dd><p>Data of the streams associated to this equipment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.fuel_type">
+<span class="sig-name descname"><span class="pre">fuel_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.fuel_type" title="Permalink to this definition"></a></dt>
+<dd><p>Fuel type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.supply_capacity">
+<span class="sig-name descname"><span class="pre">supply_capacity</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.supply_capacity" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment supply capacity [kW]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.global_conversion_efficiency">
+<span class="sig-name descname"><span class="pre">global_conversion_efficiency</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.global_conversion_efficiency" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment efficiency []</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.equipment_sub_type">
+<span class="sig-name descname"><span class="pre">equipment_sub_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.equipment_sub_type" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment designation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> (<em>dict</em>) – <p>Equipment characterization data, with the following keys:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>id<span class="classifier">int</span></dt><dd><p>Equipment ID</p>
+</dd>
+<dt>object_type<span class="classifier">str</span></dt><dd><p>Equipment type: “process”, “boiler”,”chp”, “burner”, “cooling_equipment”, “stream”</p>
+</dd>
+<dt>fuel_type<span class="classifier">str</span></dt><dd><p>Fuel type</p>
+</dd>
+<dt>boiler_equipment_sub_type: str</dt><dd><p>Options: “steam_boiler” or “hot_water_boiler”</p>
+</dd>
+<dt>supply_capacity<span class="classifier">float</span></dt><dd><p>Equipment supply capacity [kW]</p>
+</dd>
+<dt>global_conversion_efficiency<span class="classifier">float</span></dt><dd><p>Conversion efficiency []</p>
+</dd>
+<dt>processes<span class="classifier">list</span></dt><dd><p>List of processes objects associated to the equipment</p>
+</dd>
+<dt>equipment_supply_temperature<span class="classifier">float</span></dt><dd><p>Equipment circuit supply temperature [ºC]</p>
+</dd>
+<dt>open_closed_loop<span class="classifier">int</span></dt><dd><p>Whether is a opens or closed loop boiler; 1 (yes)  or 0 (no)</p>
+</dd>
+<dt>saturday_on<span class="classifier">int</span></dt><dd><p>If it is available on Saturday []; 1 (yes)  or 0 (no)</p>
+</dd>
+<dt>sunday_on<span class="classifier">int</span></dt><dd><p>If it is available on Sunday []; 1 (yes)  or 0 (no)</p>
+</dd>
+<dt>shutdown_periods<span class="classifier">list</span></dt><dd><p>List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]</p>
+</dd>
+<dt>daily_periods<span class="classifier">list</span></dt><dd><p>List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]</p>
+</dd>
+<dt>equipment_return_temperature<span class="classifier">float, optional</span></dt><dd><p>Equipment working fluid return temperature [ºC]</p>
+</dd>
+<dt>boiler_supply_flowrate<span class="classifier">float, optional</span></dt><dd><p>Equipment working fluid mass flowrate. Only for steam boilers.</p>
+</dd>
+</dl>
+</div></blockquote>
+</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base data</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-module.src.Source.characterization.Generate_Equipment.generate_burner">
+<span id="burner"></span><h2>Burner<a class="headerlink" href="#module-module.src.Source.characterization.Generate_Equipment.generate_burner" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_burner.Burner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Generate_Equipment.generate_burner.</span></span><span class="sig-name descname"><span class="pre">Burner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Generate_Equipment/generate_burner.html#Burner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_burner.Burner" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Create Burner Object</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.id" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.object_type" title="Permalink to this definition"></a></dt>
+<dd><p>DEFAULT = “equipment”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.streams">
+<span class="sig-name descname"><span class="pre">streams</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.streams" title="Permalink to this definition"></a></dt>
+<dd><p>Data of the streams associated to this equipment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.fuel_type">
+<span class="sig-name descname"><span class="pre">fuel_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.fuel_type" title="Permalink to this definition"></a></dt>
+<dd><p>Fuel type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.supply_capacity">
+<span class="sig-name descname"><span class="pre">supply_capacity</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.supply_capacity" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment supply capacity [kW]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.global_conversion_efficiency">
+<span class="sig-name descname"><span class="pre">global_conversion_efficiency</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.global_conversion_efficiency" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment efficiency []</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.equipment_sub_type">
+<span class="sig-name descname"><span class="pre">equipment_sub_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.equipment_sub_type" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment designation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> (<em>dict</em>) – <p>Equipment characterization data, with the following keys:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>id<span class="classifier">int</span></dt><dd><p>Equipment ID</p>
+</dd>
+<dt>fuel_type<span class="classifier">str</span></dt><dd><p>Fuel type</p>
+</dd>
+<dt>object_type<span class="classifier">str</span></dt><dd><p>Equipment type: “process”, “boiler”,”chp”, “burner”, “cooling_equipment”, “stream”</p>
+</dd>
+<dt>global_conversion_efficiency<span class="classifier">float</span></dt><dd><p>Conversion efficiency []</p>
+</dd>
+<dt>supply_capacity<span class="classifier">float</span></dt><dd><p>Equipment supply capacity [kW]</p>
+</dd>
+<dt>processes<span class="classifier">list</span></dt><dd><p>List of processes objects associated to the equipment</p>
+</dd>
+<dt>saturday_on<span class="classifier">int</span></dt><dd><p>If it is available on Saturday []; 1 (yes)  or 0 (no)</p>
+</dd>
+<dt>sunday_on<span class="classifier">int</span></dt><dd><p>If it is available on Sunday []; 1 (yes)  or 0 (no)</p>
+</dd>
+<dt>shutdown_periods<span class="classifier">list</span></dt><dd><p>List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]</p>
+</dd>
+<dt>daily_periods<span class="classifier">list</span></dt><dd><p>List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]</p>
+</dd>
+<dt>burner_equipment_sub_type<span class="classifier">str</span></dt><dd><p>Options: “indirect_burner” or “direct_burner”</p>
+</dd>
+<dt>burner_excess_heat_supply_temperature<span class="classifier">float</span></dt><dd><p>Burner recoverable excess heat temperature [ºC]</p>
+</dd>
+<dt>burner_excess_heat_flowrate<span class="classifier">float</span></dt><dd><p>Burner recoverable excess heat mass flowrate [kg/h]</p>
+</dd>
+</dl>
+</div></blockquote>
+</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base data</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-module.src.Source.characterization.Generate_Equipment.generate_chp">
+<span id="chp"></span><h2>CHP<a class="headerlink" href="#module-module.src.Source.characterization.Generate_Equipment.generate_chp" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Generate_Equipment.generate_chp.</span></span><span class="sig-name descname"><span class="pre">Chp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Generate_Equipment/generate_chp.html#Chp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Create CHP Object</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.id" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.object_type" title="Permalink to this definition"></a></dt>
+<dd><p>DEFAULT = “equipment”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.streams">
+<span class="sig-name descname"><span class="pre">streams</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.streams" title="Permalink to this definition"></a></dt>
+<dd><p>Data of the streams associated to this equipment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.fuel_type">
+<span class="sig-name descname"><span class="pre">fuel_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.fuel_type" title="Permalink to this definition"></a></dt>
+<dd><p>Fuel type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.supply_capacity">
+<span class="sig-name descname"><span class="pre">supply_capacity</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.supply_capacity" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment supply capacity [kW]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.global_conversion_efficiency">
+<span class="sig-name descname"><span class="pre">global_conversion_efficiency</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.global_conversion_efficiency" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment efficiency []</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.equipment_sub_type">
+<span class="sig-name descname"><span class="pre">equipment_sub_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.equipment_sub_type" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment designation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.thermal_conversion_efficiency">
+<span class="sig-name descname"><span class="pre">thermal_conversion_efficiency</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.thermal_conversion_efficiency" title="Permalink to this definition"></a></dt>
+<dd><p>Thermal conversion efficiency []</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.electrical_conversion_efficiency">
+<span class="sig-name descname"><span class="pre">electrical_conversion_efficiency</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.electrical_conversion_efficiency" title="Permalink to this definition"></a></dt>
+<dd><p>Electrical conversion efficiency []</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> (<em>dict</em>) – <p>Equipment characterization data, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt>id<span class="classifier">int</span></dt><dd><p>Equipment ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fuel_type<span class="classifier">str</span></dt><dd><p>Fuel type</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="simple">
+<dt>object_type<span class="classifier">str</span></dt><dd><p>Equipment type: “process”, “boiler”,”chp”, “burner”, “cooling_equipment”, “stream”</p>
+</dd>
+</dl>
+<ul>
+<li><dl class="simple">
+<dt>equipment_sub_type: str</dt><dd><p>Options: “steam_boiler” or “hot_water_boiler”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>supply_capacity<span class="classifier">float, optional</span></dt><dd><p>Equipment supply capacity [kW]; Provide thermal or electrical supply capacity</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electrical_generation<span class="classifier">float, optional</span></dt><dd><p>CHP electrical generation capacity [kWe]; Provide thermal or electrical supply capacity</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>thermal_conversion_efficiency<span class="classifier">float, optional</span></dt><dd><p>CHP thermal efficiency []; Provide thermal or electrical conversion efficiency</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electrical_conversion_efficiency<span class="classifier">float, optional</span></dt><dd><p>CHP electrical efficiency []; Provide thermal or electrical conversion efficiency</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>global_conversion_efficiency<span class="classifier">float</span></dt><dd><p>Conversion efficiency []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>processes<span class="classifier">list, optional</span></dt><dd><p>List of processes objects associated to the equipment;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>equipment_supply_temperature<span class="classifier">float</span></dt><dd><p>Equipment circuit supply temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>open_closed_loop<span class="classifier">int</span></dt><dd><p>Whether is a opens or closed loop boiler; 1 (yes)  or 0 (no)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>saturday_on<span class="classifier">int</span></dt><dd><p>If it is available on Saturday []; 1 (yes)  or 0 (no)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>sunday_on<span class="classifier">int</span></dt><dd><p>If it is available on Sunday []; 1 (yes)  or 0 (no)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>shutdown_periods<span class="classifier">list</span></dt><dd><p>List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>daily_periods<span class="classifier">list</span></dt><dd><p>List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>equipment_return_temperature<span class="classifier">float, optional</span></dt><dd><p>Equipment working fluid return temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base data</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment">
+<span id="cooling-equipment"></span><h2>Cooling Equipment<a class="headerlink" href="#module-module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.</span></span><span class="sig-name descname"><span class="pre">Cooling_Equipment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Generate_Equipment/generate_cooling_equipment.html#Cooling_Equipment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Create Cooling Equipment Object and characterize its streams</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.id" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.object_type" title="Permalink to this definition"></a></dt>
+<dd><p>DEFAULT = “equipment”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.streams">
+<span class="sig-name descname"><span class="pre">streams</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.streams" title="Permalink to this definition"></a></dt>
+<dd><p>Data of the streams associated to this equipment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.fuel_type">
+<span class="sig-name descname"><span class="pre">fuel_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.fuel_type" title="Permalink to this definition"></a></dt>
+<dd><p>Fuel type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.supply_capacity">
+<span class="sig-name descname"><span class="pre">supply_capacity</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.supply_capacity" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment supply capacity [kW]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.global_conversion_efficiency">
+<span class="sig-name descname"><span class="pre">global_conversion_efficiency</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.global_conversion_efficiency" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment efficiency []</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.equipment_sub_type">
+<span class="sig-name descname"><span class="pre">equipment_sub_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.equipment_sub_type" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment designation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> (<em>dict</em>) – <p>Equipment characterization data, with the following keys:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>id<span class="classifier">int</span></dt><dd><p>Equipment ID</p>
+</dd>
+<dt>fuel_type<span class="classifier">str</span></dt><dd><p>Fuel type</p>
+</dd>
+<dt>object_type<span class="classifier">str</span></dt><dd><p>Equipment type: “process”, “boiler”,”chp”, “burner”, “cooling_equipment”, “stream”</p>
+</dd>
+<dt>global_conversion_efficiency<span class="classifier">float</span></dt><dd><p>Chiller COP []</p>
+</dd>
+<dt>supply_capacity<span class="classifier">float</span></dt><dd><p>Equipment supply capacity [kW]</p>
+</dd>
+<dt>cooling_equipment_sub_type<span class="classifier">str</span></dt><dd><p>Type of cooling equipment; ‘co2_chiller’, ‘cooling_tower’, ‘compression_chiller’</p>
+</dd>
+<dt>processes<span class="classifier">list</span></dt><dd><p>List of processes objects associated to the equipment</p>
+</dd>
+<dt>saturday_on<span class="classifier">int</span></dt><dd><p>If it is available on Saturday []; 1 (yes)  or 0 (no)</p>
+</dd>
+<dt>sunday_on<span class="classifier">int</span></dt><dd><p>If it is available on Sunday []; 1 (yes)  or 0 (no)</p>
+</dd>
+<dt>shutdown_periods<span class="classifier">list</span></dt><dd><p>List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]</p>
+</dd>
+<dt>daily_periods<span class="classifier">list</span></dt><dd><p>List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]</p>
+</dd>
+</dl>
+</div></blockquote>
+</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base data</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="DetailedCharacterization.html" class="btn btn-neutral float-left" title="Detailed Characterization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Process.html" class="btn btn-neutral float-right" title="Process" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

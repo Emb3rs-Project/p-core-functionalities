@@ -1,8 +1,6 @@
-from module.Sink.characterization.greenhouse import greenhouse
+from module.src.Sink.characterization.greenhouse import greenhouse
 import json
 import os
-from ....utilities.kb import KB
-from ....utilities.kb_data import kb
 
 script_dir = os.path.dirname(__file__)
 data = json.load(open(os.path.join(script_dir, "test_files/greenhouse_simple_input.json")))

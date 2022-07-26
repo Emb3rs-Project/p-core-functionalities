@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>module.src.General.Simple_User.simple_user &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+      <li>module.src.General.Simple_User.simple_user</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for module.src.General.Simple_User.simple_user</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">...General.Auxiliary_General.stream_industry</span> <span class="kn">import</span> <span class="n">stream_industry</span>
+<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour</span> <span class="kn">import</span> <span class="n">schedule_hour</span>
+<span class="kn">from</span> <span class="nn">...Error_Handling.error_simple_user</span> <span class="kn">import</span> <span class="n">PlatformSimpleUser</span>
+<span class="kn">from</span> <span class="nn">.adjust_capacity</span> <span class="kn">import</span> <span class="n">adjust_capacity</span>
+
+
+<div class="viewcode-block" id="simple_user"><a class="viewcode-back" href="../../../../../SimpleCharacterization.html#module.src.General.Simple_User.simple_user.simple_user">[docs]</a><span class="k">def</span> <span class="nf">simple_user</span><span class="p">(</span><span class="n">in_var</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Simple User streams characterization.</span>
+
+<span class="sd">    Receives user&#39;s streams data from the platform and creates a standard stream</span>
+<span class="sd">    data output to be used in other modules.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_var : dict</span>
+<span class="sd">        All necessary data to perform the simple characterization data, with the following key:</span>
+
+<span class="sd">        platform: dict</span>
+<span class="sd">            Data obtained from the platform</span>
+
+<span class="sd">                - type_of_object: str</span>
+<span class="sd">                    &#39;sink&#39; or &#39;source&#39;</span>
+
+<span class="sd">                - streams : list with dict</span>
+<span class="sd">                    Streams to be analyzed. Each stream with the following keys:</span>
+
+<span class="sd">                        - name: int</span>
+<span class="sd">                            stream ID []</span>
+
+<span class="sd">                        - supply_temperature: str</span>
+<span class="sd">                            stream&#39;s supply/initial temperature [ºC]</span>
+
+<span class="sd">                        - target_temperature: str</span>
+<span class="sd">                            stream&#39;s target/final temperature [ºC]</span>
+
+<span class="sd">                        - fluid: str:</span>
+<span class="sd">                            stream&#39;s fluid []</span>
+
+<span class="sd">                        - capacity: float</span>
+<span class="sd">                            stream&#39;s capacity [kW] - provide capacity or fluid_cp and flowrate</span>
+
+<span class="sd">                        - fluid_cp: float</span>
+<span class="sd">                            stream&#39;s fluid cp [kJ/kg.K] - provide capacity or fluid_cp and flowrate</span>
+
+<span class="sd">                        - flowrate: float</span>
+<span class="sd">                            stream&#39;s mass flowrate [kg/h] - provide capacity or fluid_cp and flowrate</span>
+
+<span class="sd">                        - daily_periods: float</span>
+<span class="sd">                            period of daily periods [h]</span>
+
+<span class="sd">                        - shutdown_periods: list</span>
+<span class="sd">                            period of days stream is not available [day]</span>
+
+<span class="sd">                        - saturday_on: int</span>
+<span class="sd">                            if available on saturdays - available (1); not available (0)</span>
+
+<span class="sd">                        - sunday_on: int</span>
+<span class="sd">                            if available on sundays - available (1); not available (0)</span>
+
+<span class="sd">                        - ref_system_fuel_type: str</span>
+<span class="sd">                            Fuel type associated</span>
+
+<span class="sd">                        - real_hourly_capacity: list, optional</span>
+<span class="sd">                            Real hourly data - for each hour of the year</span>
+
+<span class="sd">                        - real_daily_capacity: list, optional</span>
+<span class="sd">                            Real daily data - for each day of the year</span>
+
+<span class="sd">                        - real_monthly_capacity: dict, optional</span>
+<span class="sd">                            Real monthly data - for each month of the year</span>
+
+<span class="sd">                        - real_yearly_capacity: float, optional</span>
+<span class="sd">                            Real yearly data - single value</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    output : dict</span>
+<span class="sd">        Streams data</span>
+
+<span class="sd">        - streams : list</span>
+<span class="sd">            List with dicts of all streams with the following keys:</span>
+
+<span class="sd">                - id : int</span>
+<span class="sd">                    stream ID []</span>
+
+<span class="sd">                - name : str</span>
+<span class="sd">                    Stream name []</span>
+
+<span class="sd">                - object_type : str</span>
+<span class="sd">                    DEFAULT = &quot;stream&quot; []</span>
+
+<span class="sd">                - object_linked_id</span>
+<span class="sd">                    None: DEFAULT=NONE, since no equipment/process is associated</span>
+
+<span class="sd">                - stream_type : str</span>
+<span class="sd">                    Stream designation []; inflow, outflow, excess_heat</span>
+
+<span class="sd">                - supply_temperature : float</span>
+<span class="sd">                    Stream&#39;s supply/initial temperature [ºC]</span>
+
+<span class="sd">                - target_temperature : float</span>
+<span class="sd">                    Stream&#39;s target/final temperature [ºC]</span>
+
+<span class="sd">                - fluid : str</span>
+<span class="sd">                    Stream fluid name</span>
+
+<span class="sd">                - flowrate : float</span>
+<span class="sd">                    Stream mass flowrate[kg/h]</span>
+
+<span class="sd">                - schedule : list</span>
+<span class="sd">                    Hourly values between 0 and 1, according to the capacity ration on that hour</span>
+
+<span class="sd">                - hourly_generation: list</span>
+<span class="sd">                    Stream&#39;s hourly capacity [kWh]</span>
+
+<span class="sd">                - capacity : float</span>
+<span class="sd">                    Stream&#39;s capacity [kW]</span>
+
+<span class="sd">                - monthly_generation : list</span>
+<span class="sd">                    Stream&#39;s monthly capacity [kWh]</span>
+
+<span class="sd">                - fuel : str</span>
+<span class="sd">                    Associated equipment fuel name []</span>
+
+<span class="sd">                - eff_equipment : float</span>
+<span class="sd">                    Associated equipment efficiency []</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">##########################################################################################</span>
+    <span class="c1"># INPUT</span>
+    <span class="n">platform_data</span> <span class="o">=</span> <span class="n">PlatformSimpleUser</span><span class="p">(</span><span class="o">**</span><span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">])</span>
+    <span class="n">streams</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">streams</span>
+    <span class="n">streams</span> <span class="o">=</span> <span class="p">[</span><span class="nb">vars</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span> <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">]</span>
+    <span class="n">type_of_object</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">type_of_object</span>
+
+    <span class="c1">##########################################################################################</span>
+    <span class="c1"># COMPUTE</span>
+    <span class="n">streams_output</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">type_of_object</span> <span class="o">==</span> <span class="s1">&#39;sink&#39;</span><span class="p">:</span>
+        <span class="n">stream_type</span> <span class="o">=</span> <span class="s2">&quot;inflow&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stream_type</span> <span class="o">=</span> <span class="s2">&quot;excess_heat&quot;</span>
+
+    <span class="k">for</span> <span class="n">index_stream</span><span class="p">,</span> <span class="n">stream</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">streams</span><span class="p">):</span>
+        <span class="n">index_stream</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># to start at 1</span>
+
+        <span class="c1"># check if capacity or flowrate given</span>
+        <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;capacity&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">capacity</span> <span class="o">=</span> <span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;flowrate&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;fluid_cp&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">((</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;supply_temperature&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;target_temperature&quot;</span><span class="p">]))</span><span class="o">/</span> <span class="mi">3600</span><span class="p">)</span>
+                <span class="n">flowrate</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;flowrate&#39;</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">capacity</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;capacity&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;steam&quot;</span><span class="p">:</span>
+                <span class="n">flowrate</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">flowrate</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;flowrate&#39;</span><span class="p">]</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">flowrate</span> <span class="o">=</span> <span class="n">capacity</span> <span class="o">*</span> <span class="mi">3600</span> <span class="o">/</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;supply_temperature&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;target_temperature&quot;</span><span class="p">]))</span>
+
+        <span class="c1"># check if real hourly capacity is given</span>
+        <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;real_hourly_capacity&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">schedule</span> <span class="o">=</span> <span class="n">schedule_hour</span><span class="p">(</span>
+                <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;saturday_on&quot;</span><span class="p">],</span>
+                <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;sunday_on&quot;</span><span class="p">],</span>
+                <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;shutdown_periods&quot;</span><span class="p">],</span>
+                <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;daily_periods&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">hourly_generation</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hourly_generation</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;real_hourly_capacity&#39;</span><span class="p">]</span>
+            <span class="n">schedule</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">capacity</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">hourly_generation</span><span class="p">)</span>
+            <span class="n">flowrate</span> <span class="o">=</span> <span class="n">capacity</span> <span class="o">*</span> <span class="mi">3600</span> <span class="o">/</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;supply_temperature&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;target_temperature&quot;</span><span class="p">]))</span>
+
+        <span class="c1"># get fuel properties</span>
+        <span class="k">if</span> <span class="n">type_of_object</span> <span class="o">==</span> <span class="s1">&#39;sink&#39;</span><span class="p">:</span>
+            <span class="n">eff_equipment</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;ref_system_eff_equipment&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">eff_equipment</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># generate stream data</span>
+        <span class="n">info_stream</span> <span class="o">=</span> <span class="n">stream_industry</span><span class="p">(</span>
+            <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">stream_type</span><span class="p">,</span>
+            <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;fluid&quot;</span><span class="p">],</span>
+            <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;supply_temperature&quot;</span><span class="p">],</span>
+            <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;target_temperature&quot;</span><span class="p">],</span>
+            <span class="n">flowrate</span><span class="p">,</span>
+            <span class="n">capacity</span><span class="p">,</span>
+            <span class="n">schedule</span><span class="o">=</span><span class="n">schedule</span><span class="p">,</span>
+            <span class="n">hourly_generation</span><span class="o">=</span><span class="n">hourly_generation</span><span class="p">,</span>
+            <span class="n">stream_id</span><span class="o">=</span><span class="n">index_stream</span><span class="p">,</span>
+            <span class="n">fuel</span><span class="o">=</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;ref_system_fuel_type&quot;</span><span class="p">],</span>
+            <span class="n">eff_equipment</span><span class="o">=</span><span class="n">eff_equipment</span>
+        <span class="p">)</span>
+
+        <span class="c1"># adjust capacity of the stream if needed</span>
+        <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_daily_capacity&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">info_stream</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">info_stream</span><span class="p">,</span> <span class="n">user_daily_capacity</span><span class="o">=</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_daily_capacity&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_monthly_capacity&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">info_stream</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">info_stream</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="nb">vars</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_monthly_capacity&quot;</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_yearly_capacity&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">info_stream</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">info_stream</span><span class="p">,</span> <span class="n">user_yearly_capacity</span><span class="o">=</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_yearly_capacity&quot;</span><span class="p">])</span>
+
+
+        <span class="n">streams_output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info_stream</span><span class="p">)</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;streams&#39;</span><span class="p">:</span> <span class="n">streams_output</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">output</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>module.src.Sink.simulation.convert_sinks &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+      <li>module.src.Sink.simulation.convert_sinks</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for module.src.Sink.simulation.convert_sinks</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">...General.Convert_Equipments.Auxiliary.sink_get_hx_temperatures</span> <span class="kn">import</span> <span class="n">sink_get_hx_temperatures</span>
+<span class="kn">from</span> <span class="nn">...General.Convert_Equipments.Convert_Options.add_boiler</span> <span class="kn">import</span> <span class="n">Add_Boiler</span>
+<span class="kn">from</span> <span class="nn">...General.Convert_Equipments.Convert_Options.add_hx</span> <span class="kn">import</span> <span class="n">Add_HX</span>
+<span class="kn">from</span> <span class="nn">...General.Convert_Equipments.Convert_Options.add_solar_thermal</span> <span class="kn">import</span> <span class="n">Add_Solar_Thermal</span>
+<span class="kn">from</span> <span class="nn">...General.Convert_Equipments.Convert_Options.add_heat_pump</span> <span class="kn">import</span> <span class="n">Add_Heat_Pump</span>
+<span class="kn">from</span> <span class="nn">...General.Convert_Equipments.Convert_Options.add_thermal_chiller</span> <span class="kn">import</span> <span class="n">Add_Thermal_Chiller</span>
+<span class="kn">from</span> <span class="nn">...General.Convert_Equipments.Convert_Options.add_pump</span> <span class="kn">import</span> <span class="n">Add_Pump</span>
+<span class="kn">from</span> <span class="nn">...General.Convert_Equipments.Auxiliary.aggregate_technologies_info</span> <span class="kn">import</span> <span class="n">aggregate_technologies_info</span>
+<span class="kn">from</span> <span class="nn">...General.Convert_Equipments.Convert_Options.add_electric_chiller</span> <span class="kn">import</span> <span class="n">Add_Electric_Chiller</span>
+<span class="kn">from</span> <span class="nn">...General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup</span> <span class="kn">import</span> <span class="n">coef_solar_thermal_backup</span>
+<span class="kn">from</span> <span class="nn">...Error_Handling.error_convert_sinks</span> <span class="kn">import</span> <span class="n">PlatformConvertSinks</span>
+<span class="kn">from</span> <span class="nn">...Error_Handling.runtime_error</span> <span class="kn">import</span> <span class="n">ModuleRuntimeException</span>
+
+<div class="viewcode-block" id="convert_sinks"><a class="viewcode-back" href="../../../../../SinkSimulation.html#module.src.Sink.simulation.convert_sinks.convert_sinks">[docs]</a><span class="k">def</span> <span class="nf">convert_sinks</span><span class="p">(</span><span class="n">in_var</span><span class="p">,</span> <span class="n">kb</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Design of Grid - Sinks conversion technologies.</span>
+
+<span class="sd">    For the group of sinks given, it is set the grid supply and return temperatures. Moreover, grid specific technologies</span>
+<span class="sd">    are designed to meet the heating/cooling requirements of the group.</span>
+
+<span class="sd">    For each sink are designed the conversion technologies needed. The design may be done for each stream individually or</span>
+<span class="sd">    it can be made to the aggregated of streams (the user must provide his preference).</span>
+<span class="sd">    When performing the conversion, three design options may occur:</span>
+<span class="sd">        Sink needs HEATING</span>
+<span class="sd">          1) the grid temperature meets the sink target temperature requirements, thus only a grid-sink HX and correspondent</span>
+<span class="sd">          circulation pumping is needed</span>
+<span class="sd">          2) the grid temperature does not meet the sink target temperature requirements, thus adding to the grid-sink HX</span>
+<span class="sd">          and correspondent circulation pumping, it is also necessary to add a technology to raise the temperature (chp,</span>
+<span class="sd">          solar thermal, heat pump, boiler)</span>
+<span class="sd">        Sink needs COOLING</span>
+<span class="sd">          3) it is always necessary to add a cooling technology (thermal_chiller), since we are only designing DHNs</span>
+
+<span class="sd">    Possible conversions: HX, HX + heating/cooling technology + HX</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_var :  All necessary data to perform the grid to sinks conversion with the following key:</span>
+
+<span class="sd">        platform: dict</span>
+<span class="sd">            Data obtained from the platform</span>
+
+<span class="sd">                - grid_supply_temperature : float, optional</span>
+<span class="sd">                    Grid supply temperature provided by the user [ºC]</span>
+
+<span class="sd">                - grid_return_temperature : float, optional</span>
+<span class="sd">                    Grid return temperature provided by the user [ºC]</span>
+
+<span class="sd">                - group_of_sinks : list with dict</span>
+<span class="sd">                    List with all sinks to be analyzed; each with the following keys:</span>
+
+<span class="sd">                        - id : int</span>
+<span class="sd">                            Sink ID []</span>
+
+<span class="sd">                        - location : list</span>
+<span class="sd">                            [latitude, longitude] [º]</span>
+
+<span class="sd">                        - fuels_data: dict:</span>
+<span class="sd">                            Fuels price and CO2 emission, with the following keys:</span>
+
+<span class="sd">                                - natural_gas: dict</span>
+<span class="sd">                                    Natural gas data</span>
+
+<span class="sd">                                        - co2_emissions: float:</span>
+<span class="sd">                                            Fuel CO2 emission [kg CO2/kWh</span>
+
+<span class="sd">                                        - price: float:</span>
+<span class="sd">                                            Fuel price [€/kWh</span>
+
+<span class="sd">                                - fuel_oil</span>
+<span class="sd">                                    Same keys as &quot;natural_gas&quot;</span>
+
+<span class="sd">                                - electricity</span>
+<span class="sd">                                    Same keys as &quot;natural_gas&quot;</span>
+
+<span class="sd">                                - biomass</span>
+<span class="sd">                                    Same keys as &quot;natural_gas&quot;</span>
+
+<span class="sd">                        - streams : list with dict</span>
+<span class="sd">                            Streams to be analyzed. Each stream with the following keys:</span>
+
+<span class="sd">                                - id : int</span>
+<span class="sd">                                    Stream ID []</span>
+
+<span class="sd">                                - name : str</span>
+<span class="sd">                                    Stream name []</span>
+
+<span class="sd">                                - object_type : str</span>
+<span class="sd">                                    DEFAULT = &quot;stream&quot; []</span>
+
+<span class="sd">                                - object_linked_id</span>
+<span class="sd">                                    None: DEFAULT=NONE, since no equipment/process is associated</span>
+
+<span class="sd">                                - stream_type : str</span>
+<span class="sd">                                    Stream designation []; inflow, outflow, excess_heat</span>
+
+<span class="sd">                                - supply_temperature : float</span>
+<span class="sd">                                    Stream&#39;s supply/initial temperature [ºC]</span>
+
+<span class="sd">                                - target_temperature : float</span>
+<span class="sd">                                    Stream&#39;s target/final temperature [ºC]</span>
+
+<span class="sd">                                - fluid : str</span>
+<span class="sd">                                    Stream fluid name</span>
+
+<span class="sd">                                - flowrate : float</span>
+<span class="sd">                                    Stream mass flowrate[kg/h]</span>
+
+<span class="sd">                                - schedule : list</span>
+<span class="sd">                                    Hourly values between 0 and 1, according to the capacity ration on that hour</span>
+
+<span class="sd">                                - hourly_generation: list</span>
+<span class="sd">                                    Stream&#39;s hourly capacity [kWh]</span>
+
+<span class="sd">                                - capacity : float</span>
+<span class="sd">                                    Stream&#39;s capacity [kW]</span>
+
+<span class="sd">                                - fuel : str</span>
+<span class="sd">                                    Associated equipment fuel name []</span>
+
+<span class="sd">                                - eff_equipment : float</span>
+<span class="sd">                                    Associated equipment efficiency []</span>
+
+<span class="sd">    kb : dict</span>
+<span class="sd">        Knowledge Base data</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    all_info : dict</span>
+<span class="sd">        All conversion data</span>
+
+<span class="sd">            - all_sinks_info : list</span>
+<span class="sd">                Each sink conversion data</span>
+
+<span class="sd">                    -sink_group_grid_supply_temperature : float</span>
+<span class="sd">                       Grid supply temperature [ºC]</span>
+
+<span class="sd">                    - sink_group_grid_return_temperature : float</span>
+<span class="sd">                       Grid return temperature [ºC]</span>
+
+<span class="sd">                    - grid_specific : list</span>
+<span class="sd">                        List with Grid Specific technologies, each technology with the following keys:</span>
+
+<span class="sd">                            - teo_equipment_name : str</span>
+<span class="sd">                                Specific nomenclature for the TEO</span>
+
+<span class="sd">                            - output : str</span>
+<span class="sd">                                Specific nomenclature for the TEO</span>
+
+<span class="sd">                            - input_fuel : str</span>
+<span class="sd">                                Specific nomenclature for the TEO</span>
+
+<span class="sd">                            - output_fuel : str</span>
+<span class="sd">                                Specific nomenclature for the TEO</span>
+
+<span class="sd">                            - equipment : list</span>
+<span class="sd">                                All conversion equipments; list with technologies names; e.g. [&#39;hx_plate&#39;, &#39;heat_pump&#39;,&#39;hx_plate&#39;]</span>
+
+<span class="sd">                            - max_capacity : float</span>
+<span class="sd">                                Stream power (sources- excess heat; sinks - grid heat)  [kW]</span>
+
+<span class="sd">                            - turnkey_a : float</span>
+<span class="sd">                                Aggregated turnkey a [€/kW]</span>
+
+<span class="sd">                            - turnkey_b : float</span>
+<span class="sd">                                Aggregated turnkey b [€]</span>
+
+<span class="sd">                            - conversion_efficiency :</span>
+<span class="sd">                                Aggregated conversion_efficiency []</span>
+
+<span class="sd">                            - electrical_conversion_efficiency : float</span>
+<span class="sd">                                ONLY FOR ORC - electrical conversion efficiency []</span>
+
+<span class="sd">                            - om_fix : float</span>
+<span class="sd">                                Aggregated om_fix [€/year.kW]</span>
+
+<span class="sd">                            - om_var : float</span>
+<span class="sd">                                Aggregated om_var [€/kWh]</span>
+
+<span class="sd">                            - emissions : float</span>
+<span class="sd">                                Aggregated emissions [kg.CO2/kWh]</span>
+
+<span class="sd">                            - technologies : list with dicts</span>
+<span class="sd">                                Each equipment info in detail (check General/Convert_Equipments/Convert_Options)</span>
+
+<span class="sd">                    - sinks : list with dict</span>
+<span class="sd">                        List with each sink data, with the following keys:</span>
+
+<span class="sd">                            - sink_id : str</span>
+<span class="sd">                                Sink ID</span>
+
+<span class="sd">                            - location : list</span>
+<span class="sd">                                [latitude, longitude] [º]</span>
+
+<span class="sd">                            - streams : list with dict</span>
+<span class="sd">                                Each stream of the sink, with the following keys:</span>
+
+<span class="sd">                                    - stream_id : str</span>
+<span class="sd">                                        Stream ID</span>
+
+<span class="sd">                                    - demand_fuel : str</span>
+<span class="sd">                                        TEO specific data</span>
+
+<span class="sd">                                    - gis_capacity : float</span>
+<span class="sd">                                        Sink nominal capacity [kWh]</span>
+
+<span class="sd">                                    - hourly_stream_capacity : list</span>
+<span class="sd">                                        Stream hourly capacity [kWh]</span>
+
+<span class="sd">                                    - teo_demand_factor : list</span>
+<span class="sd">                                        Stream&#39;s hourly capacity divided by yearly capacity [kWh]</span>
+
+<span class="sd">                                    - teo_yearly_demand : float</span>
+<span class="sd">                                        Stream yearly demand [kWh]</span>
+
+<span class="sd">                                    - conversion_technologies : list</span>
+<span class="sd">                                        List with multiple dictionaries with the solution of technologies possible to</span>
+<span class="sd">                                        implement; same keys as the &quot;grid_specific&quot; technologies</span>
+
+<span class="sd">            - n_demand_list : list with dicts</span>
+<span class="sd">                Sinks data for GIS, with the following keys:</span>
+
+<span class="sd">                - id : str</span>
+<span class="sd">                    Object ID</span>
+
+<span class="sd">                - coords : list</span>
+<span class="sd">                    [latitude, longitude] [º]</span>
+
+<span class="sd">                - cap : float</span>
+<span class="sd">                    Object nominal capacity [kW]</span>
+
+<span class="sd">            - n_grid_specific : list with dicts</span>
+<span class="sd">                Grid specific data for GIS, with the following keys:</span>
+
+<span class="sd">                    - id : int</span>
+<span class="sd">                        Object ID</span>
+
+<span class="sd">                    - coords : list</span>
+<span class="sd">                        Same keys as &quot;n_demand_list&quot;</span>
+
+<span class="sd">                    - cap : float</span>
+<span class="sd">                        Same keys as &quot;n_demand_list&quot;</span>
+
+<span class="sd">            - n_thermal_storage : list with dicts</span>
+<span class="sd">                Thermal storage data for GIS; Same keys as &quot;n_grid_specific&quot;</span>
+
+<span class="sd">            - teo_demand_factor_group : list</span>
+<span class="sd">                Every hour of the year with dicts in each hour with TEO Sink ID and corresponding</span>
+<span class="sd">                hourly_capacity/yearly_capacity; e.g. [{&quot;sink1&quot;:0.5,&quot;sink2&quot;:0,...},{{&quot;sink1&quot;:0.6,&quot;sink2&quot;:0,...},...]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">##################################################################################################################</span>
+    <span class="c1"># INPUT</span>
+    <span class="n">platform_data</span> <span class="o">=</span> <span class="n">PlatformConvertSinks</span><span class="p">(</span><span class="o">**</span><span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">])</span>
+
+    <span class="n">grid_supply_temperature</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">grid_supply_temperature</span>
+    <span class="n">grid_return_temperature</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">grid_return_temperature</span>
+
+    <span class="n">group_of_sinks</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">group_of_sinks</span>  <span class="c1"># e.g. building, greenhouse, streams</span>
+    <span class="n">group_of_sinks</span> <span class="o">=</span> <span class="p">[</span><span class="nb">vars</span><span class="p">(</span><span class="n">sink</span><span class="p">)</span> <span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">group_of_sinks</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">group_of_sinks</span><span class="p">:</span>
+        <span class="n">sink</span><span class="p">[</span><span class="s2">&quot;fuels_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s2">&quot;fuels_data&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">sink</span><span class="p">[</span><span class="s2">&quot;fuels_data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">sink</span><span class="p">[</span><span class="s2">&quot;fuels_data&quot;</span><span class="p">][</span><span class="n">fuel</span><span class="p">]</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s2">&quot;fuels_data&quot;</span><span class="p">][</span><span class="n">fuel</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">group_of_sinks</span><span class="p">:</span>
+        <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">vars</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span> <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]]</span>
+
+    <span class="c1">##################################################################################################################</span>
+    <span class="c1"># Initialize array</span>
+    <span class="n">output_sink</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">vector_sink_max_target_temperature</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">vector_sink_max_supply_temperature</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">grid_specific_heating</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">boiler_fuel_type</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;electricity&#39;</span><span class="p">,</span><span class="s1">&#39;natural_gas&#39;</span><span class="p">,</span> <span class="s1">&#39;fuel_oil&#39;</span><span class="p">,</span> <span class="s1">&#39;biomass&#39;</span><span class="p">]</span>  <span class="c1"># types of fuel</span>
+    <span class="n">fuels_teo_nomenclature</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;natural_gas&#39;</span><span class="p">:</span> <span class="s1">&#39;ng&#39;</span><span class="p">,</span> <span class="s1">&#39;fuel_oil&#39;</span><span class="p">:</span> <span class="s1">&#39;oil&#39;</span><span class="p">,</span> <span class="s1">&#39;biomass&#39;</span><span class="p">:</span> <span class="s1">&#39;bio&#39;</span><span class="p">,</span> <span class="s1">&#39;electricity&#39;</span><span class="p">:</span> <span class="s1">&#39;el&#39;</span><span class="p">}</span>
+
+    <span class="c1">##################################################################################################################</span>
+    <span class="c1"># Defined vars</span>
+    <span class="n">ambient_temperature</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">minimum_coef_solar_thermal</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># solar thermal has to provide at least 50% of streams demand to be considered for TEO</span>
+
+    <span class="c1"># Grid Characteristics</span>
+    <span class="n">grid_fluid</span> <span class="o">=</span> <span class="s1">&#39;water&#39;</span>
+    <span class="n">hot_grid_delta_T</span> <span class="o">=</span> <span class="mi">30</span>  <span class="c1"># defined minimum grid delta_T</span>
+    <span class="n">max_grid_temperature</span> <span class="o">=</span> <span class="mi">110</span>
+
+    <span class="c1"># HX Characteristics</span>
+    <span class="n">hx_efficiency</span> <span class="o">=</span> <span class="mf">0.95</span>
+    <span class="n">hx_delta_T</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="c1"># Convert_Options Characteristics</span>
+    <span class="n">power_fraction</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># Defined as 5%</span>
+    <span class="n">thermal_chiller_generator_T_cold</span> <span class="o">=</span> <span class="mi">70</span>  <span class="c1"># [ºC]</span>
+    <span class="n">thermal_chiller_generator_T_hot</span> <span class="o">=</span> <span class="mi">85</span>  <span class="c1"># [ºC]</span>
+    <span class="n">thermal_chiller_supply_temperature</span> <span class="o">=</span> <span class="mi">7</span>  <span class="c1"># [ºC]</span>
+    <span class="n">thermal_chiller_efficiency</span> <span class="o">=</span> <span class="mf">0.71</span>  <span class="c1"># COP</span>
+    <span class="n">boiler_efficiency</span> <span class="o">=</span> <span class="mf">0.95</span>
+
+    <span class="k">for</span> <span class="n">sink_index</span><span class="p">,</span> <span class="n">sink</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">group_of_sinks</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">stream_index</span><span class="p">,</span> <span class="n">stream</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]):</span>
+            <span class="n">hourly_stream_capacity</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">]</span>
+            <span class="k">break</span>
+        <span class="k">break</span>
+
+    <span class="n">teo_group_of_sinks_demand_factor</span> <span class="o">=</span> <span class="nb">list</span><span class="p">({}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hourly_stream_capacity</span><span class="p">)))</span>
+
+    <span class="c1">############################################################</span>
+    <span class="c1"># get grid temperature according to max sink target temperature</span>
+    <span class="k">if</span> <span class="n">grid_supply_temperature</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">grid_supply_temperature</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">group_of_sinks</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;stream_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;inflow&#39;</span><span class="p">:</span>
+                    <span class="n">vector_sink_max_target_temperature</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">])</span>
+                    <span class="n">vector_sink_max_supply_temperature</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">])</span>
+
+                <span class="n">grid_supply_temperature</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">vector_sink_max_target_temperature</span><span class="p">)</span> <span class="o">+</span> <span class="n">hx_delta_T</span>
+                <span class="n">grid_return_temperature</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">vector_sink_max_supply_temperature</span><span class="p">)</span> <span class="o">+</span> <span class="n">hx_delta_T</span>
+
+                <span class="c1"># check if grid delta_T is respected</span>
+                <span class="k">if</span> <span class="n">grid_supply_temperature</span> <span class="o">-</span> <span class="n">grid_return_temperature</span> <span class="o">&lt;</span> <span class="n">hot_grid_delta_T</span><span class="p">:</span>
+                    <span class="n">grid_supply_temperature</span> <span class="o">=</span> <span class="n">grid_return_temperature</span> <span class="o">+</span> <span class="n">hot_grid_delta_T</span>
+
+                <span class="k">if</span> <span class="n">grid_supply_temperature</span> <span class="o">&gt;</span> <span class="n">max_grid_temperature</span><span class="p">:</span>
+                    <span class="n">grid_supply_temperature</span> <span class="o">=</span> <span class="n">max_grid_temperature</span>
+                    <span class="n">grid_return_temperature</span> <span class="o">=</span> <span class="n">max_grid_temperature</span> <span class="o">-</span> <span class="n">hot_grid_delta_T</span>
+
+
+    <span class="c1">######################################</span>
+    <span class="c1"># create backup for sink group</span>
+    <span class="n">group_of_sinks_grid_specific_power_heating</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">group_of_sinks_grid_specific_power_cooling</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">group_latitude</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">group_longitude</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">group_of_sinks_grid_specific_minimum_supply_temperature</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">needed_yearly_capacity</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">group_of_sinks_grid_specific_hourly_capacity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">group_of_sinks</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;streams&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">]))</span>
+
+    <span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">group_of_sinks</span><span class="p">:</span>
+        <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span>
+        <span class="n">group_latitude</span> <span class="o">+=</span> <span class="n">latitude</span>
+        <span class="n">group_longitude</span> <span class="o">+=</span> <span class="n">longitude</span>
+
+        <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]:</span>
+                <span class="n">group_of_sinks_grid_specific_power_heating</span> <span class="o">+=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;capacity&#39;</span><span class="p">]</span>
+                <span class="n">needed_yearly_capacity</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">])</span>  <span class="c1"># [kWh]</span>
+                <span class="n">group_of_sinks_grid_specific_hourly_capacity</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">group_of_sinks_grid_specific_power_cooling</span> <span class="o">+=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;capacity&#39;</span><span class="p">]</span>
+                <span class="n">group_of_sinks_grid_specific_minimum_supply_temperature</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">])</span>
+
+    <span class="n">group_latitude</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_of_sinks</span><span class="p">)</span>
+    <span class="n">group_longitude</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_of_sinks</span><span class="p">)</span>
+
+    <span class="c1"># assume average value of fuel cost/co2 emissions of the sinks for the grid specific</span>
+    <span class="n">grid_specific_fuels_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">((</span><span class="n">group_of_sinks</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;fuels_data&#39;</span><span class="p">]))</span>
+
+    <span class="k">for</span> <span class="n">fuels_keys</span> <span class="ow">in</span> <span class="n">grid_specific_fuels_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">fuel_key</span> <span class="ow">in</span> <span class="n">grid_specific_fuels_data</span><span class="p">[</span><span class="n">fuels_keys</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">grid_specific_fuels_data</span><span class="p">[</span><span class="n">fuels_keys</span><span class="p">][</span><span class="n">fuel_key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+    <span class="n">fuels_keys</span> <span class="o">=</span> <span class="n">group_of_sinks</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;fuels_data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="c1"># fuels names</span>
+    <span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">group_of_sinks</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">fuel_key</span> <span class="ow">in</span> <span class="n">fuels_keys</span><span class="p">:</span>
+            <span class="n">grid_specific_fuels_data</span><span class="p">[</span><span class="n">fuel_key</span><span class="p">][</span><span class="s2">&quot;price&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;fuels_data&#39;</span><span class="p">][</span><span class="n">fuel_key</span><span class="p">][</span><span class="s2">&quot;price&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">group_of_sinks</span><span class="p">))</span>
+            <span class="n">grid_specific_fuels_data</span><span class="p">[</span><span class="n">fuel_key</span><span class="p">][</span><span class="s2">&quot;co2_emissions&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;fuels_data&#39;</span><span class="p">][</span><span class="n">fuel_key</span><span class="p">][</span><span class="s2">&quot;co2_emissions&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">group_of_sinks</span><span class="p">))</span>
+
+
+    <span class="k">if</span> <span class="n">group_of_sinks_grid_specific_power_heating</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># add boiler</span>
+            <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">boiler_fuel_type</span><span class="p">:</span>
+                <span class="n">info_technology_group</span> <span class="o">=</span> <span class="n">Add_Boiler</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                   <span class="n">grid_specific_fuels_data</span><span class="p">,</span>
+                                                   <span class="n">fuel</span><span class="p">,</span>
+                                                   <span class="n">group_of_sinks_grid_specific_power_heating</span><span class="p">,</span>
+                                                   <span class="n">power_fraction</span><span class="p">,</span>
+                                                   <span class="n">grid_supply_temperature</span><span class="p">,</span>
+                                                   <span class="n">grid_return_temperature</span><span class="p">)</span>
+
+                <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="n">fuels_teo_nomenclature</span><span class="p">[</span><span class="n">info_technology_group</span><span class="o">.</span><span class="n">fuel_type</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_boiler&#39;</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="s1">&#39;grid_specific&#39;</span><span class="p">,</span>
+                                              <span class="p">[</span><span class="n">info_technology_group</span><span class="p">],</span>
+                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                              <span class="n">info_technology_group</span><span class="o">.</span><span class="n">data_teo</span><span class="p">[</span><span class="s1">&#39;max_input_capacity&#39;</span><span class="p">],</span>
+                                              <span class="n">group_of_sinks_grid_specific_power_heating</span><span class="p">,</span>
+                                              <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                              <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                              <span class="s1">&#39;grid_specific&#39;</span><span class="p">)</span>
+
+                <span class="n">grid_specific_heating</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+            <span class="c1"># add heat pump</span>
+            <span class="n">info_technology_group_hp</span> <span class="o">=</span> <span class="n">Add_Heat_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                     <span class="n">grid_specific_fuels_data</span><span class="p">,</span>
+                                                     <span class="n">power_fraction</span><span class="p">,</span>
+                                                     <span class="n">grid_supply_temperature</span><span class="p">,</span>
+                                                     <span class="n">grid_return_temperature</span><span class="p">,</span>
+                                                     <span class="n">ambient_temperature</span><span class="p">,</span>
+                                                     <span class="n">supply_capacity</span><span class="o">=</span><span class="n">group_of_sinks_grid_specific_power_heating</span><span class="p">)</span>
+
+            <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;hp&#39;</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="s1">&#39;grid_specific&#39;</span><span class="p">,</span>
+                                          <span class="p">[</span><span class="n">info_technology_group_hp</span><span class="p">],</span>
+                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                          <span class="n">info_technology_group_hp</span><span class="o">.</span><span class="n">data_teo</span><span class="p">[</span><span class="s1">&#39;max_input_capacity&#39;</span><span class="p">],</span>
+                                          <span class="n">group_of_sinks_grid_specific_power_heating</span><span class="p">,</span>
+                                          <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                          <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                          <span class="s1">&#39;grid_specific&#39;</span><span class="p">)</span>
+
+            <span class="n">grid_specific_heating</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+            <span class="c1"># add solar thermal + hp</span>
+            <span class="n">info_technology_group_solar_thermal</span> <span class="o">=</span> <span class="n">Add_Solar_Thermal</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                    <span class="n">grid_specific_fuels_data</span><span class="p">,</span>
+                                                                    <span class="n">group_latitude</span><span class="p">,</span>
+                                                                    <span class="n">group_longitude</span><span class="p">,</span>
+                                                                    <span class="n">group_of_sinks_grid_specific_power_heating</span><span class="p">,</span>
+                                                                    <span class="n">power_fraction</span><span class="p">,</span>
+                                                                    <span class="n">grid_supply_temperature</span><span class="p">,</span>
+                                                                    <span class="n">grid_return_temperature</span><span class="p">,</span>
+                                                                    <span class="n">hx_delta_T</span><span class="p">,</span>
+                                                                    <span class="n">hx_efficiency</span><span class="p">)</span>
+
+            <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;st_&#39;</span> <span class="o">+</span> <span class="s1">&#39;hp&#39;</span>
+            <span class="n">coef_solar_thermal</span><span class="p">,</span> <span class="n">info_technology_group_hp</span> <span class="o">=</span> <span class="n">coef_solar_thermal_backup</span><span class="p">(</span><span class="n">group_of_sinks_grid_specific_hourly_capacity</span><span class="p">,</span> <span class="n">info_technology_group_solar_thermal</span><span class="p">,</span> <span class="n">info_technology_group_hp</span><span class="p">)</span>
+
+            <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="s1">&#39;grid_specific&#39;</span><span class="p">,</span>
+                                          <span class="p">[</span><span class="n">info_technology_group_solar_thermal</span><span class="p">,</span>
+                                           <span class="n">info_technology_group_hp</span><span class="p">],</span>
+                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                          <span class="n">group_of_sinks_grid_specific_power_heating</span><span class="p">,</span>
+                                          <span class="n">group_of_sinks_grid_specific_power_heating</span><span class="p">,</span>
+                                          <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                          <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                          <span class="s1">&#39;grid_specific&#39;</span><span class="p">)</span>  <span class="c1"># overall conversion efficiency will be 1</span>
+
+            <span class="k">if</span> <span class="n">coef_solar_thermal</span> <span class="o">&gt;=</span> <span class="n">minimum_coef_solar_thermal</span><span class="p">:</span>
+                <span class="n">info</span><span class="p">[</span><span class="s1">&#39;hourly_supply_capacity_normalize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info_technology_group_solar_thermal</span><span class="o">.</span><span class="n">data_teo</span><span class="p">[</span><span class="s1">&#39;hourly_supply_capacity_normalize&#39;</span><span class="p">]</span>
+                <span class="n">grid_specific_heating</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ModuleRuntimeException</span><span class="p">(</span>
+                <span class="n">code</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;convert_sinks.py&quot;</span><span class="p">,</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Designing heating grid specific technologies is infeasible. Report to the platform.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1">######################################</span>
+    <span class="c1"># convert each stream</span>
+    <span class="k">try</span><span class="p">:</span>
+       <span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">group_of_sinks</span><span class="p">:</span>
+        <span class="n">output_converted</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span>
+        <span class="n">fuels_data</span> <span class="o">=</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;fuels_data&#39;</span><span class="p">]</span>
+
+        <span class="c1"># get conversion technologies for each stream</span>
+        <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]:</span>
+            <span class="n">conversion_technologies</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">hourly_stream_capacity</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">]</span>  <span class="c1"># [kWh]</span>
+            <span class="n">stream_nominal_capacity</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">hourly_stream_capacity</span><span class="p">)</span>  <span class="c1"># [kW]</span>
+
+            <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;stream_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;inflow&#39;</span><span class="p">:</span>
+
+                <span class="c1"># get heating technologies</span>
+                <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]:</span>
+
+                    <span class="c1"># vapour is needed - only heat pump is designed</span>
+                    <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="o">-</span> <span class="n">hx_delta_T</span><span class="p">:</span>
+                        <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;hp&#39;</span>
+
+                        <span class="n">info_technology</span> <span class="o">=</span> <span class="n">Add_Heat_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                        <span class="n">fuels_data</span><span class="p">,</span>
+                                                        <span class="n">power_fraction</span><span class="p">,</span>
+                                                        <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span>
+                                                        <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">],</span>
+                                                        <span class="n">grid_return_temperature</span><span class="p">,</span>
+                                                        <span class="n">supply_capacity</span><span class="o">=</span><span class="n">stream_nominal_capacity</span><span class="p">)</span>
+
+                        <span class="n">power_from_grid</span> <span class="o">=</span> <span class="n">info_technology</span><span class="o">.</span><span class="n">evap_capacity</span>
+
+                        <span class="n">info_pump_grid</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                  <span class="n">fuels_data</span><span class="p">,</span>
+                                                  <span class="n">grid_fluid</span><span class="p">,</span>
+                                                  <span class="n">power_from_grid</span><span class="p">,</span>
+                                                  <span class="n">power_fraction</span><span class="p">,</span>
+                                                  <span class="n">grid_supply_temperature</span><span class="p">,</span>
+                                                  <span class="n">grid_return_temperature</span><span class="p">)</span>
+
+                        <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                      <span class="p">[</span><span class="n">info_pump_grid</span><span class="p">,</span> <span class="n">info_technology</span><span class="p">],</span>
+                                                      <span class="n">power_fraction</span><span class="p">,</span>
+                                                      <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                      <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                      <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                      <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                      <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                        <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># add HX to grid</span>
+                        <span class="n">hx_grid_supply_temperature</span><span class="p">,</span> <span class="n">hx_grid_return_temperature</span><span class="p">,</span> <span class="n">hx_sink_supply_temperature</span><span class="p">,</span> <span class="n">hx_sink_target_temperature</span> <span class="o">=</span> <span class="n">sink_get_hx_temperatures</span><span class="p">(</span>
+                            <span class="n">grid_supply_temperature</span><span class="p">,</span> <span class="n">grid_return_temperature</span><span class="p">,</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">],</span>
+                            <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span> <span class="n">hx_delta_T</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">hx_grid_supply_temperature</span> <span class="o">==</span> <span class="n">hx_grid_return_temperature</span><span class="p">:</span>  <span class="c1"># safety - occurs when -&gt; grid_supply_temperature &lt; stream_supply_temperature:</span>
+                            <span class="n">hx_power</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="n">hx_power_supply</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">hx_power_supply</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span>
+                                <span class="n">hx_sink_target_temperature</span> <span class="o">-</span> <span class="n">hx_sink_supply_temperature</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+                                                  <span class="nb">abs</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]))</span>
+                            <span class="n">hx_power</span> <span class="o">=</span> <span class="n">hx_power_supply</span> <span class="o">/</span> <span class="n">hx_efficiency</span>
+
+                        <span class="n">info_hx_grid</span> <span class="o">=</span> <span class="n">Add_HX</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                              <span class="n">hx_grid_supply_temperature</span><span class="p">,</span>
+                                              <span class="n">hx_grid_return_temperature</span><span class="p">,</span>
+                                              <span class="n">grid_fluid</span><span class="p">,</span>
+                                              <span class="n">hx_sink_target_temperature</span><span class="p">,</span>
+                                              <span class="n">hx_sink_supply_temperature</span><span class="p">,</span>
+                                              <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span>
+                                              <span class="n">hx_power</span><span class="p">,</span>
+                                              <span class="n">power_fraction</span><span class="p">)</span>
+
+                        <span class="c1"># add circulation pumping to grid</span>
+                        <span class="n">info_pump_grid</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                  <span class="n">fuels_data</span><span class="p">,</span>
+                                                  <span class="n">grid_fluid</span><span class="p">,</span>
+                                                  <span class="n">hx_power</span><span class="p">,</span>
+                                                  <span class="n">power_fraction</span><span class="p">,</span>
+                                                  <span class="n">hx_grid_supply_temperature</span><span class="p">,</span>
+                                                  <span class="n">hx_grid_return_temperature</span><span class="p">)</span>
+
+                        <span class="c1"># grid may not supply enough heat to the sink</span>
+                        <span class="n">needed_supply_capacity</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span> <span class="o">-</span> <span class="n">hx_power_supply</span>  <span class="c1"># [kW]</span>
+
+                        <span class="c1"># only HX needed</span>
+                        <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">hx_sink_target_temperature</span><span class="p">:</span>
+                            <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;shex&#39;</span>
+
+                            <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                          <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">],</span>
+                                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                                          <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                          <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                          <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                          <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                            <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                        <span class="c1"># add boosting technologies</span>
+                        <span class="k">elif</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">hx_sink_target_temperature</span><span class="p">:</span>
+                            <span class="c1"># 1) add boiler</span>
+                            <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">boiler_fuel_type</span><span class="p">:</span>
+                                <span class="n">info_technology</span> <span class="o">=</span> <span class="n">Add_Boiler</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                             <span class="n">fuels_data</span><span class="p">,</span>
+                                                             <span class="n">fuel</span><span class="p">,</span>
+                                                             <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                             <span class="n">power_fraction</span><span class="p">,</span>
+                                                             <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span>
+                                                             <span class="n">hx_sink_target_temperature</span><span class="p">)</span>
+
+                                <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="n">fuels_teo_nomenclature</span><span class="p">[</span><span class="n">info_technology</span><span class="o">.</span><span class="n">fuel_type</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_boiler&#39;</span>
+
+                                <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                              <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">,</span> <span class="n">info_technology</span><span class="p">],</span>
+                                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                                              <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                              <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                              <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                              <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                              <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                                <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                            <span class="c1"># 2) add solar thermal + boiler as backup</span>
+                            <span class="n">info_technology_solar_thermal</span> <span class="o">=</span> <span class="n">Add_Solar_Thermal</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                              <span class="n">fuels_data</span><span class="p">,</span>
+                                                                              <span class="n">latitude</span><span class="p">,</span>
+                                                                              <span class="n">longitude</span><span class="p">,</span>
+                                                                              <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                                                              <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span>
+                                                                              <span class="n">hx_sink_target_temperature</span><span class="p">,</span>
+                                                                              <span class="n">hx_delta_T</span><span class="p">,</span>
+                                                                              <span class="n">hx_efficiency</span><span class="p">)</span>
+
+                            <span class="n">info_technology_boiler</span> <span class="o">=</span> <span class="n">Add_Boiler</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                <span class="n">fuels_data</span><span class="p">,</span>
+                                                                <span class="s1">&#39;natural_gas&#39;</span><span class="p">,</span>
+                                                                <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                                <span class="n">power_fraction</span><span class="p">,</span>
+                                                                <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span>
+                                                                <span class="n">hx_sink_target_temperature</span><span class="p">)</span>
+
+                            <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;st_&#39;</span> <span class="o">+</span> <span class="n">fuels_teo_nomenclature</span><span class="p">[</span>
+                                <span class="n">info_technology_boiler</span><span class="o">.</span><span class="n">fuel_type</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_boiler&#39;</span>
+
+                            <span class="n">coef_solar_thermal</span><span class="p">,</span> <span class="n">info_technology_boiler</span> <span class="o">=</span> <span class="n">coef_solar_thermal_backup</span><span class="p">(</span>
+                                <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">],</span> <span class="n">info_technology_solar_thermal</span><span class="p">,</span> <span class="n">info_technology_boiler</span><span class="p">)</span>
+
+                            <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                          <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">,</span>
+                                                           <span class="n">info_technology_solar_thermal</span><span class="p">,</span> <span class="n">info_technology_boiler</span><span class="p">],</span>
+                                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                                          <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                          <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                          <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                          <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                            <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                            <span class="c1"># 3) add solar thermal + heat pump as backup</span>
+                            <span class="n">info_technology_heat_pump</span> <span class="o">=</span> <span class="n">Add_Heat_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                      <span class="n">fuels_data</span><span class="p">,</span>
+                                                                      <span class="n">power_fraction</span><span class="p">,</span>
+                                                                      <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span>
+                                                                      <span class="n">hx_sink_target_temperature</span><span class="p">,</span>
+                                                                      <span class="n">ambient_temperature</span><span class="p">,</span>
+                                                                      <span class="n">supply_capacity</span><span class="o">=</span><span class="n">needed_supply_capacity</span><span class="p">)</span>
+
+                            <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;st_&#39;</span> <span class="o">+</span> <span class="s1">&#39;hp&#39;</span>
+
+                            <span class="n">coef_solar_thermal</span><span class="p">,</span> <span class="n">info_technology_heat_pump</span> <span class="o">=</span> <span class="n">coef_solar_thermal_backup</span><span class="p">(</span>
+                                <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;hourly_generation&#39;</span><span class="p">],</span>
+                                <span class="n">info_technology_solar_thermal</span><span class="p">,</span>
+                                <span class="n">info_technology_heat_pump</span><span class="p">)</span>
+
+                            <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                          <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">,</span>
+                                                           <span class="n">info_technology_solar_thermal</span><span class="p">,</span>
+                                                           <span class="n">info_technology_heat_pump</span><span class="p">],</span>
+                                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                                          <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                          <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                          <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                          <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                            <span class="c1"># add solar thermal profile</span>
+                            <span class="k">if</span> <span class="n">coef_solar_thermal</span> <span class="o">&gt;=</span> <span class="n">minimum_coef_solar_thermal</span><span class="p">:</span>
+                                <span class="n">info</span><span class="p">[</span><span class="s1">&#39;hourly_supply_capacity_normalize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info_technology_solar_thermal</span><span class="o">.</span><span class="n">data_teo</span><span class="p">[</span>
+                                    <span class="s1">&#39;hourly_supply_capacity_normalize&#39;</span><span class="p">]</span>
+
+                                <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                            <span class="c1"># 4) add Heat Pump</span>
+                            <span class="n">info_technology</span> <span class="o">=</span> <span class="n">Add_Heat_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                            <span class="n">fuels_data</span><span class="p">,</span>
+                                                            <span class="n">power_fraction</span><span class="p">,</span>
+                                                            <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;target_temperature&quot;</span><span class="p">],</span>
+                                                            <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;supply_temperature&quot;</span><span class="p">],</span>
+                                                            <span class="n">grid_return_temperature</span><span class="p">,</span>
+                                                            <span class="n">supply_capacity</span><span class="o">=</span><span class="n">stream_nominal_capacity</span><span class="p">)</span>
+                            <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;hp&#39;</span>
+
+                            <span class="c1"># heat pump circulation pumping to grid</span>
+                            <span class="n">info_pump_grid</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                      <span class="n">fuels_data</span><span class="p">,</span>
+                                                      <span class="n">grid_fluid</span><span class="p">,</span>
+                                                      <span class="n">info_technology</span><span class="o">.</span><span class="n">evap_capacity</span><span class="p">,</span>
+                                                      <span class="n">power_fraction</span><span class="p">,</span>
+                                                      <span class="n">hx_grid_supply_temperature</span><span class="p">,</span>
+                                                      <span class="n">hx_grid_return_temperature</span><span class="p">)</span>
+
+                            <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                          <span class="p">[</span><span class="n">info_pump_grid</span><span class="p">,</span> <span class="n">info_technology</span><span class="p">],</span>
+                                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                                          <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                          <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                          <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                          <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                            <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+
+                <span class="c1"># get cooling technologies</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">grid_supply_temperature</span> <span class="o">&lt;</span> <span class="n">thermal_chiller_generator_T_hot</span><span class="p">:</span>
+                        <span class="n">after_hx_global_conversion_efficiency</span> <span class="o">=</span> <span class="n">boiler_efficiency</span> <span class="o">*</span> <span class="n">thermal_chiller_efficiency</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">after_hx_global_conversion_efficiency</span> <span class="o">=</span> <span class="n">thermal_chiller_efficiency</span>
+
+                    <span class="c1"># add electric chiller IF stream target temperature inferior to absorption chiller supply temperature</span>
+                    <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">thermal_chiller_supply_temperature</span><span class="p">:</span>
+                        <span class="n">electric_chiller_supply_capacity</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span> <span class="o">*</span> <span class="p">(</span>
+                                <span class="n">thermal_chiller_supply_temperature</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+                                                                   <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stream</span><span class="p">[</span>
+                                                               <span class="s1">&#39;target_temperature&#39;</span><span class="p">])</span>
+
+                        <span class="n">thermal_chiller_supply_capacity</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span> <span class="o">-</span> <span class="n">electric_chiller_supply_capacity</span>
+
+                        <span class="n">info_electric_chiller</span> <span class="o">=</span> <span class="n">Add_Electric_Chiller</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                                     <span class="n">fuels_data</span><span class="p">,</span>
+                                                                     <span class="n">electric_chiller_supply_capacity</span><span class="p">,</span>
+                                                                     <span class="n">power_fraction</span><span class="p">,</span>
+                                                                     <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span>
+                                                                     <span class="n">thermal_chiller_supply_temperature</span><span class="p">,</span> <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">thermal_chiller_supply_capacity</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span>
+                        <span class="n">info_electric_chiller</span> <span class="o">=</span> <span class="p">[]</span>
+
+                    <span class="c1"># add HX to grid</span>
+                    <span class="n">hx_grid_supply_temperature</span><span class="p">,</span> <span class="n">hx_grid_return_temperature</span><span class="p">,</span> <span class="n">hx_sink_supply_temperature</span><span class="p">,</span> <span class="n">hx_sink_target_temperature</span> <span class="o">=</span> <span class="n">sink_get_hx_temperatures</span><span class="p">(</span>
+                        <span class="n">grid_supply_temperature</span><span class="p">,</span> <span class="n">grid_return_temperature</span><span class="p">,</span> <span class="n">thermal_chiller_generator_T_cold</span><span class="p">,</span>
+                        <span class="n">thermal_chiller_generator_T_hot</span><span class="p">,</span> <span class="n">hx_delta_T</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">hx_grid_supply_temperature</span> <span class="o">==</span> <span class="n">hx_grid_return_temperature</span><span class="p">:</span>
+                        <span class="n">hx_power_supply</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">hx_power</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">hx_power_supply</span> <span class="o">=</span> <span class="n">thermal_chiller_supply_capacity</span> <span class="o">/</span> <span class="p">(</span>
+                            <span class="nb">abs</span><span class="p">(</span><span class="n">thermal_chiller_generator_T_hot</span> <span class="o">-</span> <span class="n">thermal_chiller_generator_T_cold</span><span class="p">))</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span>
+                            <span class="n">hx_grid_supply_temperature</span> <span class="o">-</span> <span class="n">hx_grid_return_temperature</span><span class="p">)</span>
+                        <span class="n">hx_power</span> <span class="o">=</span> <span class="n">hx_power_supply</span> <span class="o">/</span> <span class="n">hx_efficiency</span>
+
+                    <span class="n">info_hx_grid</span> <span class="o">=</span> <span class="n">Add_HX</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                          <span class="n">hx_grid_supply_temperature</span><span class="p">,</span>
+                                          <span class="n">hx_grid_return_temperature</span><span class="p">,</span>
+                                          <span class="n">grid_fluid</span><span class="p">,</span>
+                                          <span class="n">hx_sink_target_temperature</span><span class="p">,</span>
+                                          <span class="n">hx_sink_supply_temperature</span><span class="p">,</span>
+                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span>
+                                          <span class="n">hx_power</span><span class="p">,</span>
+                                          <span class="n">power_fraction</span><span class="p">)</span>
+
+                    <span class="c1"># add circulation pumping to grid</span>
+                    <span class="n">info_pump_grid</span> <span class="o">=</span> <span class="n">Add_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                              <span class="n">fuels_data</span><span class="p">,</span>
+                                              <span class="n">grid_fluid</span><span class="p">,</span>
+                                              <span class="n">hx_power_supply</span><span class="p">,</span>
+                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                              <span class="n">hx_sink_target_temperature</span><span class="p">,</span>
+                                              <span class="n">hx_sink_supply_temperature</span><span class="p">)</span>
+
+                    <span class="c1"># grid may not supply enough heat to the sink</span>
+                    <span class="n">needed_supply_capacity</span> <span class="o">=</span> <span class="n">stream_nominal_capacity</span> <span class="o">/</span> <span class="n">after_hx_global_conversion_efficiency</span> <span class="o">-</span> <span class="n">hx_power_supply</span>  <span class="c1"># [kW]</span>
+
+                    <span class="c1"># add absorption chiller</span>
+                    <span class="n">info_technology</span> <span class="o">=</span> <span class="n">Add_Thermal_Chiller</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                          <span class="n">fuels_data</span><span class="p">,</span>
+                                                          <span class="n">thermal_chiller_supply_capacity</span><span class="p">,</span>
+                                                          <span class="n">power_fraction</span><span class="p">)</span>
+
+                    <span class="c1"># absorption chiller evaporation temperature not reached by the grid - put booster technology before</span>
+                    <span class="k">if</span> <span class="n">hx_sink_target_temperature</span> <span class="o">&lt;</span> <span class="n">thermal_chiller_generator_T_hot</span><span class="p">:</span>
+                        <span class="c1"># add boiler</span>
+                        <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">boiler_fuel_type</span><span class="p">:</span>
+                            <span class="n">info_boiler</span> <span class="o">=</span> <span class="n">Add_Boiler</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                     <span class="n">fuels_data</span><span class="p">,</span>
+                                                     <span class="n">fuel</span><span class="p">,</span>
+                                                     <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                     <span class="n">power_fraction</span><span class="p">,</span>
+                                                     <span class="n">thermal_chiller_generator_T_hot</span><span class="p">,</span>
+                                                     <span class="n">hx_sink_target_temperature</span><span class="p">)</span>
+
+                            <span class="k">if</span> <span class="n">info_electric_chiller</span> <span class="o">==</span> <span class="p">[]:</span>
+                                <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;ac_&#39;</span> <span class="o">+</span> <span class="n">fuels_teo_nomenclature</span><span class="p">[</span>
+                                    <span class="n">info_boiler</span><span class="o">.</span><span class="n">fuel_type</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_boiler&#39;</span>
+                                <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                              <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">,</span> <span class="n">info_boiler</span><span class="p">,</span>
+                                                               <span class="n">info_technology</span><span class="p">],</span>
+                                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                                              <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                              <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                              <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                              <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                              <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;ac_ec_&#39;</span> <span class="o">+</span> <span class="n">fuels_teo_nomenclature</span><span class="p">[</span>
+                                    <span class="n">info_boiler</span><span class="o">.</span><span class="n">fuel_type</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_boiler&#39;</span>
+
+                                <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                              <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">,</span> <span class="n">info_boiler</span><span class="p">,</span>
+                                                               <span class="n">info_technology</span><span class="p">,</span> <span class="n">info_electric_chiller</span><span class="p">],</span>
+                                                              <span class="n">power_fraction</span><span class="p">,</span>
+                                                              <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                              <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                              <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                              <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                              <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                            <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                        <span class="c1"># add heat pump</span>
+                        <span class="n">info_heat_pump</span> <span class="o">=</span> <span class="n">Add_Heat_Pump</span><span class="p">(</span><span class="n">kb</span><span class="p">,</span>
+                                                       <span class="n">fuels_data</span><span class="p">,</span>
+                                                       <span class="n">needed_supply_capacity</span><span class="p">,</span>
+                                                       <span class="n">power_fraction</span><span class="p">,</span>
+                                                       <span class="n">thermal_chiller_generator_T_hot</span><span class="p">,</span>
+                                                       <span class="n">hx_sink_target_temperature</span><span class="p">,</span>
+                                                       <span class="n">ambient_temperature</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">info_electric_chiller</span> <span class="o">==</span> <span class="p">[]:</span>
+                            <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;ac_&#39;</span> <span class="o">+</span> <span class="s1">&#39;hp&#39;</span>
+                            <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                          <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">,</span> <span class="n">info_heat_pump</span><span class="p">,</span>
+                                                           <span class="n">info_technology</span><span class="p">],</span>
+                                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                                          <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                          <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                          <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                          <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;ac_ec_&#39;</span> <span class="o">+</span> <span class="s1">&#39;hp&#39;</span>
+                            <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                          <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">,</span> <span class="n">info_heat_pump</span><span class="p">,</span>
+                                                           <span class="n">info_technology</span><span class="p">,</span> <span class="n">info_electric_chiller</span><span class="p">],</span>
+                                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                                          <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                          <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                          <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                          <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                        <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">info_electric_chiller</span> <span class="o">==</span> <span class="p">[]:</span>
+                            <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;ac&#39;</span>
+
+                            <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                          <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">,</span> <span class="n">info_technology</span><span class="p">],</span>
+                                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                                          <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                          <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                          <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                          <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">teo_equipment_name</span> <span class="o">=</span> <span class="s1">&#39;ac_ec&#39;</span>
+                            <span class="n">info</span> <span class="o">=</span> <span class="n">aggregate_technologies_info</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                                                          <span class="p">[</span><span class="n">info_hx_grid</span><span class="p">,</span> <span class="n">info_pump_grid</span><span class="p">,</span> <span class="n">info_electric_chiller</span><span class="p">,</span>
+                                                           <span class="n">info_technology</span><span class="p">],</span>
+                                                          <span class="n">power_fraction</span><span class="p">,</span>
+                                                          <span class="n">info_pump_grid</span><span class="o">.</span><span class="n">supply_capacity</span><span class="p">,</span>
+                                                          <span class="n">stream_nominal_capacity</span><span class="p">,</span>
+                                                          <span class="s1">&#39;sink&#39;</span><span class="p">,</span>
+                                                          <span class="n">teo_equipment_name</span><span class="p">,</span>
+                                                          <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+                        <span class="n">conversion_technologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+            <span class="n">yearly_demand</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">hourly_stream_capacity</span><span class="p">)</span>
+            <span class="n">teo_demand_factor</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">yearly_demand</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">hourly_stream_capacity</span><span class="p">]</span>
+
+
+            <span class="n">gis_capacity</span> <span class="o">=</span> <span class="n">conversion_technologies</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;max_capacity&#39;</span><span class="p">]</span>
+            <span class="n">teo_id</span> <span class="o">=</span> <span class="s1">&#39;sink&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;str&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;dem&#39;</span> <span class="c1"># &#39;sink&#39; + str(sink[&#39;id&#39;]) + &#39;stream&#39; + str(stream[&#39;id&#39;])</span>
+
+            <span class="n">output_converted</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;stream_id&#39;</span><span class="p">:</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;demand_fuel&#39;</span><span class="p">:</span> <span class="n">teo_id</span><span class="p">,</span>
+                <span class="s1">&#39;gis_capacity&#39;</span><span class="p">:</span> <span class="n">gis_capacity</span><span class="p">,</span>  <span class="c1"># [kW]</span>
+                <span class="s1">&#39;hourly_stream_capacity&#39;</span><span class="p">:</span> <span class="n">hourly_stream_capacity</span><span class="p">,</span>  <span class="c1"># [kWh]</span>
+                <span class="s1">&#39;teo_demand_factor&#39;</span><span class="p">:</span> <span class="n">teo_demand_factor</span><span class="p">,</span>
+                <span class="s1">&#39;teo_yearly_demand&#39;</span><span class="p">:</span> <span class="n">yearly_demand</span><span class="p">,</span>
+                <span class="s1">&#39;conversion_technologies&#39;</span><span class="p">:</span> <span class="n">conversion_technologies</span><span class="p">,</span>  <span class="c1"># [€/kW]</span>
+            <span class="p">})</span>
+
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">teo_group_of_sinks_demand_factor</span><span class="p">):</span>
+                <span class="n">i</span><span class="p">[</span><span class="n">teo_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">teo_demand_factor</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="n">output_sink</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;sink_id&#39;</span><span class="p">:</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">],</span>
+            <span class="s1">&#39;streams&#39;</span><span class="p">:</span> <span class="n">output_converted</span>
+        <span class="p">})</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModuleRuntimeException</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;convert_sinks.py&quot;</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Sinks&#39; streams conversion infeasible. Check sinks&#39; streams.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1">##############################</span>
+    <span class="c1"># OUTPUT</span>
+    <span class="n">all_sinks_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;sink_group_grid_supply_temperature&#39;</span><span class="p">:</span> <span class="n">grid_supply_temperature</span><span class="p">,</span>
+        <span class="s1">&#39;sink_group_grid_return_temperature&#39;</span><span class="p">:</span> <span class="n">grid_return_temperature</span><span class="p">,</span>
+        <span class="s1">&#39;grid_specific&#39;</span><span class="p">:</span> <span class="n">grid_specific_heating</span><span class="p">,</span>
+        <span class="s1">&#39;sinks&#39;</span><span class="p">:</span> <span class="n">output_sink</span>
+    <span class="p">}</span>
+
+    <span class="c1"># GIS INFO</span>
+    <span class="n">n_demand_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">all_sinks_info</span><span class="p">[</span><span class="s1">&#39;sinks&#39;</span><span class="p">]:</span>
+        <span class="n">total_cap</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]:</span>
+            <span class="n">total_cap</span> <span class="o">=</span> <span class="n">total_cap</span> <span class="o">+</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;gis_capacity&#39;</span><span class="p">]</span>
+
+        <span class="n">gis_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;sink_id&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;coords&#39;</span><span class="p">:</span> <span class="n">sink</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;cap&#39;</span><span class="p">:</span> <span class="n">total_cap</span>  <span class="c1"># [kW]</span>
+        <span class="p">}</span>
+
+        <span class="n">n_demand_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gis_dict</span><span class="p">)</span>
+
+    <span class="n">n_grid_specific</span> <span class="o">=</span> <span class="p">[{</span>
+        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;coords&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">group_latitude</span><span class="p">,</span> <span class="n">group_longitude</span><span class="p">],</span>
+        <span class="s1">&#39;cap&#39;</span><span class="p">:</span> <span class="n">group_of_sinks_grid_specific_power_heating</span>  <span class="c1"># [kW]</span>
+    <span class="p">}]</span>
+
+    <span class="n">n_thermal_storage</span> <span class="o">=</span> <span class="p">[{</span>
+        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;coords&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">group_latitude</span><span class="p">,</span> <span class="n">group_longitude</span><span class="p">],</span>
+        <span class="s1">&#39;cap&#39;</span><span class="p">:</span> <span class="mi">1</span>  <span class="c1"># [kW]</span>
+    <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;coords&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">group_latitude</span><span class="p">,</span> <span class="n">group_longitude</span><span class="p">],</span>
+            <span class="s1">&#39;cap&#39;</span><span class="p">:</span> <span class="mi">1</span>  <span class="c1"># [kW]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+
+
+
+    <span class="n">all_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;all_sinks_info&quot;</span><span class="p">:</span> <span class="n">all_sinks_info</span><span class="p">,</span>
+        <span class="s2">&quot;n_grid_specific&quot;</span><span class="p">:</span> <span class="n">n_grid_specific</span><span class="p">,</span>
+        <span class="s2">&quot;n_demand_list&quot;</span><span class="p">:</span> <span class="n">n_demand_list</span><span class="p">,</span>
+        <span class="s2">&quot;n_thermal_storage&quot;</span><span class="p">:</span> <span class="n">n_thermal_storage</span><span class="p">,</span>
+        <span class="s2">&quot;teo_demand_factor_group&quot;</span><span class="p">:</span> <span class="n">teo_group_of_sinks_demand_factor</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">all_info</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

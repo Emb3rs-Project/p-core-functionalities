@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pinch Analysis - QUICK INPUTS &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Sink" href="Sink.html" />
+    <link rel="prev" title="Pinch Analysis" href="module.Source.simulation.Heat_Recovery.Pinch.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="module.Source.simulation.Convert.html">Convert Sources</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.html">Internal Heat Recovery</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.ORC.html">Organic Rankine Cycle (ORC)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.Pinch.html">Pinch Analysis</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Pinch Analysis - QUICK INPUTS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source%20Simulation.html">Source Simulation</a> &raquo;</li>
+          <li><a href="module.Source.simulation.Heat_Recovery.html">Internal Heat Recovery</a> &raquo;</li>
+      <li>Pinch Analysis - QUICK INPUTS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/module.Source.simulation.Heat_Recovery.PinchQuick.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams">
+<span id="pinch-analysis-quick-inputs"></span><h1>Pinch Analysis - QUICK INPUTS<a class="headerlink" href="#module-module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams.convert_pinch_isolated_streams">
+<span class="sig-prename descclassname"><span class="pre">module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams.</span></span><span class="sig-name descname"><span class="pre">convert_pinch_isolated_streams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/simulation/Heat_Recovery/convert_pinch_isolated_streams.html#convert_pinch_isolated_streams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams.convert_pinch_isolated_streams" title="Permalink to this definition"></a></dt>
+<dd><p>Perform Pinch Analysis to isolated streams.</p>
+<p>Return best solutions data and report</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> (<em>dict</em>) – <p>Data to perform pinch analysis</p>
+<blockquote>
+<div><dl>
+<dt>platform<span class="classifier">dict</span></dt><dd><p>Platform data</p>
+<blockquote>
+<div><dl>
+<dt>streams<span class="classifier">dict</span></dt><dd><p>Streams data</p>
+</dd>
+<dt>pinch_delta_T_min<span class="classifier">float</span></dt><dd><p>Pinch delta_T</p>
+</dd>
+<dt>location<span class="classifier">list</span></dt><dd><p>[latitude, longitude] [º]</p>
+</dd>
+<dt>fuels_data: dict:</dt><dd><p>Fuels price and CO2 emission, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>natural_gas: dict</dt><dd><p>Natural gas data</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>co2_emissions: float:</dt><dd><p>Fuel CO2 emission [kg CO2/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>price: float:</dt><dd><p>Fuel price [€/kWh]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fuel_oil</dt><dd><p>Same keys as “natural_gas”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electricity</dt><dd><p>Same keys as “natural_gas”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>biomass</dt><dd><p>Same keys as “natural_gas”</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>streams_to_analyse<span class="classifier">list</span></dt><dd><p>Stream ID to analyse</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><strong>pinch_output</strong> –</p>
+<p>Pinch analysis, with the following keys:</p>
+<blockquote>
+<div><dl>
+<dt>best_options<span class="classifier">dict</span></dt><dd><p>Dicts with solutions data for:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>co2_optimization<span class="classifier">list</span></dt><dd><p>List with best design options of the respective category</p>
+</dd>
+<dt>energy_recovered_optimization<span class="classifier">list</span></dt><dd><p>List with best design options of the respective category</p>
+</dd>
+<dt>energy_investment_optimization<span class="classifier">list</span></dt><dd><p>List with best design options of the respective category</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>report<span class="classifier">str</span></dt><dd><p>HTML Report</p>
+</dd>
+</dl>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="module.Source.simulation.Heat_Recovery.Pinch.html" class="btn btn-neutral float-left" title="Pinch Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Sink.html" class="btn btn-neutral float-right" title="Sink" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,6 +1,6 @@
-from module.Sink.characterization.building import building
-from ....utilities.kb import KB
-from ....utilities.kb_data import kb
+from module.src.Sink.characterization.building import building
+from module.src.utilities.kb import KB
+from module.src.utilities.kb_data import kb
 import json
 import os
 

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../../index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../../index.html">Module code</a> &raquo;</li>
+      <li>module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">....Error_Handling.error_isolated_stream</span> <span class="kn">import</span> <span class="n">PlatformIsolatedStream</span>
+<span class="kn">from</span> <span class="nn">....General.Simple_User.isolated_stream</span> <span class="kn">import</span> <span class="n">isolated_stream</span>
+<span class="kn">from</span> <span class="nn">.Pinch.convert_pinch</span> <span class="kn">import</span> <span class="n">convert_pinch</span>
+<span class="kn">from</span> <span class="nn">....utilities.kb</span> <span class="kn">import</span> <span class="n">KB</span>
+
+
+<div class="viewcode-block" id="convert_pinch_isolated_streams"><a class="viewcode-back" href="../../../../../../module.Source.simulation.Heat_Recovery.PinchQuick.html#module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams.convert_pinch_isolated_streams">[docs]</a><span class="k">def</span> <span class="nf">convert_pinch_isolated_streams</span><span class="p">(</span><span class="n">in_var</span><span class="p">,</span> <span class="n">kb</span><span class="p">:</span> <span class="n">KB</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Perform Pinch Analysis to isolated streams.</span>
+
+<span class="sd">    Return best solutions data and report</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_var : dict</span>
+<span class="sd">        Data to perform pinch analysis</span>
+
+<span class="sd">            platform : dict</span>
+<span class="sd">                Platform data</span>
+
+<span class="sd">                    streams : dict</span>
+<span class="sd">                        Streams data</span>
+
+<span class="sd">                    pinch_delta_T_min : float</span>
+<span class="sd">                        Pinch delta_T</span>
+
+<span class="sd">                    location : list</span>
+<span class="sd">                        [latitude, longitude] [º]</span>
+
+<span class="sd">                    fuels_data: dict:</span>
+<span class="sd">                        Fuels price and CO2 emission, with the following keys:</span>
+
+<span class="sd">                            - natural_gas: dict</span>
+<span class="sd">                                Natural gas data</span>
+
+<span class="sd">                                    - co2_emissions: float:</span>
+<span class="sd">                                        Fuel CO2 emission [kg CO2/kWh]</span>
+
+<span class="sd">                                    - price: float:</span>
+<span class="sd">                                        Fuel price [€/kWh]</span>
+
+<span class="sd">                            - fuel_oil</span>
+<span class="sd">                                Same keys as &quot;natural_gas&quot;</span>
+
+<span class="sd">                            - electricity</span>
+<span class="sd">                                Same keys as &quot;natural_gas&quot;</span>
+
+<span class="sd">                            - biomass</span>
+<span class="sd">                                Same keys as &quot;natural_gas&quot;</span>
+
+<span class="sd">                    streams_to_analyse : list</span>
+<span class="sd">                        Stream ID to analyse</span>
+
+<span class="sd">    kb : dict</span>
+<span class="sd">        Knowledge Base</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pinch_output : dict</span>
+<span class="sd">        Pinch analysis, with the following keys:</span>
+
+<span class="sd">            best_options : dict</span>
+<span class="sd">                Dicts with solutions data for:</span>
+
+<span class="sd">                    co2_optimization : list</span>
+<span class="sd">                        List with best design options of the respective category</span>
+
+<span class="sd">                    energy_recovered_optimization : list</span>
+<span class="sd">                        List with best design options of the respective category</span>
+
+<span class="sd">                    energy_investment_optimization : list</span>
+<span class="sd">                        List with best design options of the respective category</span>
+
+<span class="sd">            report : str</span>
+<span class="sd">                HTML Report</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">raw_streams_data</span> <span class="o">=</span> <span class="n">PlatformIsolatedStream</span><span class="p">(</span><span class="o">**</span><span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">])</span>
+    <span class="n">streams_data</span> <span class="o">=</span> <span class="p">[</span><span class="nb">vars</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span> <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">raw_streams_data</span><span class="o">.</span><span class="n">streams</span><span class="p">]</span>
+
+
+    <span class="c1"># get streams data</span>
+    <span class="n">isolated_stream_output</span> <span class="o">=</span> <span class="n">isolated_stream</span><span class="p">(</span><span class="n">streams_data</span><span class="p">)</span>
+    <span class="n">streams</span> <span class="o">=</span> <span class="n">isolated_stream_output</span><span class="p">[</span><span class="s1">&#39;streams&#39;</span><span class="p">]</span>
+
+
+    <span class="c1"># perform pinch analysis</span>
+    <span class="n">input_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;fuels_data&quot;</span><span class="p">:</span>  <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s2">&quot;fuels_data&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;streams_to_analyse&quot;</span><span class="p">:</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s1">&#39;streams_to_analyse&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;all_input_objects&quot;</span><span class="p">:</span> <span class="n">streams</span><span class="p">,</span>
+            <span class="s2">&quot;pinch_delta_T_min&quot;</span><span class="p">:</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s1">&#39;pinch_delta_T_min&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s1">&#39;location&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;interest_rate&quot;</span><span class="p">:</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s1">&#39;interest_rate&#39;</span><span class="p">]}</span>
+    <span class="p">}</span>
+
+    <span class="n">pinch_output</span> <span class="o">=</span> <span class="n">convert_pinch</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pinch_output</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

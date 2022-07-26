@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organic Rankine Cycle (ORC) &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pinch Analysis" href="module.Source.simulation.Heat_Recovery.Pinch.html" />
+    <link rel="prev" title="Internal Heat Recovery" href="module.Source.simulation.Heat_Recovery.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="module.Source.simulation.Convert.html">Convert Sources</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.html">Internal Heat Recovery</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Organic Rankine Cycle (ORC)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.Pinch.html">Pinch Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.PinchQuick.html">Pinch Analysis - QUICK INPUTS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source%20Simulation.html">Source Simulation</a> &raquo;</li>
+          <li><a href="module.Source.simulation.Heat_Recovery.html">Internal Heat Recovery</a> &raquo;</li>
+      <li>Organic Rankine Cycle (ORC)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/module.Source.simulation.Heat_Recovery.ORC.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-module.src.Source.simulation.Heat_Recovery.ORC.convert_orc">
+<span id="organic-rankine-cycle-orc"></span><h1>Organic Rankine Cycle (ORC)<a class="headerlink" href="#module-module.src.Source.simulation.Heat_Recovery.ORC.convert_orc" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="module.src.Source.simulation.Heat_Recovery.ORC.convert_orc.convert_orc">
+<span class="sig-prename descclassname"><span class="pre">module.src.Source.simulation.Heat_Recovery.ORC.convert_orc.</span></span><span class="sig-name descname"><span class="pre">convert_orc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/simulation/Heat_Recovery/ORC/convert_orc.html#convert_orc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.simulation.Heat_Recovery.ORC.convert_orc.convert_orc" title="Permalink to this definition"></a></dt>
+<dd><p>The main routine for designing ORCs for the streams given</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> – <ul>
+<li><dl class="simple">
+<dt>streams:<code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">with</span> <span class="pre">dicts</span></code>: each stream data, with the following keys:</dt><dd><ul>
+<li><p>id: <code class="docutils literal notranslate"><span class="pre">int</span></code>: stream ID []</p></li>
+<li><p>name: <code class="docutils literal notranslate"><span class="pre">str</span></code>: stream name []</p></li>
+<li><p>object_type: <code class="docutils literal notranslate"><span class="pre">str</span></code>: DEFAULT=stream []</p></li>
+<li><p>stream_type: <code class="docutils literal notranslate"><span class="pre">str</span></code>: stream designation []; e.g. inflow, outflow, excess_heat</p></li>
+<li><p>supply_temperature: <code class="docutils literal notranslate"><span class="pre">float</span></code>: stream’s supply/initial temperature [ºC]</p></li>
+<li><p>target_temperature: <code class="docutils literal notranslate"><span class="pre">float</span></code>: stream’s target/final temperature [ºC]</p></li>
+<li><p>fluid: <code class="docutils literal notranslate"><span class="pre">str</span></code>: stream’s fluid []</p></li>
+<li><p>flowrate: <code class="docutils literal notranslate"><span class="pre">float</span></code>: stream’s mass flowrate [kg/h]</p></li>
+<li><p>schedule: <code class="docutils literal notranslate"><span class="pre">list</span></code>: stream’s hourly schedule</p></li>
+<li><p>hourly_generation: <code class="docutils literal notranslate"><span class="pre">list</span></code>: stream’s hourly capacity</p></li>
+<li><p>capacity: <code class="docutils literal notranslate"><span class="pre">float</span></code>: stream’s capacity [kW]</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>consumer_type: <code class="docutils literal notranslate"><span class="pre">str</span></code>: type of consumer tariff []; ‘household’ or ‘non-household’</p></li>
+<li><p>get_best_number: <code class="docutils literal notranslate"><span class="pre">int</span></code>: [OPTIONAL]  number of best conversion cases; DEFAULT=3</p></li>
+<li><p>orc_years_working: <code class="docutils literal notranslate"><span class="pre">int</span></code>: [OPTIONAL]  ORC working years [years]; DEFAULT=25</p></li>
+<li><p>orc_T_evap: <code class="docutils literal notranslate"><span class="pre">float</span></code>: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=110</p></li>
+<li><p>orc_T_cond: <code class="docutils literal notranslate"><span class="pre">float</span></code>: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=35</p></li>
+</ul>
+</p></li>
+<li><p><strong>kb</strong> – Knowledge Base data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>report: <code class="docutils literal notranslate"><span class="pre">str</span></code>: HTML report</p></li>
+<li><dl class="simple">
+<dt>best_options: <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">with</span> <span class="pre">dicts</span></code>: each designed solution data, with the following keys:</dt><dd><ul>
+<li><p>ID: <code class="docutils literal notranslate"><span class="pre">int</span></code>: ORC design ID []</p></li>
+<li><p>streams_id: <code class="docutils literal notranslate"><span class="pre">list</span></code>:  streams ID considered for the solution []</p></li>
+<li><p>electrical_generation_nominal: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC nominal electrical generation [kW]</p></li>
+<li><p>electrical_generation_yearly: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly electrical generation [kWh]</p></li>
+<li><p>excess_heat_supply_capacity: <code class="docutils literal notranslate"><span class="pre">float</span></code>: streams thermal capacity available [kW]</p></li>
+<li><p>conversion_efficiency: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC heat to electricity conversion efficiency []</p></li>
+<li><p>turnkey: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC investment cost [€]</p></li>
+<li><p>om_fix: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly OM fix costs [€/year]</p></li>
+<li><p>om_var: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly OM var costs [€/kWh]</p></li>
+<li><p>electrical_generation_yearly_turnkey: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly electrical generation over turnkey [kWh/€]</p></li>
+<li><p>co2_savings: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly CO2 savings (all electricity is considered to be consumed)  [kg CO2/kWh]</p></li>
+<li><p>money_savings: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly monetary savings (all electricity is considered to be consumed [€/kWh]</p></li>
+<li><p>discount_rate: <code class="docutils literal notranslate"><span class="pre">float</span></code>: discount rate []</p></li>
+<li><p>lifetime: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC working years [years]</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="module.Source.simulation.Heat_Recovery.html" class="btn btn-neutral float-left" title="Internal Heat Recovery" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="module.Source.simulation.Heat_Recovery.Pinch.html" class="btn btn-neutral float-right" title="Pinch Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

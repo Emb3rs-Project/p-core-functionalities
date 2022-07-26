@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sink Simulation &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="Examples.html" />
+    <link rel="prev" title="Greenhouse" href="Greenhouse.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Source.html">Source</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Sink.html">Sink</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="SinkCharacterization.html">Sink Characterization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sink Simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-module.src.Sink.simulation.convert_sinks">Convert Sinks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="Sink.html">Sink</a> &raquo;</li>
+      <li>Sink Simulation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/SinkSimulation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sink-simulation">
+<h1>Sink Simulation<a class="headerlink" href="#sink-simulation" title="Permalink to this heading"></a></h1>
+<section id="module-module.src.Sink.simulation.convert_sinks">
+<span id="convert-sinks"></span><h2>Convert Sinks<a class="headerlink" href="#module-module.src.Sink.simulation.convert_sinks" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="module.src.Sink.simulation.convert_sinks.convert_sinks">
+<span class="sig-prename descclassname"><span class="pre">module.src.Sink.simulation.convert_sinks.</span></span><span class="sig-name descname"><span class="pre">convert_sinks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Sink/simulation/convert_sinks.html#convert_sinks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Sink.simulation.convert_sinks.convert_sinks" title="Permalink to this definition"></a></dt>
+<dd><p>Design of Grid - Sinks conversion technologies.</p>
+<p>For the group of sinks given, it is set the grid supply and return temperatures. Moreover, grid specific technologies
+are designed to meet the heating/cooling requirements of the group.</p>
+<p>For each sink are designed the conversion technologies needed. The design may be done for each stream individually or
+it can be made to the aggregated of streams (the user must provide his preference).
+When performing the conversion, three design options may occur:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Sink needs HEATING</dt><dd><p>1) the grid temperature meets the sink target temperature requirements, thus only a grid-sink HX and correspondent
+circulation pumping is needed
+2) the grid temperature does not meet the sink target temperature requirements, thus adding to the grid-sink HX
+and correspondent circulation pumping, it is also necessary to add a technology to raise the temperature (chp,
+solar thermal, heat pump, boiler)</p>
+</dd>
+<dt>Sink needs COOLING</dt><dd><ol class="arabic simple" start="3">
+<li><p>it is always necessary to add a cooling technology (thermal_chiller), since we are only designing DHNs</p></li>
+</ol>
+</dd>
+</dl>
+</div></blockquote>
+<p>Possible conversions: HX, HX + heating/cooling technology + HX</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> (<em>All necessary data to perform the grid to sinks conversion with the following key:</em>) – <dl>
+<dt>platform: dict</dt><dd><p>Data obtained from the platform</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt>grid_supply_temperature<span class="classifier">float, optional</span></dt><dd><p>Grid supply temperature provided by the user [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>grid_return_temperature<span class="classifier">float, optional</span></dt><dd><p>Grid return temperature provided by the user [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>group_of_sinks<span class="classifier">list with dict</span></dt><dd><p>List with all sinks to be analyzed; each with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt>id<span class="classifier">int</span></dt><dd><p>Sink ID []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>location<span class="classifier">list</span></dt><dd><p>[latitude, longitude] [º]</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>fuels_data: dict:</dt><dd><p>Fuels price and CO2 emission, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>natural_gas: dict</dt><dd><p>Natural gas data</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>co2_emissions: float:</dt><dd><p>Fuel CO2 emission [kg CO2/kWh</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>price: float:</dt><dd><p>Fuel price [€/kWh</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fuel_oil</dt><dd><p>Same keys as “natural_gas”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electricity</dt><dd><p>Same keys as “natural_gas”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>biomass</dt><dd><p>Same keys as “natural_gas”</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>streams<span class="classifier">list with dict</span></dt><dd><p>Streams to be analyzed. Each stream with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>id<span class="classifier">int</span></dt><dd><p>Stream ID []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>name<span class="classifier">str</span></dt><dd><p>Stream name []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>object_type<span class="classifier">str</span></dt><dd><p>DEFAULT = “stream” []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>object_linked_id</dt><dd><p>None: DEFAULT=NONE, since no equipment/process is associated</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>stream_type<span class="classifier">str</span></dt><dd><p>Stream designation []; inflow, outflow, excess_heat</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>supply_temperature<span class="classifier">float</span></dt><dd><p>Stream’s supply/initial temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>target_temperature<span class="classifier">float</span></dt><dd><p>Stream’s target/final temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fluid<span class="classifier">str</span></dt><dd><p>Stream fluid name</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>flowrate<span class="classifier">float</span></dt><dd><p>Stream mass flowrate[kg/h]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>schedule<span class="classifier">list</span></dt><dd><p>Hourly values between 0 and 1, according to the capacity ration on that hour</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>hourly_generation: list</dt><dd><p>Stream’s hourly capacity [kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>capacity<span class="classifier">float</span></dt><dd><p>Stream’s capacity [kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fuel<span class="classifier">str</span></dt><dd><p>Associated equipment fuel name []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>eff_equipment<span class="classifier">float</span></dt><dd><p>Associated equipment efficiency []</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><strong>all_info</strong> –</p>
+<p>All conversion data</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>all_sinks_info<span class="classifier">list</span></dt><dd><p>Each sink conversion data</p>
+<blockquote>
+<div><dl class="simple">
+<dt>-sink_group_grid_supply_temperature<span class="classifier">float</span></dt><dd><p>Grid supply temperature [ºC]</p>
+</dd>
+</dl>
+<ul>
+<li><dl class="simple">
+<dt>sink_group_grid_return_temperature<span class="classifier">float</span></dt><dd><p>Grid return temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>grid_specific<span class="classifier">list</span></dt><dd><p>List with Grid Specific technologies, each technology with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>teo_equipment_name<span class="classifier">str</span></dt><dd><p>Specific nomenclature for the TEO</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output<span class="classifier">str</span></dt><dd><p>Specific nomenclature for the TEO</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>input_fuel<span class="classifier">str</span></dt><dd><p>Specific nomenclature for the TEO</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output_fuel<span class="classifier">str</span></dt><dd><p>Specific nomenclature for the TEO</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>equipment<span class="classifier">list</span></dt><dd><p>All conversion equipments; list with technologies names; e.g. [‘hx_plate’, ‘heat_pump’,’hx_plate’]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>max_capacity<span class="classifier">float</span></dt><dd><p>Stream power (sources- excess heat; sinks - grid heat)  [kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>turnkey_a<span class="classifier">float</span></dt><dd><p>Aggregated turnkey a [€/kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>turnkey_b<span class="classifier">float</span></dt><dd><p>Aggregated turnkey b [€]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>conversion_efficiency :</dt><dd><p>Aggregated conversion_efficiency []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electrical_conversion_efficiency<span class="classifier">float</span></dt><dd><p>ONLY FOR ORC - electrical conversion efficiency []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>om_fix<span class="classifier">float</span></dt><dd><p>Aggregated om_fix [€/year.kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>om_var<span class="classifier">float</span></dt><dd><p>Aggregated om_var [€/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>emissions<span class="classifier">float</span></dt><dd><p>Aggregated emissions [kg.CO2/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>technologies<span class="classifier">list with dicts</span></dt><dd><p>Each equipment info in detail (check General/Convert_Equipments/Convert_Options)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>sinks<span class="classifier">list with dict</span></dt><dd><p>List with each sink data, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt>sink_id<span class="classifier">str</span></dt><dd><p>Sink ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>location<span class="classifier">list</span></dt><dd><p>[latitude, longitude] [º]</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>streams<span class="classifier">list with dict</span></dt><dd><p>Each stream of the sink, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>stream_id<span class="classifier">str</span></dt><dd><p>Stream ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>demand_fuel<span class="classifier">str</span></dt><dd><p>TEO specific data</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>gis_capacity<span class="classifier">float</span></dt><dd><p>Sink nominal capacity [kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>hourly_stream_capacity<span class="classifier">list</span></dt><dd><p>Stream hourly capacity [kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>teo_demand_factor<span class="classifier">list</span></dt><dd><p>Stream’s hourly capacity divided by yearly capacity [kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>teo_yearly_demand<span class="classifier">float</span></dt><dd><p>Stream yearly demand [kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>conversion_technologies<span class="classifier">list</span></dt><dd><p>List with multiple dictionaries with the solution of technologies possible to
+implement; same keys as the “grid_specific” technologies</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>n_demand_list<span class="classifier">list with dicts</span></dt><dd><p>Sinks data for GIS, with the following keys:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>id<span class="classifier">str</span></dt><dd><p>Object ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>coords<span class="classifier">list</span></dt><dd><p>[latitude, longitude] [º]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>cap<span class="classifier">float</span></dt><dd><p>Object nominal capacity [kW]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>n_grid_specific<span class="classifier">list with dicts</span></dt><dd><p>Grid specific data for GIS, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>id<span class="classifier">int</span></dt><dd><p>Object ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>coords<span class="classifier">list</span></dt><dd><p>Same keys as “n_demand_list”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>cap<span class="classifier">float</span></dt><dd><p>Same keys as “n_demand_list”</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>n_thermal_storage<span class="classifier">list with dicts</span></dt><dd><p>Thermal storage data for GIS; Same keys as “n_grid_specific”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>teo_demand_factor_group<span class="classifier">list</span></dt><dd><p>Every hour of the year with dicts in each hour with TEO Sink ID and corresponding
+hourly_capacity/yearly_capacity; e.g. [{“sink1”:0.5,”sink2”:0,…},{{“sink1”:0.6,”sink2”:0,…},…]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Greenhouse.html" class="btn btn-neutral float-left" title="Greenhouse" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

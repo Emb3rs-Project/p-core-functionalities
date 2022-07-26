@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>module.src.Source.simulation.Heat_Recovery.ORC.convert_orc &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../../" id="documentation_options" src="../../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../../../index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../../index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../../../index.html">Module code</a> &raquo;</li>
+      <li>module.src.Source.simulation.Heat_Recovery.ORC.convert_orc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for module.src.Source.simulation.Heat_Recovery.ORC.convert_orc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.....Source.simulation.Heat_Recovery.ORC.Auxiliary.get_data_of_converting_each_stream_to_orc</span> <span class="kn">import</span> <span class="n">get_data_of_converting_each_stream_to_orc</span>
+<span class="kn">from</span> <span class="nn">.....KB_General.equipment_details</span> <span class="kn">import</span> <span class="n">EquipmentDetails</span>
+<span class="kn">from</span> <span class="nn">.....utilities.kb</span> <span class="kn">import</span> <span class="n">KB</span>
+<span class="kn">from</span> <span class="nn">.....Error_Handling.error_convert_orc</span> <span class="kn">import</span> <span class="n">PlatformConvertORC</span>
+<span class="kn">from</span> <span class="nn">.....Error_Handling.runtime_error</span> <span class="kn">import</span> <span class="n">ModuleRuntimeException</span>
+<span class="kn">from</span> <span class="nn">.....Reports.orc_report</span> <span class="kn">import</span> <span class="n">orc_report</span>
+
+
+<div class="viewcode-block" id="convert_orc"><a class="viewcode-back" href="../../../../../../../module.Source.simulation.Heat_Recovery.ORC.html#module.src.Source.simulation.Heat_Recovery.ORC.convert_orc.convert_orc">[docs]</a><span class="k">def</span> <span class="nf">convert_orc</span><span class="p">(</span><span class="n">in_var</span><span class="p">,</span> <span class="n">kb</span><span class="p">:</span> <span class="n">KB</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The main routine for designing ORCs for the streams given</span>
+
+<span class="sd">    :param in_var:</span>
+<span class="sd">            - streams:``list with dicts``: each stream data, with the following keys:</span>
+<span class="sd">                    - id: ``int``: stream ID []</span>
+<span class="sd">                    - name: ``str``: stream name []</span>
+<span class="sd">                    - object_type: ``str``: DEFAULT=stream []</span>
+<span class="sd">                    - stream_type: ``str``: stream designation []; e.g. inflow, outflow, excess_heat</span>
+<span class="sd">                    - supply_temperature: ``float``: stream&#39;s supply/initial temperature [ºC]</span>
+<span class="sd">                    - target_temperature: ``float``: stream&#39;s target/final temperature [ºC]</span>
+<span class="sd">                    - fluid: ``str``: stream&#39;s fluid []</span>
+<span class="sd">                    - flowrate: ``float``: stream&#39;s mass flowrate [kg/h]</span>
+<span class="sd">                    - schedule: ``list``: stream&#39;s hourly schedule</span>
+<span class="sd">                    - hourly_generation: ``list``: stream&#39;s hourly capacity</span>
+<span class="sd">                    - capacity: ``float``: stream&#39;s capacity [kW]</span>
+
+<span class="sd">            - consumer_type: ``str``: type of consumer tariff []; &#39;household&#39; or &#39;non-household&#39;</span>
+<span class="sd">            - get_best_number: ``int``: [OPTIONAL]  number of best conversion cases; DEFAULT=3</span>
+<span class="sd">            - orc_years_working: ``int``: [OPTIONAL]  ORC working years [years]; DEFAULT=25</span>
+<span class="sd">            - orc_T_evap: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=110</span>
+<span class="sd">            - orc_T_cond: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=35</span>
+
+<span class="sd">    :param kb: Knowledge Base data</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">        - report: ``str``: HTML report</span>
+<span class="sd">        - best_options: ``list with dicts``: each designed solution data, with the following keys:</span>
+<span class="sd">                - ID: ``int``: ORC design ID []</span>
+<span class="sd">                - streams_id: ``list``:  streams ID considered for the solution []</span>
+<span class="sd">                - electrical_generation_nominal: ``float``: ORC nominal electrical generation [kW]</span>
+<span class="sd">                - electrical_generation_yearly: ``float``: ORC yearly electrical generation [kWh]</span>
+<span class="sd">                - excess_heat_supply_capacity: ``float``: streams thermal capacity available [kW]</span>
+<span class="sd">                - conversion_efficiency: ``float``: ORC heat to electricity conversion efficiency []</span>
+<span class="sd">                - turnkey: ``float``: ORC investment cost [€]</span>
+<span class="sd">                - om_fix: ``float``: ORC yearly OM fix costs [€/year]</span>
+<span class="sd">                - om_var: ``float``: ORC yearly OM var costs [€/kWh]</span>
+<span class="sd">                - electrical_generation_yearly_turnkey: ``float``: ORC yearly electrical generation over turnkey [kWh/€]</span>
+<span class="sd">                - co2_savings: ``float``: ORC yearly CO2 savings (all electricity is considered to be consumed)  [kg CO2/kWh]</span>
+<span class="sd">                - money_savings: ``float``: ORC yearly monetary savings (all electricity is considered to be consumed [€/kWh]</span>
+<span class="sd">                - discount_rate: ``float``: discount rate []</span>
+<span class="sd">                - lifetime: ``float``: ORC working years [years]</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#################################################################</span>
+    <span class="c1"># INPUT</span>
+    <span class="n">platform_data</span> <span class="o">=</span> <span class="n">PlatformConvertORC</span><span class="p">(</span><span class="o">**</span><span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">])</span>
+
+    <span class="n">streams</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">streams</span>
+    <span class="n">streams</span> <span class="o">=</span> <span class="p">[</span><span class="nb">vars</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span> <span class="k">for</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">]</span>
+    <span class="n">get_best_number</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">get_best_number</span>
+    <span class="n">orc_years_working</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">orc_years_working</span>
+    <span class="n">orc_T_evap</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">orc_T_evap</span>
+    <span class="n">orc_T_cond</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">orc_T_cond</span>
+    <span class="n">fuels_data</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">fuels_data</span>
+    <span class="n">interest_rate</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">interest_rate</span>
+
+    <span class="n">fuels_data</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">fuels_data</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">fuels_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">fuels_data</span><span class="p">[</span><span class="n">fuel</span><span class="p">]</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">fuels_data</span><span class="p">[</span><span class="n">fuel</span><span class="p">])</span>
+
+    <span class="c1">#################################################################</span>
+    <span class="c1">#GET DATA</span>
+    <span class="c1"># Initialize Arrays</span>
+    <span class="n">convert_info</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">stream_combination_not_feasible</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">aggregate_options</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span>
+
+    <span class="c1"># KB</span>
+    <span class="n">equipment_details</span> <span class="o">=</span> <span class="n">EquipmentDetails</span><span class="p">(</span><span class="n">kb</span><span class="p">)</span>
+
+    <span class="c1"># ORC characteristics</span>
+    <span class="n">minimum_orc_power</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># [kW] - minimum power ORC designed</span>
+    <span class="n">hx_delta_T</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">hx_efficiency</span> <span class="o">=</span> <span class="mf">0.95</span>
+    <span class="n">power_fraction</span> <span class="o">=</span> <span class="mf">0.05</span>
+    <span class="n">carnot_correction_factor</span> <span class="o">=</span> <span class="mf">0.44</span>
+    <span class="n">eff_carnot_corrected</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">orc_T_cond</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">orc_T_evap</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">))</span> <span class="o">*</span> <span class="n">carnot_correction_factor</span>
+    <span class="n">min_orc_supply_temperature</span> <span class="o">=</span> <span class="n">orc_T_evap</span> <span class="o">+</span> <span class="n">hx_delta_T</span>
+    <span class="n">intermediate_fluid</span> <span class="o">=</span> <span class="s1">&#39;water&#39;</span>
+
+
+    <span class="c1"># get interest rate and fuel price</span>
+    <span class="n">electricity_data</span> <span class="o">=</span> <span class="n">fuels_data</span><span class="p">[</span><span class="s1">&#39;electricity&#39;</span><span class="p">]</span>
+    <span class="n">electricity_price</span> <span class="o">=</span> <span class="n">electricity_data</span><span class="p">[</span><span class="s2">&quot;price&quot;</span><span class="p">]</span>
+    <span class="n">electricity_co2_emissions</span> <span class="o">=</span> <span class="n">electricity_data</span><span class="p">[</span><span class="s2">&quot;co2_emissions&quot;</span><span class="p">]</span>
+
+
+    <span class="c1"># check if streams temperature enough to be converted</span>
+    <span class="n">df_streams</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">streams</span><span class="p">)</span>
+    <span class="n">df_streams</span> <span class="o">=</span> <span class="n">df_streams</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">df_streams</span><span class="p">[</span><span class="n">df_streams</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_orc_supply_temperature</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">df_streams</span> <span class="o">=</span> <span class="n">df_streams</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">df_streams</span><span class="p">[</span><span class="n">df_streams</span><span class="p">[</span><span class="s1">&#39;capacity&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">minimum_orc_power</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="c1">#################################################################</span>
+    <span class="c1"># COMPUTE</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">all_streams_index</span> <span class="o">=</span> <span class="n">df_streams</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="c1"># do all possible combinations between the streams</span>
+        <span class="n">combinations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">L</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_streams_index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">all_streams_index</span><span class="p">,</span> <span class="n">L</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span> <span class="o">!=</span> <span class="p">[]:</span>
+                    <span class="n">combinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">subset</span><span class="p">))</span>
+
+        <span class="c1"># compute stream conversion info when aggregated and not aggregated</span>
+        <span class="n">streams_info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">stream_index</span> <span class="ow">in</span> <span class="n">all_streams_index</span><span class="p">:</span>
+            <span class="n">stream</span> <span class="o">=</span> <span class="n">streams</span><span class="p">[</span><span class="n">stream_index</span><span class="p">]</span>
+            <span class="n">streams_info</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">stream_index</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;info_individual&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;info_aggregate&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+
+            <span class="k">for</span> <span class="n">aggregate_option</span> <span class="ow">in</span> <span class="n">aggregate_options</span><span class="p">:</span>
+
+                <span class="n">stream_thermal_capacity_max_power</span><span class="p">,</span> <span class="n">orc_type</span><span class="p">,</span> <span class="n">orc_electrical_generation</span><span class="p">,</span> <span class="n">intermediate_turnkey_max_power</span><span class="p">,</span> <span class="n">intermediate_om_fix_max_power</span><span class="p">,</span> <span class="n">intermediate_om_var_max_power</span> <span class="o">=</span> <span class="n">get_data_of_converting_each_stream_to_orc</span><span class="p">(</span>
+                    <span class="n">kb</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">hx_delta_T</span><span class="p">,</span> <span class="n">orc_T_cond</span><span class="p">,</span> <span class="n">orc_T_evap</span><span class="p">,</span> <span class="n">hx_efficiency</span><span class="p">,</span> <span class="n">power_fraction</span><span class="p">,</span> <span class="n">intermediate_fluid</span><span class="p">,</span>
+                    <span class="n">fuels_data</span><span class="p">,</span> <span class="n">aggregate_option</span><span class="p">)</span>
+
+                <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;orc_type&#39;</span><span class="p">:</span> <span class="n">orc_type</span><span class="p">,</span>
+                    <span class="s1">&#39;stream_thermal_capacity_max_power&#39;</span><span class="p">:</span> <span class="n">stream_thermal_capacity_max_power</span><span class="p">,</span>
+                    <span class="s1">&#39;orc_electrical_generation&#39;</span><span class="p">:</span> <span class="n">orc_electrical_generation</span><span class="p">,</span>
+                    <span class="s1">&#39;intermediate_turnkey_max_power&#39;</span><span class="p">:</span> <span class="n">intermediate_turnkey_max_power</span><span class="p">,</span>
+                    <span class="s1">&#39;intermediate_om_fix_max_power&#39;</span><span class="p">:</span> <span class="n">intermediate_om_fix_max_power</span><span class="p">,</span>
+                    <span class="s1">&#39;intermediate_om_var_max_power&#39;</span><span class="p">:</span> <span class="n">intermediate_om_var_max_power</span><span class="p">}</span>
+
+                <span class="k">if</span> <span class="n">aggregate_option</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">streams_info</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">stream_index</span><span class="p">)][</span><span class="s1">&#39;info_individual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">streams_info</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">stream_index</span><span class="p">)][</span><span class="s1">&#39;info_aggregate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
+
+        <span class="c1"># convert streams - all combinations possible</span>
+        <span class="n">new_id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">:</span>
+            <span class="n">electrical_generation_yearly</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">om_fix_intermediate</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">turnkey_intermediate</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">om_var_intermediate</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">stream_thermal_capacity_total</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">combo</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">combination_streams_id</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">vec_electrical_generation_nominal_total</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">stream_index</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># aggregated</span>
+                        <span class="n">info_type</span> <span class="o">=</span> <span class="s2">&quot;info_aggregate&quot;</span>
+                        <span class="n">combo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">streams</span><span class="p">[</span><span class="n">stream_index</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>  <span class="c1"># not aggregated</span>
+                        <span class="n">info_type</span> <span class="o">=</span> <span class="s2">&quot;info_individual&quot;</span>
+
+                    <span class="n">electrical_generation_nominal</span> <span class="o">=</span> <span class="n">streams_info</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">stream_index</span><span class="p">)][</span><span class="n">info_type</span><span class="p">][</span><span class="s1">&#39;orc_electrical_generation&#39;</span><span class="p">]</span>
+                    <span class="n">stream_thermal_capacity_total</span> <span class="o">+=</span> <span class="n">streams_info</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">stream_index</span><span class="p">)][</span><span class="n">info_type</span><span class="p">][</span><span class="s1">&#39;stream_thermal_capacity_max_power&#39;</span><span class="p">]</span>
+                    <span class="n">om_fix_intermediate</span> <span class="o">=</span> <span class="n">streams_info</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">stream_index</span><span class="p">)][</span><span class="n">info_type</span><span class="p">][</span><span class="s1">&#39;intermediate_om_fix_max_power&#39;</span><span class="p">]</span>
+                    <span class="n">turnkey_intermediate</span> <span class="o">=</span> <span class="n">streams_info</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">stream_index</span><span class="p">)][</span><span class="n">info_type</span><span class="p">][</span><span class="s1">&#39;intermediate_turnkey_max_power&#39;</span><span class="p">]</span>
+                    <span class="n">om_var_intermediate</span> <span class="o">=</span> <span class="n">streams_info</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">stream_index</span><span class="p">)][</span><span class="n">info_type</span><span class="p">][</span><span class="s1">&#39;intermediate_om_var_max_power&#39;</span><span class="p">]</span>
+
+                    <span class="c1"># yearly and nominal electric generation</span>
+                    <span class="k">if</span> <span class="n">vec_electrical_generation_nominal_total</span> <span class="o">==</span> <span class="p">[]:</span>
+                        <span class="n">vec_electrical_generation_nominal_total</span> <span class="o">=</span> <span class="p">[</span><span class="n">electrical_generation_nominal</span> <span class="o">*</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
+                                                                   <span class="n">streams</span><span class="p">[</span><span class="n">stream_index</span><span class="p">][</span><span class="s1">&#39;schedule&#39;</span><span class="p">]]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">vec_electrical_generation_nominal_total</span> <span class="o">+=</span> <span class="n">electrical_generation_nominal</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                            <span class="n">streams</span><span class="p">[</span><span class="n">stream_index</span><span class="p">][</span><span class="s1">&#39;schedule&#39;</span><span class="p">])</span>
+
+                    <span class="n">electrical_generation_yearly</span> <span class="o">+=</span> <span class="n">electrical_generation_nominal</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">(</span>
+                        <span class="n">streams</span><span class="p">[</span><span class="n">stream_index</span><span class="p">][</span><span class="s1">&#39;schedule&#39;</span><span class="p">])</span>
+
+                <span class="c1"># design ORC for this nominal electrical generation</span>
+                <span class="n">electrical_generation_nominal_total</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">vec_electrical_generation_nominal_total</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">combination_streams_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">combo</span><span class="p">)</span>
+                    <span class="n">global_conversion_efficiency_equipment</span><span class="p">,</span> <span class="n">om_fix_orc</span><span class="p">,</span> <span class="n">turnkey_orc</span> <span class="o">=</span> <span class="n">equipment_details</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span>
+                        <span class="s1">&#39;orc&#39;</span><span class="p">,</span> <span class="n">electrical_generation_nominal_total</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">combination_streams_id</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">streams</span><span class="p">[</span><span class="n">stream_index</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]])</span>
+                    <span class="n">global_conversion_efficiency_equipment</span><span class="p">,</span> <span class="n">om_fix_orc</span><span class="p">,</span> <span class="n">turnkey_orc</span> <span class="o">=</span> <span class="n">equipment_details</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span>
+                        <span class="n">streams_info</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">stream_index</span><span class="p">)][</span><span class="s1">&#39;info_individual&#39;</span><span class="p">][</span><span class="s1">&#39;orc_type&#39;</span><span class="p">],</span>
+                        <span class="n">electrical_generation_nominal_total</span><span class="p">)</span>
+
+                <span class="c1"># total costs</span>
+                <span class="n">om_var_total</span> <span class="o">=</span> <span class="n">om_var_intermediate</span>
+                <span class="n">om_fix_total</span> <span class="o">=</span> <span class="n">om_fix_orc</span> <span class="o">+</span> <span class="n">om_fix_intermediate</span>
+                <span class="n">total_turnkey</span> <span class="o">=</span> <span class="n">turnkey_orc</span> <span class="o">+</span> <span class="n">turnkey_intermediate</span>
+
+                <span class="c1"># all convert options</span>
+                <span class="k">if</span> <span class="n">electrical_generation_nominal_total</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">convert_info</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="n">new_id</span><span class="p">,</span>
+                        <span class="s1">&#39;streams_id&#39;</span><span class="p">:</span> <span class="n">combination_streams_id</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="s1">&#39;electrical_generation_nominal&#39;</span><span class="p">:</span> <span class="n">electrical_generation_nominal_total</span><span class="p">,</span>  <span class="c1"># [kW]</span>
+                        <span class="s1">&#39;electrical_generation_yearly&#39;</span><span class="p">:</span> <span class="n">electrical_generation_yearly</span><span class="p">,</span><span class="c1"># electric generation per year [kWh]</span>
+                        <span class="s1">&#39;excess_heat_supply_capacity&#39;</span><span class="p">:</span> <span class="n">stream_thermal_capacity_total</span><span class="p">,</span>  <span class="c1"># [kW]</span>
+                        <span class="s1">&#39;conversion_efficiency&#39;</span><span class="p">:</span> <span class="n">eff_carnot_corrected</span><span class="p">,</span>  <span class="c1"># [%]</span>
+                        <span class="s1">&#39;capex&#39;</span><span class="p">:</span> <span class="n">total_turnkey</span><span class="p">,</span>  <span class="c1"># [€]</span>
+                        <span class="s1">&#39;om_fix&#39;</span><span class="p">:</span> <span class="n">om_fix_total</span><span class="p">,</span>  <span class="c1"># yearly om fix costs [€/year]</span>
+                        <span class="s1">&#39;om_var&#39;</span><span class="p">:</span> <span class="n">om_var_total</span> <span class="o">/</span> <span class="n">electrical_generation_yearly</span><span class="p">,</span>  <span class="c1"># [€/kWh]</span>
+                        <span class="s1">&#39;electrical_generation_yearly_turnkey&#39;</span><span class="p">:</span> <span class="n">total_turnkey</span> <span class="o">/</span> <span class="n">electrical_generation_yearly</span><span class="p">,</span>
+                        <span class="s1">&#39;co2_savings&#39;</span><span class="p">:</span> <span class="n">electricity_co2_emissions</span><span class="p">,</span>  <span class="c1"># [kg CO2/kWh]</span>
+                        <span class="s1">&#39;money_savings&#39;</span><span class="p">:</span> <span class="n">electricity_price</span><span class="p">,</span>  <span class="c1"># [€/kWh]</span>
+                        <span class="s2">&quot;orc_T_evap&quot;</span><span class="p">:</span> <span class="n">orc_T_evap</span><span class="p">,</span>
+                        <span class="s2">&quot;orc_T_cond&quot;</span><span class="p">:</span> <span class="n">orc_T_cond</span>
+                    <span class="p">})</span>
+
+                    <span class="n">new_id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">stream_combination_not_feasible</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">combination</span><span class="p">))</span>
+
+        <span class="n">df_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="nb">dict</span> <span class="ow">in</span> <span class="n">convert_info</span><span class="p">:</span>
+            <span class="n">df_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="nb">dict</span><span class="p">])],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+        <span class="c1"># get best solutions</span>
+        <span class="k">if</span> <span class="n">df_data</span><span class="o">.</span><span class="n">empty</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="c1"># update columns for Business Module</span>
+            <span class="n">df_data</span><span class="p">[</span><span class="s1">&#39;discount_rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interest_rate</span>
+            <span class="n">df_data</span><span class="p">[</span><span class="s1">&#39;lifetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">orc_years_working</span>
+
+            <span class="n">best_options</span> <span class="o">=</span> <span class="n">df_data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;electrical_generation_yearly_turnkey&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span>
+                <span class="n">n</span><span class="o">=</span><span class="n">get_best_number</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ModuleRuntimeException</span><span class="p">(</span>
+                <span class="n">code</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
+                <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;convert_orc.py&quot;</span><span class="p">,</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;There are no feasible ORC designs off the streams provided.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModuleRuntimeException</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;convert_orc.py&quot;</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;ORC design to source&#39; streams infeasible. Check sources&#39; streams.  &quot;</span>
+                <span class="s2">&quot;If all inputs are correct report to the platform.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Get Report HTML</span>
+    <span class="n">data_report</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;best_options&quot;</span><span class="p">:</span> <span class="n">best_options</span><span class="p">,</span>
+        <span class="s2">&quot;df_streams&quot;</span><span class="p">:</span> <span class="n">df_streams</span><span class="p">,</span>
+        <span class="s2">&quot;co2_emission_data&quot;</span><span class="p">:</span> <span class="n">electricity_co2_emissions</span><span class="p">,</span>
+        <span class="s2">&quot;elec_cost_data&quot;</span><span class="p">:</span> <span class="n">electricity_price</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">report_html</span> <span class="o">=</span> <span class="n">orc_report</span><span class="p">(</span><span class="n">data_report</span><span class="p">)</span>
+
+    <span class="c1">##############################</span>
+    <span class="c1"># OUTPUT</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;best_options&#39;</span><span class="p">:</span> <span class="n">best_options</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;report&#39;</span><span class="p">:</span> <span class="n">report_html</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">output</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

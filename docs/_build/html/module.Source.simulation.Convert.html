@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Convert Sources &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Internal Heat Recovery" href="module.Source.simulation.Heat_Recovery.html" />
+    <link rel="prev" title="Source Simulation" href="Source%20Simulation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Convert Sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.html">Internal Heat Recovery</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source%20Simulation.html">Source Simulation</a> &raquo;</li>
+      <li>Convert Sources</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/module.Source.simulation.Convert.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-module.src.Source.simulation.Convert.convert_sources">
+<span id="convert-sources"></span><h1>Convert Sources<a class="headerlink" href="#module-module.src.Source.simulation.Convert.convert_sources" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="module.src.Source.simulation.Convert.convert_sources.convert_sources">
+<span class="sig-prename descclassname"><span class="pre">module.src.Source.simulation.Convert.convert_sources.</span></span><span class="sig-name descname"><span class="pre">convert_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/simulation/Convert/convert_sources.html#convert_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.simulation.Convert.convert_sources.convert_sources" title="Permalink to this definition"></a></dt>
+<dd><p>Sources conversion to the grid - design of technologies.</p>
+<p>For each source are designed the conversion technologies needed. The design may be done for each stream individually
+or it can be made to the aggregated of streams (the user must provide his preference). After the designing, it is
+known the power available from each source.
+When performing the conversion, three design options may occur:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>If the stream supply temperature &gt; grid supply temperature -&gt; HX designed</p></li>
+<li><p>If the stream supply temperature &gt; ORC evaporator -&gt; ORC cascaded designed</p></li>
+<li><p>If the stream supply temperature &lt; grid supply temperature -&gt; heating technologies are designed</p></li>
+</ol>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> (<em>dict</em>) – <p>platform and CF module data, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>platform: dict</dt><dd><p>Platform data, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>existing_grid_data: list with dict [OPTIONAL]</dt><dd><p>Existent grid connection point data, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>id: int</dt><dd><p>Existent source or grid connection point ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>location: list</dt><dd><p>Location [º]; [latitude,longitude]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>levelized_co2_emissions: float</dt><dd><p>Grid levelized CO2 emissions [c]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>levelized_om_var: float</dt><dd><p>Grid levelized OM var [€/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>levelized_om_fix: float</dt><dd><p>Grid levelized OM fix  [€/kWh]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>group_of_sources: list with dict</dt><dd><p>Sources to be analyzed. Each source with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt>id: int:</dt><dd><p>Source ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>location: list</dt><dd><p>Location [º]; [latitude,longitude]</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>fuels_data: dict</dt><dd><p>Fuels price and CO2 emission, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>natural_gas: dict</dt><dd><p>with the following keys:</p>
+<ul>
+<li><dl class="simple">
+<dt>co2_emissions: float:</dt><dd><p>Fuel CO2 emission [kg CO2/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>price: float:</dt><dd><p>Fuel price [€/kWh]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fuel_oil<span class="classifier">dict</span></dt><dd><p>Similar to “natural_gas”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electricity<span class="classifier">dict</span></dt><dd><p>Similar to “natural_gas”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>biomass<span class="classifier">dict</span></dt><dd><p>Similar to “natural_gas”</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>streams: list with dict</dt><dd><p>Source’s streams to be analyzed. Each stream with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>stream_id: int</dt><dd><p>Stream ID []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>object_type: str</dt><dd><p>DEFAULT=stream []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>stream_type: str</dt><dd><p>Stream designation []; inflow, outflow, excess_heat</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fluid: str</dt><dd><p>Stream’s fluid []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>capacity: float</dt><dd><p>Stream’s capacity [kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>supply_temperature: float</dt><dd><p>Stream’s supply/initial temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>target_temperature: float</dt><dd><p>Stream’s target/final temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>hourly_generation: list</dt><dd><p>Stream’s hourly capacity [kWh]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><dl>
+<dt>cf_module: dict</dt><dd><p>CF module data, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>sink_group_grid_supply_temperature: float</dt><dd><p>Grid supply temperature (user input or defined by the “convert_sinks”) [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>sink_group_grid_return_temperature: float</dt><dd><p>Grid return temperature (user input or defined by the “convert_sinks”) [ºC]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p><strong>all_info</strong> –</p>
+<p>Sources conversion data, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>all_sources_info: list</dt><dd><p>Sources dicts to be analyzed. Each source with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt>source_id: int:</dt><dd><p>Source ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>location: list:</dt><dd><p>Location [º]; [latitude,longitude]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>source_grid_supply_temperature: float</dt><dd><p>Source-grid supply temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>source_grid_return_temperature: float</dt><dd><p>Source-grid return temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>streams_converted<span class="classifier">list</span></dt><dd><p>Streams conversion data dicts, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt>stream_id: int</dt><dd><p>Stream ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>teo_stream_id: str</dt><dd><p>TEO specific data; stream ID with source ID []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>input_fuel: str</dt><dd><p>TEO specific data; TEO input fuel name []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output_fuel: str</dt><dd><p>TEO specific data; TEO output fuel name  []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output: int</dt><dd><p>TEO specific data; DEFAULT=1 []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>gis_capacity: float</dt><dd><p>GIS specific data; stream converted/provided capacity to the grid</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>hourly_stream_capacity: list</dt><dd><p>Hourly stream capacity [kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>teo_capacity_factor: list</dt><dd><p>TEO specific data</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>max_stream_capacity: float</dt><dd><p>Max stream capacity [kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>conversion_technologies: list</dt><dd><p>Conversion solution data dicts (technologies implemented), with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>teo_equipment_name: str</dt><dd><p>TEO specific data; TEO equipment name []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output: int</dt><dd><p>TEO specific data; DEFAULT=1 []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>input_fuel: str</dt><dd><p>TEO specific data; TEO input fuel name []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output_fuel: str</dt><dd><p>TEO specific data; TEO output fuel name  []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>equipment: list</dt><dd><p>Conversion solution equipment names []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>max_capacity: float</dt><dd><p>Stream capacity maximum capacity convertible  [kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>turnkey_a: float</dt><dd><p>Conversion solution turnkey a (ax+b)  [€/kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>turnkey_b: float</dt><dd><p>Conversion solution turnkey b (ax+b) [€]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>conversion_efficiency: float</dt><dd><p>Conversion solution efficiency stream-to-grid []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>om_fix: float</dt><dd><p>Conversion solution OM fix [€/year.kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>om_var: float</dt><dd><p>Conversion solution OM var [€/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>emissions: float</dt><dd><p>Conversion solution CO2 emissions [kg.CO2/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>technologies: list</dt><dd><p>Each technologies info in detail dicts (check each technology routine for more details)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>ex_grid: dict, list</dt><dd><p>TEO specific data; existent grid data</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>teo_equipment_name: str</dt><dd><p>DEFAULT=”ex_grid”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output: int</dt><dd><p>DEFAULT=1</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>input_fuel: None</dt><dd><p>DEFAULT=None</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output_fuel: str</dt><dd><p>DEFAULT=”dhnwatersupply”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>equipment: list</dt><dd><p>DEFAULT=[]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>max_capacity: float</dt><dd><p>DEFAULT=10**8</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>turnkey_a: float</dt><dd><p>DEFAULT=0</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>turnkey_b: float</dt><dd><p>DEFAULT=0</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>conversion_efficiency: float</dt><dd><p>DEFAULT=1</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>om_fix: int</dt><dd><p>Levelized OM Var [€/year]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>om_var: int</dt><dd><p>Levelized OM Var [€/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>emissions: float</dt><dd><p>Levelized CO2 emissions [kgCO2/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>technologies: list</dt><dd><p>DEFAULT=[]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>teo_string: str</dt><dd><p>TEO specific data. DEFAULT=”dhn”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>input_fuel: str</dt><dd><p>TEO specific data. DEFAULT=”dhnwatersupply”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output_fuel: str</dt><dd><p>TEO specific data. DEFAULT=”dhnwaterdem”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>output: int</dt><dd><p>TEO specific data. DEFAULT=1</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>input: int</dt><dd><p>TEO specific data. DEFAULT=1</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>n_supply_list: list</dt><dd><p>GIS specific data. Sources location and capacity provided to the grid</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>teo_capacity_factor_group: int</dt><dd><p>TEO specific data</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>teo_dhn: dict</dt><dd><p>TEO specific data. Parameters TEO</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict:</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Source%20Simulation.html" class="btn btn-neutral float-left" title="Source Simulation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="module.Source.simulation.Heat_Recovery.html" class="btn btn-neutral float-right" title="Internal Heat Recovery" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

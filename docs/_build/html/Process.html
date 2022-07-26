@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Process &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Source Simulation" href="Source%20Simulation.html" />
+    <link rel="prev" title="Generate Equipment" href="Generate_Equipment.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="SimpleCharacterization.html">Simple Characterization</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="DetailedCharacterization.html">Detailed Characterization</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="Generate_Equipment.html">Generate Equipment</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Process</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source%20Characterization.html">Source Characterization</a> &raquo;</li>
+          <li><a href="DetailedCharacterization.html">Detailed Characterization</a> &raquo;</li>
+      <li>Process</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Process.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-module.src.Source.characterization.Process.process">
+<span id="process"></span><h1>Process<a class="headerlink" href="#module-module.src.Source.characterization.Process.process" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Process.process.</span></span><span class="sig-name descname"><span class="pre">Process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Create Process object and characterize its streams (Inflow/Outflow/Maintenance/Evaporation).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.id" title="Permalink to this definition"></a></dt>
+<dd><p>Process ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.object_type" title="Permalink to this definition"></a></dt>
+<dd><p>DEFAULT = “process”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.streams">
+<span class="sig-name descname"><span class="pre">streams</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.streams" title="Permalink to this definition"></a></dt>
+<dd><p>Data of the streams associated to this equipment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.equipment_id">
+<span class="sig-name descname"><span class="pre">equipment_id</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.equipment_id" title="Permalink to this definition"></a></dt>
+<dd><p>Equipment ID associated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.operation_temperature">
+<span class="sig-name descname"><span class="pre">operation_temperature</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.operation_temperature" title="Permalink to this definition"></a></dt>
+<dd><p>Operation temperature [ºC]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.schedule_type">
+<span class="sig-name descname"><span class="pre">schedule_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.schedule_type" title="Permalink to this definition"></a></dt>
+<dd><p>Process schedule type; batch (1) or continuous (0)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.example_of_daily_period">
+<span class="sig-name descname"><span class="pre">example_of_daily_period</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.example_of_daily_period" title="Permalink to this definition"></a></dt>
+<dd><p>Hours in a daily period [h]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.eff_equipment">
+<span class="sig-name descname"><span class="pre">eff_equipment</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.eff_equipment" title="Permalink to this definition"></a></dt>
+<dd><p>Efficiency of the equipment associated []</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.fuel">
+<span class="sig-name descname"><span class="pre">fuel</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.fuel" title="Permalink to this definition"></a></dt>
+<dd><p>Fuel of the equipment associated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.cycle_time_percentage">
+<span class="sig-name descname"><span class="pre">cycle_time_percentage</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.cycle_time_percentage" title="Permalink to this definition"></a></dt>
+<dd><p>Process cycle time percentage []</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_var</strong> (<em>dict</em>) – <p>Process characterization data, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl class="simple">
+<dt>id: int</dt><dd><p>Process ID []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>equipment_id: int</dt><dd><p>Associated equipment ID []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>operation_temperature: float</dt><dd><p>process temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>saturday_on: int</dt><dd><p>If it is available on Saturday []; 1 (yes)  or 0 (no)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>sunday_on: int</dt><dd><p>If it is available on Sunday []; 1 (yes)  or 0 (no)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>shutdown_periods: list</dt><dd><p>List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>daily_periods: list</dt><dd><p>List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>schedule_type: int</dt><dd><p>Process schedule type; batch (1) or continuous (0)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>cycle_time_percentage: float</dt><dd><p>Cycle  percentage for Startup/Inflow/Outflow during batch process</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>inflow_data: list</dt><dd><p>Inflow streams dicts, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>name: str</dt><dd><p>Inflow name</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mass: float, optional</dt><dd><p>Inflow mass [kg]; Provide flowrate or mass</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>flowrate: float, optional</dt><dd><p>Inflow flowrate [kg/h]; Provide flowrate or mass</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fluid_cp: float</dt><dd><p>Inflow cp [kJ/kg.K]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>supply_temperature: float</dt><dd><p>Inflow supply/initial temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>outflow_data<span class="classifier">list</span></dt><dd><p>Outflow data dicts, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>fluid_cp: float</dt><dd><p>Outflow cp [kJ/kg.K]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>target_temperature: float</dt><dd><p>Outflow target/final temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>flowrate: float, optional</dt><dd><p>Outflow mass flowrate [kg/h]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mass: float, optional</dt><dd><p>Outflow mass [kg]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>initial_temperature: float, optional</dt><dd><p>Outflow initIal temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>maintenance_data<span class="classifier">list</span></dt><dd><p>Maintenance data dicts, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>name: str</dt><dd><p>Name</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>maintenance_capacity: float</dt><dd><p>Maintenance or evaporation capacity [kW]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base data</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.generate_inflow">
+<span class="sig-name descname"><span class="pre">generate_inflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process.generate_inflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.generate_inflow" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.generate_maintenance_and_evaporation">
+<span class="sig-name descname"><span class="pre">generate_maintenance_and_evaporation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process.generate_maintenance_and_evaporation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.generate_maintenance_and_evaporation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.generate_outflow">
+<span class="sig-name descname"><span class="pre">generate_outflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outflow_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process.generate_outflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.generate_outflow" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.schedule">
+<span class="sig-name descname"><span class="pre">schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process.schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.schedule" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Generate_Equipment.html" class="btn btn-neutral float-left" title="Generate Equipment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Source%20Simulation.html" class="btn btn-neutral float-right" title="Source Simulation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

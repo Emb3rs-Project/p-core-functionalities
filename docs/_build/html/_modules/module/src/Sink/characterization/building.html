@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>module.src.Sink.characterization.building &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+      <li>module.src.Sink.characterization.building</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for module.src.Sink.characterization.building</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">...utilities.kb</span> <span class="kn">import</span> <span class="n">KB</span>
+<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour</span> <span class="kn">import</span> <span class="n">schedule_hour</span>
+<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.month_last_hour</span> <span class="kn">import</span> <span class="n">month_last_hour</span>
+<span class="kn">from</span> <span class="nn">...General.Simple_User.adjust_capacity</span> <span class="kn">import</span> <span class="n">adjust_capacity</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.building_climate_api</span> <span class="kn">import</span> <span class="n">building_climate_api</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.wall_area</span> <span class="kn">import</span> <span class="n">wall_area</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.surface_outside_rad_heat_loss</span> <span class="kn">import</span> <span class="n">surface_outside_rad_heat_loss</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.ht_indoor_air</span> <span class="kn">import</span> <span class="n">ht_indoor_air</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.building_dhw</span> <span class="kn">import</span> <span class="n">building_dhw</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.explicit_computation_component_temperature</span> <span class="kn">import</span> <span class="n">explicit_computation_component_temperature</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.steady_state_vertical_inner_wall</span> <span class="kn">import</span> <span class="n">steady_state_vertical_inner_wall</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.steady_state_horizontal_faced_down</span> <span class="kn">import</span> <span class="n">steady_state_horizontal_face_down</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.steady_state_horizontal_faced_up</span> <span class="kn">import</span> <span class="n">steady_state_horizontal_face_up</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.steady_state_vertical_inner_glass</span> <span class="kn">import</span> <span class="n">steady_state_vertical_inner_glass</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.steady_state_exterior_wall</span> <span class="kn">import</span> <span class="n">steady_state_exterior_wall</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.info_time_step_climate_data</span> <span class="kn">import</span> <span class="n">info_time_step_climate_data</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.ht_radiation_vertical_surface</span> <span class="kn">import</span> <span class="n">ht_radiation_vertical_surface</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.ht_radiation_horizontal_surface</span> <span class="kn">import</span> <span class="n">ht_radiation_horizontal_surface</span>
+<span class="kn">from</span> <span class="nn">...Error_Handling.error_building</span> <span class="kn">import</span> <span class="n">error_building</span>
+<span class="kn">from</span> <span class="nn">...Error_Handling.runtime_error</span> <span class="kn">import</span> <span class="n">ModuleRuntimeException</span>
+
+<div class="viewcode-block" id="building"><a class="viewcode-back" href="../../../../../Building.html#module.src.Sink.characterization.building.building">[docs]</a><span class="k">def</span> <span class="nf">building</span><span class="p">(</span><span class="n">in_var</span><span class="p">,</span> <span class="n">kb</span> <span class="p">:</span> <span class="n">KB</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Building characterization</span>
+
+<span class="sd">    Simulates heat an cooling consumptions over the year, according to building specifications</span>
+<span class="sd">    and climate weather data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_var : dict</span>
+<span class="sd">        All necessary data to perform the building characterization data, with the following key:</span>
+
+<span class="sd">        platform: dict</span>
+<span class="sd">            Data obtained from the platform, with the following keys:</span>
+
+<span class="sd">                - location : list</span>
+<span class="sd">                    location [º]; [latitude,longitude]</span>
+
+<span class="sd">                - number_floor: int</span>
+<span class="sd">                    number of floors</span>
+
+<span class="sd">                - width_floor: float</span>
+<span class="sd">                    floor width [m]</span>
+
+<span class="sd">                - length_floor: float</span>
+<span class="sd">                    floor length	[m]</span>
+
+<span class="sd">                - height_floor: float</span>
+<span class="sd">                    floor height [m]</span>
+
+<span class="sd">                - ratio_wall_N: float</span>
+<span class="sd">                    ratio of the North wall area in total north facade area (wall + window) []</span>
+
+<span class="sd">                - ratio_wall_S: float</span>
+<span class="sd">                    ratio of the South wall area in total north facade area (wall + window) []</span>
+
+<span class="sd">                - ratio_wall_E: float</span>
+<span class="sd">                    ratio of the East wall area in total north facade area (wall + window) []</span>
+
+<span class="sd">                - ratio_wall_W: float</span>
+<span class="sd">                    ratio of the West wall area in total north facade area (wall + window) []</span>
+
+<span class="sd">                - daily_periods: float</span>
+<span class="sd">                    period of daily periods [h]</span>
+
+<span class="sd">                - shutdown_periods: list</span>
+<span class="sd">                    period of days stream is not available [day]</span>
+
+<span class="sd">                - saturday_on: int</span>
+<span class="sd">                    if available on saturdays - available (1); not available (0)</span>
+
+<span class="sd">                - sunday_on: int</span>
+<span class="sd">                    if available on sundays - available (1); not available (0)</span>
+
+<span class="sd">                - building_orientation: str</span>
+<span class="sd">                    building’s main facade orientation; &quot;N&quot;,&quot;S&quot;,&quot;E&quot; or &quot;W&quot;</span>
+
+<span class="sd">                - space_heating_type: int</span>
+<span class="sd">                    Space heating type;</span>
+<span class="sd">                           1 = Conventional; heaters working fluid supply temperature of 75ºC,  heaters working fluid return temperature of 45ºC)</span>
+<span class="sd">                           2 = Low temperature; heaters working fluid supply temperature of 50ºC,  heaters working fluid return temperature of 30ºC)</span>
+<span class="sd">                           3 = Specify Temperatures - Advanced Properties; of supply_temperature_heat and target_temperature_heat</span>
+
+<span class="sd">                - T_cool_on: float</span>
+<span class="sd">                    Cooling setpoint temperature [ºC]</span>
+
+<span class="sd">                - T_heat_on: float</span>
+<span class="sd">                    Heating setpoint temperature [ºC]</span>
+
+<span class="sd">                - T_off_min: float</span>
+<span class="sd">                    Heating setback setpoint temperature [ºC]</span>
+
+<span class="sd">                - T_off_max: float</span>
+<span class="sd">                    Cooling setback setpoint temperature  [ºC]</span>
+
+<span class="sd">                - ref_system_fuel_type_heating: str</span>
+<span class="sd">                    Fuel type associated; e.g. &quot;natural_gas&quot;,&quot;electricity&quot;,&quot;biomass&quot;,&quot;fuel_oil&quot;,&quot;none&quot;</span>
+
+<span class="sd">                - ref_system_fuel_price_heating: float, optional</span>
+<span class="sd">                    Fuel Price. If not given, obtained from KB</span>
+
+<span class="sd">                - ref_system_eff_equipment_heating: float, optional</span>
+<span class="sd">                    Efficiency of the heating equipment</span>
+
+<span class="sd">                - ref_system_fuel_type_cooling: str</span>
+<span class="sd">                    Fuel type associated</span>
+
+<span class="sd">                - ref_system_fuel_price_cooling: float, optional</span>
+<span class="sd">                    Fuel Price. If not given, obtained from KB</span>
+
+<span class="sd">                - ref_system_eff_equipment_cooling: float</span>
+<span class="sd">                    OPTIONAL] COP of the cooling equipment</span>
+
+<span class="sd">                - real_heating_monthly_capacity: dict, optional</span>
+<span class="sd">                    Real monthly data - for each month of the year</span>
+
+<span class="sd">                - real_heating_yearly_capacity: float, optional</span>
+<span class="sd">                    Real yearly data - single value</span>
+
+<span class="sd">                - real_cooling_monthly_capacity: dict, optional</span>
+<span class="sd">                    Real monthly data - for each month of the year</span>
+
+<span class="sd">                - real_cooling_yearly_capacity: float, optional</span>
+<span class="sd">                    Real yearly data - single value</span>
+
+<span class="sd">                - number_person_per_floor: int, optional</span>
+<span class="sd">                    Persons per floor</span>
+
+<span class="sd">                - supply_temperature_heat: float, optional</span>
+<span class="sd">                    Heating System ReturnTemperature [ºC]</span>
+
+<span class="sd">                - target_temperature_heat: float, optional</span>
+<span class="sd">                    Heating System Supply Temperature [ºC]</span>
+
+<span class="sd">                - supply_temperature_cool: float, optional</span>
+<span class="sd">                    Cooling System Return Temperature [ºC]</span>
+
+<span class="sd">                - target_temperature_cool: float, optional</span>
+<span class="sd">                    Cooling System Supply Temperature [ºC]</span>
+
+<span class="sd">                - tau_glass: float, optional</span>
+<span class="sd">                    glass windows transmissivity []</span>
+
+<span class="sd">                - u_wall: float, optional</span>
+<span class="sd">                    walls&#39; U value [W/m2.K]</span>
+
+<span class="sd">                - u_roof: float, optional</span>
+<span class="sd">                    roof U value [W/m2.K]</span>
+
+<span class="sd">                - u_glass: float, optional</span>
+<span class="sd">                    glass windows U value [W/m2.K]</span>
+
+<span class="sd">                - u_floor: float, optional</span>
+<span class="sd">                    floor U value [W/m2.K]</span>
+
+<span class="sd">                - alpha_wall: float, optional</span>
+<span class="sd">                    walls’ radiation absorption coefficient []</span>
+
+<span class="sd">                - alpha_floor: float, optional</span>
+<span class="sd">                    floor’s radiation absorption coefficient []</span>
+
+<span class="sd">                - alpha_glass: float, optional</span>
+<span class="sd">                    windows’ radiation absorption coefficient []</span>
+
+<span class="sd">                - cp_floor: float, optional</span>
+<span class="sd">                    floor specific heat capacitance [J/kg.K]</span>
+
+<span class="sd">                - cp_roof: float, optional</span>
+<span class="sd">                    roof specific heat capacitance [J/kg.K]</span>
+
+<span class="sd">                - cp_wall: float, optional</span>
+<span class="sd">                    wall specific heat capacitance [J/kg.K]</span>
+
+<span class="sd">                - air_change_hour: float, optional</span>
+<span class="sd">                    air changes per hour due to infiltrations [1/h]</span>
+
+<span class="sd">                - renewal_air_per_person: float, optional</span>
+<span class="sd">                    fresh air changer per person [m3/s per person]</span>
+
+<span class="sd">                - vol_dhw_set: float, optional</span>
+<span class="sd">                    Volume of daily water consumption [m3]</span>
+
+<span class="sd">                - Q_gain_per_floor: float, optional</span>
+<span class="sd">                    Internal Gains [W/m2]</span>
+
+<span class="sd">                - emissivity_wall: float, optional</span>
+<span class="sd">                    Walls&#39;s emissivity</span>
+
+<span class="sd">                - emissivity_glass: float, optional</span>
+<span class="sd">                    Glass Window&#39;s emissivity</span>
+
+<span class="sd">    kb: dict</span>
+<span class="sd">        Knowledge Base data</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    output : dict</span>
+<span class="sd">        Streams data</span>
+
+<span class="sd">            - streams : list</span>
+<span class="sd">                List with dicts of all streams with the following keys:</span>
+
+<span class="sd">                    - id : int</span>
+<span class="sd">                        stream ID []</span>
+
+<span class="sd">                    - name : str</span>
+<span class="sd">                        Stream name []</span>
+
+<span class="sd">                    - object_type : str</span>
+<span class="sd">                        DEFAULT = &quot;stream&quot; []</span>
+
+<span class="sd">                    - object_linked_id</span>
+<span class="sd">                        None: DEFAULT=NONE, since no equipment/process is associated</span>
+
+<span class="sd">                    - stream_type : str</span>
+<span class="sd">                        Stream designation []; inflow, outflow, excess_heat</span>
+
+<span class="sd">                    - supply_temperature : float</span>
+<span class="sd">                        Stream&#39;s supply/initial temperature [ºC]</span>
+
+<span class="sd">                    - target_temperature : float</span>
+<span class="sd">                        Stream&#39;s target/final temperature [ºC]</span>
+
+<span class="sd">                    - fluid : str</span>
+<span class="sd">                        Stream fluid name</span>
+
+<span class="sd">                    - flowrate : float</span>
+<span class="sd">                        Stream mass flowrate[kg/h]</span>
+
+<span class="sd">                    - schedule : list</span>
+<span class="sd">                        Hourly values between 0 and 1, according to the capacity ration on that hour</span>
+
+<span class="sd">                    - hourly_generation: list</span>
+<span class="sd">                        Stream&#39;s hourly capacity [kWh]</span>
+
+<span class="sd">                    - capacity : float</span>
+<span class="sd">                        Stream&#39;s capacity [kW]</span>
+
+<span class="sd">                    - monthly_generation : list</span>
+<span class="sd">                        Stream&#39;s monthly capacity [kWh]</span>
+
+<span class="sd">                    - fuel : str</span>
+<span class="sd">                        Associated equipment fuel name []</span>
+
+<span class="sd">                    - eff_equipment : float</span>
+<span class="sd">                        Associated equipment efficiency []</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">################################################################################################</span>
+    <span class="c1"># INPUT ----------------------------------------------</span>
+    <span class="n">platform_data</span> <span class="o">=</span> <span class="n">error_building</span><span class="p">(</span><span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">],</span> <span class="n">kb</span><span class="p">)</span>
+    <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">location</span>
+    <span class="n">number_floor</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">number_floor</span>
+    <span class="n">width_floor</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">width_floor</span>
+    <span class="n">length_floor</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">length_floor</span>
+    <span class="n">height_floor</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">height_floor</span>
+    <span class="n">ratio_wall_N</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ratio_wall_N</span>
+    <span class="n">ratio_wall_S</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ratio_wall_S</span>
+    <span class="n">ratio_wall_E</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ratio_wall_E</span>
+    <span class="n">ratio_wall_W</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ratio_wall_W</span>
+    <span class="n">saturday_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">saturday_on</span>
+    <span class="n">sunday_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">sunday_on</span>
+    <span class="n">shutdown_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">shutdown_periods</span>
+    <span class="n">daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">daily_periods</span>
+    <span class="n">building_orientation</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">building_orientation</span>
+    <span class="n">T_cool_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">T_cool_on</span>  <span class="c1"># cooling start temperature working hours [ºC]</span>
+    <span class="n">T_heat_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">T_heat_on</span>  <span class="c1"># heating start temperature working hours [ºC]</span>
+    <span class="n">T_off_min</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">T_off_min</span>  <span class="c1"># heating start temperature off peak [ºC]</span>
+    <span class="n">T_off_max</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">T_off_max</span>  <span class="c1"># cooling start temperature off peak [ºC</span>
+    <span class="n">number_person_per_floor</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">number_person_per_floor</span> <span class="c1"># number of occupants per floor</span>
+    <span class="n">supply_temperature_heat</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">supply_temperature_heat</span>  <span class="c1"># Heating</span>
+    <span class="n">target_temperature_heat</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">target_temperature_heat</span>
+    <span class="n">supply_temperature_cool</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">supply_temperature_cool</span>  <span class="c1"># Cooling</span>
+    <span class="n">target_temperature_cool</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">target_temperature_cool</span>
+    <span class="n">tau_glass</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">tau_glass</span>  <span class="c1"># Glass transmissivity</span>
+    <span class="n">u_wall</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">u_wall</span>  <span class="c1"># Wall heat transfer coefficient [W/m2.K]</span>
+    <span class="n">u_roof</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">u_roof</span>
+    <span class="n">u_glass</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">u_glass</span>
+    <span class="n">u_floor</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">u_floor</span>
+    <span class="n">alpha_wall</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">alpha_wall</span>
+    <span class="n">alpha_floor</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">alpha_floor</span>
+    <span class="n">alpha_glass</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">alpha_glass</span>
+    <span class="n">cp_floor</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">cp_floor</span>  <span class="c1"># Specific heat capacitance [J/m2.K]</span>
+    <span class="n">cp_roof</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">cp_roof</span>
+    <span class="n">cp_wall</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">cp_wall</span>
+    <span class="n">air_change_hour</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">air_change_hour</span>  <span class="c1"># air changes per hour [1/h]</span>
+    <span class="n">renewal_air_per_person</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">renewal_air_per_person</span>  <span class="c1"># [m3/s.person]</span>
+    <span class="n">vol_dhw_set</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">vol_dhw_set</span>
+    <span class="n">Q_gain_per_floor</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">Q_gain_per_floor</span>
+    <span class="n">emissivity_wall</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">emissivity_wall</span>
+    <span class="n">emissivity_glass</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">emissivity_glass</span>
+
+    <span class="n">ref_system_eff_equipment_heating</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ref_system_eff_equipment_heating</span>
+    <span class="n">ref_system_fuel_type_heating</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ref_system_fuel_type_heating</span>
+    <span class="n">ref_system_eff_equipment_cooling</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ref_system_eff_equipment_cooling</span>
+    <span class="n">ref_system_fuel_type_cooling</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ref_system_fuel_type_cooling</span>
+
+    <span class="n">real_heating_monthly_capacity</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">real_heating_monthly_capacity</span>
+    <span class="n">real_heating_yearly_capacity</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">real_heating_yearly_capacity</span>
+    <span class="n">real_cooling_monthly_capacity</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">real_cooling_monthly_capacity</span>
+    <span class="n">real_cooling_yearly_capacity</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">real_cooling_yearly_capacity</span>
+
+
+    <span class="c1">################################################################################################</span>
+    <span class="c1"># DEFINED VARS ----------------------------------------------------------------------------------</span>
+    <span class="n">consumer_type</span> <span class="o">=</span> <span class="s2">&quot;household&quot;</span>
+    <span class="c1"># Simulation Properties</span>
+    <span class="n">interpolation_weight</span> <span class="o">=</span> <span class="mf">0.8</span>
+
+    <span class="c1"># Building Properties</span>
+    <span class="n">T_ground</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># ground temperature [ºC]</span>
+    <span class="n">T_net</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># domestic water inlet temperature [ºC]</span>
+    <span class="n">T_dhw</span> <span class="o">=</span> <span class="mi">38</span>  <span class="c1"># domestic hot water (dhw) temperature [ºC]</span>
+    <span class="n">u_wall</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">u_wall</span> <span class="o">-</span> <span class="mf">0.13</span> <span class="o">-</span> <span class="mf">0.04</span><span class="p">)</span>
+    <span class="n">u_glass</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">u_glass</span> <span class="o">-</span> <span class="mf">0.13</span> <span class="o">-</span> <span class="mf">0.04</span><span class="p">)</span>  <span class="c1"># removed associated with outer/inner convection</span>
+    <span class="n">u_wall</span> <span class="o">=</span> <span class="n">u_wall</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">u_roof</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">u_roof</span> <span class="o">-</span> <span class="mf">0.13</span> <span class="o">-</span> <span class="mf">0.04</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">u_floor</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">u_floor</span> <span class="o">-</span> <span class="mf">0.13</span> <span class="o">-</span> <span class="mf">0.04</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">u_deck</span> <span class="o">=</span> <span class="n">u_roof</span>
+    <span class="n">alpha_roof</span> <span class="o">=</span> <span class="n">alpha_wall</span>
+
+    <span class="c1"># Fluids/Material Properties</span>
+    <span class="n">rho_water</span> <span class="o">=</span> <span class="mi">997</span>  <span class="c1"># [kg/m3]</span>
+    <span class="n">cp_water</span> <span class="o">=</span> <span class="mi">4200</span>  <span class="c1"># [J/kg.K]</span>
+    <span class="n">rho_air</span> <span class="o">=</span> <span class="mf">1.225</span>  <span class="c1"># [kg/m3]</span>
+    <span class="n">cp_air</span> <span class="o">=</span> <span class="mi">1005</span>  <span class="c1"># [J/kg.K]</span>
+
+
+    <span class="c1">################################################################################################</span>
+    <span class="c1"># COMPUTE ----------------------------------------------</span>
+    <span class="c1"># Schedule</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">schedule_hour</span><span class="p">(</span><span class="n">saturday_on</span><span class="p">,</span> <span class="n">sunday_on</span><span class="p">,</span> <span class="n">shutdown_periods</span><span class="p">,</span> <span class="n">daily_periods</span><span class="p">)</span>  <span class="c1"># vector: [0,1,1,0,..]; 0-on 1-off</span>
+    <span class="n">month_last_hour_vector</span> <span class="o">=</span> <span class="n">month_last_hour</span><span class="p">()</span>
+
+    <span class="c1"># Climate data</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">df_climate</span> <span class="o">=</span> <span class="n">building_climate_api</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModuleRuntimeException</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;building.py&quot;</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Building characterization infeasible. Climate data not possible to obtain, change location or try later.&quot;</span>
+        <span class="p">)</span>
+
+
+    <span class="c1"># Building Properties</span>
+    <span class="n">area_floor</span> <span class="o">=</span> <span class="n">width_floor</span> <span class="o">*</span> <span class="n">length_floor</span>
+    <span class="n">area_N_facade</span> <span class="o">=</span> <span class="n">wall_area</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="n">building_orientation</span><span class="p">,</span> <span class="n">width_floor</span><span class="p">,</span> <span class="n">length_floor</span><span class="p">,</span> <span class="n">height_floor</span><span class="p">)</span>  <span class="c1"># area facade (wall+glass) [m2]</span>
+    <span class="n">area_S_facade</span> <span class="o">=</span> <span class="n">wall_area</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">building_orientation</span><span class="p">,</span> <span class="n">width_floor</span><span class="p">,</span> <span class="n">length_floor</span><span class="p">,</span> <span class="n">height_floor</span><span class="p">)</span>
+    <span class="n">area_E_facade</span> <span class="o">=</span> <span class="n">wall_area</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="n">building_orientation</span><span class="p">,</span> <span class="n">width_floor</span><span class="p">,</span> <span class="n">length_floor</span><span class="p">,</span> <span class="n">height_floor</span><span class="p">)</span>
+    <span class="n">area_W_facade</span> <span class="o">=</span> <span class="n">wall_area</span><span class="p">(</span><span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="n">building_orientation</span><span class="p">,</span> <span class="n">width_floor</span><span class="p">,</span> <span class="n">length_floor</span><span class="p">,</span> <span class="n">height_floor</span><span class="p">)</span>
+    <span class="n">area_N_wall</span> <span class="o">=</span> <span class="n">area_N_facade</span> <span class="o">*</span> <span class="n">ratio_wall_N</span>  <span class="c1"># area North wall [m2]</span>
+    <span class="n">area_S_wall</span> <span class="o">=</span> <span class="n">area_S_facade</span> <span class="o">*</span> <span class="n">ratio_wall_S</span>
+    <span class="n">area_E_wall</span> <span class="o">=</span> <span class="n">area_E_facade</span> <span class="o">*</span> <span class="n">ratio_wall_E</span>
+    <span class="n">area_W_wall</span> <span class="o">=</span> <span class="n">area_W_facade</span> <span class="o">*</span> <span class="n">ratio_wall_W</span>
+    <span class="n">ratio_glass_in_N</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ratio_wall_N</span><span class="p">)</span>  <span class="c1"># glass area fraction</span>
+    <span class="n">ratio_glass_in_S</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ratio_wall_S</span><span class="p">)</span>
+    <span class="n">ratio_glass_in_E</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ratio_wall_E</span><span class="p">)</span>
+    <span class="n">ratio_glass_in_W</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ratio_wall_W</span><span class="p">)</span>
+    <span class="n">area_N_glass</span> <span class="o">=</span> <span class="n">area_N_facade</span> <span class="o">*</span> <span class="n">ratio_glass_in_N</span>  <span class="c1"># area North glass [m2]</span>
+    <span class="n">area_S_glass</span> <span class="o">=</span> <span class="n">area_S_facade</span> <span class="o">*</span> <span class="n">ratio_glass_in_S</span>
+    <span class="n">area_E_glass</span> <span class="o">=</span> <span class="n">area_E_facade</span> <span class="o">*</span> <span class="n">ratio_glass_in_E</span>
+    <span class="n">area_W_glass</span> <span class="o">=</span> <span class="n">area_W_facade</span> <span class="o">*</span> <span class="n">ratio_glass_in_W</span>
+    <span class="n">volume_floor</span> <span class="o">=</span> <span class="n">area_floor</span> <span class="o">*</span> <span class="n">height_floor</span>  <span class="c1"># indoor air volume per floor [m3]</span>
+    <span class="n">air_change_second</span> <span class="o">=</span> <span class="n">air_change_hour</span> <span class="o">*</span> <span class="n">volume_floor</span> <span class="o">/</span> <span class="mi">3600</span>  <span class="c1"># air infiltration im SI units [m3/s]</span>
+    <span class="n">c_roof</span> <span class="o">=</span> <span class="n">cp_roof</span> <span class="o">*</span> <span class="n">area_floor</span>  <span class="c1"># roof heat capacitance [J/K]</span>
+    <span class="n">c_floor</span> <span class="o">=</span> <span class="n">cp_floor</span> <span class="o">*</span> <span class="n">area_floor</span>
+    <span class="n">c_deck</span> <span class="o">=</span> <span class="n">cp_floor</span> <span class="o">*</span> <span class="n">area_floor</span>
+    <span class="n">c_N_wall</span> <span class="o">=</span> <span class="n">cp_wall</span> <span class="o">*</span> <span class="n">area_N_wall</span>  <span class="c1"># N wall heat capacitance [J/K]</span>
+    <span class="n">c_S_wall</span> <span class="o">=</span> <span class="n">cp_wall</span> <span class="o">*</span> <span class="n">area_S_wall</span>
+    <span class="n">c_E_wall</span> <span class="o">=</span> <span class="n">cp_wall</span> <span class="o">*</span> <span class="n">area_E_wall</span>
+    <span class="n">c_W_wall</span> <span class="o">=</span> <span class="n">cp_wall</span> <span class="o">*</span> <span class="n">area_W_wall</span>
+
+
+    <span class="c1"># SIMULATION ----------------------------------------------</span>
+    <span class="c1"># Initialize vars</span>
+    <span class="n">flowrate_dhw_set</span> <span class="o">=</span> <span class="mi">6</span> <span class="o">/</span> <span class="mi">60000</span> <span class="o">*</span> <span class="n">number_person_per_floor</span> <span class="o">*</span> <span class="mf">0.5</span>  <span class="c1"># combined DHW flowrate per floor [m3/s]</span>
+    <span class="n">profile_hourly_heat</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">profile_hourly_cool</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">profile_monthly_heat</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">profile_monthly_cool</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">T_interior</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># floor interior air temperature</span>
+    <span class="n">T_N_wall</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># wall temperature</span>
+    <span class="n">T_S_wall</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_E_wall</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_W_wall</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_N_wall_in</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># interior surface wall temperature</span>
+    <span class="n">T_S_wall_in</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_E_wall_in</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_W_wall_in</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_N_wall_out</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># exterior surface wall temperature</span>
+    <span class="n">T_S_wall_out</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_E_wall_out</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_W_wall_out</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_N_glass_out</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_S_glass_out</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_E_glass_out</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_W_glass_out</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_N_glass_in</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_E_glass_in</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_W_glass_in</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_S_glass_in</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_roof</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># last floor. roof temperature</span>
+    <span class="n">T_roof_in</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_roof_out</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">T_deck</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># deck temperature</span>
+    <span class="n">T_deck_above</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># floor of building floors (above zero floor)</span>
+    <span class="n">T_deck_below</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># deck of building floors larger than 0, except last floor</span>
+    <span class="n">T_floor</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># zero floor, floor temperature</span>
+    <span class="n">T_floor_in</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">vol_dhw</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cumulative_heat_monthly</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cumulative_cool_monthly</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">glass_in_N</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;glass&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_N_glass</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_N_glass_in</span><span class="p">}</span>
+    <span class="n">glass_in_E</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;glass&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_E_glass</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_E_glass_in</span><span class="p">}</span>
+    <span class="n">glass_in_S</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;glass&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_S_glass</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_S_glass_in</span><span class="p">}</span>
+    <span class="n">glass_in_W</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;glass&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_W_glass</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_W_glass_in</span><span class="p">}</span>
+    <span class="n">wall_in_N</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;wall&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_N_wall</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_N_wall_in</span><span class="p">}</span>
+    <span class="n">wall_in_E</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;wall&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_E_wall</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_E_wall_in</span><span class="p">}</span>
+    <span class="n">wall_in_S</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;wall&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_S_wall</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_S_wall_in</span><span class="p">}</span>
+    <span class="n">wall_in_W</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;wall&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_W_wall</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_W_wall_in</span><span class="p">}</span>
+    <span class="n">deck_below_in</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;wall&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_floor</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_deck_below</span><span class="p">}</span>
+    <span class="n">deck_above_in</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;wall&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_floor</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_deck_above</span><span class="p">}</span>
+    <span class="n">roof_in</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;wall&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_floor</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_roof_in</span><span class="p">}</span>
+    <span class="n">floor_in</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;wall&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="n">area_floor</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">T_floor_in</span><span class="p">}</span>
+
+    <span class="c1"># Simulation Info</span>
+    <span class="n">time_step</span> <span class="o">=</span> <span class="mi">15</span><span class="o">*</span><span class="mi">60</span>  <span class="c1"># time step [s]</span>
+    <span class="n">time_step_number_in_one_hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">3600</span> <span class="o">/</span> <span class="n">time_step</span><span class="p">)</span>  <span class="c1"># time step number</span>
+    <span class="n">max_air_delta_T_per_minute</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># 1ºC per min</span>
+    <span class="n">max_air_delta_T_allowed</span> <span class="o">=</span> <span class="n">time_step</span> <span class="o">*</span> <span class="n">max_air_delta_T_per_minute</span> <span class="o">/</span> <span class="mi">60</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">profile_index</span><span class="p">,</span> <span class="n">profile_operating</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">profile_index</span> <span class="ow">in</span> <span class="n">month_last_hour_vector</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">profile_index</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
+                <span class="n">profile_monthly_heat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cumulative_heat_monthly</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># space heating demand [kWh]</span>
+                <span class="n">profile_monthly_cool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cumulative_cool_monthly</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># space cooling demand [kWh]</span>
+                <span class="n">cumulative_heat_monthly</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reset monthly heating needs</span>
+                <span class="n">cumulative_cool_monthly</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reset monthly cooling needs</span>
+
+            <span class="n">cumulative_heat_hourly</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reset hourly heating needs</span>
+            <span class="n">cumulative_cool_hourly</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reset hourly cooling needs</span>
+
+            <span class="k">if</span> <span class="n">profile_index</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">break</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">time_step_number_in_one_hour</span><span class="p">):</span>
+
+                <span class="c1"># CLIMATE DATA --------------------------------------------------------------------------------------</span>
+                <span class="n">T_exterior</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">Q_sun_N_facade</span><span class="p">,</span> <span class="n">Q_sun_S_facade</span><span class="p">,</span> <span class="n">Q_sun_E_facade</span><span class="p">,</span> <span class="n">Q_sun_W_facade</span><span class="p">,</span> <span class="n">Q_sun_roof</span><span class="p">,</span> <span class="n">wind_speed</span> <span class="o">=</span> <span class="n">info_time_step_climate_data</span><span class="p">(</span>
+                    <span class="n">df_climate</span><span class="p">,</span> <span class="n">profile_index</span><span class="p">,</span> <span class="n">time_step_number_in_one_hour</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+                <span class="c1"># Correct wind speed</span>
+                <span class="n">z_0</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># surface roughness</span>
+                <span class="n">wind_speed</span> <span class="o">=</span> <span class="n">wind_speed</span> <span class="o">*</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="n">height_floor</span> <span class="o">*</span> <span class="n">number_floor</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">z_0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
+                    <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span> <span class="o">/</span> <span class="n">z_0</span><span class="p">))</span>  <span class="c1"># correct wind speed of 10m for the average building height [m/s]</span>
+                <span class="n">u_exterior</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5.8</span> <span class="o">+</span> <span class="mf">3.94</span> <span class="o">*</span> <span class="n">wind_speed</span><span class="p">)</span>  <span class="c1"># outside heat convection coef. [W/m2.K]</span>
+
+                <span class="c1"># BUILDING  --------------------------------------------------------------------------------------</span>
+                <span class="c1"># Solar radiation floor</span>
+                <span class="n">Q_sun_floor</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q_sun_N_facade</span> <span class="o">*</span> <span class="n">area_N_glass</span> <span class="o">+</span> <span class="n">Q_sun_S_facade</span> <span class="o">*</span> <span class="n">area_S_glass</span> <span class="o">+</span> <span class="n">Q_sun_E_facade</span> <span class="o">*</span> <span class="n">area_E_glass</span> <span class="o">+</span> <span class="n">Q_sun_W_facade</span> <span class="o">*</span> <span class="n">area_W_glass</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau_glass</span>  <span class="c1"># total transmitted radiation by glass to floor/deck [W]</span>
+
+                <span class="c1"># Radiation Heat Transfer</span>
+                <span class="n">Q_rad_N_glass</span> <span class="o">=</span> <span class="n">ht_radiation_vertical_surface</span><span class="p">(</span><span class="n">glass_in_N</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span> <span class="n">glass_in_S</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span>
+                                                              <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span> <span class="n">deck_below_in</span><span class="p">,</span> <span class="n">deck_above_in</span><span class="p">,</span>
+                                                              <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>  <span class="c1"># North Glass</span>
+                <span class="n">Q_rad_N_wall</span> <span class="o">=</span> <span class="n">ht_radiation_vertical_surface</span><span class="p">(</span><span class="n">wall_in_N</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span> <span class="n">glass_in_S</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span>
+                                                             <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span> <span class="n">deck_below_in</span><span class="p">,</span> <span class="n">deck_above_in</span><span class="p">,</span>
+                                                             <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>  <span class="c1"># North Wall</span>
+                <span class="n">Q_rad_E_glass</span> <span class="o">=</span> <span class="n">ht_radiation_vertical_surface</span><span class="p">(</span><span class="n">glass_in_E</span><span class="p">,</span> <span class="n">glass_in_N</span><span class="p">,</span> <span class="n">glass_in_S</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">wall_in_N</span><span class="p">,</span>
+                                                              <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span> <span class="n">deck_below_in</span><span class="p">,</span> <span class="n">deck_above_in</span><span class="p">,</span>
+                                                              <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>
+                <span class="n">Q_rad_E_wall</span> <span class="o">=</span> <span class="n">ht_radiation_vertical_surface</span><span class="p">(</span><span class="n">wall_in_E</span><span class="p">,</span> <span class="n">glass_in_N</span><span class="p">,</span> <span class="n">glass_in_S</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">wall_in_N</span><span class="p">,</span>
+                                                             <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span> <span class="n">deck_below_in</span><span class="p">,</span> <span class="n">deck_above_in</span><span class="p">,</span>
+                                                             <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>
+                <span class="n">Q_rad_S_glass</span> <span class="o">=</span> <span class="n">ht_radiation_vertical_surface</span><span class="p">(</span><span class="n">glass_in_S</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span> <span class="n">glass_in_N</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span>
+                                                              <span class="n">wall_in_N</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span> <span class="n">deck_below_in</span><span class="p">,</span> <span class="n">deck_above_in</span><span class="p">,</span>
+                                                              <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>
+                <span class="n">Q_rad_S_wall</span> <span class="o">=</span> <span class="n">ht_radiation_vertical_surface</span><span class="p">(</span><span class="n">wall_in_S</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span> <span class="n">glass_in_N</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span>
+                                                             <span class="n">wall_in_N</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span> <span class="n">deck_below_in</span><span class="p">,</span> <span class="n">deck_above_in</span><span class="p">,</span>
+                                                             <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>
+                <span class="n">Q_rad_W_glass</span> <span class="o">=</span> <span class="n">ht_radiation_vertical_surface</span><span class="p">(</span><span class="n">glass_in_W</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span> <span class="n">glass_in_S</span><span class="p">,</span> <span class="n">glass_in_N</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span>
+                                                              <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_N</span><span class="p">,</span> <span class="n">deck_below_in</span><span class="p">,</span> <span class="n">deck_above_in</span><span class="p">,</span>
+                                                              <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>
+                <span class="n">Q_rad_W_wall</span> <span class="o">=</span> <span class="n">ht_radiation_vertical_surface</span><span class="p">(</span><span class="n">wall_in_W</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span> <span class="n">glass_in_S</span><span class="p">,</span> <span class="n">glass_in_N</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span>
+                                                             <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_N</span><span class="p">,</span> <span class="n">deck_below_in</span><span class="p">,</span> <span class="n">deck_above_in</span><span class="p">,</span>
+                                                             <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>
+                <span class="n">Q_rad_deck_below</span> <span class="o">=</span> <span class="n">ht_radiation_horizontal_surface</span><span class="p">(</span><span class="n">deck_below_in</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span>
+                                                                   <span class="n">glass_in_S</span><span class="p">,</span> <span class="n">glass_in_N</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span> <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_N</span><span class="p">,</span>
+                                                                   <span class="n">deck_above_in</span><span class="p">,</span> <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>
+                <span class="n">Q_rad_deck_above</span> <span class="o">=</span> <span class="n">ht_radiation_horizontal_surface</span><span class="p">(</span><span class="n">deck_above_in</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span>
+                                                                   <span class="n">glass_in_S</span><span class="p">,</span> <span class="n">glass_in_N</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span> <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_N</span><span class="p">,</span>
+                                                                   <span class="n">deck_below_in</span><span class="p">,</span> <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>
+                <span class="n">Q_rad_roof</span> <span class="o">=</span> <span class="n">ht_radiation_horizontal_surface</span><span class="p">(</span><span class="n">roof_in</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span> <span class="n">glass_in_S</span><span class="p">,</span>
+                                                             <span class="n">glass_in_N</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span> <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_N</span><span class="p">,</span> <span class="n">deck_above_in</span><span class="p">,</span>
+                                                             <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>
+                <span class="n">Q_rad_floor</span> <span class="o">=</span> <span class="n">ht_radiation_horizontal_surface</span><span class="p">(</span><span class="n">floor_in</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span> <span class="n">glass_in_S</span><span class="p">,</span>
+                                                              <span class="n">glass_in_N</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span> <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_N</span><span class="p">,</span> <span class="n">deck_below_in</span><span class="p">,</span>
+                                                              <span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">emissivity_glass</span><span class="p">)</span>
+
+                <span class="c1"># Sky Radiation Heat Losses</span>
+                <span class="n">Q_infra_N_outer_wall</span> <span class="o">=</span> <span class="n">surface_outside_rad_heat_loss</span><span class="p">(</span><span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">T_N_wall_out</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span>
+                                                                     <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Radiation heat loss [W/m2]</span>
+                <span class="n">Q_infra_S_outer_wall</span> <span class="o">=</span> <span class="n">surface_outside_rad_heat_loss</span><span class="p">(</span><span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">T_S_wall_out</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span>
+                                                                     <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">Q_infra_E_outer_wall</span> <span class="o">=</span> <span class="n">surface_outside_rad_heat_loss</span><span class="p">(</span><span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">T_E_wall_out</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span>
+                                                                     <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">Q_infra_W_outer_wall</span> <span class="o">=</span> <span class="n">surface_outside_rad_heat_loss</span><span class="p">(</span><span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">T_W_wall_out</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span>
+                                                                     <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">Q_infra_N_outer_glass</span> <span class="o">=</span> <span class="n">surface_outside_rad_heat_loss</span><span class="p">(</span><span class="n">emissivity_glass</span><span class="p">,</span> <span class="n">T_N_glass_out</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span>
+                                                                      <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">Q_infra_S_outer_glass</span> <span class="o">=</span> <span class="n">surface_outside_rad_heat_loss</span><span class="p">(</span><span class="n">emissivity_glass</span><span class="p">,</span> <span class="n">T_S_glass_out</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span>
+                                                                      <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">Q_infra_E_outer_glass</span> <span class="o">=</span> <span class="n">surface_outside_rad_heat_loss</span><span class="p">(</span><span class="n">emissivity_glass</span><span class="p">,</span> <span class="n">T_E_glass_out</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span>
+                                                                      <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">Q_infra_W_outer_glass</span> <span class="o">=</span> <span class="n">surface_outside_rad_heat_loss</span><span class="p">(</span><span class="n">emissivity_glass</span><span class="p">,</span> <span class="n">T_W_glass_out</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span>
+                                                                      <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">Q_infra_roof_out</span> <span class="o">=</span> <span class="n">surface_outside_rad_heat_loss</span><span class="p">(</span><span class="n">emissivity_wall</span><span class="p">,</span> <span class="n">T_roof_out</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+                <span class="c1"># Each floor Heat balance of indoor temperature [W]</span>
+                <span class="n">surfaces_vertical</span> <span class="o">=</span> <span class="p">[</span><span class="n">glass_in_N</span><span class="p">,</span> <span class="n">glass_in_E</span><span class="p">,</span> <span class="n">glass_in_S</span><span class="p">,</span> <span class="n">glass_in_W</span><span class="p">,</span> <span class="n">wall_in_E</span><span class="p">,</span> <span class="n">wall_in_S</span><span class="p">,</span> <span class="n">wall_in_W</span><span class="p">,</span>
+                                     <span class="n">wall_in_N</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">number_floor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">surfaces_horizontal</span> <span class="o">=</span> <span class="p">[</span><span class="n">roof_in</span><span class="p">,</span> <span class="n">deck_above_in</span><span class="p">]</span>
+                    <span class="n">top_floor</span> <span class="o">=</span> <span class="n">ht_indoor_air</span><span class="p">(</span><span class="n">T_interior</span><span class="p">,</span> <span class="n">surfaces_horizontal</span><span class="p">,</span> <span class="n">surfaces_vertical</span><span class="p">)</span>
+                    <span class="n">surfaces_horizontal</span> <span class="o">=</span> <span class="p">[</span><span class="n">deck_above_in</span><span class="p">,</span> <span class="n">deck_below_in</span><span class="p">]</span>
+                    <span class="n">middle_floor</span> <span class="o">=</span> <span class="n">ht_indoor_air</span><span class="p">(</span><span class="n">T_interior</span><span class="p">,</span> <span class="n">surfaces_horizontal</span><span class="p">,</span> <span class="n">surfaces_vertical</span><span class="p">)</span>
+                    <span class="n">surfaces_horizontal</span> <span class="o">=</span> <span class="p">[</span><span class="n">deck_below_in</span><span class="p">,</span> <span class="n">floor_in</span><span class="p">]</span>
+                    <span class="n">bottom_floor</span> <span class="o">=</span> <span class="n">ht_indoor_air</span><span class="p">(</span><span class="n">T_interior</span><span class="p">,</span> <span class="n">surfaces_horizontal</span><span class="p">,</span> <span class="n">surfaces_vertical</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">surfaces_horizontal</span> <span class="o">=</span> <span class="p">[</span><span class="n">roof_in</span><span class="p">,</span> <span class="n">floor_in</span><span class="p">]</span>
+                    <span class="n">zero_floor</span> <span class="o">=</span> <span class="n">ht_indoor_air</span><span class="p">(</span><span class="n">T_interior</span><span class="p">,</span> <span class="n">surfaces_horizontal</span><span class="p">,</span> <span class="n">surfaces_vertical</span><span class="p">)</span>
+
+                <span class="c1"># Average floor Heat balance before space heating/cooling</span>
+                <span class="k">if</span> <span class="n">number_floor</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">Q_building_floor</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">renewal_air_per_person</span> <span class="o">*</span> <span class="n">number_person_per_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                            <span class="n">T_exterior</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span> <span class="o">*</span> <span class="n">profile_operating</span> \
+                                       <span class="o">+</span> <span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">air_change_second</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_exterior</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span> \
+                                       <span class="o">+</span> <span class="n">Q_gain_per_floor</span> <span class="o">*</span> <span class="n">profile_operating</span> \
+                                       <span class="o">+</span> <span class="n">zero_floor</span>  <span class="c1"># [W]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Q_building_floor</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">renewal_air_per_person</span> <span class="o">*</span> <span class="n">number_person_per_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                            <span class="n">T_exterior</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span> <span class="o">*</span> <span class="n">profile_operating</span> \
+                                       <span class="o">+</span> <span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">air_change_second</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_exterior</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span> \
+                                       <span class="o">+</span> <span class="n">Q_gain_per_floor</span> <span class="o">*</span> <span class="n">profile_operating</span> \
+                                       <span class="o">+</span> <span class="p">(</span><span class="n">top_floor</span> <span class="o">+</span> <span class="n">middle_floor</span> <span class="o">*</span> <span class="p">(</span><span class="n">number_floor</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">bottom_floor</span><span class="p">)</span> <span class="o">/</span> <span class="n">number_floor</span>
+
+                <span class="c1"># SPACE HEATING/COOLING ACTUATION --------------------------------------------------------</span>
+                <span class="c1"># off work time</span>
+                <span class="k">if</span> <span class="n">profile_operating</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">T_interior_guess</span> <span class="o">=</span> <span class="n">T_interior</span> <span class="o">+</span> <span class="p">(</span><span class="n">Q_building_floor</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="p">(</span>
+                            <span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span>  <span class="c1"># [ºC]</span>
+
+                    <span class="c1"># outside temperature interval - activating space heating</span>
+                    <span class="k">if</span> <span class="n">T_interior</span> <span class="o">&lt;</span> <span class="n">T_off_min</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&lt;</span> <span class="n">T_off_min</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">Q_building_floor</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">T_off_min</span> <span class="o">-</span> <span class="n">T_interior</span> <span class="o">&lt;</span> <span class="n">max_air_delta_T_allowed</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Q_building_floor</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">T_off_min</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>  <span class="c1"># [W]</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Q_building_floor</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>
+                                        <span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="n">max_air_delta_T_allowed</span> <span class="o">/</span> <span class="n">time_step</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">T_interior_guess</span> <span class="o">-</span> <span class="n">T_interior</span> <span class="o">&lt;</span> <span class="n">max_air_delta_T_allowed</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">max_air_delta_T_allowed</span> <span class="o">-</span> <span class="p">(</span><span class="n">T_interior_guess</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">))</span> <span class="o">/</span> <span class="n">time_step</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="mi">0</span>
+
+                    <span class="c1"># inside temperature interval - activating space heating</span>
+                    <span class="k">elif</span> <span class="n">T_interior</span> <span class="o">&gt;=</span> <span class="n">T_off_min</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&lt;</span> <span class="n">T_off_min</span><span class="p">:</span>
+                        <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_off_min</span> <span class="o">-</span> <span class="n">T_interior_guess</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>
+
+                    <span class="c1"># inside temperature interval - activating space cooling</span>
+                    <span class="k">elif</span> <span class="n">T_interior</span> <span class="o">&lt;=</span> <span class="n">T_off_max</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&gt;</span> <span class="n">T_off_max</span><span class="p">:</span>  <span class="c1"># above temperature range</span>
+                        <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_off_max</span> <span class="o">-</span> <span class="n">T_interior_guess</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>
+
+                    <span class="c1"># outside temperature interval - activating space cooling</span>
+                    <span class="k">elif</span> <span class="n">T_interior</span> <span class="o">&gt;</span> <span class="n">T_off_max</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&gt;</span> <span class="n">T_off_max</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">Q_building_floor</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">T_interior</span> <span class="o">-</span> <span class="n">T_off_max</span> <span class="o">&lt;</span> <span class="n">max_air_delta_T_allowed</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="o">-</span><span class="n">Q_building_floor</span> <span class="o">-</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">max_air_delta_T_allowed</span> <span class="o">-</span> <span class="p">(</span><span class="n">T_interior</span> <span class="o">-</span> <span class="n">T_off_max</span><span class="p">))</span> <span class="o">/</span> <span class="n">time_step</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="o">-</span><span class="n">Q_building_floor</span> <span class="o">-</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                    <span class="n">max_air_delta_T_allowed</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">T_interior</span> <span class="o">-</span> <span class="n">T_interior_guess</span> <span class="o">&lt;</span> <span class="n">max_air_delta_T_allowed</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">max_air_delta_T_allowed</span> <span class="o">-</span> <span class="p">(</span><span class="n">T_interior</span> <span class="o">-</span> <span class="n">T_interior_guess</span><span class="p">))</span> <span class="o">/</span> <span class="n">time_step</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="c1"># on work time</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">T_interior_guess</span> <span class="o">=</span> <span class="n">T_interior</span> <span class="o">+</span> <span class="p">(</span><span class="n">Q_building_floor</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span>
+
+                    <span class="c1"># activating space heating</span>
+                    <span class="k">if</span> <span class="n">T_interior</span> <span class="o">&lt;</span> <span class="n">T_heat_on</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&lt;</span> <span class="n">T_heat_on</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">Q_building_floor</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">T_heat_on</span> <span class="o">-</span> <span class="n">T_interior</span> <span class="o">&lt;</span> <span class="n">max_air_delta_T_allowed</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Q_building_floor</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">T_heat_on</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Q_building_floor</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>
+                                        <span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="n">max_air_delta_T_allowed</span> <span class="o">/</span> <span class="n">time_step</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">T_interior_guess</span> <span class="o">-</span> <span class="n">T_interior</span> <span class="o">&lt;</span> <span class="n">max_air_delta_T_allowed</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">max_air_delta_T_allowed</span> <span class="o">-</span> <span class="p">(</span><span class="n">T_interior_guess</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">))</span> <span class="o">/</span> <span class="n">time_step</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="mi">0</span>
+
+                    <span class="c1"># activating space heating</span>
+                    <span class="k">elif</span> <span class="n">T_interior</span> <span class="o">&gt;=</span> <span class="n">T_heat_on</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&lt;</span> <span class="n">T_heat_on</span><span class="p">:</span>
+                        <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_heat_on</span> <span class="o">-</span> <span class="n">T_interior_guess</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>
+
+                    <span class="c1"># activating space cooling</span>
+                    <span class="k">elif</span> <span class="n">T_interior</span> <span class="o">&lt;=</span> <span class="n">T_cool_on</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&gt;</span> <span class="n">T_cool_on</span><span class="p">:</span>  <span class="c1"># above temperature range</span>
+                        <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_cool_on</span> <span class="o">-</span> <span class="n">T_interior_guess</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>
+
+                    <span class="k">elif</span> <span class="n">T_interior</span> <span class="o">==</span> <span class="n">T_cool_on</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&gt;=</span> <span class="n">T_cool_on</span><span class="p">:</span>  <span class="c1"># above temperature range</span>
+                        <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="o">-</span><span class="n">Q_building_floor</span>
+
+                    <span class="c1"># activating space cooling</span>
+                    <span class="k">elif</span> <span class="n">T_interior</span> <span class="o">&gt;</span> <span class="n">T_cool_on</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&gt;</span> <span class="n">T_cool_on</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">Q_building_floor</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">T_interior</span> <span class="o">-</span> <span class="n">T_cool_on</span> <span class="o">&lt;</span> <span class="n">max_air_delta_T_allowed</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="o">-</span><span class="n">Q_building_floor</span> <span class="o">-</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">T_interior</span> <span class="o">-</span> <span class="n">T_cool_on</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="o">-</span><span class="n">Q_building_floor</span> <span class="o">-</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                    <span class="n">max_air_delta_T_allowed</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">T_interior</span> <span class="o">-</span> <span class="n">T_interior_guess</span> <span class="o">&lt;</span> <span class="n">max_air_delta_T_allowed</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">max_air_delta_T_allowed</span> <span class="o">-</span> <span class="p">(</span><span class="n">T_interior</span> <span class="o">-</span> <span class="n">T_interior_guess</span><span class="p">))</span> <span class="o">/</span> <span class="n">time_step</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="c1"># HOT WATER CONSUMPTION -------------------------------------------------------------------------</span>
+                <span class="n">flowrate_dhw</span><span class="p">,</span> <span class="n">vol_dhw</span> <span class="o">=</span> <span class="n">building_dhw</span><span class="p">(</span><span class="n">profile_index</span><span class="p">,</span> <span class="n">vol_dhw_set</span><span class="p">,</span> <span class="n">vol_dhw</span><span class="p">,</span> <span class="n">flowrate_dhw_set</span><span class="p">,</span>
+                                                     <span class="n">time_step</span><span class="p">)</span>  <span class="c1"># [m3/s]; [m3]</span>
+                <span class="n">Q_dwh</span> <span class="o">=</span> <span class="n">rho_water</span> <span class="o">*</span> <span class="n">cp_water</span> <span class="o">*</span> <span class="n">flowrate_dhw</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_dhw</span> <span class="o">-</span> <span class="n">T_net</span><span class="p">)</span>  <span class="c1"># [W]</span>
+
+                <span class="c1"># COMPUTE TEMPERATURES  -------------------------------------------------------------------------</span>
+                <span class="c1"># Steady State Heat Balances</span>
+                <span class="c1"># Inner Surfaces</span>
+                <span class="n">T_deck_above</span> <span class="o">=</span> <span class="n">steady_state_horizontal_face_up</span><span class="p">(</span><span class="n">Q_sun_floor</span><span class="p">,</span> <span class="n">T_deck_above</span><span class="p">,</span> <span class="n">T_deck</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_deck</span><span class="p">,</span>
+                                                               <span class="n">Q_rad_deck_above</span><span class="p">,</span> <span class="n">area_floor</span><span class="p">,</span> <span class="n">alpha_floor</span><span class="p">,</span>
+                                                               <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_deck_below</span> <span class="o">=</span> <span class="n">steady_state_horizontal_face_down</span><span class="p">(</span><span class="n">T_deck_below</span><span class="p">,</span> <span class="n">T_deck</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_deck</span><span class="p">,</span> <span class="n">Q_rad_deck_below</span><span class="p">,</span>
+                                                                 <span class="n">area_floor</span><span class="p">,</span> <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_N_wall_in</span> <span class="o">=</span> <span class="n">steady_state_vertical_inner_wall</span><span class="p">(</span><span class="n">T_N_wall_in</span><span class="p">,</span> <span class="n">T_N_wall</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span> <span class="n">Q_rad_N_wall</span><span class="p">,</span>
+                                                               <span class="n">area_N_wall</span><span class="p">,</span> <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_S_wall_in</span> <span class="o">=</span> <span class="n">steady_state_vertical_inner_wall</span><span class="p">(</span><span class="n">T_S_wall_in</span><span class="p">,</span> <span class="n">T_S_wall</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span> <span class="n">Q_rad_S_wall</span><span class="p">,</span>
+                                                               <span class="n">area_S_wall</span><span class="p">,</span> <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_E_wall_in</span> <span class="o">=</span> <span class="n">steady_state_vertical_inner_wall</span><span class="p">(</span><span class="n">T_E_wall_in</span><span class="p">,</span> <span class="n">T_E_wall</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span> <span class="n">Q_rad_E_wall</span><span class="p">,</span>
+                                                               <span class="n">area_E_wall</span><span class="p">,</span> <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_W_wall_in</span> <span class="o">=</span> <span class="n">steady_state_vertical_inner_wall</span><span class="p">(</span><span class="n">T_W_wall_in</span><span class="p">,</span> <span class="n">T_W_wall</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span> <span class="n">Q_rad_W_wall</span><span class="p">,</span>
+                                                               <span class="n">area_W_wall</span><span class="p">,</span> <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_N_glass_in</span> <span class="o">=</span> <span class="n">steady_state_vertical_inner_glass</span><span class="p">(</span><span class="n">Q_sun_N_facade</span><span class="p">,</span> <span class="n">alpha_glass</span><span class="p">,</span> <span class="n">T_N_glass_in</span><span class="p">,</span> <span class="n">T_N_glass_out</span><span class="p">,</span>
+                                                                 <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_glass</span><span class="p">,</span> <span class="n">Q_rad_N_glass</span><span class="p">,</span> <span class="n">area_N_glass</span><span class="p">,</span>
+                                                                 <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_S_glass_in</span> <span class="o">=</span> <span class="n">steady_state_vertical_inner_glass</span><span class="p">(</span><span class="n">Q_sun_S_facade</span><span class="p">,</span> <span class="n">alpha_glass</span><span class="p">,</span> <span class="n">T_S_glass_in</span><span class="p">,</span> <span class="n">T_S_glass_out</span><span class="p">,</span>
+                                                                 <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_glass</span><span class="p">,</span> <span class="n">Q_rad_S_glass</span><span class="p">,</span> <span class="n">area_S_glass</span><span class="p">,</span>
+                                                                 <span class="n">interpolation_weight</span><span class="p">)</span>
+
+                <span class="n">T_E_glass_in</span> <span class="o">=</span> <span class="n">steady_state_vertical_inner_glass</span><span class="p">(</span><span class="n">Q_sun_E_facade</span><span class="p">,</span> <span class="n">alpha_glass</span><span class="p">,</span> <span class="n">T_E_glass_in</span><span class="p">,</span> <span class="n">T_E_glass_out</span><span class="p">,</span>
+                                                                 <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_glass</span><span class="p">,</span> <span class="n">Q_rad_E_glass</span><span class="p">,</span> <span class="n">area_E_glass</span><span class="p">,</span>
+                                                                 <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_W_glass_in</span> <span class="o">=</span> <span class="n">steady_state_vertical_inner_glass</span><span class="p">(</span><span class="n">Q_sun_W_facade</span><span class="p">,</span> <span class="n">alpha_glass</span><span class="p">,</span> <span class="n">T_W_glass_in</span><span class="p">,</span> <span class="n">T_W_glass_out</span><span class="p">,</span>
+                                                                 <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_glass</span><span class="p">,</span> <span class="n">Q_rad_W_glass</span><span class="p">,</span> <span class="n">area_W_glass</span><span class="p">,</span>
+                                                                 <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_roof_in</span> <span class="o">=</span> <span class="n">steady_state_horizontal_face_down</span><span class="p">(</span><span class="n">T_roof_in</span><span class="p">,</span> <span class="n">T_roof</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_roof</span><span class="p">,</span> <span class="n">Q_rad_roof</span><span class="p">,</span> <span class="n">area_floor</span><span class="p">,</span>
+                                                              <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_floor_in</span> <span class="o">=</span> <span class="n">steady_state_horizontal_face_up</span><span class="p">(</span><span class="n">Q_sun_floor</span><span class="p">,</span> <span class="n">T_floor_in</span><span class="p">,</span> <span class="n">T_floor</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">,</span> <span class="n">u_floor</span><span class="p">,</span>
+                                                             <span class="n">Q_rad_floor</span><span class="p">,</span> <span class="n">area_floor</span><span class="p">,</span> <span class="n">alpha_floor</span><span class="p">,</span> <span class="n">interpolation_weight</span><span class="p">)</span>
+
+                <span class="c1"># Outer Surfaces</span>
+                <span class="n">T_roof_out</span> <span class="o">=</span> <span class="n">steady_state_exterior_wall</span><span class="p">(</span><span class="n">T_roof_out</span><span class="p">,</span> <span class="n">T_roof</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span> <span class="n">Q_sun_roof</span><span class="p">,</span>
+                                                        <span class="n">Q_infra_roof_out</span><span class="p">,</span> <span class="n">alpha_roof</span><span class="p">,</span> <span class="n">u_exterior</span><span class="p">,</span> <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_N_wall_out</span> <span class="o">=</span> <span class="n">steady_state_exterior_wall</span><span class="p">(</span><span class="n">T_N_wall_out</span><span class="p">,</span> <span class="n">T_N_wall</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span> <span class="n">Q_sun_N_facade</span><span class="p">,</span>
+                                                          <span class="n">Q_infra_N_outer_wall</span><span class="p">,</span> <span class="n">alpha_wall</span><span class="p">,</span> <span class="n">u_exterior</span><span class="p">,</span>
+                                                          <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_S_wall_out</span> <span class="o">=</span> <span class="n">steady_state_exterior_wall</span><span class="p">(</span><span class="n">T_S_wall_out</span><span class="p">,</span> <span class="n">T_S_wall</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span> <span class="n">Q_sun_S_facade</span><span class="p">,</span>
+                                                          <span class="n">Q_infra_S_outer_wall</span><span class="p">,</span> <span class="n">alpha_wall</span><span class="p">,</span> <span class="n">u_exterior</span><span class="p">,</span>
+                                                          <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_E_wall_out</span> <span class="o">=</span> <span class="n">steady_state_exterior_wall</span><span class="p">(</span><span class="n">T_E_wall_out</span><span class="p">,</span> <span class="n">T_E_wall</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span> <span class="n">Q_sun_E_facade</span><span class="p">,</span>
+                                                          <span class="n">Q_infra_E_outer_wall</span><span class="p">,</span> <span class="n">alpha_wall</span><span class="p">,</span> <span class="n">u_exterior</span><span class="p">,</span>
+                                                          <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_W_wall_out</span> <span class="o">=</span> <span class="n">steady_state_exterior_wall</span><span class="p">(</span><span class="n">T_W_wall_out</span><span class="p">,</span> <span class="n">T_W_wall</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span> <span class="n">Q_sun_W_facade</span><span class="p">,</span>
+                                                          <span class="n">Q_infra_W_outer_wall</span><span class="p">,</span> <span class="n">alpha_wall</span><span class="p">,</span> <span class="n">u_exterior</span><span class="p">,</span>
+                                                          <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_N_glass_out</span> <span class="o">=</span> <span class="n">steady_state_exterior_wall</span><span class="p">(</span><span class="n">T_N_glass_out</span><span class="p">,</span> <span class="n">T_N_glass_in</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span> <span class="n">u_glass</span><span class="p">,</span> <span class="n">Q_sun_N_facade</span><span class="p">,</span>
+                                                           <span class="n">Q_infra_N_outer_glass</span><span class="p">,</span> <span class="n">alpha_glass</span><span class="p">,</span> <span class="n">u_exterior</span><span class="p">,</span>
+                                                           <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_S_glass_out</span> <span class="o">=</span> <span class="n">steady_state_exterior_wall</span><span class="p">(</span><span class="n">T_S_glass_out</span><span class="p">,</span> <span class="n">T_S_glass_in</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span> <span class="n">u_glass</span><span class="p">,</span> <span class="n">Q_sun_S_facade</span><span class="p">,</span>
+                                                           <span class="n">Q_infra_S_outer_glass</span><span class="p">,</span> <span class="n">alpha_glass</span><span class="p">,</span> <span class="n">u_exterior</span><span class="p">,</span>
+                                                           <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_E_glass_out</span> <span class="o">=</span> <span class="n">steady_state_exterior_wall</span><span class="p">(</span><span class="n">T_E_glass_out</span><span class="p">,</span> <span class="n">T_E_glass_in</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span> <span class="n">u_glass</span><span class="p">,</span> <span class="n">Q_sun_E_facade</span><span class="p">,</span>
+                                                           <span class="n">Q_infra_E_outer_glass</span><span class="p">,</span> <span class="n">alpha_glass</span><span class="p">,</span> <span class="n">u_exterior</span><span class="p">,</span>
+                                                           <span class="n">interpolation_weight</span><span class="p">)</span>
+                <span class="n">T_W_glass_out</span> <span class="o">=</span> <span class="n">steady_state_exterior_wall</span><span class="p">(</span><span class="n">T_W_glass_out</span><span class="p">,</span> <span class="n">T_W_glass_in</span><span class="p">,</span> <span class="n">T_exterior</span><span class="p">,</span> <span class="n">u_glass</span><span class="p">,</span> <span class="n">Q_sun_W_facade</span><span class="p">,</span>
+                                                           <span class="n">Q_infra_W_outer_glass</span><span class="p">,</span> <span class="n">alpha_glass</span><span class="p">,</span> <span class="n">u_exterior</span><span class="p">,</span>
+                                                           <span class="n">interpolation_weight</span><span class="p">)</span>
+
+                <span class="c1"># Explicit Heat Balances</span>
+                <span class="c1"># Interior Air</span>
+                <span class="n">T_interior</span> <span class="o">=</span> <span class="n">T_interior</span> <span class="o">+</span> <span class="p">(</span><span class="n">Q_building_floor</span> <span class="o">+</span> <span class="n">Q_heat_required</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="p">(</span>
+                        <span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_floor</span><span class="p">)</span>  <span class="c1"># [ºC]</span>
+
+                <span class="c1"># Wall</span>
+                <span class="n">T_N_wall</span> <span class="o">=</span> <span class="n">explicit_computation_component_temperature</span><span class="p">(</span><span class="n">T_N_wall</span><span class="p">,</span> <span class="n">T_N_wall_in</span><span class="p">,</span> <span class="n">T_N_wall_out</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span>
+                                                                      <span class="n">area_N_wall</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">c_N_wall</span><span class="p">)</span>
+                <span class="n">T_S_wall</span> <span class="o">=</span> <span class="n">explicit_computation_component_temperature</span><span class="p">(</span><span class="n">T_S_wall</span><span class="p">,</span> <span class="n">T_S_wall_in</span><span class="p">,</span> <span class="n">T_S_wall_out</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span>
+                                                                      <span class="n">area_S_wall</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">c_S_wall</span><span class="p">)</span>
+                <span class="n">T_E_wall</span> <span class="o">=</span> <span class="n">explicit_computation_component_temperature</span><span class="p">(</span><span class="n">T_E_wall</span><span class="p">,</span> <span class="n">T_E_wall_in</span><span class="p">,</span> <span class="n">T_E_wall_out</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span>
+                                                                      <span class="n">area_E_wall</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">c_E_wall</span><span class="p">)</span>
+                <span class="n">T_W_wall</span> <span class="o">=</span> <span class="n">explicit_computation_component_temperature</span><span class="p">(</span><span class="n">T_W_wall</span><span class="p">,</span> <span class="n">T_W_wall_in</span><span class="p">,</span> <span class="n">T_W_wall_out</span><span class="p">,</span> <span class="n">u_wall</span><span class="p">,</span>
+                                                                      <span class="n">area_W_wall</span><span class="p">,</span> <span class="n">time_step</span><span class="p">,</span> <span class="n">c_W_wall</span><span class="p">)</span>
+                <span class="n">T_roof</span> <span class="o">=</span> <span class="n">explicit_computation_component_temperature</span><span class="p">(</span><span class="n">T_roof</span><span class="p">,</span> <span class="n">T_roof_in</span><span class="p">,</span> <span class="n">T_roof_out</span><span class="p">,</span> <span class="n">u_roof</span><span class="p">,</span> <span class="n">area_floor</span><span class="p">,</span>
+                                                                    <span class="n">time_step</span><span class="p">,</span> <span class="n">c_roof</span><span class="p">)</span>
+                <span class="n">T_floor</span> <span class="o">=</span> <span class="n">explicit_computation_component_temperature</span><span class="p">(</span><span class="n">T_floor</span><span class="p">,</span> <span class="n">T_floor_in</span><span class="p">,</span> <span class="n">T_ground</span><span class="p">,</span> <span class="n">u_floor</span><span class="p">,</span> <span class="n">area_floor</span><span class="p">,</span>
+                                                                     <span class="n">time_step</span><span class="p">,</span> <span class="n">c_floor</span><span class="p">)</span>
+                <span class="n">T_deck</span> <span class="o">=</span> <span class="n">explicit_computation_component_temperature</span><span class="p">(</span><span class="n">T_deck</span><span class="p">,</span> <span class="n">T_deck_above</span><span class="p">,</span> <span class="n">T_deck_below</span><span class="p">,</span> <span class="n">u_deck</span><span class="p">,</span> <span class="n">area_floor</span><span class="p">,</span>
+                                                                    <span class="n">time_step</span><span class="p">,</span> <span class="n">c_deck</span><span class="p">)</span>
+
+                <span class="c1"># Generate Profiles Data</span>
+                <span class="k">if</span> <span class="n">Q_heat_required</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cumulative_heat_monthly</span> <span class="o">+=</span> <span class="p">(</span><span class="n">Q_heat_required</span> <span class="o">+</span> <span class="n">Q_dwh</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="mi">3600000</span>  <span class="c1"># [kWh]</span>
+                    <span class="n">cumulative_heat_hourly</span> <span class="o">+=</span> <span class="p">(</span><span class="n">Q_heat_required</span> <span class="o">+</span> <span class="n">Q_dwh</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="mi">3600000</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">cumulative_cool_monthly</span> <span class="o">+=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">Q_heat_required</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="mi">3600000</span><span class="p">)</span>
+                    <span class="n">cumulative_cool_hourly</span> <span class="o">+=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">Q_heat_required</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="mi">3600000</span><span class="p">)</span>
+
+                <span class="c1"># Update Info</span>
+                <span class="n">glass_in_N</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_N_glass_in</span>
+                <span class="n">glass_in_E</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_E_glass_in</span>
+                <span class="n">glass_in_S</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_S_glass_in</span>
+                <span class="n">glass_in_W</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_W_glass_in</span>
+                <span class="n">wall_in_N</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_N_wall_in</span>
+                <span class="n">wall_in_E</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_E_wall_in</span>
+                <span class="n">wall_in_S</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_S_wall_in</span>
+                <span class="n">wall_in_W</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_W_wall_in</span>
+                <span class="n">deck_below_in</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_deck_below</span>
+                <span class="n">deck_above_in</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_deck_above</span>
+                <span class="n">roof_in</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_roof_in</span>
+                <span class="n">floor_in</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">T_floor_in</span>
+
+            <span class="c1"># Hourly Profiles</span>
+            <span class="n">profile_hourly_heat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cumulative_heat_hourly</span><span class="p">)</span>  <span class="c1"># hourly space heating demand [kWh]</span>
+            <span class="n">profile_hourly_cool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cumulative_cool_hourly</span><span class="p">)</span>  <span class="c1"># hourly space cooling demand [kWh]</span>
+
+        <span class="n">profile_monthly_heat</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">number_floor</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">profile_monthly_heat</span><span class="p">]</span>
+        <span class="n">profile_monthly_cool</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">number_floor</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">profile_monthly_cool</span><span class="p">]</span>
+        <span class="n">profile_hourly_heat</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">number_floor</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">profile_hourly_heat</span><span class="p">]</span>
+        <span class="n">profile_hourly_cool</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">number_floor</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">profile_hourly_cool</span><span class="p">]</span>
+
+        <span class="c1"># Adjust Capacity</span>
+        <span class="n">stream_hot</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s2">&quot;building heating&quot;</span><span class="p">,</span>
+                <span class="s1">&#39;object_type&#39;</span><span class="p">:</span> <span class="s1">&#39;stream&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;fluid&#39;</span><span class="p">:</span> <span class="s1">&#39;water&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;stream_type&#39;</span><span class="p">:</span> <span class="s1">&#39;inflow&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;capacity&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">profile_hourly_heat</span><span class="p">),</span>
+                <span class="s2">&quot;monthly_generation&quot;</span><span class="p">:</span> <span class="n">profile_monthly_heat</span><span class="p">,</span>  <span class="c1"># [kWh]</span>
+                <span class="s2">&quot;hourly_generation&quot;</span><span class="p">:</span> <span class="n">profile_hourly_heat</span><span class="p">,</span>  <span class="c1"># [kWh]</span>
+                <span class="s2">&quot;supply_temperature&quot;</span><span class="p">:</span> <span class="n">supply_temperature_heat</span><span class="p">,</span>  <span class="c1"># [ºC]</span>
+                <span class="s2">&quot;target_temperature&quot;</span><span class="p">:</span> <span class="n">target_temperature_heat</span><span class="p">,</span>  <span class="c1"># [ºC]</span>
+                <span class="s2">&quot;schedule&quot;</span><span class="p">:</span> <span class="n">profile</span><span class="p">,</span>
+                <span class="s2">&quot;fuel&quot;</span><span class="p">:</span> <span class="n">ref_system_fuel_type_heating</span><span class="p">,</span>
+                <span class="s2">&quot;eff_equipment&quot;</span><span class="p">:</span> <span class="n">ref_system_eff_equipment_heating</span>
+        <span class="p">}</span>
+
+
+        <span class="n">stream_cold</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s2">&quot;building cooling&quot;</span><span class="p">,</span>
+                <span class="s1">&#39;object_type&#39;</span><span class="p">:</span> <span class="s1">&#39;stream&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;fluid&#39;</span><span class="p">:</span> <span class="s1">&#39;water&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;stream_type&#39;</span><span class="p">:</span> <span class="s1">&#39;inflow&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;capacity&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">profile_hourly_cool</span><span class="p">),</span>
+                <span class="s2">&quot;monthly_generation&quot;</span><span class="p">:</span> <span class="n">profile_monthly_cool</span><span class="p">,</span>  <span class="c1"># [kWh]</span>
+                <span class="s2">&quot;hourly_generation&quot;</span><span class="p">:</span> <span class="n">profile_hourly_cool</span><span class="p">,</span>  <span class="c1"># [kWh]</span>
+                <span class="s2">&quot;supply_temperature&quot;</span><span class="p">:</span> <span class="n">supply_temperature_cool</span><span class="p">,</span>  <span class="c1"># [ºC]</span>
+                <span class="s2">&quot;target_temperature&quot;</span><span class="p">:</span> <span class="n">target_temperature_cool</span><span class="p">,</span>  <span class="c1"># [ºC]</span>
+                <span class="s2">&quot;schedule&quot;</span><span class="p">:</span> <span class="n">profile</span><span class="p">,</span>
+                <span class="s2">&quot;fuel&quot;</span><span class="p">:</span> <span class="n">ref_system_fuel_type_cooling</span><span class="p">,</span>
+                <span class="s2">&quot;eff_equipment&quot;</span><span class="p">:</span> <span class="n">ref_system_eff_equipment_cooling</span>
+            <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">real_heating_monthly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream_hot</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="nb">vars</span><span class="p">(</span><span class="n">real_heating_monthly_capacity</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">real_heating_yearly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream_hot</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">user_yearly_capacity</span><span class="o">=</span><span class="n">real_heating_yearly_capacity</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">real_cooling_monthly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream_cold</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_cold</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="nb">vars</span><span class="p">(</span><span class="n">real_cooling_monthly_capacity</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">real_cooling_yearly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream_cold</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_cold</span><span class="p">,</span> <span class="n">user_yearly_capacity</span><span class="o">=</span><span class="n">real_cooling_yearly_capacity</span><span class="p">)</span>
+
+
+        <span class="c1">##############################</span>
+        <span class="c1"># OUTPUT</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;streams&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">stream_cold</span><span class="p">]}</span>
+
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModuleRuntimeException</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;building.py&quot;</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Building characterization infeasible. Please check your inputs.&quot;</span>
+        <span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

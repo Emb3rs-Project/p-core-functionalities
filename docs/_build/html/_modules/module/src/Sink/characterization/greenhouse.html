@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>module.src.Sink.characterization.greenhouse &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+      <li>module.src.Sink.characterization.greenhouse</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for module.src.Sink.characterization.greenhouse</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour</span> <span class="kn">import</span> <span class="n">schedule_hour</span>
+<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.month_last_hour</span> <span class="kn">import</span> <span class="n">month_last_hour</span>
+<span class="kn">from</span> <span class="nn">...General.Simple_User.adjust_capacity</span> <span class="kn">import</span> <span class="n">adjust_capacity</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.building_climate_api</span> <span class="kn">import</span> <span class="n">building_climate_api</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.wall_area</span> <span class="kn">import</span> <span class="n">wall_area</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.h_convection_horizontal</span> <span class="kn">import</span> <span class="n">h_convection_horizontal</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.h_convection_vertical</span> <span class="kn">import</span> <span class="n">h_convection_vertical</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.ht_radiation_equation</span> <span class="kn">import</span> <span class="n">ht_radiation_equation</span>
+<span class="kn">from</span> <span class="nn">.Auxiliary.info_time_step_climate_data</span> <span class="kn">import</span> <span class="n">info_time_step_climate_data</span>
+<span class="kn">from</span> <span class="nn">...Error_Handling.error_greenhouse</span> <span class="kn">import</span> <span class="n">PlatformGreenhouse</span>
+<span class="kn">from</span> <span class="nn">...Error_Handling.runtime_error</span> <span class="kn">import</span> <span class="n">ModuleRuntimeException</span>
+
+
+<div class="viewcode-block" id="greenhouse"><a class="viewcode-back" href="../../../../../Greenhouse.html#module.src.Sink.characterization.greenhouse.greenhouse">[docs]</a><span class="k">def</span> <span class="nf">greenhouse</span><span class="p">(</span><span class="n">in_var</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Greenhouse characterization</span>
+
+<span class="sd">    Simulates the heat needs over the year according to the greenhouse specifications and climate</span>
+<span class="sd">    weather data of the location</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_var : dict</span>
+<span class="sd">        All necessary data to perform the building characterization data, with the following key:</span>
+
+<span class="sd">        platform: dict</span>
+<span class="sd">            Data obtained from the platform, with the following keys:</span>
+
+<span class="sd">                 - location : list</span>
+<span class="sd">                     Location [º]; [latitude,longitude]</span>
+
+<span class="sd">                 - width: float:</span>
+<span class="sd">                     Width [m]</span>
+
+<span class="sd">                 - length: float:</span>
+<span class="sd">                     Length [m]</span>
+
+<span class="sd">                 - height: float:</span>
+<span class="sd">                     Height [m]</span>
+
+<span class="sd">                 - greenhouse_orientation: str:</span>
+<span class="sd">                     Greenhouse’s main facade orientation; &quot;N&quot;,&quot;S&quot;,&quot;E&quot; or &quot;W&quot;</span>
+
+<span class="sd">                 - daily_periods: float:</span>
+<span class="sd">                     Period of daily periods [h]</span>
+
+<span class="sd">                 - shutdown_periods: list:</span>
+<span class="sd">                     Period of days stream is not available [day]</span>
+
+<span class="sd">                 - greenhouse_efficiency:</span>
+<span class="sd">                     Greenhouse air infiltration tightness:</span>
+<span class="sd">                                 1 = tight cover with low infiltrations</span>
+<span class="sd">                                 2 = medium sealing</span>
+<span class="sd">                                 3 = leaky cover</span>
+
+<span class="sd">                 - T_heat_on: float:</span>
+<span class="sd">                     Heating setpoint temperature [ºC]</span>
+
+<span class="sd">                 - thermal_blanket:</span>
+<span class="sd">                     If greenhouse has a thermal blanket/curtain being used at night; 1=yes,0=no</span>
+
+<span class="sd">                 - artificial_lights_system:</span>
+<span class="sd">                     lighting hours in greenhouse; 1=yes,0=no</span>
+
+<span class="sd">                 - ref_system_fuel_type: str</span>
+<span class="sd">                     Fuel type associated; e.g. &quot;natural_gas&quot;,&quot;electricity&quot;,&quot;biomass&quot;,&quot;fuel_oil&quot;,&quot;none&quot;</span>
+
+<span class="sd">                 - ref_system_eff_equipment: float, optional</span>
+<span class="sd">                     COP of the cooling equipment;</span>
+
+<span class="sd">                 - real_monthly_capacity: dict, optional</span>
+<span class="sd">                     Real monthly data - for each month of the year</span>
+
+<span class="sd">                 - real_yearly_capacity: float, optional</span>
+<span class="sd">                     Real yearly data - single value</span>
+
+<span class="sd">                 - hours_lights_needed:</span>
+<span class="sd">                     hours of light the plant needs (accounting with daily solar hours) [h]</span>
+
+<span class="sd">                 - supply_temperature_heat: float, optional</span>
+<span class="sd">                     Heating System ReturnTemperature [ºC]; DEFAULT=30</span>
+
+<span class="sd">                 - target_temperature_heat: float, optional</span>
+<span class="sd">                     Heating System Supply Temperature [ºC]; DEFAULT=50</span>
+
+<span class="sd">                 - leaf_area_index, optional</span>
+<span class="sd">                     Ratio of leaf area over ground area []; DEFAULT=1</span>
+
+<span class="sd">                 - rh_air, optional</span>
+<span class="sd">                     Relative humidity [%]; DEFAULT=80</span>
+
+<span class="sd">                 - u_cover, optional</span>
+<span class="sd">                     Cover thermal conductivity [W/m2.K]; DEFAULT=6</span>
+
+<span class="sd">                 - indoor_air_speed, optional</span>
+<span class="sd">                     Indoor air velocity [m/s]; DEFAULT=0.1</span>
+
+<span class="sd">                 - leaf_length, optional</span>
+<span class="sd">                     Characteristic length of a plant leaf [m]; DEFAULT=0.027</span>
+
+<span class="sd">                 - tau_cover_long_wave_radiation, optional</span>
+<span class="sd">                     Cover transmissivity coefficient to long-wave radiation; DEFAULT=0.3</span>
+
+<span class="sd">                 - emissivity_cover_long_wave_radiation, optional</span>
+<span class="sd">                     Cover emissivity coefficient to long-wave radiation; DEFAULT=0.2</span>
+
+<span class="sd">                 - tau_cover_solar_radiation, optional</span>
+<span class="sd">                     Cover&#39;s transmissivity coefficient to solar radiation []; DEFAULT=0.9</span>
+
+<span class="sd">                 - power_lights, optional</span>
+<span class="sd">                     Light power per square meter [W/m2]; DEFAULT=20</span>
+
+<span class="sd">    kb : dict</span>
+<span class="sd">        Knowledge base data</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        output : dict</span>
+<span class="sd">        Streams data</span>
+
+<span class="sd">        - streams : list</span>
+<span class="sd">            List with dicts of all streams with the following keys:</span>
+
+<span class="sd">                - id : int</span>
+<span class="sd">                    stream ID []</span>
+
+<span class="sd">                - name : str</span>
+<span class="sd">                    Stream name []</span>
+
+<span class="sd">                - object_type : str</span>
+<span class="sd">                    DEFAULT = &quot;stream&quot; []</span>
+
+<span class="sd">                - object_linked_id</span>
+<span class="sd">                    None: DEFAULT=NONE, since no equipment/process is associated</span>
+
+<span class="sd">                - stream_type : str</span>
+<span class="sd">                    Stream designation []; inflow, outflow, excess_heat</span>
+
+<span class="sd">                - supply_temperature : float</span>
+<span class="sd">                    Stream&#39;s supply/initial temperature [ºC]</span>
+
+<span class="sd">                - target_temperature : float</span>
+<span class="sd">                    Stream&#39;s target/final temperature [ºC]</span>
+
+<span class="sd">                - fluid : str</span>
+<span class="sd">                    Stream fluid name</span>
+
+<span class="sd">                - flowrate : float</span>
+<span class="sd">                    Stream mass flowrate[kg/h]</span>
+
+<span class="sd">                - schedule : list</span>
+<span class="sd">                    Hourly values between 0 and 1, according to the capacity ration on that hour</span>
+
+<span class="sd">                - hourly_generation: list</span>
+<span class="sd">                    Stream&#39;s hourly capacity [kWh]</span>
+
+<span class="sd">                - capacity : float</span>
+<span class="sd">                    Stream&#39;s capacity [kW]</span>
+
+<span class="sd">                - monthly_generation : list</span>
+<span class="sd">                    Stream&#39;s monthly capacity [kWh]</span>
+
+<span class="sd">                - fuel : str</span>
+<span class="sd">                    Associated equipment fuel name []</span>
+
+<span class="sd">                - eff_equipment : float</span>
+<span class="sd">                    Associated equipment efficiency []</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="c1">##################################################################################################################</span>
+    <span class="c1"># INPUT ----------------------------------------------</span>
+    <span class="c1"># validate inputs</span>
+    <span class="n">platform_data</span> <span class="o">=</span> <span class="n">PlatformGreenhouse</span><span class="p">(</span><span class="o">**</span><span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">])</span>
+
+    <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">location</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">width</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">length</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">height</span>
+    <span class="n">shutdown_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">shutdown_periods</span>
+    <span class="n">daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">daily_periods</span>
+    <span class="n">greenhouse_orientation</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">greenhouse_orientation</span>
+    <span class="n">artificial_lights_system</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">artificial_lights_system</span>
+    <span class="n">T_cool_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">T_cool_on</span>
+    <span class="n">T_heat_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">T_heat_on</span>
+    <span class="n">thermal_blanket</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">thermal_blanket</span>
+    <span class="n">saturday_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">saturday_on</span>
+    <span class="n">sunday_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">sunday_on</span>
+    <span class="n">f_c</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">f_c</span>
+    <span class="n">supply_temperature_heat</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">supply_temperature_heat</span>
+    <span class="n">target_temperature_heat</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">target_temperature_heat</span>
+    <span class="n">leaf_area_index</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">leaf_area_index</span>  <span class="c1"># ratio of area_plants/area_floor</span>
+    <span class="n">rh_air</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">rh_air</span>  <span class="c1"># controlled interior air RH</span>
+    <span class="n">u_cover</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">u_cover</span>  <span class="c1"># heat transfer coefficient cover [W/m2.K]</span>
+    <span class="n">indoor_air_speed</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">indoor_air_speed</span>  <span class="c1"># indoor_air_speed [m/s]</span>
+    <span class="n">leaf_length</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">leaf_length</span>  <span class="c1"># characteristic leaf length [m]</span>
+    <span class="n">tau_cover_long_wave_radiation</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">tau_cover_long_wave_radiation</span>  <span class="c1"># cover transmissivity long wave radiation</span>
+    <span class="n">emissivity_cover_long_wave_radiation</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">emissivity_cover_long_wave_radiation</span>  <span class="c1"># emissivity long wave radiation</span>
+    <span class="n">tau_cover_solar_radiation</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">tau_cover_solar_radiation</span>  <span class="c1"># cover transmissivity solar radiation</span>
+    <span class="n">power_lights</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">power_lights</span>  <span class="c1"># lighting power per square meter [W/m2]</span>
+    <span class="n">hours_lights_needed</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">hours_lights_needed</span>  <span class="c1"># lighting hours in greenhouse (counting with daily iluminance) [h]</span>
+    <span class="n">real_heating_monthly_capacity</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">real_heating_monthly_capacity</span>
+    <span class="n">real_heating_yearly_capacity</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">real_heating_yearly_capacity</span>
+    <span class="n">ref_system_fuel_type</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ref_system_fuel_type</span>
+    <span class="n">ref_system_eff_equipment</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ref_system_eff_equipment</span>
+
+    <span class="c1">##################################################################################################################</span>
+    <span class="c1"># DEFINED VARS ----------------------------------------------------------------------------------</span>
+    <span class="c1"># Greenhouse characteristics</span>
+    <span class="n">alpha_plants_and_soil</span> <span class="o">=</span> <span class="mf">0.75</span>
+    <span class="n">alpha_greenhouse</span> <span class="o">=</span> <span class="n">tau_cover_solar_radiation</span> <span class="o">*</span> <span class="n">alpha_plants_and_soil</span>
+    <span class="n">emissivity_greenhouse</span> <span class="o">=</span> <span class="mf">0.9</span>
+    <span class="n">T_ground</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># ground temperature [ºC]</span>
+    <span class="n">L_ground</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># [m]</span>
+    <span class="n">k_ground</span> <span class="o">=</span> <span class="mf">1.4</span>  <span class="c1"># [W/m.K]</span>
+    <span class="n">u_ground</span> <span class="o">=</span> <span class="n">k_ground</span> <span class="o">/</span> <span class="n">L_ground</span>  <span class="c1"># [W/m2.K]</span>
+    <span class="n">u_thermal_cover</span> <span class="o">=</span> <span class="mf">0.75</span>
+
+    <span class="c1"># Fluids Properties</span>
+    <span class="n">p_atmospheric</span> <span class="o">=</span> <span class="mi">101</span>  <span class="c1"># atmospheric pressure [kPa]</span>
+    <span class="n">rho_air</span> <span class="o">=</span> <span class="mf">1.225</span>  <span class="c1"># [kg/m3]</span>
+    <span class="n">cp_air</span> <span class="o">=</span> <span class="mi">1005</span>  <span class="c1"># [J/kg.K]</span>
+    <span class="n">latent_heat_water</span> <span class="o">=</span> <span class="mi">2450</span> <span class="o">*</span> <span class="mi">1000</span>  <span class="c1"># [J/kg]</span>
+
+    <span class="c1">##################################################################################################################</span>
+    <span class="c1"># COMPUTE ----------------------------------------------------------------------------------</span>
+    <span class="c1"># Schedule</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">schedule_hour</span><span class="p">(</span><span class="n">saturday_on</span><span class="p">,</span> <span class="n">sunday_on</span><span class="p">,</span> <span class="n">shutdown_periods</span><span class="p">,</span> <span class="n">daily_periods</span><span class="p">)</span>
+    <span class="n">month_last_hour_vector</span> <span class="o">=</span> <span class="n">month_last_hour</span><span class="p">()</span>
+
+    <span class="c1"># Climate data</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">df_climate</span> <span class="o">=</span> <span class="n">building_climate_api</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModuleRuntimeException</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;greenhouse.py&quot;</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Greenhouse characterization infeasible. Climate data not possible to obtain, change location or try later.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Guarantee desired minimum plant illumination</span>
+    <span class="n">df_climate</span><span class="p">[</span><span class="s1">&#39;turn_on_lights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">save_first_hour</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>  <span class="c1"># random value</span>
+    <span class="n">save_last_hour</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>
+
+    <span class="k">if</span> <span class="n">artificial_lights_system</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">solar_radiation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_climate</span><span class="p">[</span><span class="s1">&#39;Q_sun_roof&#39;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">solar_radiation</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Q_sun_roof&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">save_first_hour</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">solar_radiation</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Q_sun_roof&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">save_last_hour</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">save_first_hour</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">10</span> <span class="ow">and</span> <span class="n">save_last_hour</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">10</span><span class="p">:</span>
+                    <span class="n">hours_sun_light</span> <span class="o">=</span> <span class="n">save_last_hour</span> <span class="o">-</span> <span class="n">save_first_hour</span>
+                    <span class="k">if</span> <span class="n">hours_sun_light</span> <span class="o">&lt;</span> <span class="n">hours_lights_needed</span><span class="p">:</span>
+                        <span class="n">hours_light_missing</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">hours_lights_needed</span> <span class="o">-</span> <span class="n">hours_sun_light</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># hours of artificial light needed</span>
+
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hours_light_missing</span><span class="p">):</span>
+                            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">save_first_hour</span> <span class="o">-</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39;turn_on_lights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                            <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">save_last_hour</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39;turn_on_lights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+                    <span class="n">save_first_hour</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>  <span class="c1"># reset vars</span>
+                    <span class="n">save_last_hour</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>
+
+    <span class="c1"># Greenhouse Properties</span>
+    <span class="n">area_floor</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="n">length</span>  <span class="c1"># [m2]</span>
+    <span class="n">area_plants</span> <span class="o">=</span> <span class="n">area_floor</span> <span class="o">*</span> <span class="n">leaf_area_index</span>
+    <span class="n">area_N_wall</span> <span class="o">=</span> <span class="n">wall_area</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="n">greenhouse_orientation</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>  <span class="c1"># area North facade [m2]</span>
+    <span class="n">area_S_wall</span> <span class="o">=</span> <span class="n">wall_area</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">greenhouse_orientation</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+    <span class="n">area_E_wall</span> <span class="o">=</span> <span class="n">wall_area</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="n">greenhouse_orientation</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+    <span class="n">area_W_wall</span> <span class="o">=</span> <span class="n">wall_area</span><span class="p">(</span><span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="n">greenhouse_orientation</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+    <span class="n">volume_greenhouse</span> <span class="o">=</span> <span class="n">area_floor</span> <span class="o">*</span> <span class="n">height</span>  <span class="c1"># indoor air volume per floor [m3]</span>
+    <span class="n">total_cover_area</span> <span class="o">=</span> <span class="p">(</span><span class="n">area_W_wall</span> <span class="o">+</span> <span class="n">area_N_wall</span> <span class="o">+</span> <span class="n">area_S_wall</span> <span class="o">+</span> <span class="n">area_E_wall</span> <span class="o">+</span> <span class="n">area_floor</span><span class="p">)</span>
+
+    <span class="c1">##################################################################################################################</span>
+    <span class="c1"># SIMULATION ----------------------------------------------------------------</span>
+    <span class="c1"># Initialize vars</span>
+    <span class="n">profile_hourly_heat</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">profile_monthly_heat</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">profile_monthly_cool</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cumulative_heat_monthly</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cumulative_cool_monthly</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">T_initial</span> <span class="o">=</span> <span class="mi">15</span>
+
+    <span class="k">if</span> <span class="n">T_initial</span> <span class="o">&lt;</span> <span class="n">T_heat_on</span><span class="p">:</span>
+        <span class="n">T_initial</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">T_heat_on</span><span class="p">)</span>
+    <span class="n">T_interior</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">T_initial</span><span class="p">)</span>  <span class="c1"># floor interior air temperature</span>
+
+    <span class="c1"># Simulation Info</span>
+    <span class="n">time_step</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">15</span>  <span class="c1"># time step [s]</span>
+    <span class="n">one_hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">3600</span> <span class="o">/</span> <span class="n">time_step</span><span class="p">)</span>  <span class="c1"># time step number</span>
+    <span class="n">max_air_delta_T_per_minute</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># 1ºC per min</span>
+    <span class="n">max_air_delta_T_allowed</span> <span class="o">=</span> <span class="n">time_step</span> <span class="o">*</span> <span class="n">max_air_delta_T_per_minute</span> <span class="o">/</span> <span class="mi">60</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">profile_index</span><span class="p">,</span> <span class="n">profile_operating</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">profile_index</span> <span class="ow">in</span> <span class="n">month_last_hour_vector</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">profile_index</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
+                <span class="n">profile_monthly_heat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cumulative_heat_monthly</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># space heating demand [kWh]</span>
+                <span class="n">profile_monthly_cool</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cumulative_cool_monthly</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># space cooling demand [kWh]</span>
+                <span class="n">cumulative_heat_monthly</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reset monthly heating needs</span>
+                <span class="n">cumulative_cool_monthly</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reset monthly cooling needs</span>
+
+            <span class="n">cumulative_heat_hourly</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># reset hourly heating needs</span>
+
+            <span class="k">if</span> <span class="n">profile_index</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">break</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">one_hour</span><span class="p">):</span>
+                <span class="c1"># Climate data</span>
+                <span class="n">T_exterior</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span> <span class="n">Q_sun_N_facade</span><span class="p">,</span> <span class="n">Q_sun_S_facade</span><span class="p">,</span> <span class="n">Q_sun_E_facade</span><span class="p">,</span> <span class="n">Q_sun_W_facade</span><span class="p">,</span> <span class="n">Q_sun_roof</span><span class="p">,</span> <span class="n">wind_speed</span> <span class="o">=</span> <span class="n">info_time_step_climate_data</span><span class="p">(</span>
+                    <span class="n">df_climate</span><span class="p">,</span> <span class="n">profile_index</span><span class="p">,</span> <span class="n">one_hour</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">thermal_blanket</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">Q_sun_roof</span> <span class="o">&lt;=</span> <span class="mi">80</span><span class="p">:</span>  <span class="c1"># simplification to determine when blanket is covering greenhouse</span>
+                        <span class="n">Q_sun_roof</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="c1"># Correct wind speed</span>
+                <span class="n">z_0</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># surface roughness</span>
+                <span class="n">wind_speed</span> <span class="o">=</span> <span class="n">wind_speed</span> <span class="o">*</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">z_0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span> <span class="o">/</span> <span class="n">z_0</span><span class="p">))</span>
+                <span class="n">u_exterior</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5.8</span> <span class="o">+</span> <span class="mf">3.94</span> <span class="o">*</span> <span class="n">wind_speed</span><span class="p">)</span>  <span class="c1"># outside heat convection coef. [W/m2.K]</span>
+
+                <span class="c1"># GREENHOUSE HEAT GAINS/LOSSES</span>
+                <span class="c1"># Solar radiation</span>
+                <span class="n">Q_sun_greenhouse</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q_sun_roof</span> <span class="o">*</span> <span class="n">area_floor</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha_greenhouse</span>
+
+                <span class="c1"># Infiltrations</span>
+                <span class="n">f_t</span> <span class="o">=</span> <span class="mf">0.16</span>
+                <span class="n">c_w</span> <span class="o">=</span> <span class="mf">0.22</span>
+                <span class="n">area_infiltration</span> <span class="o">=</span> <span class="n">total_cover_area</span> <span class="o">*</span> <span class="n">f_c</span>
+                <span class="n">air_change_per_second</span> <span class="o">=</span> <span class="n">area_infiltration</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                    <span class="n">c_w</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">wind_speed</span> <span class="o">+</span> <span class="n">f_t</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">T_interior</span> <span class="o">-</span> <span class="n">T_exterior</span><span class="p">)))</span>  <span class="c1"># [m3/s]</span>
+
+                <span class="c1"># Evapotranspiration</span>
+                <span class="n">vapour_p_plants</span> <span class="o">=</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">20.386</span> <span class="o">-</span> <span class="mi">5132</span> <span class="o">/</span> <span class="p">(</span><span class="n">T_interior</span> <span class="o">+</span> <span class="mf">273.1</span><span class="p">)))</span> <span class="o">*</span> <span class="mf">0.13</span>  <span class="c1"># [kPa]</span>
+                <span class="n">vapour_p_air</span> <span class="o">=</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">20.386</span> <span class="o">-</span> <span class="mi">5132</span> <span class="o">/</span> <span class="p">(</span><span class="n">T_interior</span> <span class="o">+</span> <span class="mf">273.1</span><span class="p">)))</span> <span class="o">*</span> <span class="p">(</span><span class="n">rh_air</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.13</span>  <span class="c1"># [kPa]</span>
+                <span class="n">w_plant</span> <span class="o">=</span> <span class="mf">0.6219</span> <span class="o">*</span> <span class="n">vapour_p_plants</span> <span class="o">/</span> <span class="p">(</span><span class="n">p_atmospheric</span> <span class="o">-</span> <span class="n">vapour_p_plants</span><span class="p">)</span>  <span class="c1"># [kg_water/kg_air]</span>
+                <span class="n">w_air</span> <span class="o">=</span> <span class="mf">0.6219</span> <span class="o">*</span> <span class="n">vapour_p_air</span> <span class="o">/</span> <span class="p">(</span><span class="n">p_atmospheric</span> <span class="o">-</span> <span class="n">vapour_p_air</span><span class="p">)</span>
+                <span class="n">R_aerodynamic</span> <span class="o">=</span> <span class="mi">220</span> <span class="o">*</span> <span class="p">(</span><span class="n">leaf_length</span> <span class="o">**</span> <span class="mf">0.2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">indoor_air_speed</span> <span class="o">**</span> <span class="mf">0.8</span><span class="p">)</span>
+                <span class="n">R_stomatal</span> <span class="o">=</span> <span class="mi">200</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">0.05</span> <span class="o">*</span> <span class="p">(</span><span class="n">Q_sun_roof</span> <span class="o">*</span> <span class="n">alpha_greenhouse</span> <span class="o">-</span> <span class="mi">50</span><span class="p">))))</span>
+                <span class="n">m_evap_water</span> <span class="o">=</span> <span class="n">area_plants</span> <span class="o">*</span> <span class="n">rho_air</span> <span class="o">*</span> <span class="p">(</span><span class="n">w_plant</span> <span class="o">-</span> <span class="n">w_air</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">R_aerodynamic</span> <span class="o">+</span> <span class="n">R_stomatal</span><span class="p">)</span>  <span class="c1"># [kg/s]</span>
+
+                <span class="k">if</span> <span class="n">m_evap_water</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">m_evap_water</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="n">Q_plants</span> <span class="o">=</span> <span class="n">m_evap_water</span> <span class="o">*</span> <span class="n">latent_heat_water</span>  <span class="c1"># [W]</span>
+
+                <span class="c1"># Conduction Ground Losses</span>
+                <span class="n">Q_lost_ground</span> <span class="o">=</span> <span class="n">u_ground</span> <span class="o">*</span> <span class="n">area_floor</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_ground</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span>
+
+                <span class="c1"># Convection Cover Losses</span>
+                <span class="n">T_cover</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">T_exterior</span> <span class="o">+</span> <span class="n">T_interior</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span>  <span class="c1"># average T_cover [ºC]</span>
+                <span class="n">h_vertical</span> <span class="o">=</span> <span class="n">h_convection_vertical</span><span class="p">(</span><span class="n">T_cover</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">)</span>
+                <span class="n">h_horizontal</span> <span class="o">=</span> <span class="n">h_convection_horizontal</span><span class="p">(</span><span class="n">T_cover</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">)</span>
+
+                <span class="n">coef_horizontal</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">coef_vertical</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">h_horizontal</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">h_horizontal</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">coef_horizontal</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="n">h_vertical</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">h_vertical</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">coef_vertical</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="k">if</span> <span class="n">Q_sun_greenhouse</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">thermal_blanket</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">val_thermal_blanket</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">val_thermal_blanket</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="n">u_horizontal</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">u_cover</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">u_thermal_cover</span> <span class="o">*</span> <span class="n">val_thermal_blanket</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">u_exterior</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">h_horizontal</span> <span class="o">*</span> <span class="n">coef_horizontal</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span>
+                                   <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">u_vertical</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">u_cover</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">u_thermal_cover</span> <span class="o">*</span> <span class="n">val_thermal_blanket</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">u_exterior</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">h_vertical</span> <span class="o">*</span> <span class="n">coef_vertical</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span>
+                                 <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">Q_top</span> <span class="o">=</span> <span class="n">area_floor</span> <span class="o">*</span> <span class="n">u_horizontal</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_exterior</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span>
+                <span class="n">Q_vertical_wall_small</span> <span class="o">=</span> <span class="n">area_E_wall</span> <span class="o">*</span> <span class="n">u_vertical</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_exterior</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span>
+                <span class="n">Q_vertical_wall_big</span> <span class="o">=</span> <span class="n">area_N_wall</span> <span class="o">*</span> <span class="n">u_vertical</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_exterior</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span>
+                <span class="n">Q_lost_exterior</span> <span class="o">=</span> <span class="n">Q_top</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">Q_vertical_wall_small</span> <span class="o">+</span> <span class="n">Q_vertical_wall_big</span><span class="p">)</span>
+
+                <span class="c1"># Radiation Losses</span>
+                <span class="k">if</span> <span class="n">Q_sun_greenhouse</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">Q_rad_lost</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">view_factor</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">area_sky</span> <span class="o">=</span> <span class="n">total_cover_area</span>
+                    <span class="n">Q_rad_sky</span> <span class="o">=</span> <span class="n">ht_radiation_equation</span><span class="p">(</span><span class="n">emissivity_greenhouse</span><span class="p">,</span> <span class="n">area_sky</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">,</span> <span class="n">T_sky</span><span class="p">,</span>
+                                                      <span class="n">view_factor</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau_cover_long_wave_radiation</span>
+                    <span class="n">Q_rad_ground</span> <span class="o">=</span> <span class="n">ht_radiation_equation</span><span class="p">(</span><span class="n">emissivity_cover_long_wave_radiation</span><span class="p">,</span> <span class="n">area_sky</span><span class="p">,</span> <span class="n">T_interior</span><span class="p">,</span>
+                                                         <span class="n">T_cover</span><span class="p">,</span> <span class="n">view_factor</span><span class="p">)</span>
+                    <span class="n">Q_rad_lost</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q_rad_sky</span> <span class="o">+</span> <span class="n">Q_rad_ground</span><span class="p">)</span>  <span class="c1"># [W]</span>
+
+                <span class="c1"># Infiltration</span>
+                <span class="n">Q_infiltrations</span> <span class="o">=</span> <span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">air_change_per_second</span> <span class="o">*</span> <span class="p">(</span><span class="n">T_exterior</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span>
+
+                <span class="c1"># Lights</span>
+                <span class="k">if</span> <span class="n">df_climate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">profile_index</span><span class="p">,</span> <span class="s1">&#39;turn_on_lights&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">Q_lights</span> <span class="o">=</span> <span class="n">power_lights</span> <span class="o">*</span> <span class="n">area_floor</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Q_lights</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="c1"># Greenhouse Air Heat Balance</span>
+                <span class="n">Q_greenhouse</span> <span class="o">=</span> <span class="n">Q_lights</span> <span class="o">+</span> \
+                               <span class="n">Q_infiltrations</span> <span class="o">+</span> \
+                               <span class="n">Q_lost_ground</span> <span class="o">+</span> \
+                               <span class="n">Q_lost_exterior</span> <span class="o">+</span> \
+                               <span class="n">Q_sun_greenhouse</span> <span class="o">-</span> \
+                               <span class="n">Q_plants</span> <span class="o">+</span> \
+                               <span class="n">Q_rad_lost</span>
+
+                <span class="c1"># SPACE HEATING/COOLING ACTUATION</span>
+                <span class="c1"># on work time</span>
+                <span class="k">if</span> <span class="n">profile_operating</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">T_interior_guess</span> <span class="o">=</span> <span class="n">T_interior</span> <span class="o">+</span> <span class="n">Q_greenhouse</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_greenhouse</span><span class="p">)</span>
+                    <span class="c1"># activating space heating</span>
+                    <span class="k">if</span> <span class="n">T_interior</span> <span class="o">&lt;</span> <span class="n">T_heat_on</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&lt;</span> <span class="n">T_heat_on</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">Q_greenhouse</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">T_heat_on</span> <span class="o">-</span> <span class="n">T_interior</span> <span class="o">&lt;</span> <span class="n">max_air_delta_T_allowed</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Q_greenhouse</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_greenhouse</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">T_heat_on</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Q_greenhouse</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>
+                                        <span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_greenhouse</span><span class="p">)</span> <span class="o">*</span> <span class="n">max_air_delta_T_allowed</span> <span class="o">/</span> <span class="n">time_step</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">T_interior_guess</span> <span class="o">-</span> <span class="n">T_interior</span> <span class="o">&lt;</span> <span class="n">max_air_delta_T_allowed</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_greenhouse</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">max_air_delta_T_allowed</span> <span class="o">-</span> <span class="p">(</span><span class="n">T_interior_guess</span> <span class="o">-</span> <span class="n">T_interior</span><span class="p">))</span> <span class="o">/</span> <span class="n">time_step</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="mi">0</span>
+
+                    <span class="k">elif</span> <span class="n">T_interior</span> <span class="o">&gt;=</span> <span class="n">T_heat_on</span> <span class="ow">and</span> <span class="n">T_interior_guess</span> <span class="o">&lt;</span> <span class="n">T_heat_on</span><span class="p">:</span>
+                        <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_greenhouse</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+                                <span class="n">T_heat_on</span> <span class="o">-</span> <span class="n">T_interior_guess</span><span class="p">)</span> <span class="o">/</span> <span class="n">time_step</span>
+
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Q_heat_required</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="c1"># COMPUTE INTERIOR TEMPERATURE</span>
+                <span class="n">T_interior</span> <span class="o">=</span> <span class="n">T_interior</span> <span class="o">+</span> <span class="p">(</span><span class="n">Q_greenhouse</span> <span class="o">+</span> <span class="n">Q_heat_required</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="p">(</span>
+                        <span class="n">rho_air</span> <span class="o">*</span> <span class="n">cp_air</span> <span class="o">*</span> <span class="n">volume_greenhouse</span><span class="p">)</span>  <span class="c1"># [ºC]</span>
+
+                <span class="k">if</span> <span class="n">T_interior</span> <span class="o">&gt;=</span> <span class="n">T_cool_on</span> <span class="ow">and</span> <span class="n">T_cool_on</span> <span class="o">&gt;=</span> <span class="n">T_exterior</span><span class="p">:</span>
+                    <span class="n">T_interior</span> <span class="o">=</span> <span class="n">T_cool_on</span>
+                <span class="k">elif</span> <span class="n">T_interior</span> <span class="o">&gt;=</span> <span class="n">T_cool_on</span> <span class="ow">and</span> <span class="n">T_exterior</span> <span class="o">&gt;=</span> <span class="n">T_cool_on</span><span class="p">:</span>
+                    <span class="n">T_interior</span> <span class="o">=</span> <span class="n">T_exterior</span>
+
+                <span class="k">if</span> <span class="n">Q_heat_required</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">cumulative_heat_monthly</span> <span class="o">+=</span> <span class="n">Q_heat_required</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="mi">3600000</span>  <span class="c1"># [kW]</span>
+                    <span class="n">cumulative_heat_hourly</span> <span class="o">+=</span> <span class="n">Q_heat_required</span> <span class="o">*</span> <span class="n">time_step</span> <span class="o">/</span> <span class="mi">3600000</span>
+
+            <span class="c1"># Hourly Profiles</span>
+            <span class="n">profile_hourly_heat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">cumulative_heat_hourly</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># space heating demand [kWh]</span>
+
+
+        <span class="n">stream_hot</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;greenhouse heating&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;object_type&quot;</span><span class="p">:</span> <span class="s2">&quot;stream&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fluid&quot;</span><span class="p">:</span> <span class="s1">&#39;water&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;stream_type&quot;</span><span class="p">:</span> <span class="s2">&quot;inflow&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;capacity&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">profile_hourly_heat</span><span class="p">),</span>
+            <span class="s2">&quot;monthly_generation&quot;</span><span class="p">:</span> <span class="n">profile_monthly_heat</span><span class="p">,</span>  <span class="c1"># [kWh]</span>
+            <span class="s2">&quot;hourly_generation&quot;</span><span class="p">:</span> <span class="n">profile_hourly_heat</span><span class="p">,</span>  <span class="c1"># [kWh]</span>
+            <span class="s2">&quot;supply_temperature&quot;</span><span class="p">:</span> <span class="n">supply_temperature_heat</span><span class="p">,</span> <span class="c1"># [ºC]</span>
+            <span class="s2">&quot;target_temperature&quot;</span><span class="p">:</span> <span class="n">target_temperature_heat</span><span class="p">,</span> <span class="c1"># [ºC]</span>
+            <span class="s2">&quot;schedule&quot;</span><span class="p">:</span> <span class="n">profile</span><span class="p">,</span>
+            <span class="s2">&quot;fuel&quot;</span><span class="p">:</span> <span class="n">ref_system_fuel_type</span><span class="p">,</span>
+            <span class="s2">&quot;eff_equipment&quot;</span><span class="p">:</span> <span class="n">ref_system_eff_equipment</span>
+
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">real_heating_monthly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream_hot</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="nb">vars</span><span class="p">(</span><span class="n">real_heating_monthly_capacity</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">real_heating_yearly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream_hot</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">user_yearly_capacity</span><span class="o">=</span><span class="n">real_heating_yearly_capacity</span><span class="p">)</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModuleRuntimeException</span><span class="p">(</span>
+            <span class="n">code</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;greenhouse.py&quot;</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Greenhouse characterization infeasible. Please check your inputs. </span><span class="se">\n</span><span class="s2"> &quot;</span>
+                <span class="s2">&quot;If all inputs are correct report to the platform.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1">###############</span>
+    <span class="c1"># OUTPUT</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;streams&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">stream_hot</span><span class="p">]}</span>
+
+    <span class="k">return</span> <span class="n">output</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

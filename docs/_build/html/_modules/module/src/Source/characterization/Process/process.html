@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>module.src.Source.characterization.Process.process &mdash; EMB3RS - Core Functionalities 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../../" id="documentation_options" src="../../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../../_static/jquery.js"></script>
+        <script src="../../../../../../_static/underscore.js"></script>
+        <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../../_static/doctools.js"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../../index.html" class="icon icon-home"> EMB3RS - Core Functionalities
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../EMB3RS.html">EMB3RS project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Introduction.html">Introduction to the CF Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../UserGuide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Source.html">Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Sink.html">Sink</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">EMB3RS - Core Functionalities</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../../index.html">Module code</a> &raquo;</li>
+      <li>module.src.Source.characterization.Process.process</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for module.src.Source.characterization.Process.process</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">....General.Auxiliary_General.stream_industry</span> <span class="kn">import</span> <span class="n">stream_industry</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">....utilities.kb</span> <span class="kn">import</span> <span class="n">KB</span>
+
+<div class="viewcode-block" id="Process"><a class="viewcode-back" href="../../../../../../Process.html#module.src.Source.characterization.Process.process.Process">[docs]</a><span class="k">class</span> <span class="nc">Process</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create Process object and characterize its streams (Inflow/Outflow/Maintenance/Evaporation).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    id : int</span>
+<span class="sd">        Process ID</span>
+
+<span class="sd">    object_type : str</span>
+<span class="sd">        DEFAULT = &quot;process&quot;</span>
+
+<span class="sd">    streams : list</span>
+<span class="sd">        Data of the streams associated to this equipment</span>
+
+<span class="sd">    equipment_id : int</span>
+<span class="sd">        Equipment ID associated</span>
+
+<span class="sd">    operation_temperature : float</span>
+<span class="sd">        Operation temperature [ºC]</span>
+
+<span class="sd">    schedule_type: int</span>
+<span class="sd">        Process schedule type; batch (1) or continuous (0)</span>
+
+<span class="sd">    example_of_daily_period : list</span>
+<span class="sd">        Hours in a daily period [h]</span>
+
+<span class="sd">    eff_equipment : float</span>
+<span class="sd">        Efficiency of the equipment associated []</span>
+
+<span class="sd">    fuel : str</span>
+<span class="sd">        Fuel of the equipment associated</span>
+
+<span class="sd">    cycle_time_percentage : float</span>
+<span class="sd">        Process cycle time percentage []</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_var : dict</span>
+<span class="sd">        Process characterization data, with the following keys:</span>
+
+<span class="sd">            - id: int</span>
+<span class="sd">                Process ID []</span>
+
+<span class="sd">            - equipment_id: int</span>
+<span class="sd">                Associated equipment ID []</span>
+
+<span class="sd">            - operation_temperature: float</span>
+<span class="sd">                process temperature [ºC]</span>
+
+<span class="sd">            - saturday_on: int</span>
+<span class="sd">                If it is available on Saturday []; 1 (yes)  or 0 (no)</span>
+
+<span class="sd">            - sunday_on: int</span>
+<span class="sd">                If it is available on Sunday []; 1 (yes)  or 0 (no)</span>
+
+<span class="sd">            - shutdown_periods: list</span>
+<span class="sd">                List with lists of periods of days it is not available [day]; e.g. [[130,140],[289,299]]</span>
+
+<span class="sd">            - daily_periods: list</span>
+<span class="sd">                List with lists of hourly periods it is available [h]; e.g. [[8,12],[15,19]]</span>
+
+<span class="sd">            - schedule_type: int</span>
+<span class="sd">                Process schedule type; batch (1) or continuous (0)</span>
+
+<span class="sd">            - cycle_time_percentage: float</span>
+<span class="sd">                Cycle  percentage for Startup/Inflow/Outflow during batch process</span>
+
+<span class="sd">            - inflow_data: list</span>
+<span class="sd">                Inflow streams dicts, with the following keys:</span>
+
+<span class="sd">                    - name: str</span>
+<span class="sd">                        Inflow name</span>
+
+<span class="sd">                    - mass: float, optional</span>
+<span class="sd">                        Inflow mass [kg]; Provide flowrate or mass</span>
+
+<span class="sd">                    - flowrate: float, optional</span>
+<span class="sd">                        Inflow flowrate [kg/h]; Provide flowrate or mass</span>
+
+<span class="sd">                    - fluid_cp: float</span>
+<span class="sd">                        Inflow cp [kJ/kg.K]</span>
+
+<span class="sd">                    - supply_temperature: float</span>
+<span class="sd">                        Inflow supply/initial temperature [ºC]</span>
+
+<span class="sd">            - outflow_data : list</span>
+<span class="sd">                Outflow data dicts, with the following keys:</span>
+
+<span class="sd">                    - fluid_cp: float</span>
+<span class="sd">                        Outflow cp [kJ/kg.K]</span>
+
+<span class="sd">                    - target_temperature: float</span>
+<span class="sd">                        Outflow target/final temperature [ºC]</span>
+
+<span class="sd">                    - flowrate: float, optional</span>
+<span class="sd">                        Outflow mass flowrate [kg/h]</span>
+
+<span class="sd">                    - mass: float, optional</span>
+<span class="sd">                        Outflow mass [kg]</span>
+
+<span class="sd">                    - initial_temperature: float, optional</span>
+<span class="sd">                        Outflow initIal temperature [ºC]</span>
+
+<span class="sd">            - maintenance_data : list</span>
+<span class="sd">                Maintenance data dicts, with the following keys:</span>
+
+<span class="sd">                    - name: str</span>
+<span class="sd">                        Name</span>
+
+<span class="sd">                    - maintenance_capacity: float</span>
+<span class="sd">                        Maintenance or evaporation capacity [kW]</span>
+
+<span class="sd">    kb : dict</span>
+<span class="sd">        Knowledge Base data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">in_var</span><span class="p">,</span> <span class="n">kb</span> <span class="p">:</span> <span class="n">KB</span><span class="p">):</span>
+
+        <span class="c1"># defined var</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object_type</span> <span class="o">=</span> <span class="s1">&#39;process&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">streams</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># INPUT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>  <span class="c1"># process ID</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equipment_id</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;equipment_id&#39;</span><span class="p">]</span>  <span class="c1"># heat/cool equipment id associated to</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;operation_temperature&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saturday_on</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;saturday_on&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sunday_on</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;sunday_on&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shutdown_periods</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;shutdown_periods&#39;</span><span class="p">]</span>  <span class="c1"># e.g: [[59,74],[152,172],[362,365]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">daily_periods</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;daily_periods&#39;</span><span class="p">]</span>  <span class="c1"># e.g: [[8,12],[15,19]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schedule_type</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;schedule_type&#39;</span><span class="p">]</span>  <span class="c1"># 0-Continuous, 1-Batch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">example_of_daily_period</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">daily_periods</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">daily_periods</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eff_equipment</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;eff_equipment&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuel</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;fuel_type&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Cycle percentage for Startup and Outflow (when in Batch)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cycle_time_percentage</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;cycle_time_percentage&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_time_percentage</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_time_percentage</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cycle_time_percentage</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cycle_time_percentage</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+
+
+        <span class="c1"># Set Point Maintenance/ Evaporation</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">maintenance_data</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;maintenance_data&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_maintenance_and_evaporation</span><span class="p">(</span><span class="n">maintenance_data</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># Inflows</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">inflow_data</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;inflow_data&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_inflow</span><span class="p">(</span><span class="n">inflow_data</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># Outflows</span>
+        <span class="n">outflow_data</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;outflow_data&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_outflow</span><span class="p">(</span><span class="n">outflow_data</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Process.generate_maintenance_and_evaporation"><a class="viewcode-back" href="../../../../../../Process.html#module.src.Source.characterization.Process.process.Process.generate_maintenance_and_evaporation">[docs]</a>    <span class="k">def</span> <span class="nf">generate_maintenance_and_evaporation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
+
+        <span class="c1"># Maintenance/Evaporation Info</span>
+        <span class="k">for</span> <span class="n">maintenance</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">schedule</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="s1">&#39;maintenance&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream_industry</span><span class="p">(</span><span class="n">maintenance</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                                <span class="s1">&#39;maintenance&#39;</span><span class="p">,</span>
+                                                <span class="s2">&quot;water&quot;</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                                <span class="kc">None</span><span class="p">,</span>
+                                                <span class="n">maintenance</span><span class="p">[</span><span class="s1">&#39;maintenance_capacity&#39;</span><span class="p">],</span>
+                                                <span class="n">schedule</span><span class="p">,</span>
+                                                <span class="n">stream_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span><span class="p">,</span>
+                                                <span class="n">fuel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fuel</span><span class="p">,</span>
+                                                <span class="n">eff_equipment</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eff_equipment</span>
+                                                <span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="Process.generate_inflow"><a class="viewcode-back" href="../../../../../../Process.html#module.src.Source.characterization.Process.process.Process.generate_inflow">[docs]</a>    <span class="k">def</span> <span class="nf">generate_inflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
+
+        <span class="n">schedule</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="s1">&#39;inflow&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">inflow</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>  <span class="c1"># batch</span>
+                <span class="n">capacity</span> <span class="o">=</span> <span class="n">inflow</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">example_of_daily_period</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">)</span> <span class="o">*</span> <span class="n">inflow</span><span class="p">[</span><span class="s1">&#39;fluid_cp&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">-</span> <span class="n">inflow</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">])</span>  <span class="c1"># [kW]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">capacity</span> <span class="o">=</span> <span class="n">inflow</span><span class="p">[</span><span class="s1">&#39;flowrate&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span> <span class="o">*</span> <span class="n">inflow</span><span class="p">[</span><span class="s1">&#39;fluid_cp&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">-</span> <span class="n">inflow</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">])</span>  <span class="c1"># [kW]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream_industry</span><span class="p">(</span><span class="n">inflow</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                                <span class="s1">&#39;inflow&#39;</span><span class="p">,</span>
+                                                <span class="n">inflow</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span>
+                                                <span class="n">inflow</span><span class="p">[</span><span class="s1">&#39;supply_temperature&#39;</span><span class="p">],</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span><span class="p">,</span>
+                                                <span class="n">inflow</span><span class="p">[</span><span class="s1">&#39;flowrate&#39;</span><span class="p">],</span>
+                                                <span class="n">capacity</span><span class="p">,</span>
+                                                <span class="n">schedule</span><span class="p">,</span>
+                                                <span class="n">stream_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span><span class="p">,</span>
+                                                <span class="n">fuel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fuel</span><span class="p">,</span>
+                                                <span class="n">eff_equipment</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eff_equipment</span>
+                                                <span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="Process.generate_outflow"><a class="viewcode-back" href="../../../../../../Process.html#module.src.Source.characterization.Process.process.Process.generate_outflow">[docs]</a>    <span class="k">def</span> <span class="nf">generate_outflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">outflow_data</span><span class="p">):</span>
+
+        <span class="n">schedule</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="s1">&#39;outflow&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">outflow</span> <span class="ow">in</span> <span class="n">outflow_data</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>  <span class="c1"># batch</span>
+                <span class="n">capacity</span> <span class="o">=</span> <span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;flowrate&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span> <span class="o">*</span> <span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;fluid_cp&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">-</span> <span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">])</span>  <span class="c1"># [kW]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">capacity</span> <span class="o">=</span> <span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">example_of_daily_period</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_time_percentage</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">)</span> <span class="o">*</span> <span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;fluid_cp&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">-</span> <span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">])</span>  <span class="c1"># [kW]</span>
+
+            <span class="k">if</span> <span class="n">outflow</span><span class="p">[</span><span class="s2">&quot;initial_temperature&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">initial_temperature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">initial_temperature</span> <span class="o">=</span> <span class="n">outflow</span><span class="p">[</span><span class="s2">&quot;initial_temperature&quot;</span><span class="p">]</span>
+
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream_industry</span><span class="p">(</span><span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                                <span class="s1">&#39;outflow&#39;</span><span class="p">,</span>
+                                                <span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;fluid&#39;</span><span class="p">],</span>
+                                                <span class="n">initial_temperature</span><span class="p">,</span>
+                                                <span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;target_temperature&#39;</span><span class="p">],</span>
+                                                <span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;flowrate&#39;</span><span class="p">],</span>
+                                                <span class="n">capacity</span><span class="p">,</span>
+                                                <span class="n">schedule</span><span class="p">,</span>
+                                                <span class="n">stream_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span><span class="p">,</span>
+                                                <span class="n">fuel</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+                                                <span class="n">eff_equipment</span><span class="o">=</span><span class="kc">None</span>
+                                                <span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="Process.schedule"><a class="viewcode-back" href="../../../../../../Process.html#module.src.Source.characterization.Process.process.Process.schedule">[docs]</a>    <span class="k">def</span> <span class="nf">schedule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stream_type</span><span class="p">):</span>
+
+        <span class="c1"># Shutdown Periods</span>
+        <span class="n">shutdown_start_date</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">shutdown_end_date</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">period</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shutdown_periods</span><span class="p">:</span>
+            <span class="n">shutdown_start_date</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">period</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span><span class="p">)</span>
+            <span class="n">shutdown_end_date</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">period</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span><span class="p">)</span>
+
+        <span class="c1"># Cycle Working Periods</span>
+        <span class="n">cycle_start_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cycle_end_time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cycle_duration</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">period</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">daily_periods</span><span class="p">:</span>
+            <span class="n">cycle_start_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">period</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">cycle_end_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">period</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">cycle_duration</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">period</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">period</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># Initialize Arrays</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">last_year</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">year</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">year_10min</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">last_year</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">6</span><span class="p">)</span>  <span class="c1"># number of 10min on that specific year</span>
+        <span class="n">profile_10min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">year_10min</span>
+        <span class="n">profile_hour</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">day</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">year_10min</span>
+        <span class="n">hday</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">year_10min</span>
+        <span class="n">tenminday</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">year_10min</span>
+        <span class="n">week</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">year_10min</span>
+        <span class="n">weekday</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">year_10min</span>
+        <span class="n">weekday</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">last_year</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">weekday</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Weekday of 1st day of the year</span>
+
+        <span class="c1"># Generate Profile</span>
+        <span class="n">hour_old</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">year_10min</span><span class="p">):</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># on operation</span>
+
+            <span class="n">day</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">i</span> <span class="o">-</span> <span class="mf">11.9</span> <span class="o">*</span> <span class="mi">6</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">6</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># day starting at 1 - 1st January</span>
+            <span class="n">hday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">i</span> <span class="o">-</span> <span class="p">(</span><span class="n">day</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">6</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)</span>  <span class="c1"># hour starting at 0 - 00:00 -&gt; e.g [0,...,23]</span>
+            <span class="n">tenminday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="p">(</span><span class="n">day</span><span class="p">[</span>
+                                     <span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">6</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">6</span>  <span class="c1"># 10 min starting at 0 - 00:00 -&gt; e.g [0,0.16(6),0.3(3),...,23.83(3)]</span>
+            <span class="n">week</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">day</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mf">3.5</span> <span class="o">+</span> <span class="n">weekday</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mi">7</span><span class="p">)</span>
+            <span class="n">weekday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">day</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">week</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="mi">7</span> <span class="o">+</span> <span class="n">weekday</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Check if Shutdown/Holiday Periods</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shutdown_periods</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">shutdown_start_date</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">day</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">shutdown_end_date</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">op</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">break</span>
+
+            <span class="c1"># Check if Weekend</span>
+            <span class="k">if</span> <span class="n">weekday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6</span> <span class="ow">and</span> <span class="n">op</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">op</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saturday_on</span>
+            <span class="k">elif</span> <span class="n">weekday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span> <span class="ow">and</span> <span class="n">op</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">op</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sunday_on</span>
+
+            <span class="c1"># Check if Daily Operation Periods</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schedule_type</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">stream_type</span> <span class="o">==</span> <span class="s1">&#39;inflow&#39;</span> <span class="p">)</span> <span class="ow">or</span> <span class="n">stream_type</span> <span class="o">==</span> <span class="s1">&#39;startup&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">op</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">daily_periods</span><span class="p">)):</span>
+
+                        <span class="k">if</span> <span class="n">cycle_start_time</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tenminday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cycle_start_time</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">cycle_duration</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_time_percentage</span><span class="p">:</span>
+                            <span class="n">op</span> <span class="o">=</span> <span class="mi">1</span>
+                            <span class="k">break</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">op</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schedule_type</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">stream_type</span> <span class="o">==</span> <span class="s1">&#39;outflow&#39;</span> <span class="p">):</span>
+                <span class="k">if</span> <span class="n">op</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">daily_periods</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="n">cycle_end_time</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tenminday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cycle_end_time</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">cycle_duration</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_time_percentage</span><span class="p">:</span>
+                            <span class="n">op</span> <span class="o">=</span> <span class="mi">1</span>
+                            <span class="k">break</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">op</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">op</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">daily_periods</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="n">cycle_start_time</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tenminday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cycle_end_time</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                            <span class="n">op</span> <span class="o">=</span> <span class="mi">1</span>
+                            <span class="k">break</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">op</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">profile_10min</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span>
+
+            <span class="k">if</span> <span class="n">hday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">hour_old</span><span class="p">:</span>
+                <span class="n">profile_hour</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">profile_10min</span><span class="p">[(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">6</span><span class="p">):</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">profile_10min</span><span class="p">[(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">6</span><span class="p">):</span><span class="n">i</span><span class="p">]))</span>
+                <span class="n">hour_old</span> <span class="o">=</span> <span class="n">hday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+
+        <span class="k">return</span> <span class="n">profile_hour</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, André Lisboa, José Cunha.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
