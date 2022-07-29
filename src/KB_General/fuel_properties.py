@@ -38,7 +38,7 @@ import ssl
 class FuelProperties:
     kb_data: dict
 
-    def get_values(self, country, fuel_type, consumer_type):
+    def get_values(self, country, fuel_type, consumer_type="non-household"):
         """ Get fuel properties
 
         The fuel properties are returned according to the country and consumer type (leads to price differences).
