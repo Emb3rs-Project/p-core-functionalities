@@ -859,7 +859,7 @@ def convert_sources(in_var, kb):
         "conversion_efficiency": 1,
         "om_fix": 0.1,
         "om_var": 0.1,
-        "emissions_factor": 0.1,
+        "emissions_factor": 0,
         "emissions": "co2",
         "emission": "co2"
     }
