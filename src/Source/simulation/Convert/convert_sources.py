@@ -766,8 +766,7 @@ def convert_sources(in_var, kb):
                                 conversion_technologies.append(info)
 
                             teo_capacity_factor = [i / max(hourly_stream_capacity) for i in hourly_stream_capacity]
-                            gis_capacity = conversion_technologies[0]['max_capacity'] * conversion_technologies[0][
-                                'conversion_efficiency']
+                            gis_capacity = conversion_technologies[0]['max_capacity']
 
                             output_converted.append({
                                 "stream_id": stream['id'],
