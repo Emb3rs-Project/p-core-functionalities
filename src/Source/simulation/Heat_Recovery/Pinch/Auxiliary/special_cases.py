@@ -347,7 +347,7 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
                                 df_streams_in_copy = pd.concat([df_streams_in_copy, pd.DataFrame([new_row])])
 
                                 # Update DFs
-                                df_streams_in_copy.loc[index_stream_in]['Split_Check'] = True
+                                df_streams_in_copy.loc[index_stream_in,'Split_Check'] = True
                                 df_streams_in_copy.loc[cold_stream_index, ['mcp']] = split_stream_mcp
 
                     combinations_updated.append([df_streams_in_copy, df_streams_out_copy])
