@@ -169,7 +169,7 @@ def make_pinch_design_draw(info):
 
 
             # SPLIT ABOVE PINCH
-            if len(stream['above_pinch']) > 1:
+            if len(stream['above_pinch']) >= 1: #CHECK
                 i = 0
                 for iterator in range(len(stream['above_pinch'])):
                     if stream['above_pinch'][iterator]['id'] != stream['id']:
@@ -186,7 +186,7 @@ def make_pinch_design_draw(info):
                         i += 1
 
             # SPLIT BELOW PINCH
-            if len(stream['below_pinch']) > 1:
+            if len(stream['below_pinch']) >= 1: #CHECK
                 i = 0
                 for iterator in range(len(stream['below_pinch'])):  # for iterator in range(len(stream['below_pinch']) - 1):
                     if stream['below_pinch'][iterator]['id'] != stream['id']:
@@ -245,7 +245,7 @@ def make_pinch_design_draw(info):
 
 
             # SPLIT ABOVE PINCH
-            if len(stream['above_pinch']) > 1:
+            if len(stream['above_pinch']) >= 1 : #CHECK
                 i = 0
                 for iterator in range(len(stream['above_pinch'])):
                     if stream['above_pinch'][iterator]['id'] != stream['id']:
@@ -265,7 +265,8 @@ def make_pinch_design_draw(info):
 
 
             # SPLIT BELOW PINCH
-            if len(stream['below_pinch']) > 1:
+            print(stream['below_pinch'])
+            if len(stream['below_pinch']) >= 1: #CHECK
                 i = 0
                 for iterator in range(len(stream['below_pinch'])):
                     if stream['below_pinch'][iterator]['id'] != stream['id']:
@@ -282,7 +283,6 @@ def make_pinch_design_draw(info):
                         i += 1
 
         y_stream -= space_between_streams + space_between_splits * max([number_splits_above, number_splits_below])
-
 
     ##########################################################################
     # DRAW HEAT EXCHANGERS
