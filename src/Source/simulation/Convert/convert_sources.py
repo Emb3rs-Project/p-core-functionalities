@@ -789,6 +789,7 @@ def convert_sources(in_var, kb):
             if output_converted != []:
                 all_sources_info.append({
                     'source_id': source['id'],
+                    'name': source['name'],
                     'location': [latitude, longitude],
                     'source_grid_supply_temperature': source_grid_supply_temperature,
                     'source_grid_return_temperature': source_grid_return_temperature,
