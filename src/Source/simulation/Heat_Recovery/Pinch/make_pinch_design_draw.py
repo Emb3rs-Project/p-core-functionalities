@@ -265,7 +265,6 @@ def make_pinch_design_draw(info):
 
 
             # SPLIT BELOW PINCH
-            print(stream['below_pinch'])
             if len(stream['below_pinch']) >= 1: #CHECK
                 i = 0
                 for iterator in range(len(stream['below_pinch'])):
