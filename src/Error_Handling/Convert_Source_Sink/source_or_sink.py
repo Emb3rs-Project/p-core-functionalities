@@ -6,6 +6,7 @@ from ..General.fueldata import FuelData
 
 class SourceOrSink(Location):
     id: int
+    name: str
     streams: List[Stream]
     fuels_data: FuelData
 

@@ -900,6 +900,7 @@ def convert_sinks(in_var, kb):
             total_cap = total_cap + stream['gis_capacity']
 
         gis_dict = {
+            'name': sink['name'],
             'id': sink['sink_id'],
             'coords': sink['location'],
             'cap': total_cap  # [kW]
@@ -909,17 +910,20 @@ def convert_sinks(in_var, kb):
 
     n_grid_specific = [{
         'id': 0,
+        'name': 'Grid Backup',
         'coords': [group_latitude, group_longitude],
         'cap': group_of_sinks_grid_specific_power_heating  # [kW]
     }]
 
     n_thermal_storage = [{
         'id': -1,
+        'name': 'Thermal Storage Sink (charging)',
         'coords': [group_latitude, group_longitude],
         'cap': 1  # [kW]
     },
         {
             'id': -2,
+            'name': 'Thermal Storage Source (discharging)',
             'coords': [group_latitude, group_longitude],
             'cap': 1  # [kW]
         }

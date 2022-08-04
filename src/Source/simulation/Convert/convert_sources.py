@@ -840,6 +840,7 @@ def convert_sources(in_var, kb):
 
         if total_cap != 0:
             gis_dict = {
+                'name': source['name'],
                 'id': source['source_id'],
                 'coords': source['location'],
                 'cap': total_cap
