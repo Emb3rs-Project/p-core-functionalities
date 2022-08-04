@@ -1,6 +1,5 @@
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.pinch_analysis import pinch_analysis
 from .....Source.simulation.Heat_Recovery.Pinch.Auxiliary.get_best_x_outputs import get_best_x_outputs
-from .....General.Auxiliary_General.get_country import get_country
 import itertools
 import pandas as pd
 from .....utilities.kb import KB
@@ -213,7 +212,6 @@ def convert_pinch(in_var, kb: KB):
 
     ############################################################################################################
     # Defined Vars
-    country = get_country(latitude, longitude)
     objects_to_analyze = []
     streams = []
     subset_not_possible_to_analyze = []
