@@ -91,7 +91,6 @@ def convert_pinch_isolated_streams(in_var, kb: KB):
             "streams_to_analyse": in_var['platform']['streams_to_analyse'],
             "all_input_objects": streams,
             "pinch_delta_T_min": in_var['platform']['pinch_delta_T_min'],
-            "location": in_var['platform']['location'],
             "interest_rate": in_var['platform']['interest_rate']}
     }
 

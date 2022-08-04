@@ -1,7 +1,6 @@
 from pydantic import BaseModel, validator, PositiveFloat, PositiveInt, conlist, NonNegativeInt, StrictStr, \
     NonNegativeFloat, confloat
 from typing import Optional, List, Union
-from .General.location import Location
 from .Source_Detail.error_fueltype import FuelChoices
 from enum import Enum
 from .General.fueldata import FuelData
@@ -86,7 +85,7 @@ def error_convert_pinch(platform_data):
         id: NonNegativeInt
         object_type: ObjectType
 
-    class PlatformPinch(Location):
+    class PlatformPinch(BaseModel):
 
         all_input_objects: List[ObjectData]
         fuels_data: FuelData

@@ -35,8 +35,6 @@ def convert_pinch(in_var, kb: KB):
                             - processes (check Source/characterization/Process/process)
                             - isolated streams (check General/Simple_User/isolated_stream)
 
-                    location:  list
-                        [latitude, longitude] [º]
 
                     lifetime : int, optional
                         Heat exchangers lifetime. DEFAULT=20
@@ -202,12 +200,14 @@ def convert_pinch(in_var, kb: KB):
     all_input_objects = [vars(new_object) for new_object in all_input_objects]
 
     pinch_delta_T_min = platform_data.pinch_delta_T_min
-    latitude, longitude = platform_data.location
     perform_all_combinations = platform_data.perform_all_combinations  # parameter to only perform all combinations for isolated streams and processes.
     number_output_options = platform_data.number_output_options
     lifetime = platform_data.lifetime
     streams_to_analyse = platform_data.streams_to_analyse
     fuels_data = platform_data.fuels_data
+    fuels_data = vars(fuels_data)
+    for key,value in fuels_data.items():
+        fuels_data[key] = vars(value)
     interest_rate = platform_data.interest_rate
 
 
@@ -246,6 +246,7 @@ def convert_pinch(in_var, kb: KB):
             elif object['object_type'] == 'stream':  # isolated streams
                 if object['id'] in streams_to_analyse:
                     if object['fuel'] != "none":
+
                         object['fuel_price'] = fuels_data[object['fuel']]["price"]
                         object['fuel_co2_emissions'] = fuels_data[object['fuel']]['co2_emissions']
                     else:
@@ -394,10 +395,8 @@ def convert_pinch(in_var, kb: KB):
 
                 # hot stream
                 if hot_stream_fuel is not None:
-
-                    data_stream_hot = fuel_properties.get_values(country, hot_stream_fuel, 'non-household')
-                    co2_emission_per_kw_stream_hot = data_stream_hot['co2_emissions']
-                    fuel_cost_kwh_stream_hot = data_stream_hot['price']
+                    co2_emission_per_kw_stream_hot = fuels_data[hot_stream_fuel]['co2_emissions']
+                    fuel_cost_kwh_stream_hot = fuels_data[hot_stream_fuel]['price']
                     eff_equipment = df_char['Eff_Equipment'].loc[df_char.index == original_hot_stream_id].values[0]
 
                     total_co2_emissions_savings += co2_emission_per_kw_stream_hot * row_df_hx[
@@ -406,9 +405,8 @@ def convert_pinch(in_var, kb: KB):
 
                 # cold stream
                 if cold_stream_fuel is not None:
-                    data_stream_cold = fuel_properties.get_values(country, cold_stream_fuel, 'non-household')
-                    co2_emission_per_kw_stream_cold = data_stream_cold['co2_emissions']
-                    fuel_cost_kwh_stream_cold = data_stream_cold['price']
+                    co2_emission_per_kw_stream_cold = fuels_data[cold_stream_fuel]['co2_emissions']
+                    fuel_cost_kwh_stream_cold = fuels_data[cold_stream_fuel]['price']
                     eff_equipment = df_char['Eff_Equipment'].loc[df_char.index == original_cold_stream_id].values[0]
 
                     total_co2_emissions_savings += co2_emission_per_kw_stream_cold * row_df_hx[
