@@ -872,6 +872,7 @@ def convert_sinks(in_var, kb):
 
         output_sink.append({
             'sink_id': sink['id'],
+            'name': sink['name'],
             'location': [latitude, longitude],
             'streams': output_converted
         })
