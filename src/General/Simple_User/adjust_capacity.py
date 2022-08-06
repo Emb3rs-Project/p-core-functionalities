@@ -30,7 +30,7 @@ def adjust_capacity(stream, user_daily_capacity=None, user_monthly_capacity=None
     user_daily_capacity: list:
         Real capacity for each hour of the year [kWh]
 
-    user_monthly_capacity: dict
+    user_monthly_capacity: list
         Real capacity of each month [kWh]
 
     user_yearly_capacity: float
@@ -51,11 +51,16 @@ def adjust_capacity(stream, user_daily_capacity=None, user_monthly_capacity=None
 
         if user_yearly_capacity is None and user_daily_capacity is None and user_monthly_capacity is not None:
 
+            user_monthly_dict = {}
+
+            for index, month_val in enumerate(user_monthly_capacity):
+                user_monthly_dict[months[index]] = month_val
+
             for index, month_capacity in enumerate(stream['monthly_generation']):
-                if user_monthly_capacity[str(months[index])] is None:
+                if user_monthly_dict[str(months[index])] is None:
                     months_coef[months[index]] = 1
                 else:
-                    months_coef[months[index]] = user_monthly_capacity[str(months[index])] / month_capacity
+                    months_coef[months[index]] = user_monthly_dict[str(months[index])] / month_capacity
 
             stream = monthly_adjust(stream, months_coef)
 

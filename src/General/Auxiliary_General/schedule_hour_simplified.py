@@ -1,6 +1,8 @@
 import datetime
 
-def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
+
+def schedule_hour_simplified(daily_periods,saturday_on,sunday_on,shutdown_periods):
+
     """Get operating schedule
 
     Receives user schedule data and returns 1h time step profile  of 1 (operating) and 0 (not operating).
@@ -38,7 +40,6 @@ def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
         shutdown_start_date.append(period[0])
         shutdown_end_date.append(period[-1])
 
-
     # Daily Working Periods FROM USER - e.g. daily_periods = [[8,12],[14,18]]
     cycle_start_time = []
     cycle_end_time = []
@@ -47,11 +48,9 @@ def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
         cycle_start_time.append(period[0])
         cycle_end_time.append(period[-1])
 
-
-
     # Initialize Arrays
     last_year = 2024
-    year_hours = int(datetime.date(last_year, 12, 31).timetuple().tm_yday*24)  # Number of hours on that specific year
+    year_hours = int(datetime.date(last_year, 12, 31).timetuple().tm_yday * 24)  # Number of hours on that specific year
     profile_hour = [0] * year_hours
     day = [0] * year_hours
     hday = [0] * year_hours
@@ -59,7 +58,6 @@ def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
     weekday = [0] * year_hours
 
     weekday[0] = datetime.date(last_year, 1, 1).weekday() + 1  # Weekday of 1st day of the year
-
 
     # Generate Profile
     for i in range(year_hours):
@@ -99,3 +97,7 @@ def schedule_hour(saturday_on,sunday_on,shutdown_periods,daily_periods):
 
 
     return profile_hour
+
+
+
+

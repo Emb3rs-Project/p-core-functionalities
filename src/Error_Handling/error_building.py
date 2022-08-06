@@ -1,15 +1,19 @@
-from pydantic import validator, confloat, PositiveFloat, PositiveInt
+from pydantic import validator, confloat, PositiveFloat, PositiveInt, StrictStr
 from typing import Optional
 
 from .General.reference_system_building import ReferenceSystemBuilding
 from .General.schedule import Schedule
 from .General.location import Location
 from enum import Enum
-
+import ast
 from .General.error_building_and_greenhouse_adjust_capacity import BuildingandGreenhouseAdjustCapacity
 from ..KB_General.building_properties import BuildingProperties
 from ..General.Auxiliary_General.get_country import get_country
 from .General.building_orientation import BuildingOrientation
+
+class ScheduleInfo(int, Enum):
+    off = 0
+    on = 1
 
 def error_building(platform_data, kb):
     building_properties = BuildingProperties(kb)
@@ -92,7 +96,7 @@ def error_building(platform_data, kb):
     ########################################################################################
     ########################################################################################
 
-    class PlatformBuilding(Schedule, Location, ReferenceSystemBuilding, BuildingandGreenhouseAdjustCapacity):
+    class PlatformBuilding(Location, ReferenceSystemBuilding, BuildingandGreenhouseAdjustCapacity):
 
         number_floor: PositiveFloat
         width_floor: PositiveFloat
@@ -133,6 +137,19 @@ def error_building(platform_data, kb):
         vol_dhw_set: Optional[PositiveFloat] = val_vol_dhw_set
         Q_gain_per_floor: Optional[PositiveFloat] = val_Q_gain_per_floor
 
+        monday_daily_periods: Optional[StrictStr]
+        tuesday_daily_periods: Optional[StrictStr]
+        wednesday_daily_periods: Optional[StrictStr]
+        thursday_daily_periods: Optional[StrictStr]
+        friday_daily_periods: Optional[StrictStr]
+        saturday_daily_periods: Optional[StrictStr]
+        sunday_daily_periods: Optional[StrictStr]
+
+        daily_periods: Optional[str]
+        shutdown_periods: Optional[str]
+        saturday_on: Optional[ScheduleInfo]
+        sunday_on: Optional[ScheduleInfo]
+
         @validator('T_cool_on', allow_reuse=True)
         def check_occupied_temperatures_set_points(cls, T_cool_on, values, **kwargs):
             if values['T_heat_on'] >= T_cool_on:
@@ -154,5 +171,54 @@ def error_building(platform_data, kb):
                 raise ValueError(
                     'Heating System Supply Temperature must be larger than Heating System Return Temperature.')
             return supply_temperature_heat
+
+        @validator("daily_periods",
+                   "monday_daily_periods",
+                   "tuesday_daily_periods",
+                   "wednesday_daily_periods",
+                   "thursday_daily_periods",
+                   "friday_daily_periods",
+                   "saturday_daily_periods",
+                   "sunday_daily_periods",allow_reuse=True )
+        def check_structure_daily_periods(cls, daily_periods):
+            daily_periods = ast.literal_eval(daily_periods)
+            if daily_periods != []:
+                if isinstance(daily_periods, list) is True:
+                    for period in daily_periods:
+                        if len(period) != 2:
+                            raise ValueError(
+                                'Only a start and ending hour must be given in each daily period. Example: [[9,12],[14,19]]')
+                        else:
+                            period_a, period_b = period
+                            if period_b <= period_a:
+                                raise ValueError(
+                                    'Second value of the daily period must be larger than the first. Example: [[9,12],[14,19]]')
+                else:
+                    raise TypeError('Provide a list for daily periods.')
+            else:
+                raise TypeError('Provide daily periods in the correct format. Example: [[11,20]] or [[9,12],[14,19]]')
+
+            return daily_periods
+
+        @validator('shutdown_periods',allow_reuse=True )
+        def check_structure_shutdown_periods(cls, shutdown_periods):
+
+            shutdown_periods = ast.literal_eval(shutdown_periods)
+            if shutdown_periods != []:
+                if isinstance(shutdown_periods, list) is True:
+                    for period in shutdown_periods:
+                        if len(period) != 2:
+                            raise ValueError(
+                                'Only a start and ending day must be given in each shutdown period. Example: [[220,250]]')
+                        else:
+                            period_a, period_b = period
+                            if period_b <= period_a:
+                                raise ValueError(
+                                    'Second value of the shutdown period must be larger than the first. Example: [[220,250]]')
+                else:
+                    raise TypeError(
+                        'Provide a list for shutdown periods.')
+
+            return shutdown_periods
 
     return PlatformBuilding(**platform_data)

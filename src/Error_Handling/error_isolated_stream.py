@@ -27,9 +27,26 @@ class StreamData(ReferenceSystem,AdjustCapacity):
     shutdown_periods: Optional[str]
     saturday_on: Optional[ScheduleInfo]
     sunday_on: Optional[ScheduleInfo]
+
+    monday_daily_periods: Optional[StrictStr]
+    tuesday_daily_periods: Optional[StrictStr]
+    wednesday_daily_periods: Optional[StrictStr]
+    thursday_daily_periods: Optional[StrictStr]
+    friday_daily_periods: Optional[StrictStr]
+    saturday_daily_periods: Optional[StrictStr]
+    sunday_daily_periods: Optional[StrictStr]
+
+
+
     capacity: Optional[PositiveFloat] = None
 
-    @validator('daily_periods', allow_reuse=True)
+    @validator('daily_periods', "monday_daily_periods",
+               "tuesday_daily_periods",
+               "wednesday_daily_periods",
+               "thursday_daily_periods",
+               "friday_daily_periods",
+               "saturday_daily_periods",
+               "sunday_daily_periods", allow_reuse=True)
     def check_structure_daily_periods(cls, daily_periods):
         daily_periods = ast.literal_eval(daily_periods)
         if daily_periods != []:
@@ -44,7 +61,9 @@ class StreamData(ReferenceSystem,AdjustCapacity):
                             raise ValueError(
                                 'Second value of the daily period must be larger than the first. Example: [[9,12],[14,19]]')
             else:
-                raise TypeError('Provide a list for daily periods.')
+                daily_periods = []
+                # raise TypeError('Provide daily periods in the correct format. Example: [[11,20]] or [[9,12],[14,19]]')
+
         return daily_periods
 
     @validator('shutdown_periods', allow_reuse=True)

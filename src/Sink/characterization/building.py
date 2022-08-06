@@ -1,6 +1,7 @@
 import math
 from ...utilities.kb import KB
-from ...General.Auxiliary_General.schedule_hour import schedule_hour
+from ...General.Auxiliary_General.schedule_hour_simplified import schedule_hour_simplified
+from ...General.Auxiliary_General.schedule_hour_detailed import schedule_hour_detailed
 from ...General.Auxiliary_General.month_last_hour import month_last_hour
 from ...General.Simple_User.adjust_capacity import adjust_capacity
 from .Auxiliary.building_climate_api import building_climate_api
@@ -260,10 +261,7 @@ def building(in_var, kb : KB):
     ratio_wall_S = platform_data.ratio_wall_S
     ratio_wall_E = platform_data.ratio_wall_E
     ratio_wall_W = platform_data.ratio_wall_W
-    saturday_on = platform_data.saturday_on
-    sunday_on = platform_data.sunday_on
-    shutdown_periods = platform_data.shutdown_periods
-    daily_periods = platform_data.daily_periods
+
     building_orientation = platform_data.building_orientation
     T_cool_on = platform_data.T_cool_on  # cooling start temperature working hours [ºC]
     T_heat_on = platform_data.T_heat_on  # heating start temperature working hours [ºC]
@@ -331,7 +329,32 @@ def building(in_var, kb : KB):
     ################################################################################################
     # COMPUTE ----------------------------------------------
     # Schedule
-    profile = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)  # vector: [0,1,1,0,..]; 0-on 1-off
+    try:
+        saturday_on = platform_data.saturday_on
+        sunday_on = platform_data.sunday_on
+        shutdown_periods = platform_data.shutdown_periods
+        daily_periods = platform_data.daily_periods
+
+        profile = schedule_hour_simplified(daily_periods,saturday_on,sunday_on,shutdown_periods) # vector: [0,1,1,0,..]; 0-on 1-off
+    except:
+        monday_daily_periods = platform_data.monday_daily_periods
+        tuesday_daily_periods = platform_data.tuesday_daily_periods
+        wednesday_daily_periods = platform_data.wednesday_daily_periods
+        thursday_daily_periods = platform_data.thursday_daily_periods
+        friday_daily_periods = platform_data.friday_daily_periods
+        saturday_daily_periods = platform_data.saturday_daily_periods
+        sunday_daily_periods = platform_data.sunday_daily_periods
+        shutdown_periods = platform_data.shutdown_periods
+
+        profile = schedule_hour_detailed(monday_daily_periods,
+                                        tuesday_daily_periods,
+                                        wednesday_daily_periods,
+                                        thursday_daily_periods,
+                                        friday_daily_periods,
+                                        saturday_daily_periods,
+                                        sunday_daily_periods,
+                                        shutdown_periods)
+
     month_last_hour_vector = month_last_hour()
 
     # Climate data
@@ -801,12 +824,12 @@ def building(in_var, kb : KB):
             }
 
         if real_heating_monthly_capacity is not None:
-            stream_hot = adjust_capacity(stream_hot, user_monthly_capacity=vars(real_heating_monthly_capacity))
+            stream_hot = adjust_capacity(stream_hot, user_monthly_capacity=real_heating_monthly_capacity)
         elif real_heating_yearly_capacity is not None:
             stream_hot = adjust_capacity(stream_hot, user_yearly_capacity=real_heating_yearly_capacity)
 
         if real_cooling_monthly_capacity is not None:
-            stream_cold = adjust_capacity(stream_cold, user_monthly_capacity=vars(real_cooling_monthly_capacity))
+            stream_cold = adjust_capacity(stream_cold, user_monthly_capacity=real_cooling_monthly_capacity)
         elif real_cooling_yearly_capacity is not None:
             stream_cold = adjust_capacity(stream_cold, user_yearly_capacity=real_cooling_yearly_capacity)
 

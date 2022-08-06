@@ -1,5 +1,6 @@
 from ...General.Auxiliary_General.stream_industry import stream_industry
-from ...General.Auxiliary_General.schedule_hour import schedule_hour
+from ...General.Auxiliary_General.schedule_hour_simplified import schedule_hour_simplified
+from ...General.Auxiliary_General.schedule_hour_detailed import schedule_hour_detailed
 from ...Error_Handling.error_simple_user import PlatformSimpleUser
 from .adjust_capacity import adjust_capacity
 
@@ -166,13 +167,25 @@ def simple_user(in_var):
 
         # check if real hourly capacity is given
         if stream['real_hourly_capacity'] is None:
-            schedule = schedule_hour(
-                stream["saturday_on"],
-                stream["sunday_on"],
-                stream["shutdown_periods"],
-                stream["daily_periods"],
-            )
+
+            try:
+                schedule = schedule_hour_simplified(stream["daily_periods"],
+                                                    stream["saturday_on"],
+                                                    stream["sunday_on"],
+                                                    stream["shutdown_periods"])
+
+            except:
+                schedule = schedule_hour_detailed(stream["monday_daily_periods"],
+                                                  stream["tuesday_daily_periods"],
+                                                  stream["wednesday_daily_periods"],
+                                                  stream["thursday_daily_periods"],
+                                                  stream["friday_daily_periods"],
+                                                  stream["saturday_daily_periods"],
+                                                  stream["sunday_daily_periods"],
+                                                  stream["shutdown_periods"])
+
             hourly_generation = None
+
         else:
             hourly_generation = stream['real_hourly_capacity']
             schedule = None
@@ -206,7 +219,7 @@ def simple_user(in_var):
         if stream["real_daily_capacity"] != None:
             info_stream = adjust_capacity(info_stream, user_daily_capacity=stream["real_daily_capacity"])
         elif stream["real_monthly_capacity"] != None:
-            info_stream = adjust_capacity(info_stream, user_monthly_capacity=vars(stream["real_monthly_capacity"]))
+            info_stream = adjust_capacity(info_stream, user_monthly_capacity=stream["real_monthly_capacity"])
         elif stream["real_yearly_capacity"] != None:
             info_stream = adjust_capacity(info_stream, user_yearly_capacity=stream["real_yearly_capacity"])
 

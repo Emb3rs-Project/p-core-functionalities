@@ -45,6 +45,10 @@ def testConvertPinch():
         data_test = isolatedstreams(2)
         test = convert_pinch(data_test, KB(kb))
 
+        file = open("CF_pinch_report.html", "w")
+        file.write(test["report"])
+        file.close()
+
         #data_test = json.load(open(os.path.join(script_dir, "test_files/pinch_detailed_workshop.json")))
         #test = convert_pinch(data_test, KB(kb))
 

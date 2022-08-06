@@ -1,4 +1,4 @@
-from ....General.Auxiliary_General.schedule_hour import schedule_hour
+from ....General.Auxiliary_General.schedule_hour_simplified import schedule_hour_simplified
 from ....General.Auxiliary_General.combustion_mass_flows import combustion_mass_flows
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....General.Auxiliary_General.stream_industry import stream_industry
@@ -129,7 +129,7 @@ class Boiler:
         ############################################################################################
         # COMPUTE
         # schedule
-        schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
+        schedule = schedule_hour_simplified(daily_periods,saturday_on,sunday_on,shutdown_periods)
 
         # supply capacity
         if self.supply_capacity is None:

@@ -13,7 +13,9 @@ def testConvertORC():
     # TEST 1
     test_1 = convert_orc(data_test_1, KB(kb))
 
-
+    file = open("CF_orc_report.html", "w")
+    file.write(test_1["report"])
+    file.close()
 
     # TEST 2
    # test_2 = convert_orc(data_test_2, KB(kb))

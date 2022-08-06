@@ -1,6 +1,6 @@
 import math
 import copy
-from ...General.Auxiliary_General.schedule_hour import schedule_hour
+from ...General.Auxiliary_General.schedule_hour_simplified import schedule_hour_simplified
 from ...General.Auxiliary_General.month_last_hour import month_last_hour
 from ...General.Simple_User.adjust_capacity import adjust_capacity
 from .Auxiliary.building_climate_api import building_climate_api
@@ -228,7 +228,7 @@ def greenhouse(in_var):
     ##################################################################################################################
     # COMPUTE ----------------------------------------------------------------------------------
     # Schedule
-    profile = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
+    profile = schedule_hour_simplified(daily_periods,saturday_on,sunday_on,shutdown_periods)
     month_last_hour_vector = month_last_hour()
 
     # Climate data
@@ -474,7 +474,7 @@ def greenhouse(in_var):
         }
 
         if real_heating_monthly_capacity is not None:
-            stream_hot = adjust_capacity(stream_hot, user_monthly_capacity=vars(real_heating_monthly_capacity))
+            stream_hot = adjust_capacity(stream_hot, user_monthly_capacity=real_heating_monthly_capacity)
         elif real_heating_yearly_capacity is not None:
             stream_hot = adjust_capacity(stream_hot, user_yearly_capacity=real_heating_yearly_capacity)
 

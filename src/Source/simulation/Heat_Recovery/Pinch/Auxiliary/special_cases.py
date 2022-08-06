@@ -320,7 +320,7 @@ def special_cases(df_streams_in, df_streams_out, above_pinch, hx_delta_T):
 
 
                                 # Update DFs
-                                df_streams_out_copy.loc[hot_stream_index]['Split_Check'] = True
+                                df_streams_out_copy.loc[hot_stream_index,'Split_Check'] = True
                                 df_streams_out_copy.loc[hot_stream_index, ['mcp']] = split_stream_mcp
 
                         else:

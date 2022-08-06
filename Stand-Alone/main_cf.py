@@ -1,29 +1,25 @@
-from mappings.cf.mapping_convert_sinks import mapping_convert_sinks
-from mappings.cf.mapping_convert_sources import mapping_convert_sources
-from mappings.cf.mapping_building import mapping_building
-from mappings.cf.mapping_greenhouse import mapping_greenhouse
-from mappings.cf.mapping_simple_user import mapping_simple_user
-
+from mappings.mapping_convert_sinks import mapping_convert_sinks
+from mappings.mapping_convert_sources import mapping_convert_sources
+from mappings.mapping_building import mapping_building
+from mappings.mapping_greenhouse import mapping_greenhouse
+from mappings.mapping_simple_user import mapping_simple_user
 from module.src.General.Simple_User.simple_user import simple_user
 from module.src.Source.simulation.Convert.convert_sources import convert_sources
+from module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams import convert_pinch_isolated_streams
 from module.src.Sink.simulation.convert_sinks import convert_sinks
 from module.src.Sink.characterization.building import building
 from module.src.Sink.characterization.greenhouse import greenhouse
 from module.src.utilities.fuel_data_fill_values import fuel_data_fill_values
-from read_user_inputs.main_read_user_inputs import main_read_user_inputs
-
 from module.src.utilities.kb import KB
-from src_modules.modules.CF.src.utilities.kb_data import kb
+from module.src.utilities.kb_data import kb
 
 
-class CF():
+class CFModule():
 
     def design_orc(self,file):
         designorc = self.DesignORC
         designorc.read_user_inputs(file)
-        simulation_data = designorc.simulation()
-
-        # create file in json
+        data = designorc.simulation()
 
         # create HTML report
 
@@ -51,18 +47,31 @@ class CF():
 
     class DesignORC:
 
-        def read_user_inputs(self):
+        def read_user_inputs(self,file):
+            self.data = read_data_design_orc(file)
 
         def characterization(self):
 
+            # fuels_data
+            self.fuels_data = fuel_data_fill_values(cf_data_raw["sources"][0]['location'],
+                                                    cf_data_raw["fuels_data"],
+                                                    KB(kb))
+
+            _data = mapping_simple_user(_source_raw, "source")
+            _char_streams = simple_user(_data)
+            del _source_raw['raw_streams']
+            _source_raw["streams"] = _char_streams["streams"]
+            _source_raw["fuels_data"] = self.fuels_data
+            self.source = _source_raw
+
         def simulation(self):
+            data = convert_orc(self.source)
 
 
     class PinchAnalysis:
 
         def read_user_inputs(self,file):
-            self.streams_data_raw = read_pinch_user_inputs(file)
-
+            self.streams_data_raw = read_data_pinch(file)
 
         def simulation(self):
 
@@ -80,14 +89,12 @@ class CF():
 
         def read_user_inputs(self,file):
 
-            cf_data_raw = read_dhn_user_inputs(file)
+            cf_data_raw = read(file)
             # self.gis_data, self.teo_data, self.mm_data, self.bm_data
 
             self.cf_characterization(cf_data_raw)
 
         def characterization(self,cf_data_raw):
-
-            print("Characterization started!")
 
             # fuels_data
             self.fuels_data = fuel_data_fill_values(cf_data_raw["sources"][0]['location'],

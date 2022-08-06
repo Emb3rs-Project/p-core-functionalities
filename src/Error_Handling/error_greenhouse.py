@@ -6,7 +6,7 @@ from .General.location import Location
 from .General.reference_system import ReferenceSystem
 from .General.schedule import Schedule
 from .General.error_building_and_greenhouse_adjust_capacity import BuildingandGreenhouseAdjustCapacity
-
+import ast
 
 class GreenhouseEfficiency(int, Enum):
     tight_cover = 1
@@ -19,7 +19,7 @@ class ArtificalLights_and_ThermalBlanket(int, Enum):
     does_not_have = 0
 
 
-class PlatformGreenhouse(Schedule, Location, ReferenceSystem, BuildingandGreenhouseAdjustCapacity):
+class PlatformGreenhouse(Location, ReferenceSystem, BuildingandGreenhouseAdjustCapacity):
     # Mandatory
     hours_lights_needed: Optional[conint(gt=0, le=24)] = None
     greenhouse_efficiency: GreenhouseEfficiency
@@ -34,6 +34,9 @@ class PlatformGreenhouse(Schedule, Location, ReferenceSystem, BuildingandGreenho
     greenhouse_efficiency: PositiveInt
     sunday_on: int = 1
     saturday_on: int = 1
+    daily_periods: Optional[str]
+    shutdown_periods: Optional[str]
+
 
     # Optional
     f_c: Optional[float] = None
@@ -81,3 +84,45 @@ class PlatformGreenhouse(Schedule, Location, ReferenceSystem, BuildingandGreenho
             raise ValueError(
                 'When introducing existing artificial lighting system, input daily light hours needed (Advanced Parameters).')
         return artificial_lights_system
+
+    @validator('shutdown_periods',allow_reuse=True )
+    def check_structure_shutdown_periods(cls, shutdown_periods):
+
+        shutdown_periods = ast.literal_eval(shutdown_periods)
+        if shutdown_periods != []:
+            if isinstance(shutdown_periods, list) is True:
+                for period in shutdown_periods:
+                    if len(period) != 2:
+                        raise ValueError(
+                            'Only a start and ending day must be given in each shutdown period. Example: [[220,250]]')
+                    else:
+                        period_a, period_b = period
+                        if period_b <= period_a:
+                            raise ValueError(
+                                'Second value of the shutdown period must be larger than the first. Example: [[220,250]]')
+            else:
+                raise TypeError(
+                    'Provide a list for shutdown periods.')
+
+        return shutdown_periods
+
+
+    @validator("daily_periods",allow_reuse=True )
+    def check_structure_daily_periods(cls, daily_periods):
+        daily_periods = ast.literal_eval(daily_periods)
+        if daily_periods != []:
+            if isinstance(daily_periods, list) is True:
+                for period in daily_periods:
+                    if len(period) != 2:
+                        raise ValueError(
+                            'Only a start and ending hour must be given in each daily period. Example: [[9,12],[14,19]]')
+                    else:
+                        period_a, period_b = period
+                        if period_b <= period_a:
+                            raise ValueError(
+                                'Second value of the daily period must be larger than the first. Example: [[9,12],[14,19]]')
+            else:
+                raise TypeError('Provide a list for daily periods.')
+        else:
+            raise TypeError('Provide daily periods in the correct format. Example: [[11,20]] or [[9,12],[14,19]]')
+        return daily_periods

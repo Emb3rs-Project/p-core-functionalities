@@ -35219,7 +35219,8 @@
       ]
     },
     {
-      "fuel": "none",
+      "fuel": "fuel_oil",
+      "eff_equipment": 0.9,
       "name": "third",
       "id": 74345,
       "object_type": "stream",
@@ -52818,7 +52819,8 @@
       ]
     },
     {
-      "fuel": "none",
+      "fuel": "natural_gas",
+      "eff_equipment": 0.9,
       "name": "fourth",
       "id": 5372,
       "object_type": "stream",

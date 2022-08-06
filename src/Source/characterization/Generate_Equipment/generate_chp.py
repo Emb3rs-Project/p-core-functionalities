@@ -1,4 +1,4 @@
-from ....General.Auxiliary_General.schedule_hour import schedule_hour
+from ....General.Auxiliary_General.schedule_hour_simplified import schedule_hour_simplified
 from ....General.Auxiliary_General.combustion_mass_flows import combustion_mass_flows
 from ....General.Auxiliary_General.stream_industry import stream_industry
 from ....KB_General.medium import Medium
@@ -132,7 +132,7 @@ class Chp:
         ############################################################################################
         # COMPUTE
         # schedule
-        schedule = schedule_hour(saturday_on, sunday_on, shutdown_periods, daily_periods)
+        schedule = schedule_hour_simplified(daily_periods,saturday_on,sunday_on,shutdown_periods)
 
         # efficiency
         if self.thermal_conversion_efficiency is None:

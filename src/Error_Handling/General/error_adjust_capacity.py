@@ -13,25 +13,10 @@ from typing import Optional, Union
 from enum import Enum
 
 
-class MonthlyCapacity(BaseModel):
-    january: NonNegativeFloat
-    february: NonNegativeFloat
-    march: NonNegativeFloat
-    april: NonNegativeFloat
-    may: NonNegativeFloat
-    june: NonNegativeFloat
-    july: NonNegativeFloat
-    august: NonNegativeFloat
-    september: NonNegativeFloat
-    october: NonNegativeFloat
-    november: NonNegativeFloat
-    december: NonNegativeFloat
-
-
 class AdjustCapacity(BaseModel):
     real_hourly_capacity: Optional[conlist(NonNegativeFloat, min_items=8760, max_items=8760)] = None
     real_daily_capacity: Optional[conlist(NonNegativeFloat, min_items=365, max_items=366)] = None
-    real_monthly_capacity: Optional[MonthlyCapacity] = None
+    real_monthly_capacity:  Optional[conlist(NonNegativeFloat, min_items=12, max_items=12)] = None
     real_yearly_capacity: Optional[NonNegativeFloat] = None
 
     @validator("real_hourly_capacity", "real_daily_capacity", "real_monthly_capacity","real_yearly_capacity", allow_reuse=True)

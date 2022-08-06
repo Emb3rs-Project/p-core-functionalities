@@ -21,6 +21,7 @@
             "price": 0.055
           }
         },
+        "name": "source_1",
         "location": [
           38.759074,
           -9.125053
@@ -17615,6 +17616,7 @@
       },
       {
         "id": 2,
+        "name": "source_2",
         "fuels_data": {
           "natural_gas": {
             "co2_emissions": 0.2,

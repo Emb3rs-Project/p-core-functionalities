@@ -1,26 +1,14 @@
-from pydantic import BaseModel, NonNegativeFloat, validator
+from pydantic import BaseModel, NonNegativeFloat, validator, conlist
 from typing import Optional
 
-class MonthlyCapacity(BaseModel):
-    january: NonNegativeFloat
-    february: NonNegativeFloat
-    march: NonNegativeFloat
-    april: NonNegativeFloat
-    may: NonNegativeFloat
-    june: NonNegativeFloat
-    july: NonNegativeFloat
-    august: NonNegativeFloat
-    september: NonNegativeFloat
-    october: NonNegativeFloat
-    november: NonNegativeFloat
-    december: NonNegativeFloat
+
 
 
 class BuildingandGreenhouseAdjustCapacity(BaseModel):
 
-    real_heating_monthly_capacity: Optional[MonthlyCapacity] = None
+    real_heating_monthly_capacity: Optional[conlist(NonNegativeFloat, min_items=12, max_items=12)] = None
     real_heating_yearly_capacity: Optional[NonNegativeFloat] = None
-    real_cooling_monthly_capacity: Optional[MonthlyCapacity] = None
+    real_cooling_monthly_capacity: Optional[conlist(NonNegativeFloat, min_items=12, max_items=12)] = None
     real_cooling_yearly_capacity: Optional[NonNegativeFloat] = None
 
     @validator("real_heating_monthly_capacity", "real_heating_yearly_capacity", allow_reuse=True)
