@@ -61,11 +61,20 @@ def building_climate_api(latitude,longitude):
     solar_collector_inclination = latitude - 15
 
     # Get Climate Data from API
-    try:
-        raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30, map_variables=False)
-    except:
-        sleep(5)
-        raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30, map_variables=False)
+    climate_data_obtained = False
+    sleep_timer = 5 # s
+    max_repeat = 4
+    repeat = 1
+    while climate_data_obtained==False:
+        try:
+            raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30, map_variables=False)
+            climate_data_obtained = True
+        except:
+            sleep(sleep_timer*repeat)
+            repeat +=1
+
+        if repeat == max_repeat:
+            raise Exception("Climate data API is getting to many requests")
 
     climate_df = raw_df[0]
 

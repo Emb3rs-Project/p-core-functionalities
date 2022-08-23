@@ -3,6 +3,7 @@ import math
 import pvlib
 import datetime
 import pandas as pd
+from time import sleep
 
 
 def solar_collector_climate_api(latitude, longitude):
@@ -40,16 +41,22 @@ def solar_collector_climate_api(latitude, longitude):
     df_col_names = ['T_exterior', 'T_sky', 'Q_beam_solar_collector', 'Q_dif_solar_collector']
     df_output = pd.DataFrame(columns=df_col_names)
 
-    # get climate data form API
-    raw_df = pvlib.iotools.get_pvgis_tmy(latitude,
-                                         longitude,
-                                         outputformat='csv',
-                                         usehorizon=True,
-                                         userhorizon=None,
-                                         startyear=None,
-                                         endyear=None,
-                                         url='https://re.jrc.ec.europa.eu/api/',
-                                         timeout=30,map_variables=False)
+    # Get Climate Data from API
+    climate_data_obtained = False
+    sleep_timer = 5 # s
+    max_repeat = 4
+    repeat = 1
+    while climate_data_obtained==False:
+        try:
+            raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30, map_variables=False)
+            climate_data_obtained = True
+        except:
+            sleep(sleep_timer*repeat)
+            repeat +=1
+
+        if repeat == max_repeat:
+            raise Exception("Climate data API is getting to many requests")
+
     climate_df = raw_df[0]
     data = np.zeros((8760, 7))
     data[:, 0] = climate_df['T2m']  # Ambient temperature [ºC]
