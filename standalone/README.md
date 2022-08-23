@@ -2,7 +2,12 @@ Main features of the CF can be use with the CF Standalone.
 By using excel files, as presented in the "test" folder, any user can easily use and obtain reports of the main features of the CF Module.
 
 ```python
+
 from main_cf_standalone import CFModule
+
+#############################################################################################
+#############################################################################################
+# USER INTERACTION -> Create a folder inside "test" folder with your input data
 
 # Initialize
 cf = CFModule()
