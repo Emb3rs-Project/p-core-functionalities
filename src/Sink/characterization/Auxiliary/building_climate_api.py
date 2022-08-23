@@ -3,7 +3,7 @@ import numpy as np
 import pvlib
 import datetime
 import pandas as pd
-
+from time import sleep
 
 def building_climate_api(latitude,longitude):
     """Get climate data for a specific location, for the building/greenhouse routine
@@ -61,7 +61,11 @@ def building_climate_api(latitude,longitude):
     solar_collector_inclination = latitude - 15
 
     # Get Climate Data from API
-    raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30, map_variables=False)
+    try:
+        raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30, map_variables=False)
+    except:
+        sleep(5)
+        raw_df = pvlib.iotools.get_pvgis_tmy(latitude, longitude, outputformat='csv', usehorizon=True, userhorizon=None, startyear=None, endyear=None, url='https://re.jrc.ec.europa.eu/api/', timeout=30, map_variables=False)
 
     climate_df = raw_df[0]
 
