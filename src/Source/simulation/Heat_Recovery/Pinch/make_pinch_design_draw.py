@@ -595,7 +595,7 @@ def make_pinch_design_draw(info):
 
     # adjust plot size
     fig = plt.gcf()
-    fig.set_size_inches(11, 6)
+    fig.set_size_inches(10, 5)
     ax = plt.gca()
     ax.set_xlim(x_min - 15, x_max + 15)
     ax.set_ylim(y_min - 15, y_max + 5)
