@@ -14,4 +14,11 @@ dependencies:
   - beautifulsoup4=
   - matplotlib=
   - requests=
+  - urllib3
+  - pip:
+    - beautifulsoup4==4.11.1
+    - geopy==2.2.0
+    - mpld3==0.5.8
+    - openpyxl==3.0.10
+    - pvlib==0.9.1
 

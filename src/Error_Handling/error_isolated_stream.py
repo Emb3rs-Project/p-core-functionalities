@@ -114,3 +114,6 @@ class StreamData(ReferenceSystem,AdjustCapacity):
 class PlatformIsolatedStream(BaseModel):
     streams: List[StreamData]
     fuels_data: FuelData
+    streams_to_analyse: list
+    pinch_delta_T_min: PositiveFloat
+    interest_rate: PositiveFloat

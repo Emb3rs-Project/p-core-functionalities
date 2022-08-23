@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-class ReadDataCF:
+class ReadDataCFDHN:
 
     def get_data(self, df_file_excel):
 
@@ -10,6 +10,9 @@ class ReadDataCF:
             df_file_excel[sheet] = df_file_excel[sheet].replace({np.nan:None})
 
         fuels_data = self.get_fuels_data(df_file_excel["CF - Fuels Data"])
+
+        df_file_excel["CF - Sinks Buildings"] = self.take_out_columns_with_specific_val(df_file_excel["CF - Sinks Buildings"], "sink_id", None)
+
         simple_sources_data = self.get_simple_sources_data(df_file_excel["CF - Sources General Data"],df_file_excel["CF - Simple Sources' Streams"])
         simple_sinks_data = self.get_simple_sinks_data(df_file_excel["CF - Sinks General Data"],df_file_excel["CF - Simple Sinks' Streams"] )
 
@@ -30,9 +33,12 @@ class ReadDataCF:
 
     def get_fuels_data(self, df_sheet):
         df_sheet = df_sheet.set_index('fuel')
+
+        df_sheet["price"] = df_sheet["price"].apply(lambda x: x/1000 if x!=None else None)
+
         df_sheet.index.name = None
         df_sheet = df_sheet.transpose()
-
+        df_sheet = df_sheet.where(pd.notnull(df_sheet), None)
         return df_sheet.to_dict()
 
 
@@ -40,33 +46,34 @@ class ReadDataCF:
 
         sources_data = []
 
-        # get sources general data
-        df_sources_general_data['source_id'] = df_sources_general_data['source_id'].apply(int)
-        df_sources_streams['source_id'] = df_sources_streams['source_id'].apply(int)
+        if df_sources_streams.empty == False:
 
-        df_sources_general_data["id"] = df_sources_general_data['source_id'].copy()
-        df_sources_general_data = df_sources_general_data.set_index('source_id')
+            # get sources general data
+            df_sources_general_data['source_id'] = df_sources_general_data['source_id'].apply(int)
+            df_sources_streams['source_id'] = df_sources_streams['source_id'].apply(int)
 
-        # create dict with keys=source_id, followed by source data
-        df_sources_general_data['location'] = df_sources_general_data.apply(lambda row: [row['latitude'],row['longitude']], axis=1)
-        df_sources_general_data = df_sources_general_data.drop(['latitude','longitude'], axis=1)
-        df_sources_general_data = df_sources_general_data.transpose()
+            df_sources_general_data["id"] = df_sources_general_data['source_id'].copy()
+            df_sources_general_data = df_sources_general_data.set_index('source_id')
 
-        general_data = df_sources_general_data.to_dict()
+            # create dict with keys=source_id, followed by source data
+            df_sources_general_data['location'] = df_sources_general_data.apply(lambda row: [row['latitude'],row['longitude']], axis=1)
+            df_sources_general_data = df_sources_general_data.drop(['latitude','longitude'], axis=1)
+            df_sources_general_data = df_sources_general_data.transpose()
 
-        # put streams on the respective source
-        for source_id in general_data.keys():
-            general_data[source_id]["raw_streams"] = []
-            df_data = df_sources_streams[df_sources_streams["source_id"] == source_id]
-            df_data = df_data.drop('source_id', axis=1)
-            data = df_data.transpose().to_dict()
+            general_data = df_sources_general_data.to_dict()
 
-            for key in data.keys():
-                data[key] = {key_stream: self.get_parameters_values(key_stream, value_stream) for (key_stream, value_stream) in data[key].items() if value_stream != None}
+            # put streams on the respective source
+            for source_id in general_data.keys():
+                general_data[source_id]["raw_streams"] = []
+                df_data = df_sources_streams[df_sources_streams["source_id"] == source_id]
+                df_data = df_data.drop('source_id', axis=1)
+                data = df_data.transpose().to_dict()
 
-            general_data[source_id]["raw_streams"] = [data[key] for key in data] # convert to list
-            sources_data.append(general_data[source_id])
+                for key in data.keys():
+                    data[key] = {key_stream: self.get_parameters_values(key_stream, value_stream) for (key_stream, value_stream) in data[key].items() if value_stream != None}
 
+                general_data[source_id]["raw_streams"] = [data[key] for key in data] # convert to list
+                sources_data.append(general_data[source_id])
 
         return sources_data
 
@@ -75,36 +82,37 @@ class ReadDataCF:
 
         sinks_data = []
 
-        # get  general data
-        df_sinks_general_data['sink_id'] = df_sinks_general_data['sink_id'].apply(int)
-        df_sinks_streams['sink_id'] = df_sinks_streams['sink_id'].apply(int)
+        if df_sinks_streams.empty == False:
+            # get  general data
+            df_sinks_general_data['sink_id'] = df_sinks_general_data['sink_id'].apply(int)
+            df_sinks_streams['sink_id'] = df_sinks_streams['sink_id'].apply(int)
 
-        df_sinks_general_data["id"] = df_sinks_general_data['sink_id'].copy()
-        df_sinks_general_data = df_sinks_general_data.set_index('sink_id')
+            df_sinks_general_data["id"] = df_sinks_general_data['sink_id'].copy()
+            df_sinks_general_data = df_sinks_general_data.set_index('sink_id')
 
-        # get simple sinks general data
-        df_simple_sinks = df_sinks_general_data.loc[df_sinks_general_data['sink_type'] == "simple sink"]
-        df_simple_sinks = df_simple_sinks.drop('sink_type', axis=1)
-        df_simple_sinks['location'] = df_simple_sinks.apply(lambda row: [row['latitude'], row['longitude']], axis=1)
-        df_simple_sinks = df_simple_sinks.drop(['latitude','longitude'], axis=1)
-        df_simple_sinks = df_simple_sinks.transpose()
+            # get simple sinks general data
+            df_simple_sinks = df_sinks_general_data.loc[df_sinks_general_data['sink_type'] == "simple sink"]
+            df_simple_sinks = df_simple_sinks.drop('sink_type', axis=1)
+            df_simple_sinks['location'] = df_simple_sinks.apply(lambda row: [row['latitude'], row['longitude']], axis=1)
+            df_simple_sinks = df_simple_sinks.drop(['latitude','longitude'], axis=1)
+            df_simple_sinks = df_simple_sinks.transpose()
 
-        # create dict with keys=sink_id, followed by source data
-        general_data = df_simple_sinks.to_dict()
+            # create dict with keys=sink_id, followed by source data
+            general_data = df_simple_sinks.to_dict()
 
-        # put streams on the respective sink
-        for sink_id in general_data.keys():
-            general_data[sink_id]["raw_streams"] = []
-            df_data = df_sinks_streams[df_sinks_streams["sink_id"] == sink_id]
-            df_data = df_data.drop('sink_id', axis=1)
-            data = df_data.transpose().to_dict()
+            # put streams on the respective sink
+            for sink_id in general_data.keys():
+                general_data[sink_id]["raw_streams"] = []
+                df_data = df_sinks_streams[df_sinks_streams["sink_id"] == sink_id]
+                df_data = df_data.drop('sink_id', axis=1)
+                data = df_data.transpose().to_dict()
 
-            for key in data.keys():
-                data[key] = {key_stream: self.get_parameters_values(key_stream, value_stream) for (key_stream, value_stream) in data[key].items() if value_stream != None}
+                for key in data.keys():
+                    data[key] = {key_stream: self.get_parameters_values(key_stream, value_stream) for (key_stream, value_stream) in data[key].items() if value_stream != None}
 
 
-            general_data[sink_id]["raw_streams"] = [data[key] for key in data] # convert to list
-            sinks_data.append(general_data[sink_id])
+                general_data[sink_id]["raw_streams"] = [data[key] for key in data] # convert to list
+                sinks_data.append(general_data[sink_id])
 
         return sinks_data
 
@@ -112,11 +120,12 @@ class ReadDataCF:
     def get_building_data(self, df_sinks_general_data, df_buildings):
         buildings_data = []
 
+
         if df_buildings.empty == False:
+
             # get  general data
             df_sinks_general_data['sink_id'] = df_sinks_general_data['sink_id'].apply(str)
             df_buildings['sink_id'] = df_buildings['sink_id'].apply(str)
-
 
             df_sinks_general_data["id"] = df_sinks_general_data['sink_id'].copy()
             df_sinks_general_data = df_sinks_general_data.set_index('sink_id')
@@ -131,6 +140,7 @@ class ReadDataCF:
 
             # create dict with keys=sink_id, followed by source data
             general_data = df_simple_sinks.to_dict()
+
             # put streams on the respective sink
             for sink_id in general_data.keys():
                 general_data[sink_id]["info"] = []
@@ -138,15 +148,17 @@ class ReadDataCF:
                 if df_data.shape[0] > 1:
                     raise Exception('Each building must have a unique Sink ID')
 
-                df_data = df_data.drop('sink_id', axis=1)
+                df_data.set_index('sink_id', inplace=True)
                 data = df_data.transpose().to_dict()
 
                 for key in data.keys():
+
                     data[key] = {key_stream: self.get_parameters_values(key_stream, value_stream) for (key_stream, value_stream) in data[key].items() if value_stream != None}
 
 
+                general_data[sink_id]["info"] = data[str(sink_id)]  # convert to list
+                general_data[sink_id]["id"] = int(general_data[sink_id]["id"]) # id must be int
 
-                general_data[sink_id]["info"] = data[int(sink_id)]  # convert to list
                 buildings_data.append(general_data[sink_id])
 
         return buildings_data
@@ -170,12 +182,10 @@ class ReadDataCF:
 
             # create dict with keys=sink_id, followed by source data
             general_data = df_simple_sinks.to_dict()
-
             # put streams on the respective sink
             for sink_id in general_data.keys():
                 general_data[sink_id]["info"] = []
                 df_data = df_greenhouses[df_greenhouses["sink_id"] == sink_id]
-
                 if df_data.empty == False:
                     if df_data.shape[0] > 1:
                         raise Exception('Each greenhouse must have a unique Sink ID')
@@ -187,7 +197,9 @@ class ReadDataCF:
                         data[key] = {key_stream: self.get_parameters_values(key_stream, value_stream) for (key_stream, value_stream) in data[key].items() if value_stream != None}
 
 
-                    general_data[sink_id]["info"] = data[int(sink_id)]  # convert to list
+                    general_data[sink_id]["info"] = data[str(sink_id)]  # convert to list
+                    general_data[sink_id]["id"] = int(general_data[sink_id]["id"])  # id must be int
+
                     greenhouses_data.append(general_data[sink_id])
                 else:
                     greenhouses_data = []
@@ -228,3 +240,7 @@ class ReadDataCF:
         else:
             return val
 
+
+    def take_out_columns_with_specific_val(self,df,column_name,val):
+        new_df = df[df[column_name] != val]
+        return new_df
