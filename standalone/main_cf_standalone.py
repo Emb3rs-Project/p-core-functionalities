@@ -27,8 +27,9 @@ class DesignORC:
         self.sources = []
 
     def read_user_inputs(self, file):
+        df_file = pd.read_excel(file, sheet_name=None)
         cf_orc = ReadDataCFORC()
-        self.cf_data = cf_orc.get_data(file)
+        self.cf_data = cf_orc.get_data(df_file)
         self.characterization()
 
     def characterization(self):
@@ -60,10 +61,9 @@ class DesignORC:
 class PinchAnalysis:
 
     def read_user_inputs(self, file):
+        df_file = pd.read_excel(file, sheet_name=None)
         cf_pinch = ReadDataCFPinch()
-
-
-        self.cf_data = cf_pinch.get_data(file)
+        self.cf_data = cf_pinch.get_data(df_file)
 
         # fuels_data
         self.cf_data["fuels_data"] = fuel_data_fill_values(self.cf_data["sources"][0]['location'],
@@ -87,8 +87,9 @@ class DHNSimulation:
         self.sinks = []
 
     def read_user_inputs(self, file):
+        df_file = pd.read_excel(file, sheet_name=None)
         cf_dhn = ReadDataCFDHN()
-        cf_data_raw = cf_dhn.get_data(file)
+        cf_data_raw = cf_dhn.get_data(df_file)
         self.cf_characterization(cf_data_raw)
 
     def cf_characterization(self, cf_data_raw):
@@ -154,25 +155,22 @@ class CFModule():
 
     def design_orc(self, file_path):
         file = os.path.abspath(file_path)
-        df_file = pd.read_excel(file, sheet_name=None)
         platform_orc = DesignORC()
-        platform_orc.read_user_inputs(df_file)
+        platform_orc.read_user_inputs(file)
         platform_orc.simulation()
         platform_orc.get_report()
 
     def dhn_simulation(self, file_path, grid_supply_temperature, grid_return_temperature):
         file = os.path.abspath(file_path)
-        df_file = pd.read_excel(file, sheet_name=None)
         platform_dhn = DHNSimulation()
-        platform_dhn.read_user_inputs(df_file)
+        platform_dhn.read_user_inputs(file)
         convert_sinks_results, convert_sources_results = platform_dhn.simulation(grid_supply_temperature, grid_return_temperature)
 
         return convert_sinks_results, convert_sources_results
 
     def pinch_analysis(self,file_path):
         file = os.path.abspath(file_path)
-        df_file = pd.read_excel(file, sheet_name=None)
         platform_pinch_analysis = PinchAnalysis()
-        platform_pinch_analysis.read_user_inputs(df_file)
+        platform_pinch_analysis.read_user_inputs(file)
         platform_pinch_analysis.simulation()
         platform_pinch_analysis.get_report()
