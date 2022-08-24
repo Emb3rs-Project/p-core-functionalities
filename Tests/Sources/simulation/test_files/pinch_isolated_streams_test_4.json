@@ -1,8 +1,12 @@
 {
   "platform": {
+    "streams_to_analyse": [11976,71155,86946,81275,67672,91918,67484,77704,71854],
+
     "all_input_objects": [
     {
       "id": 11976,
+      "fuel": "none",
+      "name": "first",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "cold_stream",
@@ -17586,6 +17590,8 @@
     },
     {
       "id": 71155,
+      "fuel": "none",
+      "name": "s",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "cold_stream",
@@ -35169,6 +35175,8 @@
     },
     {
       "id": 86946,
+      "fuel": "none",
+      "name": "sa",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "cold_stream",
@@ -52752,6 +52760,8 @@
     },
     {
       "id": 81275,
+      "fuel": "none",
+      "name": "fourth",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "cold_stream",
@@ -70335,6 +70345,8 @@
     },
     {
       "id": 67672,
+      "fuel": "none",
+      "name": "firsasft",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "hot_stream",
@@ -87918,6 +87930,8 @@
     },
     {
       "id": 91918,
+      "fuel": "none",
+      "name": "sdf",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "hot_stream",
@@ -105501,6 +105515,8 @@
     },
     {
       "id": 67484,
+      "fuel": "none",
+      "name": "ngf",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "hot_stream",
@@ -123084,6 +123100,8 @@
     },
     {
       "id": 77704,
+      "fuel": "none",
+      "name": "bcv",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "hot_stream",
@@ -140667,6 +140685,8 @@
     },
     {
       "id": 71854,
+      "fuel": "none",
+      "name": "kok",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "hot_stream",
@@ -158250,9 +158270,23 @@
     }
   ],
     "pinch_delta_T_min": 20,
-    "location": [
-      48.864716,
-      2.349014
-    ]
+    "fuels_data": {
+          "natural_gas": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "biomass": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "fuel_oil": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "electricity": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          }
+        }
   }
 }

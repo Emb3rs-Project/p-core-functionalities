@@ -1,11 +1,15 @@
 {
   "platform": {
+    "streams_to_analyse": [57467,32471],
     "all_input_objects": [
       {
         "object_type": "process",
         "streams": [
           {
             "id": 57467,
+            "eff_equipment": 0.9,
+            "name": "stream_1",
+            "fuel": "natural_gas",
             "object_type": "stream",
             "object_linked_id": 55,
             "stream_type": "startup",
@@ -17539,6 +17543,8 @@
           },
           {
             "id": 95819,
+            "name": "stream_2",
+            "fuel": "natural_gas",
             "object_type": "stream",
             "object_linked_id": 55,
             "stream_type": "inflow",
@@ -35072,6 +35078,8 @@
           },
           {
             "id": 31702,
+            "name": "stream_3",
+            "fuel": "natural_gas",
             "object_type": "stream",
             "object_linked_id": 55,
             "stream_type": "inflow",
@@ -52605,6 +52613,8 @@
           },
           {
             "id": 27007,
+            "name": "stream_4",
+            "fuel": "none",
             "object_type": "stream",
             "object_linked_id": 55,
             "stream_type": "outflow",
@@ -70157,6 +70167,8 @@
         "streams": [
           {
             "id": 3030,
+            "name": "stream_1",
+            "fuel": "natural_gas",
             "object_type": "stream",
             "object_linked_id": 101,
             "stream_type": "inflow",
@@ -87740,6 +87752,8 @@
           },
           {
             "id": 82907,
+            "name": "stream_2",
+            "fuel": "natural_gas",
             "object_type": "stream",
             "object_linked_id": 101,
             "stream_type": "supply_heat",
@@ -105323,6 +105337,8 @@
           },
           {
             "id": 32471,
+            "name": "stream_2",
+            "fuel": "none",
             "object_type": "stream",
             "object_linked_id": 101,
             "stream_type": "excess_heat",
@@ -122913,10 +122929,24 @@
       }
     ],
     "pinch_delta_T_min": 20,
-    "location": [
-      48.864716,
-      2.349014
-    ]
+    "fuels_data": {
+          "natural_gas": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "biomass": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "fuel_oil": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "electricity": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          }
+        }
   }
 }
 

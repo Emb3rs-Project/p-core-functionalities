@@ -78,11 +78,7 @@
         "ref_system_eff_equipment": null
       }
     ],
-    "pinch_delta_T_min": 50,
-    "location": [
-      48.864716,
-      2.349014
-    ]
+    "pinch_delta_T_min": 50
   }
 }
 

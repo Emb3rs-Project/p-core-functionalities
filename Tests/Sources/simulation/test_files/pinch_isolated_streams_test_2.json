@@ -1,6 +1,6 @@
 {
   "platform": {
-     "fuels_data": {
+    "fuels_data": {
           "natural_gas": {
             "co2_emissions": 0.2,
             "price": 0.055
@@ -70418,12 +70418,7 @@
         5208000.0
       ]
     }
-  ]
-,
-    "pinch_delta_T_min": 50,
-    "location": [
-      48.864716,
-      2.349014
-    ]
+  ],
+    "pinch_delta_T_min": 50
   }
 }

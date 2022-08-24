@@ -223,8 +223,7 @@ def convert_pinch(in_var, kb: KB):
 
     try:
         # create the streams list
-        #get_equipment = {str(input_object['id']): input_object for input_object in all_input_objects if
-        #                 input_object['object_type'] == 'equipment'}
+
         for object in all_input_objects:  # objet can be stream/process/equipment
             if object['object_type'] == 'process':  # from processes get streams
                 objects_to_analyze.append(object)
@@ -327,7 +326,6 @@ def convert_pinch(in_var, kb: KB):
     df_char['mcp'] = df_char['Capacity'] /abs(df_char['Supply_Shift']- df_char['Target_Shift'])  # [kW/K]
 
 
-
     ############################################################################################################
     # PINCH ANALYSIS
     design_id = 1  # give each design an ID - initial value
@@ -420,6 +418,7 @@ def convert_pinch(in_var, kb: KB):
                 'capex': df_hx['Total_Turnkey_Cost'].sum(),
                 'om_fix': df_hx['HX_OM_Fix_Cost'].sum()
             })
+
 
 
     df_optimization = pd.DataFrame(list_df_optimization)

@@ -1,8 +1,29 @@
 {
   "platform": {
+    "fuels_data": {
+          "natural_gas": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "biomass": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "fuel_oil": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          },
+          "electricity": {
+            "co2_emissions": 0.2,
+            "price": 0.055
+          }
+        },
+    "streams_to_analyse": [8184,19964,66996,42460,14457],
     "all_input_objects": [
     {
       "id": 8184,
+      "fuel": "none",
+      "name": "first",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "cold_stream",
@@ -17586,6 +17607,8 @@
     },
     {
       "id": 19964,
+      "fuel": "none",
+      "name": "second",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "cold_stream",
@@ -35169,6 +35192,8 @@
     },
     {
       "id": 66996,
+      "fuel": "none",
+      "name": "third",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "cold_stream",
@@ -52752,6 +52777,8 @@
     },
     {
       "id": 42460,
+      "fuel": "none",
+      "name": "fourth",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "hot_stream",
@@ -70335,6 +70362,8 @@
     },
     {
       "id": 14457,
+      "fuel": "none",
+      "name": "fifth",
       "object_type": "stream",
       "object_linked_id": null,
       "stream_type": "hot_stream",
@@ -87917,11 +87946,7 @@
       "capacity": 20.0
     }
     ],
-    "pinch_delta_T_min": 20,
-    "location": [
-      48.864716,
-      2.349014
-    ]
+    "pinch_delta_T_min": 20
   }
 }
 

@@ -11,9 +11,6 @@ script_dir = os.path.dirname(__file__)
 def testConvertPinchIsolated():
 
     data_test = json.load(open(os.path.join(script_dir, "test_files/pinch_isolated_raw.json")))
-
     test = convert_pinch_isolated_streams(data_test, KB(kb))
-
-
 
     print("Convert Pinch with Isolated Stream run Successfully")
