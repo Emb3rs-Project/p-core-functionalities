@@ -42,8 +42,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source Submodule</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="SimpleCharacterization.html">Simple Characterization</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="DetailedCharacterization.html">Detailed Characterization</a><ul class="current">
@@ -56,8 +55,8 @@
 <li class="toctree-l2"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -74,7 +73,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source.html">Source Submodule</a> &raquo;</li>
           <li><a href="Source%20Characterization.html">Source Characterization</a> &raquo;</li>
           <li><a href="DetailedCharacterization.html">Detailed Characterization</a> &raquo;</li>
       <li>Process</li>
@@ -93,7 +92,10 @@
 <dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Process.process.</span></span><span class="sig-name descname"><span class="pre">Process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Create Process object and characterize its streams (Inflow/Outflow/Maintenance/Evaporation).</p>
+<p>Create Process object and characterize its process components (Inflow/Outflow/Maintenance/Evaporation).</p>
+<p>A process is sequencing of actions, in continuous or batch, which includes heating/cooling of streams.
+Regarding the types of streams: Inflow - going in stream -, Outflow - going out stream - , Maintenance/
+Evaporation - energy demand for a specific temperature. The process can be continuous or in batch.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.id" title="Permalink to this definition"></a></dt>
@@ -251,7 +253,9 @@
 </dl>
 </li>
 <li><dl class="simple">
-<dt>cycle_time_percentage: float</dt><dd><p>Cycle  percentage for Startup/Inflow/Outflow during batch process</p>
+<dt>cycle_time_percentage: float</dt><dd><p>Percentage of time needed of a cycle for the Startup/Inflow/Outflow during batch process.
+Example: For a cycle_time 1h and cycle_time_percentage=0.1; initial 10%/6min for heating the startup
+fluid and inflow, and last 10%/6min for the outflow discharge.</p>
 </dd>
 </dl>
 </li>
@@ -324,7 +328,7 @@
 </dl>
 </li>
 <li><dl>
-<dt>maintenance_data<span class="classifier">list</span></dt><dd><p>Maintenance data dicts, with the following keys:</p>
+<dt>maintenance_data<span class="classifier">list</span></dt><dd><p>Maintenance/Eavporation data dicts, with the following keys:</p>
 <blockquote>
 <div><ul class="simple">
 <li><dl class="simple">

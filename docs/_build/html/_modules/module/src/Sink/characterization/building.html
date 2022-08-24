@@ -39,10 +39,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../UserGuide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../Source.html">Source</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Source.html">Source Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -72,7 +71,8 @@
   <h1>Source code for module.src.Sink.characterization.building</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">...utilities.kb</span> <span class="kn">import</span> <span class="n">KB</span>
-<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour</span> <span class="kn">import</span> <span class="n">schedule_hour</span>
+<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour_simplified</span> <span class="kn">import</span> <span class="n">schedule_hour_simplified</span>
+<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour_detailed</span> <span class="kn">import</span> <span class="n">schedule_hour_detailed</span>
 <span class="kn">from</span> <span class="nn">...General.Auxiliary_General.month_last_hour</span> <span class="kn">import</span> <span class="n">month_last_hour</span>
 <span class="kn">from</span> <span class="nn">...General.Simple_User.adjust_capacity</span> <span class="kn">import</span> <span class="n">adjust_capacity</span>
 <span class="kn">from</span> <span class="nn">.Auxiliary.building_climate_api</span> <span class="kn">import</span> <span class="n">building_climate_api</span>
@@ -95,8 +95,8 @@
 <div class="viewcode-block" id="building"><a class="viewcode-back" href="../../../../../Building.html#module.src.Sink.characterization.building.building">[docs]</a><span class="k">def</span> <span class="nf">building</span><span class="p">(</span><span class="n">in_var</span><span class="p">,</span> <span class="n">kb</span> <span class="p">:</span> <span class="n">KB</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Building characterization</span>
 
-<span class="sd">    Simulates heat an cooling consumptions over the year, according to building specifications</span>
-<span class="sd">    and climate weather data</span>
+<span class="sd">    Simulates heat (space heating and hot water) and cooling (space cooling) consumptions over the year, according to</span>
+<span class="sd">    building specifications and climate weather data. Characterizes heating/cooling streams of a building.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -169,20 +169,14 @@
 <span class="sd">                - ref_system_fuel_type_heating: str</span>
 <span class="sd">                    Fuel type associated; e.g. &quot;natural_gas&quot;,&quot;electricity&quot;,&quot;biomass&quot;,&quot;fuel_oil&quot;,&quot;none&quot;</span>
 
-<span class="sd">                - ref_system_fuel_price_heating: float, optional</span>
-<span class="sd">                    Fuel Price. If not given, obtained from KB</span>
-
 <span class="sd">                - ref_system_eff_equipment_heating: float, optional</span>
 <span class="sd">                    Efficiency of the heating equipment</span>
 
 <span class="sd">                - ref_system_fuel_type_cooling: str</span>
 <span class="sd">                    Fuel type associated</span>
 
-<span class="sd">                - ref_system_fuel_price_cooling: float, optional</span>
-<span class="sd">                    Fuel Price. If not given, obtained from KB</span>
-
-<span class="sd">                - ref_system_eff_equipment_cooling: float</span>
-<span class="sd">                    OPTIONAL] COP of the cooling equipment</span>
+<span class="sd">                - ref_system_eff_equipment_cooling: float, optional</span>
+<span class="sd">                    COP of the cooling equipment</span>
 
 <span class="sd">                - real_heating_monthly_capacity: dict, optional</span>
 <span class="sd">                    Real monthly data - for each month of the year</span>
@@ -298,7 +292,7 @@
 <span class="sd">                        Stream fluid name</span>
 
 <span class="sd">                    - flowrate : float</span>
-<span class="sd">                        Stream mass flowrate[kg/h]</span>
+<span class="sd">                        Stream mass flowrate [kg/h]</span>
 
 <span class="sd">                    - schedule : list</span>
 <span class="sd">                        Hourly values between 0 and 1, according to the capacity ration on that hour</span>
@@ -332,10 +326,7 @@
     <span class="n">ratio_wall_S</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ratio_wall_S</span>
     <span class="n">ratio_wall_E</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ratio_wall_E</span>
     <span class="n">ratio_wall_W</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">ratio_wall_W</span>
-    <span class="n">saturday_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">saturday_on</span>
-    <span class="n">sunday_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">sunday_on</span>
-    <span class="n">shutdown_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">shutdown_periods</span>
-    <span class="n">daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">daily_periods</span>
+
     <span class="n">building_orientation</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">building_orientation</span>
     <span class="n">T_cool_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">T_cool_on</span>  <span class="c1"># cooling start temperature working hours [ºC]</span>
     <span class="n">T_heat_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">T_heat_on</span>  <span class="c1"># heating start temperature working hours [ºC]</span>
@@ -403,7 +394,32 @@
     <span class="c1">################################################################################################</span>
     <span class="c1"># COMPUTE ----------------------------------------------</span>
     <span class="c1"># Schedule</span>
-    <span class="n">profile</span> <span class="o">=</span> <span class="n">schedule_hour</span><span class="p">(</span><span class="n">saturday_on</span><span class="p">,</span> <span class="n">sunday_on</span><span class="p">,</span> <span class="n">shutdown_periods</span><span class="p">,</span> <span class="n">daily_periods</span><span class="p">)</span>  <span class="c1"># vector: [0,1,1,0,..]; 0-on 1-off</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">saturday_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">saturday_on</span>
+        <span class="n">sunday_on</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">sunday_on</span>
+        <span class="n">shutdown_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">shutdown_periods</span>
+        <span class="n">daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">daily_periods</span>
+
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">schedule_hour_simplified</span><span class="p">(</span><span class="n">daily_periods</span><span class="p">,</span><span class="n">saturday_on</span><span class="p">,</span><span class="n">sunday_on</span><span class="p">,</span><span class="n">shutdown_periods</span><span class="p">)</span> <span class="c1"># vector: [0,1,1,0,..]; 0-on 1-off</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">monday_daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">monday_daily_periods</span>
+        <span class="n">tuesday_daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">tuesday_daily_periods</span>
+        <span class="n">wednesday_daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">wednesday_daily_periods</span>
+        <span class="n">thursday_daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">thursday_daily_periods</span>
+        <span class="n">friday_daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">friday_daily_periods</span>
+        <span class="n">saturday_daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">saturday_daily_periods</span>
+        <span class="n">sunday_daily_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">sunday_daily_periods</span>
+        <span class="n">shutdown_periods</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">shutdown_periods</span>
+
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">schedule_hour_detailed</span><span class="p">(</span><span class="n">monday_daily_periods</span><span class="p">,</span>
+                                        <span class="n">tuesday_daily_periods</span><span class="p">,</span>
+                                        <span class="n">wednesday_daily_periods</span><span class="p">,</span>
+                                        <span class="n">thursday_daily_periods</span><span class="p">,</span>
+                                        <span class="n">friday_daily_periods</span><span class="p">,</span>
+                                        <span class="n">saturday_daily_periods</span><span class="p">,</span>
+                                        <span class="n">sunday_daily_periods</span><span class="p">,</span>
+                                        <span class="n">shutdown_periods</span><span class="p">)</span>
+
     <span class="n">month_last_hour_vector</span> <span class="o">=</span> <span class="n">month_last_hour</span><span class="p">()</span>
 
     <span class="c1"># Climate data</span>
@@ -873,12 +889,12 @@
             <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">real_heating_monthly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">stream_hot</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="nb">vars</span><span class="p">(</span><span class="n">real_heating_monthly_capacity</span><span class="p">))</span>
+            <span class="n">stream_hot</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="n">real_heating_monthly_capacity</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">real_heating_yearly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">stream_hot</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">user_yearly_capacity</span><span class="o">=</span><span class="n">real_heating_yearly_capacity</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">real_cooling_monthly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">stream_cold</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_cold</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="nb">vars</span><span class="p">(</span><span class="n">real_cooling_monthly_capacity</span><span class="p">))</span>
+            <span class="n">stream_cold</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_cold</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="n">real_cooling_monthly_capacity</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">real_cooling_yearly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">stream_cold</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_cold</span><span class="p">,</span> <span class="n">user_yearly_capacity</span><span class="o">=</span><span class="n">real_cooling_yearly_capacity</span><span class="p">)</span>
 

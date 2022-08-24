@@ -42,9 +42,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Source.html">Source</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="Sink.html">Sink</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Source.html">Source Submodule</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Sink.html">Sink Submodule</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="SinkCharacterization.html">Sink Characterization</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="SimpleCharacterization.html">Simple Characterization</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Building</a></li>
@@ -54,7 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="SinkSimulation.html">Sink Simulation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -71,7 +70,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="Sink.html">Sink</a> &raquo;</li>
+          <li><a href="Sink.html">Sink Submodule</a> &raquo;</li>
           <li><a href="SinkCharacterization.html">Sink Characterization</a> &raquo;</li>
       <li>Building</li>
       <li class="wy-breadcrumbs-aside">
@@ -89,8 +88,8 @@
 <dt class="sig sig-object py" id="module.src.Sink.characterization.building.building">
 <span class="sig-prename descclassname"><span class="pre">module.src.Sink.characterization.building.</span></span><span class="sig-name descname"><span class="pre">building</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Sink/characterization/building.html#building"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Sink.characterization.building.building" title="Permalink to this definition"></a></dt>
 <dd><p>Building characterization</p>
-<p>Simulates heat an cooling consumptions over the year, according to building specifications
-and climate weather data</p>
+<p>Simulates heat (space heating and hot water) and cooling (space cooling) consumptions over the year, according to
+building specifications and climate weather data. Characterizes heating/cooling streams of a building.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -205,11 +204,6 @@ and climate weather data</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>ref_system_fuel_price_heating: float, optional</dt><dd><p>Fuel Price. If not given, obtained from KB</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
 <dt>ref_system_eff_equipment_heating: float, optional</dt><dd><p>Efficiency of the heating equipment</p>
 </dd>
 </dl>
@@ -220,12 +214,7 @@ and climate weather data</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>ref_system_fuel_price_cooling: float, optional</dt><dd><p>Fuel Price. If not given, obtained from KB</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>ref_system_eff_equipment_cooling: float</dt><dd><p>OPTIONAL] COP of the cooling equipment</p>
+<dt>ref_system_eff_equipment_cooling: float, optional</dt><dd><p>COP of the cooling equipment</p>
 </dd>
 </dl>
 </li>
@@ -417,7 +406,7 @@ and climate weather data</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>flowrate<span class="classifier">float</span></dt><dd><p>Stream mass flowrate[kg/h]</p>
+<dt>flowrate<span class="classifier">float</span></dt><dd><p>Stream mass flowrate [kg/h]</p>
 </dd>
 </dl>
 </li>

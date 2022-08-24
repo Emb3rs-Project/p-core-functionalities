@@ -24,8 +24,8 @@ from ...Error_Handling.runtime_error import ModuleRuntimeException
 def building(in_var, kb : KB):
     """Building characterization
 
-    Simulates heat an cooling consumptions over the year, according to building specifications
-    and climate weather data
+    Simulates heat (space heating and hot water) and cooling (space cooling) consumptions over the year, according to
+    building specifications and climate weather data. Characterizes heating/cooling streams of a building.
 
     Parameters
     ----------
@@ -98,20 +98,14 @@ def building(in_var, kb : KB):
                 - ref_system_fuel_type_heating: str
                     Fuel type associated; e.g. "natural_gas","electricity","biomass","fuel_oil","none"
 
-                - ref_system_fuel_price_heating: float, optional
-                    Fuel Price. If not given, obtained from KB
-
                 - ref_system_eff_equipment_heating: float, optional
                     Efficiency of the heating equipment
 
                 - ref_system_fuel_type_cooling: str
                     Fuel type associated
 
-                - ref_system_fuel_price_cooling: float, optional
-                    Fuel Price. If not given, obtained from KB
-
-                - ref_system_eff_equipment_cooling: float
-                    OPTIONAL] COP of the cooling equipment
+                - ref_system_eff_equipment_cooling: float, optional
+                    COP of the cooling equipment
 
                 - real_heating_monthly_capacity: dict, optional
                     Real monthly data - for each month of the year
@@ -227,7 +221,7 @@ def building(in_var, kb : KB):
                         Stream fluid name
 
                     - flowrate : float
-                        Stream mass flowrate[kg/h]
+                        Stream mass flowrate [kg/h]
 
                     - schedule : list
                         Hourly values between 0 and 1, according to the capacity ration on that hour

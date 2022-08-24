@@ -3,7 +3,11 @@ import datetime
 from ....utilities.kb import KB
 
 class Process:
-    """Create Process object and characterize its streams (Inflow/Outflow/Maintenance/Evaporation).
+    """Create Process object and characterize its process components (Inflow/Outflow/Maintenance/Evaporation).
+
+    A process is sequencing of actions, in continuous or batch, which includes heating/cooling of streams.
+    Regarding the types of streams: Inflow - going in stream -, Outflow - going out stream - , Maintenance/
+    Evaporation - energy demand for a specific temperature. The process can be continuous or in batch.
 
     Attributes
     ----------
@@ -67,7 +71,9 @@ class Process:
                 Process schedule type; batch (1) or continuous (0)
 
             - cycle_time_percentage: float
-                Cycle  percentage for Startup/Inflow/Outflow during batch process
+                Percentage of time needed of a cycle for the Startup/Inflow/Outflow during batch process.
+                Example: For a cycle_time 1h and cycle_time_percentage=0.1; initial 10%/6min for heating the startup
+                fluid and inflow, and last 10%/6min for the outflow discharge.
 
             - inflow_data: list
                 Inflow streams dicts, with the following keys:
@@ -106,7 +112,7 @@ class Process:
                         Outflow initIal temperature [ºC]
 
             - maintenance_data : list
-                Maintenance data dicts, with the following keys:
+                Maintenance/Eavporation data dicts, with the following keys:
 
                     - name: str
                         Name
@@ -146,8 +152,6 @@ class Process:
         except:
             self.cycle_time_percentage = 0.1
 
-
-
         # Set Point Maintenance/ Evaporation
         try:
             maintenance_data = in_var['maintenance_data']
@@ -176,8 +180,8 @@ class Process:
                                                 self.id,
                                                 'maintenance',
                                                 "water",
-                                                self.operation_temperature - 1,
-                                                self.operation_temperature + 1,
+                                                self.operation_temperature - 1,  # to be able to run pinch analysis
+                                                self.operation_temperature + 1,  # to be able to run pinch analysis
                                                 None,
                                                 maintenance['maintenance_capacity'],
                                                 schedule,
@@ -189,7 +193,6 @@ class Process:
             self.stream_id += 1
 
     def generate_inflow(self,data):
-
         schedule = self.schedule('inflow')
 
         for inflow in data:
@@ -215,7 +218,6 @@ class Process:
             self.stream_id += 1
 
     def generate_outflow(self,outflow_data):
-
         schedule = self.schedule('outflow')
 
         for outflow in outflow_data:
@@ -228,7 +230,6 @@ class Process:
                 initial_temperature = self.operation_temperature
             else:
                 initial_temperature = outflow["initial_temperature"]
-
 
             self.streams.append(stream_industry(outflow['name'],
                                                 self.id,

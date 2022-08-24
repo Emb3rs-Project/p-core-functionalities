@@ -42,8 +42,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source Submodule</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="SimpleCharacterization.html">Simple Characterization</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="DetailedCharacterization.html">Detailed Characterization</a><ul class="current">
@@ -56,8 +55,8 @@
 <li class="toctree-l2"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -74,7 +73,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source.html">Source Submodule</a> &raquo;</li>
           <li><a href="Source%20Characterization.html">Source Characterization</a> &raquo;</li>
           <li><a href="DetailedCharacterization.html">Detailed Characterization</a> &raquo;</li>
       <li>Generate Equipment</li>
@@ -96,6 +95,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Generate_Equipment.generate_boiler.</span></span><span class="sig-name descname"><span class="pre">Boiler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Generate_Equipment/generate_boiler.html#Boiler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Create Boiler Object and characterize its streams</p>
+<p>From main characteristics of a boiler, adding to its characterization, it are estimated the inflow/supply/excess
+heat streams.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_boiler.Boiler.id" title="Permalink to this definition"></a></dt>
@@ -226,6 +227,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Generate_Equipment.generate_burner.</span></span><span class="sig-name descname"><span class="pre">Burner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Generate_Equipment/generate_burner.html#Burner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_burner.Burner" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Create Burner Object</p>
+<p>From main characteristics of a burner, adding to its characterization, it are estimated the inflow/supply/excess
+heat streams.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_burner.Burner.id" title="Permalink to this definition"></a></dt>
@@ -352,6 +355,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Generate_Equipment.generate_chp.</span></span><span class="sig-name descname"><span class="pre">Chp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Generate_Equipment/generate_chp.html#Chp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Create CHP Object</p>
+<p>From main characteristics of a Combined Heat and Power unit, adding to its characterization, it are estimated the
+inflow/supply/excess heat streams.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_chp.Chp.id" title="Permalink to this definition"></a></dt>
@@ -560,6 +565,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.</span></span><span class="sig-name descname"><span class="pre">Cooling_Equipment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Generate_Equipment/generate_cooling_equipment.html#Cooling_Equipment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Create Cooling Equipment Object and characterize its streams</p>
+<p>From main characteristics of the cooling equipment, adding to its characterization, it is estimated the excess heat
+stream.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.id">
 <span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment.id" title="Permalink to this definition"></a></dt>

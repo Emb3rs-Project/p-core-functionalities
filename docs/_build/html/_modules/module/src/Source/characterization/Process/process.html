@@ -39,10 +39,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../UserGuide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../Source.html">Source</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Source.html">Source Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -75,7 +74,11 @@
 <span class="kn">from</span> <span class="nn">....utilities.kb</span> <span class="kn">import</span> <span class="n">KB</span>
 
 <div class="viewcode-block" id="Process"><a class="viewcode-back" href="../../../../../../Process.html#module.src.Source.characterization.Process.process.Process">[docs]</a><span class="k">class</span> <span class="nc">Process</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create Process object and characterize its streams (Inflow/Outflow/Maintenance/Evaporation).</span>
+    <span class="sd">&quot;&quot;&quot;Create Process object and characterize its process components (Inflow/Outflow/Maintenance/Evaporation).</span>
+
+<span class="sd">    A process is sequencing of actions, in continuous or batch, which includes heating/cooling of streams.</span>
+<span class="sd">    Regarding the types of streams: Inflow - going in stream -, Outflow - going out stream - , Maintenance/</span>
+<span class="sd">    Evaporation - energy demand for a specific temperature. The process can be continuous or in batch.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -139,7 +142,9 @@
 <span class="sd">                Process schedule type; batch (1) or continuous (0)</span>
 
 <span class="sd">            - cycle_time_percentage: float</span>
-<span class="sd">                Cycle  percentage for Startup/Inflow/Outflow during batch process</span>
+<span class="sd">                Percentage of time needed of a cycle for the Startup/Inflow/Outflow during batch process.</span>
+<span class="sd">                Example: For a cycle_time 1h and cycle_time_percentage=0.1; initial 10%/6min for heating the startup</span>
+<span class="sd">                fluid and inflow, and last 10%/6min for the outflow discharge.</span>
 
 <span class="sd">            - inflow_data: list</span>
 <span class="sd">                Inflow streams dicts, with the following keys:</span>
@@ -178,7 +183,7 @@
 <span class="sd">                        Outflow initIal temperature [ºC]</span>
 
 <span class="sd">            - maintenance_data : list</span>
-<span class="sd">                Maintenance data dicts, with the following keys:</span>
+<span class="sd">                Maintenance/Eavporation data dicts, with the following keys:</span>
 
 <span class="sd">                    - name: str</span>
 <span class="sd">                        Name</span>
@@ -218,8 +223,6 @@
         <span class="k">except</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cycle_time_percentage</span> <span class="o">=</span> <span class="mf">0.1</span>
 
-
-
         <span class="c1"># Set Point Maintenance/ Evaporation</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">maintenance_data</span> <span class="o">=</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;maintenance_data&#39;</span><span class="p">]</span>
@@ -248,8 +251,8 @@
                                                 <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                                                 <span class="s1">&#39;maintenance&#39;</span><span class="p">,</span>
                                                 <span class="s2">&quot;water&quot;</span><span class="p">,</span>
-                                                <span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
-                                                <span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># to be able to run pinch analysis</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># to be able to run pinch analysis</span>
                                                 <span class="kc">None</span><span class="p">,</span>
                                                 <span class="n">maintenance</span><span class="p">[</span><span class="s1">&#39;maintenance_capacity&#39;</span><span class="p">],</span>
                                                 <span class="n">schedule</span><span class="p">,</span>
@@ -261,7 +264,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
 <div class="viewcode-block" id="Process.generate_inflow"><a class="viewcode-back" href="../../../../../../Process.html#module.src.Source.characterization.Process.process.Process.generate_inflow">[docs]</a>    <span class="k">def</span> <span class="nf">generate_inflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
-
         <span class="n">schedule</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="s1">&#39;inflow&#39;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">inflow</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
@@ -287,7 +289,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
 <div class="viewcode-block" id="Process.generate_outflow"><a class="viewcode-back" href="../../../../../../Process.html#module.src.Source.characterization.Process.process.Process.generate_outflow">[docs]</a>    <span class="k">def</span> <span class="nf">generate_outflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">outflow_data</span><span class="p">):</span>
-
         <span class="n">schedule</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="s1">&#39;outflow&#39;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">outflow</span> <span class="ow">in</span> <span class="n">outflow_data</span><span class="p">:</span>
@@ -300,7 +301,6 @@
                 <span class="n">initial_temperature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_temperature</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">initial_temperature</span> <span class="o">=</span> <span class="n">outflow</span><span class="p">[</span><span class="s2">&quot;initial_temperature&quot;</span><span class="p">]</span>
-
 
             <span class="bp">self</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream_industry</span><span class="p">(</span><span class="n">outflow</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
                                                 <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>

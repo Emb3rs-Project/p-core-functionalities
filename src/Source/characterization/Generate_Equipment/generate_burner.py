@@ -8,6 +8,9 @@ from ....utilities.kb import KB
 class Burner:
     """Create Burner Object
 
+    From main characteristics of a burner, adding to its characterization, it are estimated the inflow/supply/excess
+    heat streams.
+
     Attributes
     ----------
     id : int

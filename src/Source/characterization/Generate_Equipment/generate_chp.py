@@ -8,6 +8,9 @@ from ....utilities.kb import KB
 class Chp:
     """Create CHP Object
 
+    From main characteristics of a Combined Heat and Power unit, adding to its characterization, it are estimated the
+    inflow/supply/excess heat streams.
+
     Attributes
     ----------
     id : int

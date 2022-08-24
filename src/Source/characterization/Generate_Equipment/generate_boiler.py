@@ -10,6 +10,9 @@ from ....utilities.kb import KB
 class Boiler:
     """Create Boiler Object and characterize its streams
 
+    From main characteristics of a boiler, adding to its characterization, it are estimated the inflow/supply/excess
+    heat streams.
+
     Attributes
     ----------
     id : int

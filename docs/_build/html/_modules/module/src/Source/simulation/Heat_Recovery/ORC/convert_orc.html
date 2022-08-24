@@ -39,10 +39,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../../EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../../Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../../UserGuide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Source.html">Source</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Source.html">Source Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../../UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -79,55 +78,155 @@
 <span class="kn">from</span> <span class="nn">.....Error_Handling.error_convert_orc</span> <span class="kn">import</span> <span class="n">PlatformConvertORC</span>
 <span class="kn">from</span> <span class="nn">.....Error_Handling.runtime_error</span> <span class="kn">import</span> <span class="n">ModuleRuntimeException</span>
 <span class="kn">from</span> <span class="nn">.....Reports.orc_report</span> <span class="kn">import</span> <span class="n">orc_report</span>
+<span class="kn">from</span> <span class="nn">.....General.Auxiliary_General.get_country</span> <span class="kn">import</span> <span class="n">get_country</span>
+<span class="kn">from</span> <span class="nn">.....KB_General.fuel_properties</span> <span class="kn">import</span> <span class="n">FuelProperties</span>
 
 
 <div class="viewcode-block" id="convert_orc"><a class="viewcode-back" href="../../../../../../../module.Source.simulation.Heat_Recovery.ORC.html#module.src.Source.simulation.Heat_Recovery.ORC.convert_orc.convert_orc">[docs]</a><span class="k">def</span> <span class="nf">convert_orc</span><span class="p">(</span><span class="n">in_var</span><span class="p">,</span> <span class="n">kb</span><span class="p">:</span> <span class="n">KB</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The main routine for designing ORCs for the streams given</span>
+    <span class="sd">&quot;&quot;&quot;Main routine for designing ORCs for the streams given</span>
 
-<span class="sd">    :param in_var:</span>
-<span class="sd">            - streams:``list with dicts``: each stream data, with the following keys:</span>
-<span class="sd">                    - id: ``int``: stream ID []</span>
-<span class="sd">                    - name: ``str``: stream name []</span>
-<span class="sd">                    - object_type: ``str``: DEFAULT=stream []</span>
-<span class="sd">                    - stream_type: ``str``: stream designation []; e.g. inflow, outflow, excess_heat</span>
-<span class="sd">                    - supply_temperature: ``float``: stream&#39;s supply/initial temperature [ºC]</span>
-<span class="sd">                    - target_temperature: ``float``: stream&#39;s target/final temperature [ºC]</span>
-<span class="sd">                    - fluid: ``str``: stream&#39;s fluid []</span>
-<span class="sd">                    - flowrate: ``float``: stream&#39;s mass flowrate [kg/h]</span>
-<span class="sd">                    - schedule: ``list``: stream&#39;s hourly schedule</span>
-<span class="sd">                    - hourly_generation: ``list``: stream&#39;s hourly capacity</span>
-<span class="sd">                    - capacity: ``float``: stream&#39;s capacity [kW]</span>
+<span class="sd">    Organic Rankine Cycles are designed for the excess heat streams given, so that the heat to power production</span>
+<span class="sd">    can be analysed.</span>
 
-<span class="sd">            - consumer_type: ``str``: type of consumer tariff []; &#39;household&#39; or &#39;non-household&#39;</span>
-<span class="sd">            - get_best_number: ``int``: [OPTIONAL]  number of best conversion cases; DEFAULT=3</span>
-<span class="sd">            - orc_years_working: ``int``: [OPTIONAL]  ORC working years [years]; DEFAULT=25</span>
-<span class="sd">            - orc_T_evap: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=110</span>
-<span class="sd">            - orc_T_cond: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=35</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_var: dict</span>
+<span class="sd">        All necessary data to perform the ORD design, with the following key:</span>
 
-<span class="sd">    :param kb: Knowledge Base data</span>
+<span class="sd">            - platform: dict</span>
+<span class="sd">                platform data, with the following keys:</span>
 
-<span class="sd">    :return:</span>
-<span class="sd">        - report: ``str``: HTML report</span>
-<span class="sd">        - best_options: ``list with dicts``: each designed solution data, with the following keys:</span>
-<span class="sd">                - ID: ``int``: ORC design ID []</span>
-<span class="sd">                - streams_id: ``list``:  streams ID considered for the solution []</span>
-<span class="sd">                - electrical_generation_nominal: ``float``: ORC nominal electrical generation [kW]</span>
-<span class="sd">                - electrical_generation_yearly: ``float``: ORC yearly electrical generation [kWh]</span>
-<span class="sd">                - excess_heat_supply_capacity: ``float``: streams thermal capacity available [kW]</span>
-<span class="sd">                - conversion_efficiency: ``float``: ORC heat to electricity conversion efficiency []</span>
-<span class="sd">                - turnkey: ``float``: ORC investment cost [€]</span>
-<span class="sd">                - om_fix: ``float``: ORC yearly OM fix costs [€/year]</span>
-<span class="sd">                - om_var: ``float``: ORC yearly OM var costs [€/kWh]</span>
-<span class="sd">                - electrical_generation_yearly_turnkey: ``float``: ORC yearly electrical generation over turnkey [kWh/€]</span>
-<span class="sd">                - co2_savings: ``float``: ORC yearly CO2 savings (all electricity is considered to be consumed)  [kg CO2/kWh]</span>
-<span class="sd">                - money_savings: ``float``: ORC yearly monetary savings (all electricity is considered to be consumed [€/kWh]</span>
-<span class="sd">                - discount_rate: ``float``: discount rate []</span>
-<span class="sd">                - lifetime: ``float``: ORC working years [years]</span>
+<span class="sd">                    - location: list:</span>
+<span class="sd">                        Location [º]; [latitude,longitude]</span>
 
+<span class="sd">                    - fuels_data: dict, optional</span>
+<span class="sd">                                Fuels price and CO2 emission, with the following keys:</span>
+
+<span class="sd">                                    - natural_gas: dict</span>
+<span class="sd">                                        with the following keys:</span>
+
+<span class="sd">                                        - co2_emissions: float:</span>
+<span class="sd">                                            Fuel CO2 emission [kg CO2/kWh]</span>
+
+<span class="sd">                                        - price: float:</span>
+<span class="sd">                                            Fuel price [€/kWh]</span>
+
+<span class="sd">                                    - fuel_oil : dict</span>
+<span class="sd">                                        Similar to &quot;natural_gas&quot;</span>
+
+<span class="sd">                                    - electricity : dict</span>
+<span class="sd">                                        Similar to &quot;natural_gas&quot;</span>
+
+<span class="sd">                                    - biomass : dict</span>
+<span class="sd">                                        Similar to &quot;natural_gas&quot;</span>
+
+<span class="sd">                    - streams: list</span>
+<span class="sd">                        each stream data, with the following keys:</span>
+
+<span class="sd">                            - id: int</span>
+<span class="sd">                                stream ID []</span>
+
+<span class="sd">                            - name: str</span>
+<span class="sd">                                stream name []</span>
+
+<span class="sd">                            - object_type: str</span>
+<span class="sd">                                DEFAULT=stream []</span>
+
+<span class="sd">                            - stream_type: str</span>
+<span class="sd">                                stream designation []; e.g. inflow, outflow, excess_heat</span>
+
+<span class="sd">                            - supply_temperature: float</span>
+<span class="sd">                                stream&#39;s supply/initial temperature [ºC]</span>
+
+<span class="sd">                            - target_temperature: float</span>
+<span class="sd">                                stream&#39;s target/final temperature [ºC]</span>
+
+<span class="sd">                            - fluid: str</span>
+<span class="sd">                                stream&#39;s fluid []</span>
+
+<span class="sd">                            - flowrate: float</span>
+<span class="sd">                                stream&#39;s mass flowrate [kg/h]</span>
+
+<span class="sd">                            - schedule: list</span>
+<span class="sd">                                stream&#39;s hourly schedule</span>
+
+<span class="sd">                            - hourly_generation: list</span>
+<span class="sd">                                stream&#39;s hourly capacity</span>
+
+<span class="sd">                            - capacity: float</span>
+<span class="sd">                                stream&#39;s capacity [kW]</span>
+
+<span class="sd">                        - get_best_number: int, optional</span>
+<span class="sd">                            number of best conversion cases; DEFAULT=3</span>
+
+<span class="sd">                        - orc_years_working: int, optional</span>
+<span class="sd">                            ORC working years [years]; DEFAULT=25</span>
+
+<span class="sd">                        - orc_T_evap: float, optional</span>
+<span class="sd">                            ORC evaporator temperature [ºC]; DEFAULT=110</span>
+
+<span class="sd">                        - orc_T_cond: float, optional</span>
+<span class="sd">                            ORC evaporator temperature [ºC]; DEFAULT=35</span>
+
+<span class="sd">    kb :dict</span>
+<span class="sd">        Knowledge Base data</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    output: dict</span>
+<span class="sd">        Output data, with the following keys:</span>
+
+<span class="sd">            - best_options : list</span>
+<span class="sd">                each designed solution data, with the following keys:</span>
+
+<span class="sd">                    - ID: int</span>
+<span class="sd">                        ORC design ID []</span>
+
+<span class="sd">                    - streams_id: list</span>
+<span class="sd">                        streams ID considered for the solution []</span>
+
+<span class="sd">                    - electrical_generation_nominal: float</span>
+<span class="sd">                        ORC nominal electrical generation [kW]</span>
+
+<span class="sd">                    - electrical_generation_yearly: float</span>
+<span class="sd">                        ORC yearly electrical generation [kWh]</span>
+
+<span class="sd">                    - excess_heat_supply_capacity: float</span>
+<span class="sd">                        streams thermal capacity available [kW]</span>
+
+<span class="sd">                    - conversion_efficiency: float</span>
+<span class="sd">                        ORC heat to electricity conversion efficiency []</span>
+
+<span class="sd">                    - turnkey: float</span>
+<span class="sd">                        ORC investment cost [€]</span>
+
+<span class="sd">                    - om_fix: float</span>
+<span class="sd">                        ORC yearly OM fix costs [€/year]</span>
+
+<span class="sd">                    - om_var: float</span>
+<span class="sd">                        ORC yearly OM var costs [€/kWh]</span>
+
+<span class="sd">                    - electrical_generation_yearly_turnkey: float</span>
+<span class="sd">                        ORC yearly electrical generation over turnkey [kWh/€]</span>
+
+<span class="sd">                    - co2_savings: float</span>
+<span class="sd">                        ORC yearly CO2 savings (all electricity is considered to be consumed)  [kg CO2/kWh]</span>
+
+<span class="sd">                    - money_savings: float</span>
+<span class="sd">                        ORC yearly monetary savings (all electricity is considered to be consumed [€/kWh]</span>
+
+<span class="sd">                    - discount_rate: float</span>
+<span class="sd">                        discount rate []</span>
+
+<span class="sd">                    - lifetime: float</span>
+<span class="sd">                        ORC working years [years]</span>
+
+<span class="sd">            - report : str</span>
+<span class="sd">                HTML report</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
 
     <span class="c1">#################################################################</span>
     <span class="c1"># INPUT</span>
@@ -139,12 +238,26 @@
     <span class="n">orc_years_working</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">orc_years_working</span>
     <span class="n">orc_T_evap</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">orc_T_evap</span>
     <span class="n">orc_T_cond</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">orc_T_cond</span>
-    <span class="n">fuels_data</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">fuels_data</span>
     <span class="n">interest_rate</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">interest_rate</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">location</span>
 
-    <span class="n">fuels_data</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">fuels_data</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">fuels_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">fuels_data</span><span class="p">[</span><span class="n">fuel</span><span class="p">]</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">fuels_data</span><span class="p">[</span><span class="n">fuel</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fuels_data</span> <span class="o">=</span> <span class="n">platform_data</span><span class="o">.</span><span class="n">fuels_data</span>
+
+        <span class="n">fuels_data</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">fuels_data</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">fuels_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">fuels_data</span><span class="p">[</span><span class="n">fuel</span><span class="p">]</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">fuels_data</span><span class="p">[</span><span class="n">fuel</span><span class="p">])</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">fuels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;natural_gas&quot;</span><span class="p">,</span> <span class="s2">&quot;biomass&quot;</span><span class="p">,</span> <span class="s2">&quot;electricity&quot;</span><span class="p">,</span> <span class="s2">&quot;fuel_oil&quot;</span><span class="p">]</span>
+        <span class="n">fuels_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span> <span class="o">=</span> <span class="n">location</span>
+        <span class="k">for</span> <span class="n">fuel</span> <span class="ow">in</span> <span class="n">fuels</span><span class="p">:</span>
+            <span class="n">fuel_properties</span> <span class="o">=</span> <span class="n">FuelProperties</span><span class="p">(</span><span class="n">kb</span><span class="p">)</span>
+            <span class="n">country</span> <span class="o">=</span> <span class="n">get_country</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">)</span>
+            <span class="n">fuel_data</span> <span class="o">=</span> <span class="n">fuel_properties</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">fuel</span><span class="p">,</span> <span class="n">consumer_type</span><span class="o">=</span><span class="s2">&quot;household&quot;</span><span class="p">)</span>
+            <span class="n">fuels_data</span><span class="p">[</span><span class="n">fuel</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;price&quot;</span><span class="p">:</span> <span class="n">fuel_data</span><span class="p">[</span><span class="s2">&quot;price&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;co2_emissions&quot;</span><span class="p">:</span> <span class="n">fuel_data</span><span class="p">[</span><span class="s2">&quot;co2_emissions&quot;</span><span class="p">]}</span>
 
     <span class="c1">#################################################################</span>
     <span class="c1">#GET DATA</span>

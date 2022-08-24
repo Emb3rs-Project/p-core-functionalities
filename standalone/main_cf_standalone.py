@@ -52,11 +52,14 @@ class DesignORC:
         in_var = mapping_convert_orc(self.fuels_data, self.sources, self.cf_data["orc_data"])
         self.convert_orc_results = convert_orc(in_var, kb)
 
+        return self.convert_orc_results
+
     def get_report(self):
         file = open("orc_report.html", "w")
         file.write(self.convert_orc_results["report"])
         file.close()
 
+        return self.convert_orc_results["report"]
 
 class PinchAnalysis:
 
@@ -74,10 +77,14 @@ class PinchAnalysis:
         in_var = mapping_pinch_analysis(self.cf_data)
         self.pinch_data = convert_pinch_isolated_streams(in_var, KB(kb))
 
+        return self.pinch_data
+
     def get_report(self):
         file = open("pinch_report.html", "w")
         file.write(self.pinch_data["report"])
         file.close()
+
+        return self.pinch_data["report"]
 
 
 class DHNSimulation:
@@ -152,13 +159,22 @@ class DHNSimulation:
 
 
 class CFModule():
+    '''
+    Run  main features of CF:
+        - District Heating Network computations
+        - Organic Rankine Cycle design
+        - Pinch Analysis and heat exchangers design
+
+    '''
 
     def design_orc(self, file_path):
         file = os.path.abspath(file_path)
         platform_orc = DesignORC()
         platform_orc.read_user_inputs(file)
-        platform_orc.simulation()
-        platform_orc.get_report()
+        orc_data = platform_orc.simulation()
+        report = platform_orc.get_report()
+
+        return orc_data, report
 
     def dhn_simulation(self, file_path, grid_supply_temperature, grid_return_temperature):
         file = os.path.abspath(file_path)
@@ -169,8 +185,11 @@ class CFModule():
         return convert_sinks_results, convert_sources_results
 
     def pinch_analysis(self,file_path):
+
         file = os.path.abspath(file_path)
         platform_pinch_analysis = PinchAnalysis()
         platform_pinch_analysis.read_user_inputs(file)
-        platform_pinch_analysis.simulation()
-        platform_pinch_analysis.get_report()
+        pinch_data = platform_pinch_analysis.simulation()
+        report = platform_pinch_analysis.get_report()
+
+        return pinch_data, report

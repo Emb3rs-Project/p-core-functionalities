@@ -5,9 +5,13 @@ from ....utilities.kb import KB
 
 
 def convert_pinch_isolated_streams(in_var, kb: KB):
-    """ Perform Pinch Analysis to isolated streams.
+    """Perform Pinch Analysis to isolated streams (QUICK INPUTS).
 
-    Return best solutions data and report
+    This routine was developed to easily perform the pinch analysis to isolated streams - streams which are not from the
+    detailed characterization - associated with equipment or processes. The user just needs to provide the properties
+    and schedule of the streams to run this routine. This routine use the main routine of the Pinch Analysis.
+    Return best solutions in minimum CO2 emissions, maximize energy recovery, and energy recovery specific cost, as well
+    as a HTML report.
 
     Parameters
     ----------
@@ -56,7 +60,7 @@ def convert_pinch_isolated_streams(in_var, kb: KB):
         Pinch analysis, with the following keys:
 
             best_options : dict
-                Dicts with solutions data for:
+                with solutions data for:
 
                     co2_optimization : list
                         List with best design options of the respective category

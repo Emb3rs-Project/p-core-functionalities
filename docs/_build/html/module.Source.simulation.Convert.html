@@ -42,8 +42,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source Submodule</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Convert Sources</a></li>
@@ -52,8 +51,8 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -70,7 +69,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source.html">Source Submodule</a> &raquo;</li>
           <li><a href="Source%20Simulation.html">Source Simulation</a> &raquo;</li>
       <li>Convert Sources</li>
       <li class="wy-breadcrumbs-aside">
@@ -87,16 +86,14 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="module.src.Source.simulation.Convert.convert_sources.convert_sources">
 <span class="sig-prename descclassname"><span class="pre">module.src.Source.simulation.Convert.convert_sources.</span></span><span class="sig-name descname"><span class="pre">convert_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/simulation/Convert/convert_sources.html#convert_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.simulation.Convert.convert_sources.convert_sources" title="Permalink to this definition"></a></dt>
-<dd><p>Sources conversion to the grid - design of technologies.</p>
-<p>For each source are designed the conversion technologies needed. The design may be done for each stream individually
-or it can be made to the aggregated of streams (the user must provide his preference). After the designing, it is
-known the power available from each source.
+<dd><p>Design of technologies to connect sources to the DHN.</p>
+<p>For each source are designed the conversion technologies needed.
 When performing the conversion, three design options may occur:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p>If the stream supply temperature &gt; grid supply temperature -&gt; HX designed</p></li>
+<li><p>If the stream supply temperature &gt; DHN supply temperature -&gt; HX designed</p></li>
 <li><p>If the stream supply temperature &gt; ORC evaporator -&gt; ORC cascaded designed</p></li>
-<li><p>If the stream supply temperature &lt; grid supply temperature -&gt; heating technologies are designed</p></li>
+<li><p>If the stream supply temperature &lt; DHN supply temperature -&gt; HX and heating technologies are designed to fulfill DHN temperature</p></li>
 </ol>
 </div></blockquote>
 <dl class="field-list simple">
@@ -124,7 +121,7 @@ When performing the conversion, three design options may occur:</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>levelized_co2_emissions: float</dt><dd><p>Grid levelized CO2 emissions [c]</p>
+<dt>levelized_co2_emissions: float</dt><dd><p>Grid levelized CO2 emissions [CO2/kWh]</p>
 </dd>
 </dl>
 </li>
@@ -158,7 +155,7 @@ When performing the conversion, three design options may occur:</p>
 </dl>
 </li>
 <li><dl>
-<dt>fuels_data: dict</dt><dd><p>Fuels price and CO2 emission, with the following keys:</p>
+<dt>fuels_data: dict, optional</dt><dd><p>Fuels price and CO2 emission, with the following keys:</p>
 <blockquote>
 <div><ul class="simple">
 <li><dl class="simple">
@@ -565,7 +562,7 @@ When performing the conversion, three design options may occur:</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict:</p>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>

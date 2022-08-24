@@ -1,4 +1,4 @@
-Main features of the CF can be use with the CF Standalone.
+Main features of the CF can be run with the Standalone version.
 By using excel files, as presented in the "test" folder, any user can easily use and obtain reports of the main features of the CF Module.
 
 ```python
@@ -18,8 +18,10 @@ design_orc_file_path = 'test_files/orc_data.xlsx'
 pinch_analysis_file_path = 'test_files/pinch_data.xlsx'
 
 # Run
-convert_sinks_results, convert_sources_results = cf.dhn_simulation(dhn_file_path, grid_supply_temperature=80, grid_return_temperature=40)
-cf.design_orc(design_orc_file_path)
-cf.pinch_analysis(pinch_analysis_file_path)
+convert_sinks_results, convert_sources_results = cf.dhn_simulation(dhn_file_path,
+                                                                   grid_supply_temperature=80,
+                                                                   grid_return_temperature=40)
+orc_data, orc_report = cf.design_orc(design_orc_file_path)
+pinch_data, pinch_report = cf.pinch_analysis(pinch_analysis_file_path)
 
 ```

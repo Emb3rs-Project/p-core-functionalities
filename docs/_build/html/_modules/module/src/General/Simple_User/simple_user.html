@@ -39,10 +39,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../UserGuide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../Source.html">Source</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Source.html">Source Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -71,7 +70,8 @@
              
   <h1>Source code for module.src.General.Simple_User.simple_user</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">...General.Auxiliary_General.stream_industry</span> <span class="kn">import</span> <span class="n">stream_industry</span>
-<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour</span> <span class="kn">import</span> <span class="n">schedule_hour</span>
+<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour_simplified</span> <span class="kn">import</span> <span class="n">schedule_hour_simplified</span>
+<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour_detailed</span> <span class="kn">import</span> <span class="n">schedule_hour_detailed</span>
 <span class="kn">from</span> <span class="nn">...Error_Handling.error_simple_user</span> <span class="kn">import</span> <span class="n">PlatformSimpleUser</span>
 <span class="kn">from</span> <span class="nn">.adjust_capacity</span> <span class="kn">import</span> <span class="n">adjust_capacity</span>
 
@@ -80,13 +80,13 @@
 
     <span class="sd">&quot;&quot;&quot;Simple User streams characterization.</span>
 
-<span class="sd">    Receives user&#39;s streams data from the platform and creates a standard stream</span>
-<span class="sd">    data output to be used in other modules.</span>
+<span class="sd">    A simple user is a user that directly introduces the streams and its properties. This routine receives the user&#39;s streams</span>
+<span class="sd">    data from the platform and creates a standard stream data output to be used in other modules.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    in_var : dict</span>
-<span class="sd">        All necessary data to perform the simple characterization data, with the following key:</span>
+<span class="sd">        All necessary data to perform the characterization, with the following keys:</span>
 
 <span class="sd">        platform: dict</span>
 <span class="sd">            Data obtained from the platform</span>
@@ -238,13 +238,25 @@
 
         <span class="c1"># check if real hourly capacity is given</span>
         <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;real_hourly_capacity&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">schedule</span> <span class="o">=</span> <span class="n">schedule_hour</span><span class="p">(</span>
-                <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;saturday_on&quot;</span><span class="p">],</span>
-                <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;sunday_on&quot;</span><span class="p">],</span>
-                <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;shutdown_periods&quot;</span><span class="p">],</span>
-                <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;daily_periods&quot;</span><span class="p">],</span>
-            <span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">schedule</span> <span class="o">=</span> <span class="n">schedule_hour_simplified</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;daily_periods&quot;</span><span class="p">],</span>
+                                                    <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;saturday_on&quot;</span><span class="p">],</span>
+                                                    <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;sunday_on&quot;</span><span class="p">],</span>
+                                                    <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;shutdown_periods&quot;</span><span class="p">])</span>
+
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">schedule</span> <span class="o">=</span> <span class="n">schedule_hour_detailed</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;monday_daily_periods&quot;</span><span class="p">],</span>
+                                                  <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;tuesday_daily_periods&quot;</span><span class="p">],</span>
+                                                  <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;wednesday_daily_periods&quot;</span><span class="p">],</span>
+                                                  <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;thursday_daily_periods&quot;</span><span class="p">],</span>
+                                                  <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;friday_daily_periods&quot;</span><span class="p">],</span>
+                                                  <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;saturday_daily_periods&quot;</span><span class="p">],</span>
+                                                  <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;sunday_daily_periods&quot;</span><span class="p">],</span>
+                                                  <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;shutdown_periods&quot;</span><span class="p">])</span>
+
             <span class="n">hourly_generation</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="n">hourly_generation</span> <span class="o">=</span> <span class="n">stream</span><span class="p">[</span><span class="s1">&#39;real_hourly_capacity&#39;</span><span class="p">]</span>
             <span class="n">schedule</span> <span class="o">=</span> <span class="kc">None</span>
@@ -278,7 +290,7 @@
         <span class="k">if</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_daily_capacity&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">info_stream</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">info_stream</span><span class="p">,</span> <span class="n">user_daily_capacity</span><span class="o">=</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_daily_capacity&quot;</span><span class="p">])</span>
         <span class="k">elif</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_monthly_capacity&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">info_stream</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">info_stream</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="nb">vars</span><span class="p">(</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_monthly_capacity&quot;</span><span class="p">]))</span>
+            <span class="n">info_stream</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">info_stream</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_monthly_capacity&quot;</span><span class="p">])</span>
         <span class="k">elif</span> <span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_yearly_capacity&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">info_stream</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">info_stream</span><span class="p">,</span> <span class="n">user_yearly_capacity</span><span class="o">=</span><span class="n">stream</span><span class="p">[</span><span class="s2">&quot;real_yearly_capacity&quot;</span><span class="p">])</span>
 

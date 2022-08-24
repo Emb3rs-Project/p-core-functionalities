@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Examples" href="Examples.html" />
+    <link rel="next" title="User Guide - STANDALONE" href="UserGuide.html" />
     <link rel="prev" title="Greenhouse" href="Greenhouse.html" /> 
 </head>
 
@@ -42,9 +42,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Source.html">Source</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="Sink.html">Sink</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Source.html">Source Submodule</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Sink.html">Sink Submodule</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="SinkCharacterization.html">Sink Characterization</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Sink Simulation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#module-module.src.Sink.simulation.convert_sinks">Convert Sinks</a></li>
@@ -52,7 +51,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -69,7 +68,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="Sink.html">Sink</a> &raquo;</li>
+          <li><a href="Sink.html">Sink Submodule</a> &raquo;</li>
       <li>Sink Simulation</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/SinkSimulation.rst.txt" rel="nofollow"> View page source</a>
@@ -87,27 +86,18 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="module.src.Sink.simulation.convert_sinks.convert_sinks">
 <span class="sig-prename descclassname"><span class="pre">module.src.Sink.simulation.convert_sinks.</span></span><span class="sig-name descname"><span class="pre">convert_sinks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Sink/simulation/convert_sinks.html#convert_sinks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Sink.simulation.convert_sinks.convert_sinks" title="Permalink to this definition"></a></dt>
-<dd><p>Design of Grid - Sinks conversion technologies.</p>
-<p>For the group of sinks given, it is set the grid supply and return temperatures. Moreover, grid specific technologies
-are designed to meet the heating/cooling requirements of the group.</p>
-<p>For each sink are designed the conversion technologies needed. The design may be done for each stream individually or
-it can be made to the aggregated of streams (the user must provide his preference).
+<dd><p>Design of technologies to connect DHN to the sinks.</p>
+<p>For each sink are designed the conversion technologies needed.
 When performing the conversion, three design options may occur:</p>
 <blockquote>
-<div><dl class="simple">
-<dt>Sink needs HEATING</dt><dd><p>1) the grid temperature meets the sink target temperature requirements, thus only a grid-sink HX and correspondent
-circulation pumping is needed
-2) the grid temperature does not meet the sink target temperature requirements, thus adding to the grid-sink HX
-and correspondent circulation pumping, it is also necessary to add a technology to raise the temperature (chp,
-solar thermal, heat pump, boiler)</p>
-</dd>
-<dt>Sink needs COOLING</dt><dd><ol class="arabic simple" start="3">
-<li><p>it is always necessary to add a cooling technology (thermal_chiller), since we are only designing DHNs</p></li>
+<div><ol class="arabic simple">
+<li><p>(HEATING) The grid temperature meets the sink target temperature requirements, thus only a grid-sink HX and correspondent circulation pumping is needed</p></li>
+<li><p>(HEATING) The grid temperature does not meet the sink target temperature requirements, thus adding to the grid-sink HX and correspondent circulation pumping, it is also necessary to add a technology to raise the temperature (chp,solar thermal, heat pump, boiler)</p></li>
+<li><p>(COOLING) It is always necessary to add a cooling technology (thermal_chiller), since we are only designing DHNs</p></li>
 </ol>
-</dd>
-</dl>
 </div></blockquote>
-<p>Possible conversions: HX, HX + heating/cooling technology + HX</p>
+<p>Possible conversions: HX, HX + heating/cooling technology + HX.</p>
+<p>Moreover, for the group of sinks capacity, heating grid specific technologies (also known as backup) are designed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -140,7 +130,7 @@ solar thermal, heat pump, boiler)</p>
 </dl>
 </li>
 <li><dl>
-<dt>fuels_data: dict:</dt><dd><p>Fuels price and CO2 emission, with the following keys:</p>
+<dt>fuels_data: dict, optional</dt><dd><p>Fuels price and CO2 emission, with the following keys:</p>
 <blockquote>
 <div><ul>
 <li><dl>
@@ -515,7 +505,7 @@ hourly_capacity/yearly_capacity; e.g. [{“sink1”:0.5,”sink2”:0,…},{{“
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Greenhouse.html" class="btn btn-neutral float-left" title="Greenhouse" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="UserGuide.html" class="btn btn-neutral float-right" title="User Guide - STANDALONE" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

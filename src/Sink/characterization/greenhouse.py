@@ -17,7 +17,7 @@ def greenhouse(in_var):
 
     """Greenhouse characterization
 
-    Simulates the heat needs over the year according to the greenhouse specifications and climate
+    Simulates the heat (space heating) needs over the year according to the greenhouse specifications and climate
     weather data of the location
 
     Parameters

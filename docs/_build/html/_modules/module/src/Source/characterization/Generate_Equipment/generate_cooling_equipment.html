@@ -39,10 +39,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../UserGuide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../Source.html">Source</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Source.html">Source Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -71,7 +70,7 @@
              
   <h1>Source code for module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">....General.Auxiliary_General.compute_cop_eer</span> <span class="kn">import</span> <span class="n">compute_cop_eer</span>
-<span class="kn">from</span> <span class="nn">....General.Auxiliary_General.schedule_hour</span> <span class="kn">import</span> <span class="n">schedule_hour</span>
+<span class="kn">from</span> <span class="nn">....General.Auxiliary_General.schedule_hour_simplified</span> <span class="kn">import</span> <span class="n">schedule_hour_simplified</span>
 <span class="kn">from</span> <span class="nn">....General.Auxiliary_General.compute_flow_rate</span> <span class="kn">import</span> <span class="n">compute_flow_rate</span>
 <span class="kn">from</span> <span class="nn">....General.Auxiliary_General.stream_industry</span> <span class="kn">import</span> <span class="n">stream_industry</span>
 <span class="kn">from</span> <span class="nn">....KB_General.medium</span> <span class="kn">import</span> <span class="n">Medium</span>
@@ -81,6 +80,9 @@
 
 <div class="viewcode-block" id="Cooling_Equipment"><a class="viewcode-back" href="../../../../../../Generate_Equipment.html#module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment.Cooling_Equipment">[docs]</a><span class="k">class</span> <span class="nc">Cooling_Equipment</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Create Cooling Equipment Object and characterize its streams</span>
+
+<span class="sd">    From main characteristics of the cooling equipment, adding to its characterization, it is estimated the excess heat</span>
+<span class="sd">    stream.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -177,7 +179,7 @@
         <span class="c1">############################################################################################</span>
         <span class="c1"># COMPUTE</span>
         <span class="c1"># schedule</span>
-        <span class="n">schedule</span> <span class="o">=</span> <span class="n">schedule_hour</span><span class="p">(</span><span class="n">saturday_on</span><span class="p">,</span> <span class="n">sunday_on</span><span class="p">,</span> <span class="n">shutdown_periods</span><span class="p">,</span> <span class="n">daily_periods</span><span class="p">)</span>
+        <span class="n">schedule</span> <span class="o">=</span> <span class="n">schedule_hour_simplified</span><span class="p">(</span><span class="n">daily_periods</span><span class="p">,</span><span class="n">saturday_on</span><span class="p">,</span><span class="n">sunday_on</span><span class="p">,</span><span class="n">shutdown_periods</span><span class="p">)</span>
 
         <span class="c1"># supply capacity</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">supply_capacity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

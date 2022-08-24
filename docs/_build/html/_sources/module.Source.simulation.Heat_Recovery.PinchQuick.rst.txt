@@ -1,4 +1,4 @@
-Pinch Analysis - QUICK INPUTS
+Pinch Analysis - Isolated Streams (QUICK INPUTS)
 =====================================================
 
 .. automodule:: module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams

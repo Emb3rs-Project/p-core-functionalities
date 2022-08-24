@@ -9,13 +9,13 @@ def simple_user(in_var):
 
     """Simple User streams characterization.
 
-    Receives user's streams data from the platform and creates a standard stream
-    data output to be used in other modules.
+    A simple user is a user that directly introduces the streams and its properties. This routine receives the user's streams
+    data from the platform and creates a standard stream data output to be used in other modules.
 
     Parameters
     ----------
     in_var : dict
-        All necessary data to perform the simple characterization data, with the following key:
+        All necessary data to perform the characterization, with the following keys:
 
         platform: dict
             Data obtained from the platform

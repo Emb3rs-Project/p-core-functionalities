@@ -42,8 +42,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source Submodule</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Simple Characterization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="DetailedCharacterization.html">Detailed Characterization</a></li>
@@ -52,8 +51,8 @@
 <li class="toctree-l2"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -70,7 +69,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source.html">Source Submodule</a> &raquo;</li>
           <li><a href="Source%20Characterization.html">Source Characterization</a> &raquo;</li>
       <li>Simple Characterization</li>
       <li class="wy-breadcrumbs-aside">
@@ -88,11 +87,11 @@
 <dt class="sig sig-object py" id="module.src.General.Simple_User.simple_user.simple_user">
 <span class="sig-prename descclassname"><span class="pre">module.src.General.Simple_User.simple_user.</span></span><span class="sig-name descname"><span class="pre">simple_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/General/Simple_User/simple_user.html#simple_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.General.Simple_User.simple_user.simple_user" title="Permalink to this definition"></a></dt>
 <dd><p>Simple User streams characterization.</p>
-<p>Receives user’s streams data from the platform and creates a standard stream
-data output to be used in other modules.</p>
+<p>A simple user is a user that directly introduces the streams and its properties. This routine receives the user’s streams
+data from the platform and creates a standard stream data output to be used in other modules.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>in_var</strong> (<em>dict</em>) – <p>All necessary data to perform the simple characterization data, with the following key:</p>
+<dd class="field-odd"><p><strong>in_var</strong> (<em>dict</em>) – <p>All necessary data to perform the characterization, with the following keys:</p>
 <dl>
 <dt>platform: dict</dt><dd><p>Data obtained from the platform</p>
 <blockquote>

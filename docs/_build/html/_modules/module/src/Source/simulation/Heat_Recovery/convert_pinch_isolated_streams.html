@@ -39,10 +39,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../../Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../UserGuide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../Source.html">Source</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Source.html">Source Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -77,9 +76,13 @@
 
 
 <div class="viewcode-block" id="convert_pinch_isolated_streams"><a class="viewcode-back" href="../../../../../../module.Source.simulation.Heat_Recovery.PinchQuick.html#module.src.Source.simulation.Heat_Recovery.convert_pinch_isolated_streams.convert_pinch_isolated_streams">[docs]</a><span class="k">def</span> <span class="nf">convert_pinch_isolated_streams</span><span class="p">(</span><span class="n">in_var</span><span class="p">,</span> <span class="n">kb</span><span class="p">:</span> <span class="n">KB</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Perform Pinch Analysis to isolated streams.</span>
+    <span class="sd">&quot;&quot;&quot;Perform Pinch Analysis to isolated streams (QUICK INPUTS).</span>
 
-<span class="sd">    Return best solutions data and report</span>
+<span class="sd">    This routine was developed to easily perform the pinch analysis to isolated streams - streams which are not from the</span>
+<span class="sd">    detailed characterization - associated with equipment or processes. The user just needs to provide the properties</span>
+<span class="sd">    and schedule of the streams to run this routine. This routine use the main routine of the Pinch Analysis.</span>
+<span class="sd">    Return best solutions in minimum CO2 emissions, maximize energy recovery, and energy recovery specific cost, as well</span>
+<span class="sd">    as a HTML report.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -95,10 +98,7 @@
 <span class="sd">                    pinch_delta_T_min : float</span>
 <span class="sd">                        Pinch delta_T</span>
 
-<span class="sd">                    location : list</span>
-<span class="sd">                        [latitude, longitude] [º]</span>
-
-<span class="sd">                    fuels_data: dict:</span>
+<span class="sd">                    fuels_data: dict</span>
 <span class="sd">                        Fuels price and CO2 emission, with the following keys:</span>
 
 <span class="sd">                            - natural_gas: dict</span>
@@ -131,7 +131,7 @@
 <span class="sd">        Pinch analysis, with the following keys:</span>
 
 <span class="sd">            best_options : dict</span>
-<span class="sd">                Dicts with solutions data for:</span>
+<span class="sd">                with solutions data for:</span>
 
 <span class="sd">                    co2_optimization : list</span>
 <span class="sd">                        List with best design options of the respective category</span>
@@ -163,7 +163,6 @@
             <span class="s2">&quot;streams_to_analyse&quot;</span><span class="p">:</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s1">&#39;streams_to_analyse&#39;</span><span class="p">],</span>
             <span class="s2">&quot;all_input_objects&quot;</span><span class="p">:</span> <span class="n">streams</span><span class="p">,</span>
             <span class="s2">&quot;pinch_delta_T_min&quot;</span><span class="p">:</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s1">&#39;pinch_delta_T_min&#39;</span><span class="p">],</span>
-            <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s1">&#39;location&#39;</span><span class="p">],</span>
             <span class="s2">&quot;interest_rate&quot;</span><span class="p">:</span> <span class="n">in_var</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">][</span><span class="s1">&#39;interest_rate&#39;</span><span class="p">]}</span>
     <span class="p">}</span>
 

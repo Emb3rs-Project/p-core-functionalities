@@ -7,54 +7,155 @@ from .....utilities.kb import KB
 from .....Error_Handling.error_convert_orc import PlatformConvertORC
 from .....Error_Handling.runtime_error import ModuleRuntimeException
 from .....Reports.orc_report import orc_report
+from .....General.Auxiliary_General.get_country import get_country
+from .....KB_General.fuel_properties import FuelProperties
 
 
 def convert_orc(in_var, kb: KB):
 
+    """Main routine for designing ORCs for the streams given
+
+    Organic Rankine Cycles are designed for the excess heat streams given, so that the heat to power production
+    can be analysed.
+
+    Parameters
+    ----------
+    in_var: dict
+        All necessary data to perform the ORD design, with the following key:
+
+            - platform: dict
+                platform data, with the following keys:
+
+                    - location: list:
+                        Location [º]; [latitude,longitude]
+
+                    - fuels_data: dict, optional
+                                Fuels price and CO2 emission, with the following keys:
+
+                                    - natural_gas: dict
+                                        with the following keys:
+
+                                        - co2_emissions: float:
+                                            Fuel CO2 emission [kg CO2/kWh]
+
+                                        - price: float:
+                                            Fuel price [€/kWh]
+
+                                    - fuel_oil : dict
+                                        Similar to "natural_gas"
+
+                                    - electricity : dict
+                                        Similar to "natural_gas"
+
+                                    - biomass : dict
+                                        Similar to "natural_gas"
+
+                    - streams: list
+                        each stream data, with the following keys:
+
+                            - id: int
+                                stream ID []
+
+                            - name: str
+                                stream name []
+
+                            - object_type: str
+                                DEFAULT=stream []
+
+                            - stream_type: str
+                                stream designation []; e.g. inflow, outflow, excess_heat
+
+                            - supply_temperature: float
+                                stream's supply/initial temperature [ºC]
+
+                            - target_temperature: float
+                                stream's target/final temperature [ºC]
+
+                            - fluid: str
+                                stream's fluid []
+
+                            - flowrate: float
+                                stream's mass flowrate [kg/h]
+
+                            - schedule: list
+                                stream's hourly schedule
+
+                            - hourly_generation: list
+                                stream's hourly capacity
+
+                            - capacity: float
+                                stream's capacity [kW]
+
+                        - get_best_number: int, optional
+                            number of best conversion cases; DEFAULT=3
+
+                        - orc_years_working: int, optional
+                            ORC working years [years]; DEFAULT=25
+
+                        - orc_T_evap: float, optional
+                            ORC evaporator temperature [ºC]; DEFAULT=110
+
+                        - orc_T_cond: float, optional
+                            ORC evaporator temperature [ºC]; DEFAULT=35
+
+    kb :dict
+        Knowledge Base data
+
+    Returns
+    -------
+    output: dict
+        Output data, with the following keys:
+
+            - best_options : list
+                each designed solution data, with the following keys:
+
+                    - ID: int
+                        ORC design ID []
+
+                    - streams_id: list
+                        streams ID considered for the solution []
+
+                    - electrical_generation_nominal: float
+                        ORC nominal electrical generation [kW]
+
+                    - electrical_generation_yearly: float
+                        ORC yearly electrical generation [kWh]
+
+                    - excess_heat_supply_capacity: float
+                        streams thermal capacity available [kW]
+
+                    - conversion_efficiency: float
+                        ORC heat to electricity conversion efficiency []
+
+                    - turnkey: float
+                        ORC investment cost [€]
+
+                    - om_fix: float
+                        ORC yearly OM fix costs [€/year]
+
+                    - om_var: float
+                        ORC yearly OM var costs [€/kWh]
+
+                    - electrical_generation_yearly_turnkey: float
+                        ORC yearly electrical generation over turnkey [kWh/€]
+
+                    - co2_savings: float
+                        ORC yearly CO2 savings (all electricity is considered to be consumed)  [kg CO2/kWh]
+
+                    - money_savings: float
+                        ORC yearly monetary savings (all electricity is considered to be consumed [€/kWh]
+
+                    - discount_rate: float
+                        discount rate []
+
+                    - lifetime: float
+                        ORC working years [years]
+
+            - report : str
+                HTML report
+
     """
-    The main routine for designing ORCs for the streams given
 
-    :param in_var:
-            - streams:``list with dicts``: each stream data, with the following keys:
-                    - id: ``int``: stream ID []
-                    - name: ``str``: stream name []
-                    - object_type: ``str``: DEFAULT=stream []
-                    - stream_type: ``str``: stream designation []; e.g. inflow, outflow, excess_heat
-                    - supply_temperature: ``float``: stream's supply/initial temperature [ºC]
-                    - target_temperature: ``float``: stream's target/final temperature [ºC]
-                    - fluid: ``str``: stream's fluid []
-                    - flowrate: ``float``: stream's mass flowrate [kg/h]
-                    - schedule: ``list``: stream's hourly schedule
-                    - hourly_generation: ``list``: stream's hourly capacity
-                    - capacity: ``float``: stream's capacity [kW]
-
-            - get_best_number: ``int``: [OPTIONAL]  number of best conversion cases; DEFAULT=3
-            - orc_years_working: ``int``: [OPTIONAL]  ORC working years [years]; DEFAULT=25
-            - orc_T_evap: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=110
-            - orc_T_cond: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=35
-
-    :param kb: Knowledge Base data
-
-    :return:
-        - report: ``str``: HTML report
-        - best_options: ``list with dicts``: each designed solution data, with the following keys:
-                - ID: ``int``: ORC design ID []
-                - streams_id: ``list``:  streams ID considered for the solution []
-                - electrical_generation_nominal: ``float``: ORC nominal electrical generation [kW]
-                - electrical_generation_yearly: ``float``: ORC yearly electrical generation [kWh]
-                - excess_heat_supply_capacity: ``float``: streams thermal capacity available [kW]
-                - conversion_efficiency: ``float``: ORC heat to electricity conversion efficiency []
-                - turnkey: ``float``: ORC investment cost [€]
-                - om_fix: ``float``: ORC yearly OM fix costs [€/year]
-                - om_var: ``float``: ORC yearly OM var costs [€/kWh]
-                - electrical_generation_yearly_turnkey: ``float``: ORC yearly electrical generation over turnkey [kWh/€]
-                - co2_savings: ``float``: ORC yearly CO2 savings (all electricity is considered to be consumed)  [kg CO2/kWh]
-                - money_savings: ``float``: ORC yearly monetary savings (all electricity is considered to be consumed [€/kWh]
-                - discount_rate: ``float``: discount rate []
-                - lifetime: ``float``: ORC working years [years]
-
-
-    """
 
     #################################################################
     # INPUT
@@ -66,12 +167,26 @@ def convert_orc(in_var, kb: KB):
     orc_years_working = platform_data.orc_years_working
     orc_T_evap = platform_data.orc_T_evap
     orc_T_cond = platform_data.orc_T_cond
-    fuels_data = platform_data.fuels_data
     interest_rate = platform_data.interest_rate
+    location = platform_data.location
 
-    fuels_data = vars(fuels_data)
-    for fuel in fuels_data.keys():
-        fuels_data[fuel] = vars(fuels_data[fuel])
+    try:
+        fuels_data = platform_data.fuels_data
+
+        fuels_data = vars(fuels_data)
+        for fuel in fuels_data.keys():
+            fuels_data[fuel] = vars(fuels_data[fuel])
+    except:
+        fuels = ["natural_gas", "biomass", "electricity", "fuel_oil"]
+        fuels_data = {}
+        latitude, longitude = location
+        for fuel in fuels:
+            fuel_properties = FuelProperties(kb)
+            country = get_country(latitude, longitude)
+            fuel_data = fuel_properties.get_values(country, fuel, consumer_type="household")
+            fuels_data[fuel] = {
+                "price": fuel_data["price"],
+                "co2_emissions": fuel_data["co2_emissions"]}
 
     #################################################################
     #GET DATA

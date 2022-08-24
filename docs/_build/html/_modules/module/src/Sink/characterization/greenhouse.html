@@ -39,10 +39,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../UserGuide.html">User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../Source.html">Source</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Source.html">Source Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -72,7 +71,7 @@
   <h1>Source code for module.src.Sink.characterization.greenhouse</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour</span> <span class="kn">import</span> <span class="n">schedule_hour</span>
+<span class="kn">from</span> <span class="nn">...General.Auxiliary_General.schedule_hour_simplified</span> <span class="kn">import</span> <span class="n">schedule_hour_simplified</span>
 <span class="kn">from</span> <span class="nn">...General.Auxiliary_General.month_last_hour</span> <span class="kn">import</span> <span class="n">month_last_hour</span>
 <span class="kn">from</span> <span class="nn">...General.Simple_User.adjust_capacity</span> <span class="kn">import</span> <span class="n">adjust_capacity</span>
 <span class="kn">from</span> <span class="nn">.Auxiliary.building_climate_api</span> <span class="kn">import</span> <span class="n">building_climate_api</span>
@@ -89,7 +88,7 @@
 
     <span class="sd">&quot;&quot;&quot;Greenhouse characterization</span>
 
-<span class="sd">    Simulates the heat needs over the year according to the greenhouse specifications and climate</span>
+<span class="sd">    Simulates the heat (space heating) needs over the year according to the greenhouse specifications and climate</span>
 <span class="sd">    weather data of the location</span>
 
 <span class="sd">    Parameters</span>
@@ -300,7 +299,7 @@
     <span class="c1">##################################################################################################################</span>
     <span class="c1"># COMPUTE ----------------------------------------------------------------------------------</span>
     <span class="c1"># Schedule</span>
-    <span class="n">profile</span> <span class="o">=</span> <span class="n">schedule_hour</span><span class="p">(</span><span class="n">saturday_on</span><span class="p">,</span> <span class="n">sunday_on</span><span class="p">,</span> <span class="n">shutdown_periods</span><span class="p">,</span> <span class="n">daily_periods</span><span class="p">)</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">schedule_hour_simplified</span><span class="p">(</span><span class="n">daily_periods</span><span class="p">,</span><span class="n">saturday_on</span><span class="p">,</span><span class="n">sunday_on</span><span class="p">,</span><span class="n">shutdown_periods</span><span class="p">)</span>
     <span class="n">month_last_hour_vector</span> <span class="o">=</span> <span class="n">month_last_hour</span><span class="p">()</span>
 
     <span class="c1"># Climate data</span>
@@ -546,7 +545,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">real_heating_monthly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">stream_hot</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="nb">vars</span><span class="p">(</span><span class="n">real_heating_monthly_capacity</span><span class="p">))</span>
+            <span class="n">stream_hot</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">user_monthly_capacity</span><span class="o">=</span><span class="n">real_heating_monthly_capacity</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">real_heating_yearly_capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">stream_hot</span> <span class="o">=</span> <span class="n">adjust_capacity</span><span class="p">(</span><span class="n">stream_hot</span><span class="p">,</span> <span class="n">user_yearly_capacity</span><span class="o">=</span><span class="n">real_heating_yearly_capacity</span><span class="p">)</span>
 

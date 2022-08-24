@@ -42,23 +42,22 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="EMB3RS.html">EMB3RS project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Introduction.html">Introduction to the CF Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="Source.html">Source Submodule</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Source%20Characterization.html">Source Characterization</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="Source%20Simulation.html">Source Simulation</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="module.Source.simulation.Convert.html">Convert Sources</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.html">Internal Heat Recovery</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Organic Rankine Cycle (ORC)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.Pinch.html">Pinch Analysis</a></li>
-<li class="toctree-l4"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.PinchQuick.html">Pinch Analysis - QUICK INPUTS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="module.Source.simulation.Heat_Recovery.PinchQuick.html">Pinch Analysis - Isolated Streams (QUICK INPUTS)</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Sink.html">Sink Submodule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UserGuide.html">User Guide - STANDALONE</a></li>
 </ul>
 
         </div>
@@ -75,7 +74,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="Source.html">Source</a> &raquo;</li>
+          <li><a href="Source.html">Source Submodule</a> &raquo;</li>
           <li><a href="Source%20Simulation.html">Source Simulation</a> &raquo;</li>
           <li><a href="module.Source.simulation.Heat_Recovery.html">Internal Heat Recovery</a> &raquo;</li>
       <li>Organic Rankine Cycle (ORC)</li>
@@ -93,63 +92,257 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="module.src.Source.simulation.Heat_Recovery.ORC.convert_orc.convert_orc">
 <span class="sig-prename descclassname"><span class="pre">module.src.Source.simulation.Heat_Recovery.ORC.convert_orc.</span></span><span class="sig-name descname"><span class="pre">convert_orc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/simulation/Heat_Recovery/ORC/convert_orc.html#convert_orc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.simulation.Heat_Recovery.ORC.convert_orc.convert_orc" title="Permalink to this definition"></a></dt>
-<dd><p>The main routine for designing ORCs for the streams given</p>
+<dd><p>Main routine for designing ORCs for the streams given</p>
+<p>Organic Rankine Cycles are designed for the excess heat streams given, so that the heat to power production
+can be analysed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>in_var</strong> – <ul>
+<li><p><strong>in_var</strong> (<em>dict</em>) – <p>All necessary data to perform the ORD design, with the following key:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>platform: dict</dt><dd><p>platform data, with the following keys:</p>
+<blockquote>
+<div><ul>
 <li><dl class="simple">
-<dt>streams:<code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">with</span> <span class="pre">dicts</span></code>: each stream data, with the following keys:</dt><dd><ul>
-<li><p>id: <code class="docutils literal notranslate"><span class="pre">int</span></code>: stream ID []</p></li>
-<li><p>name: <code class="docutils literal notranslate"><span class="pre">str</span></code>: stream name []</p></li>
-<li><p>object_type: <code class="docutils literal notranslate"><span class="pre">str</span></code>: DEFAULT=stream []</p></li>
-<li><p>stream_type: <code class="docutils literal notranslate"><span class="pre">str</span></code>: stream designation []; e.g. inflow, outflow, excess_heat</p></li>
-<li><p>supply_temperature: <code class="docutils literal notranslate"><span class="pre">float</span></code>: stream’s supply/initial temperature [ºC]</p></li>
-<li><p>target_temperature: <code class="docutils literal notranslate"><span class="pre">float</span></code>: stream’s target/final temperature [ºC]</p></li>
-<li><p>fluid: <code class="docutils literal notranslate"><span class="pre">str</span></code>: stream’s fluid []</p></li>
-<li><p>flowrate: <code class="docutils literal notranslate"><span class="pre">float</span></code>: stream’s mass flowrate [kg/h]</p></li>
-<li><p>schedule: <code class="docutils literal notranslate"><span class="pre">list</span></code>: stream’s hourly schedule</p></li>
-<li><p>hourly_generation: <code class="docutils literal notranslate"><span class="pre">list</span></code>: stream’s hourly capacity</p></li>
-<li><p>capacity: <code class="docutils literal notranslate"><span class="pre">float</span></code>: stream’s capacity [kW]</p></li>
+<dt>location: list:</dt><dd><p>Location [º]; [latitude,longitude]</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>fuels_data: dict, optional</dt><dd><p>Fuels price and CO2 emission, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>natural_gas: dict</dt><dd><p>with the following keys:</p>
+<ul>
+<li><dl class="simple">
+<dt>co2_emissions: float:</dt><dd><p>Fuel CO2 emission [kg CO2/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>price: float:</dt><dd><p>Fuel price [€/kWh]</p>
+</dd>
+</dl>
+</li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><p>consumer_type: <code class="docutils literal notranslate"><span class="pre">str</span></code>: type of consumer tariff []; ‘household’ or ‘non-household’</p></li>
-<li><p>get_best_number: <code class="docutils literal notranslate"><span class="pre">int</span></code>: [OPTIONAL]  number of best conversion cases; DEFAULT=3</p></li>
-<li><p>orc_years_working: <code class="docutils literal notranslate"><span class="pre">int</span></code>: [OPTIONAL]  ORC working years [years]; DEFAULT=25</p></li>
-<li><p>orc_T_evap: <code class="docutils literal notranslate"><span class="pre">float</span></code>: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=110</p></li>
-<li><p>orc_T_cond: <code class="docutils literal notranslate"><span class="pre">float</span></code>: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=35</p></li>
+<li><dl class="simple">
+<dt>fuel_oil<span class="classifier">dict</span></dt><dd><p>Similar to “natural_gas”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electricity<span class="classifier">dict</span></dt><dd><p>Similar to “natural_gas”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>biomass<span class="classifier">dict</span></dt><dd><p>Similar to “natural_gas”</p>
+</dd>
+</dl>
+</li>
 </ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>streams: list</dt><dd><p>each stream data, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>id: int</dt><dd><p>stream ID []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>name: str</dt><dd><p>stream name []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>object_type: str</dt><dd><p>DEFAULT=stream []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>stream_type: str</dt><dd><p>stream designation []; e.g. inflow, outflow, excess_heat</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>supply_temperature: float</dt><dd><p>stream’s supply/initial temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>target_temperature: float</dt><dd><p>stream’s target/final temperature [ºC]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fluid: str</dt><dd><p>stream’s fluid []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>flowrate: float</dt><dd><p>stream’s mass flowrate [kg/h]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>schedule: list</dt><dd><p>stream’s hourly schedule</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>hourly_generation: list</dt><dd><p>stream’s hourly capacity</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>capacity: float</dt><dd><p>stream’s capacity [kW]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>get_best_number: int, optional</dt><dd><p>number of best conversion cases; DEFAULT=3</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>orc_years_working: int, optional</dt><dd><p>ORC working years [years]; DEFAULT=25</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>orc_T_evap: float, optional</dt><dd><p>ORC evaporator temperature [ºC]; DEFAULT=110</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>orc_T_cond: float, optional</dt><dd><p>ORC evaporator temperature [ºC]; DEFAULT=35</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
 </p></li>
-<li><p><strong>kb</strong> – Knowledge Base data</p></li>
+<li><p><strong>kb</strong> (<em>dict</em>) – Knowledge Base data</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p>report: <code class="docutils literal notranslate"><span class="pre">str</span></code>: HTML report</p></li>
+<dd class="field-even"><p><p><strong>output</strong> –</p>
+<p>Output data, with the following keys:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>best_options<span class="classifier">list</span></dt><dd><p>each designed solution data, with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
 <li><dl class="simple">
-<dt>best_options: <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">with</span> <span class="pre">dicts</span></code>: each designed solution data, with the following keys:</dt><dd><ul>
-<li><p>ID: <code class="docutils literal notranslate"><span class="pre">int</span></code>: ORC design ID []</p></li>
-<li><p>streams_id: <code class="docutils literal notranslate"><span class="pre">list</span></code>:  streams ID considered for the solution []</p></li>
-<li><p>electrical_generation_nominal: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC nominal electrical generation [kW]</p></li>
-<li><p>electrical_generation_yearly: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly electrical generation [kWh]</p></li>
-<li><p>excess_heat_supply_capacity: <code class="docutils literal notranslate"><span class="pre">float</span></code>: streams thermal capacity available [kW]</p></li>
-<li><p>conversion_efficiency: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC heat to electricity conversion efficiency []</p></li>
-<li><p>turnkey: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC investment cost [€]</p></li>
-<li><p>om_fix: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly OM fix costs [€/year]</p></li>
-<li><p>om_var: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly OM var costs [€/kWh]</p></li>
-<li><p>electrical_generation_yearly_turnkey: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly electrical generation over turnkey [kWh/€]</p></li>
-<li><p>co2_savings: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly CO2 savings (all electricity is considered to be consumed)  [kg CO2/kWh]</p></li>
-<li><p>money_savings: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC yearly monetary savings (all electricity is considered to be consumed [€/kWh]</p></li>
-<li><p>discount_rate: <code class="docutils literal notranslate"><span class="pre">float</span></code>: discount rate []</p></li>
-<li><p>lifetime: <code class="docutils literal notranslate"><span class="pre">float</span></code>: ORC working years [years]</p></li>
-</ul>
+<dt>ID: int</dt><dd><p>ORC design ID []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>streams_id: list</dt><dd><p>streams ID considered for the solution []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electrical_generation_nominal: float</dt><dd><p>ORC nominal electrical generation [kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electrical_generation_yearly: float</dt><dd><p>ORC yearly electrical generation [kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>excess_heat_supply_capacity: float</dt><dd><p>streams thermal capacity available [kW]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>conversion_efficiency: float</dt><dd><p>ORC heat to electricity conversion efficiency []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>turnkey: float</dt><dd><p>ORC investment cost [€]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>om_fix: float</dt><dd><p>ORC yearly OM fix costs [€/year]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>om_var: float</dt><dd><p>ORC yearly OM var costs [€/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>electrical_generation_yearly_turnkey: float</dt><dd><p>ORC yearly electrical generation over turnkey [kWh/€]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>co2_savings: float</dt><dd><p>ORC yearly CO2 savings (all electricity is considered to be consumed)  [kg CO2/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>money_savings: float</dt><dd><p>ORC yearly monetary savings (all electricity is considered to be consumed [€/kWh]</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>discount_rate: float</dt><dd><p>discount rate []</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>lifetime: float</dt><dd><p>ORC working years [years]</p>
 </dd>
 </dl>
 </li>
 </ul>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>report<span class="classifier">str</span></dt><dd><p>HTML report</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
 </p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>

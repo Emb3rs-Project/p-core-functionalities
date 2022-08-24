@@ -10,6 +10,9 @@ from ....utilities.kb import KB
 class Cooling_Equipment:
     """Create Cooling Equipment Object and characterize its streams
 
+    From main characteristics of the cooling equipment, adding to its characterization, it is estimated the excess heat
+    stream.
+
     Attributes
     ----------
     id : int

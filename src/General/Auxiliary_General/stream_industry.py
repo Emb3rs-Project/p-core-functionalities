@@ -38,7 +38,7 @@ def stream_industry(stream_name,object_linked_id, stream_type, fluid, supply_tem
     target_temperature : float
         Stream's target/final temperature [ºC]
 
-    mass_flowrate : float
+    mass_flowrate : float, None
         Stream mass flowrate[kg/h]
 
     capacity : float

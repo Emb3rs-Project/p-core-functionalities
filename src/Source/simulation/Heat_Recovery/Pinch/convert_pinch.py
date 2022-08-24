@@ -11,8 +11,9 @@ from .....Reports.pinch_report import pinch_report
 def convert_pinch(in_var, kb: KB):
     """Main function of Pinch Analysis
 
-    Includes data pretreatment, pinch analysis, and economic/co2 analysis of the options designed.
-    Return the best three solutions for: minimum CO2 emissions ,maximize energy recovery, and energy recovery specific cost.
+    Includes data pretreatment, pinch analysis, and economic/CO2 analysis of the options designed.
+    Return the best three solutions for: minimum CO2 emissions ,maximize energy recovery, and energy recovery specific
+    cost.
 
     Parameters
     ----------
