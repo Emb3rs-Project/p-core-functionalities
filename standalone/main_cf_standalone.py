@@ -52,14 +52,8 @@ class DesignORC:
         in_var = mapping_convert_orc(self.fuels_data, self.sources, self.cf_data["orc_data"])
         self.convert_orc_results = convert_orc(in_var, kb)
 
-        return self.convert_orc_results
+        return self.convert_orc_results["best_options"], self.convert_orc_results["report"]
 
-    def get_report(self):
-        file = open("orc_report.html", "w")
-        file.write(self.convert_orc_results["report"])
-        file.close()
-
-        return self.convert_orc_results["report"]
 
 class PinchAnalysis:
 
@@ -77,14 +71,7 @@ class PinchAnalysis:
         in_var = mapping_pinch_analysis(self.cf_data)
         self.pinch_data = convert_pinch_isolated_streams(in_var, KB(kb))
 
-        return self.pinch_data
-
-    def get_report(self):
-        file = open("pinch_report.html", "w")
-        file.write(self.pinch_data["report"])
-        file.close()
-
-        return self.pinch_data["report"]
+        return self.pinch_data['best_options'], self.pinch_data["report"]
 
 
 class DHNSimulation:
@@ -171,8 +158,7 @@ class CFModule():
         file = os.path.abspath(file_path)
         platform_orc = DesignORC()
         platform_orc.read_user_inputs(file)
-        orc_data = platform_orc.simulation()
-        report = platform_orc.get_report()
+        orc_data, report = platform_orc.simulation()
 
         return orc_data, report
 
@@ -189,7 +175,6 @@ class CFModule():
         file = os.path.abspath(file_path)
         platform_pinch_analysis = PinchAnalysis()
         platform_pinch_analysis.read_user_inputs(file)
-        pinch_data = platform_pinch_analysis.simulation()
-        report = platform_pinch_analysis.get_report()
+        pinch_data, report = platform_pinch_analysis.simulation()
 
         return pinch_data, report
