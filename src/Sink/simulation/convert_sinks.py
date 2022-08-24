@@ -16,24 +16,18 @@ from ...KB_General.fuel_properties import FuelProperties
 from ...General.Auxiliary_General.get_country import get_country
 
 def convert_sinks(in_var, kb):
-    """Design of Grid - Sinks conversion technologies.
 
-    For the group of sinks given, it is set the grid supply and return temperatures. Moreover, grid specific technologies
-    are designed to meet the heating/cooling requirements of the group.
+    """Design of technologies to connect DHN to the sinks.
 
-    For each sink are designed the conversion technologies needed. The design may be done for each stream individually or
-    it can be made to the aggregated of streams (the user must provide his preference).
+    For each sink are designed the conversion technologies needed.
     When performing the conversion, three design options may occur:
-        Sink needs HEATING
-          1) the grid temperature meets the sink target temperature requirements, thus only a grid-sink HX and correspondent
-          circulation pumping is needed
-          2) the grid temperature does not meet the sink target temperature requirements, thus adding to the grid-sink HX
-          and correspondent circulation pumping, it is also necessary to add a technology to raise the temperature (chp,
-          solar thermal, heat pump, boiler)
-        Sink needs COOLING
-          3) it is always necessary to add a cooling technology (thermal_chiller), since we are only designing DHNs
+        1. (HEATING) The grid temperature meets the sink target temperature requirements, thus only a grid-sink HX and correspondent circulation pumping is needed
+        2. (HEATING) The grid temperature does not meet the sink target temperature requirements, thus adding to the grid-sink HX and correspondent circulation pumping, it is also necessary to add a technology to raise the temperature (chp,solar thermal, heat pump, boiler)
+        3. (COOLING) It is always necessary to add a cooling technology (thermal_chiller), since we are only designing DHNs
 
-    Possible conversions: HX, HX + heating/cooling technology + HX
+    Possible conversions: HX, HX + heating/cooling technology + HX.
+
+    Moreover, for the group of sinks capacity, heating grid specific technologies (also known as backup) are designed.
 
     Parameters
     ----------
@@ -914,9 +908,11 @@ def convert_sinks(in_var, kb):
     # GIS INFO
     n_demand_list = []
     for sink in all_sinks_info['sinks']:
-        total_cap = 0
+        aggregate_profiles = np.zeros(len(sink['streams'][0]['hourly_stream_capacity'])) # just 0s
         for stream in sink['streams']:
-            total_cap = total_cap + stream['gis_capacity']
+            aggregate_profiles = np.add(aggregate_profiles,stream['hourly_stream_capacity'])
+
+        total_cap = max(aggregate_profiles)
 
         gis_dict = {
             'name': sink['name'],

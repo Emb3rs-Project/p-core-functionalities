@@ -14,17 +14,16 @@ from ....Error_Handling.error_convert_sources import MainErrorConvertSources
 from ....Error_Handling.runtime_error import ModuleRuntimeException
 from ....KB_General.fuel_properties import FuelProperties
 from ....General.Auxiliary_General.get_country import get_country
+import numpy as np
 
 def convert_sources(in_var, kb):
-    """Sources conversion to the grid - design of technologies.
+    """Design of technologies to connect sources to the DHN.
 
-    For each source are designed the conversion technologies needed. The design may be done for each stream individually
-    or it can be made to the aggregated of streams (the user must provide his preference). After the designing, it is
-    known the power available from each source.
+    For each source are designed the conversion technologies needed.
     When performing the conversion, three design options may occur:
-            1. If the stream supply temperature > grid supply temperature -> HX designed
+            1. If the stream supply temperature > DHN supply temperature -> HX designed
             2. If the stream supply temperature > ORC evaporator -> ORC cascaded designed
-            3. If the stream supply temperature < grid supply temperature -> heating technologies are designed
+            3. If the stream supply temperature < DHN supply temperature -> HX and heating technologies are designed to fulfill DHN temperature
 
     Parameters
     ----------
@@ -44,7 +43,7 @@ def convert_sources(in_var, kb):
                                 Location [º]; [latitude,longitude]
 
                             - levelized_co2_emissions: float
-                                Grid levelized CO2 emissions [c]
+                                Grid levelized CO2 emissions [CO2/kWh]
 
                             - levelized_om_var: float
                                 Grid levelized OM var [€/kWh]
@@ -123,7 +122,7 @@ def convert_sources(in_var, kb):
 
     Returns
     -------
-    all_info: dict:
+    all_info: dict
         Sources conversion data, with the following keys:
 
             - all_sources_info: list
@@ -849,10 +848,13 @@ def convert_sources(in_var, kb):
     ##############################
     # OUTPUT
     n_supply_list = []
+
     for source in all_sources_info:
-        total_cap = 0
+        aggregate_profiles = np.zeros(len(source['streams_converted'][0]['hourly_stream_capacity']))  # just 0s
         for stream in source['streams_converted']:
-            total_cap += float(stream['gis_capacity'])  # [kW]
+            aggregate_profiles = np.add(aggregate_profiles, stream['hourly_stream_capacity'])
+
+        total_cap = max(aggregate_profiles)
 
         if total_cap != 0:
             gis_dict = {
