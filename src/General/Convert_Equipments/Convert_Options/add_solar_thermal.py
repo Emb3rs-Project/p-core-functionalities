@@ -100,7 +100,6 @@ class Add_Solar_Thermal():
         self.supply_fluid = 'thermal_oil'
         self.fuel_type = 'electricity'
 
-        fuel_properties = FuelProperties(kb)
         self.fuel_properties = fuels_data[self.fuel_type]
 
         # get equipment characteristics

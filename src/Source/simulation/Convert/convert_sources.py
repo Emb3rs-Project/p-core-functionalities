@@ -12,6 +12,8 @@ from ....Source.simulation.Auxiliary.design_orc import design_orc
 from ....General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import coef_solar_thermal_backup
 from ....Error_Handling.error_convert_sources import MainErrorConvertSources
 from ....Error_Handling.runtime_error import ModuleRuntimeException
+from ....KB_General.fuel_properties import FuelProperties
+from ....General.Auxiliary_General.get_country import get_country
 
 def convert_sources(in_var, kb):
     """Sources conversion to the grid - design of technologies.
@@ -336,7 +338,20 @@ def convert_sources(in_var, kb):
         for source_index, source in enumerate(group_of_sources):
             output_converted = []
             latitude, longitude = source['location']
-            fuels_data = source['fuels_data']
+
+            try:
+                fuels_data = source['fuels_data']
+            except:
+                fuels = ["natural_gas","biomass","electricity","fuel_oil"]
+                fuels_data = {}
+                for fuel in fuels:
+                    fuel_properties = FuelProperties(kb)
+                    country = get_country(latitude, longitude)
+                    fuel_data = fuel_properties.get_values(country, fuel, consumer_type="household")
+                    fuels_data[fuel] = {"price": fuel_data["price"],
+                                          "co2_emissions": fuel_data["co2_emissions"]}
+
+
 
             # get conversion technologies for each stream
             for stream_index, stream in enumerate(source['streams']):

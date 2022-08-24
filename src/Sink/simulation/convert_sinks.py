@@ -12,6 +12,8 @@ from ...General.Convert_Equipments.Convert_Options.add_electric_chiller import A
 from ...General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import coef_solar_thermal_backup
 from ...Error_Handling.error_convert_sinks import PlatformConvertSinks
 from ...Error_Handling.runtime_error import ModuleRuntimeException
+from ...KB_General.fuel_properties import FuelProperties
+from ...General.Auxiliary_General.get_country import get_country
 
 def convert_sinks(in_var, kb):
     """Design of Grid - Sinks conversion technologies.
@@ -259,10 +261,26 @@ def convert_sinks(in_var, kb):
     group_of_sinks = platform_data.group_of_sinks  # e.g. building, greenhouse, streams
     group_of_sinks = [vars(sink) for sink in group_of_sinks]
 
-    for sink in group_of_sinks:
-        sink["fuels_data"] = vars(sink["fuels_data"])
-        for fuel in sink["fuels_data"].keys():
-            sink["fuels_data"][fuel] = vars(sink["fuels_data"][fuel])
+    try:
+        for sink in group_of_sinks:
+            sink["fuels_data"] = vars(sink["fuels_data"])
+            for fuel in sink["fuels_data"].keys():
+                sink["fuels_data"][fuel] = vars(sink["fuels_data"][fuel])
+    except:
+        fuels = ["natural_gas", "biomass", "electricity", "fuel_oil"]
+        fuels_data = {}
+        for sink in group_of_sinks:
+            latitude, longitude = sink['location']
+            for fuel in fuels:
+                fuel_properties = FuelProperties(kb)
+                country = get_country(latitude, longitude)
+                fuel_data = fuel_properties.get_values(country, fuel, consumer_type="household")
+                fuels_data[fuel] = {
+                    "price": fuel_data["price"],
+                    "co2_emissions": fuel_data["co2_emissions"]}
+
+            sink["fuels_data"] = fuels_data
+
 
     for sink in group_of_sinks:
         sink['streams'] = [vars(stream) for stream in sink['streams']]
