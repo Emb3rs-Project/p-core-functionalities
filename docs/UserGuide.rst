@@ -33,7 +33,9 @@ excel files and provide routines the results to the user. You can check below to
 
 For each one of the simulations you can find an example for the `INPUTS <https://github.com/Emb3rs-Project/p-core-functionalities/tree/master/standalone/test_files>`_ data
 and `RESULTS <https://github.com/Emb3rs-Project/p-core-functionalities/tree/master/standalone/test_files/results>`_  in
-the "standalone" folder. Below, you can find a step-by-step for each simulation.
+the "standalone" folder. Check `here <https://github.com/Emb3rs-Project/p-core-functionalities/blob/master/standalone/test.py>`_, for a more detailed code snippet.
+
+Below, you can find a step-by-step for each simulation.
 
 District Heating Network
 --------------------------------------------
