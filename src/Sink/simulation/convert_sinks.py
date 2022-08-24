@@ -57,7 +57,7 @@ def convert_sinks(in_var, kb):
                         - location : list
                             [latitude, longitude] [º]
 
-                        - fuels_data: dict:
+                        - fuels_data: dict, optional
                             Fuels price and CO2 emission, with the following keys:
 
                                 - natural_gas: dict

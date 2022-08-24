@@ -61,7 +61,7 @@ def convert_sources(in_var, kb):
                             - location: list
                                 Location [º]; [latitude,longitude]
 
-                            - fuels_data: dict
+                            - fuels_data: dict, optional
                                 Fuels price and CO2 emission, with the following keys:
 
                                     - natural_gas: dict

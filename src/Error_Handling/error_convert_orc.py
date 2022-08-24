@@ -2,7 +2,6 @@ from pydantic import validator, PositiveInt, PositiveFloat
 from typing import List, Optional
 from .General.stream import Stream
 from .General.location import Location
-from .General.consumer_type_options import ConsumerTypeOptions
 from .General.fueldata import FuelData
 
 class PlatformConvertORC(Location):

@@ -23,7 +23,7 @@ def convert_pinch_isolated_streams(in_var, kb: KB):
                     pinch_delta_T_min : float
                         Pinch delta_T
 
-                    fuels_data: dict:
+                    fuels_data: dict
                         Fuels price and CO2 emission, with the following keys:
 
                             - natural_gas: dict

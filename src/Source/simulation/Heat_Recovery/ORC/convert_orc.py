@@ -28,7 +28,6 @@ def convert_orc(in_var, kb: KB):
                     - hourly_generation: ``list``: stream's hourly capacity
                     - capacity: ``float``: stream's capacity [kW]
 
-            - consumer_type: ``str``: type of consumer tariff []; 'household' or 'non-household'
             - get_best_number: ``int``: [OPTIONAL]  number of best conversion cases; DEFAULT=3
             - orc_years_working: ``int``: [OPTIONAL]  ORC working years [years]; DEFAULT=25
             - orc_T_evap: ``float``: [OPTIONAL] ORC evaporator temperature [ºC]; DEFAULT=110
