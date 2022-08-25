@@ -2,7 +2,7 @@ Detailed Characterization
 ======================================
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    Generate_Equipment
    Process
