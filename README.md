@@ -15,8 +15,7 @@ Source:
 - Industry’s equipment, processes, and streams characterization (characterization) 
 - Excess heat characterization (characterization) 
 - Internal heat recovery analysis (simulation) 
-
-Conversion of the source’s excess heat streams to the DHN and evaluation of the technologies to be implemented (simulation) 
+ -Conversion of the source’s excess heat streams to the DHN and evaluation of the technologies to be implemented (simulation) 
 
 Sink: 
 - Industry and buildings – greenhouse, hotel, residential, office - heating/cooling demand and streams characterization (characterization) 
