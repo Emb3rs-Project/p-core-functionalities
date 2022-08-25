@@ -6,7 +6,6 @@ from ....KB_General.medium import Medium
 from ....KB_General.equipment_details import EquipmentDetails
 from ....utilities.kb import KB
 
-
 class Boiler:
     """Create Boiler Object and characterize its streams
 
@@ -88,8 +87,6 @@ class Boiler:
 
     kb : dict
         Knowledge Base data
-
-
     """
 
     def __init__(self, in_var, kb: KB):
