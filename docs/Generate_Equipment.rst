@@ -3,7 +3,7 @@ Generate Equipment
 
 Boiler
 --------------------------------------------------------------------------
-.. automodule:: src.Source.characterization.Process.process
+.. automodule:: src.Source.characterization.Generate_Equipment.generate_boiler
    :members:
    :undoc-members:
    :show-inheritance:

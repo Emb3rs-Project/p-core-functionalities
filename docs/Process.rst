@@ -1,7 +1,7 @@
 Process
 ==============================================
 
-.. automodule:: src.Source.characterization.Generate_Equipment.generate_boiler
+.. automodule:: src.Source.characterization.Process.process
    :members:
    :undoc-members:
    :show-inheritance:
