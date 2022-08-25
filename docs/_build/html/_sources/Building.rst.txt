@@ -1,5 +1,5 @@
 Building
---------------------------------------------
+==============================================
 
 .. automodule:: src.Sink.characterization.building
    :members:

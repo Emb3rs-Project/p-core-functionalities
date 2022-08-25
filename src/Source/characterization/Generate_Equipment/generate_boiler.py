@@ -2,8 +2,6 @@ from ....General.Auxiliary_General.schedule_hour_simplified import schedule_hour
 from ....General.Auxiliary_General.combustion_mass_flows import combustion_mass_flows
 from ....General.Auxiliary_General.compute_flow_rate import compute_flow_rate
 from ....General.Auxiliary_General.stream_industry import stream_industry
-from ....KB_General.medium import Medium
-from ....KB_General.equipment_details import EquipmentDetails
 from ....utilities.kb import KB
 
 class Boiler:
