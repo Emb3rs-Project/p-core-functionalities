@@ -3,8 +3,10 @@ Generate Equipment
 
 Boiler
 --------------------------------------------------------------------------
-.. include:: src.Source.characterization.Generate_Equipment.generate_boiler
-
+.. automodule:: src.Source.characterization.Generate_Equipment.generate_boiler
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Burner
 --------------------------------------------------------------------------

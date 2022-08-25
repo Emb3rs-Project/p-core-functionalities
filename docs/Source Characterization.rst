@@ -4,8 +4,8 @@ Source Characterization
 .. toctree::
    :maxdepth: 4
 
-   SimpleCharacterization
-   DetailedCharacterization
+..include:: SimpleCharacterization.rst
+            DetailedCharacterization.rst
 
 
 
