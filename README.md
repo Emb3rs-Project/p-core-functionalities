@@ -1,5 +1,7 @@
 # EMB3RS Core functionalities (CF) module
 
+CF Main features documentation: https://cf-embers.readthedocs.io/en/latest/
+
 ## Introduction
 The purpose of the Core Functionalities (CF) module is to allow full characterization of the EMB3Rs platform objects (sinks and sources) and provide technical information to all the analysis modules, namely the graphical information systems (GIS) module, the techno-economic (TEO) module, the market module (MM), and the business module (BM); to run their simulations.   
 
