@@ -39,7 +39,7 @@ def coef_solar_thermal_backup(stream_hourly_capacity, solar_thermal_object, heat
         except:
             power_provided_by_solar_thermal += 0
 
-    stream_yearly_power = sum(list(filter(lambda num: num != 0, solar_thermal_hours_production)))
+    stream_yearly_power = sum(stream_hourly_capacity)
 
     # update om_var and emissions
     coef_solar_thermal = power_provided_by_solar_thermal / stream_yearly_power
