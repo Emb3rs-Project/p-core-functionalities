@@ -26,17 +26,16 @@ Looking into more detail at the main platform objects.
 
 When a user creates a source, there are two methods to perform its characterization. A simple form if the user desires to characterize directly specific excess heat streams and a more detailed form for users who intend an industry complete characterization. These need to introduce in detail their equipment and processes data. In terms of simulation, whether simplified or detailed characterization, the CF module will convert the source´s excess heat to the DHN, estimating the available conversion heat and the technologies that could be implemented. Only for the users who performed the detailed characterization is performed the internal heat recovery analysis – based on a pinch analysis-, in which the CF suggests possible heat exchanger design combinations. 
 
-Detailed information for the source characterization can be found here (https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Source/characterization/readme.md)
+Detailed information for the source characterization can be found here (https://github.com/Emb3rs-Project/p-core-functionalities/tree/master/src/Source/characterization)
 
-Detailed information for the source simulation can be found here (https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Source/simulation/readme.md)
+Detailed information for the source simulation can be found here (https://github.com/Emb3rs-Project/p-core-functionalities/tree/master/src/Source/simulation)
 
 When a user creates a sink, it is prompted to the user to characterize its heating/cooling demand. Similar to the source, there is a simplified form for the user to input directly a specific heat/cold stream demand, and a more detailed form for the users who which to characterize buildings – residential, offices, hotels, and greenhouses. According to the user's buildings specification, the CF will characterize the building by generating the heating/cooling demand. Simulation-wise, the CF will evaluate the technologies that could be implemented on the DHN to meet the heat/cold sink´s needs. 
 
-Detailed information for the sink characterization can be found here:
-https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Sink/characterization/readme.md
+Detailed information for the sink characterization can be found here: https://github.com/Emb3rs-Project/p-core-functionalities/tree/master/src/Sink/characterization
 
 Detailed information for the sink simulation can be found here:
-https://gitlab.pdmfc.com/emb3rs1/prototypes/cf/module_code/-/blob/master/Sink/simulation/readme.md
+https://github.com/Emb3rs-Project/p-core-functionalities/tree/master/src/Sink/simulation
 
 
 ## Requirements
