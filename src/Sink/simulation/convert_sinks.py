@@ -21,9 +21,11 @@ def convert_sinks(in_var, kb):
 
     For each sink are designed the conversion technologies needed.
     When performing the conversion, three design options may occur:
-        1. (HEATING) The grid temperature meets the sink target temperature requirements, thus only a grid-sink HX and correspondent circulation pumping is needed
-        2. (HEATING) The grid temperature does not meet the sink target temperature requirements, thus adding to the grid-sink HX and correspondent circulation pumping, it is also necessary to add a technology to raise the temperature (chp,solar thermal, heat pump, boiler)
-        3. (COOLING) It is always necessary to add a cooling technology (thermal_chiller), since we are only designing DHNs
+    Sink that requires HEATING:
+        1. The grid temperature meets the sink target temperature requirements, thus only a grid-sink HX and correspondent circulation pumping is needed
+        2. The grid temperature does not meet the sink target temperature requirements, thus adding to the grid-sink HX and correspondent circulation pumping, it is also necessary to add a technology to raise the temperature (chp,solar thermal, heat pump, boiler)
+    Sink that requires COOLING:
+        3. It is always necessary to add a cooling technology (thermal_chiller), since we are only designing DHNs
 
     Possible conversions: HX, HX + heating/cooling technology + HX.
 

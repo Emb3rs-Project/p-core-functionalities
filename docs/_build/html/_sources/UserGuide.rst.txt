@@ -4,8 +4,6 @@ User Guide - STANDALONE
 The CF can also be used as STANDALONE. It were developed scripts with the main features of the CF that read data from
 excel files and provide routines the results to the user. You can check below to understand how it works.
 
-**After cloning the CF repository, check the folder "standalone"-> "test.py". Running the standalone is as simple as this:**
-
 .. code-block:: python
 
     from main_cf_standalone import CFModule
