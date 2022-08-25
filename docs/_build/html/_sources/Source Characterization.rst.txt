@@ -2,7 +2,7 @@ Source Characterization
 ======================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
    SimpleCharacterization
    DetailedCharacterization
