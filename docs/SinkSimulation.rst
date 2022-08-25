@@ -1,7 +1,7 @@
 Sink Simulation
 ==============================
 
-XXConvert Sinks
+Convert Sinks
 --------------------------------------------
 
 .. automodule:: src.Sink.simulation.convert_sinks
