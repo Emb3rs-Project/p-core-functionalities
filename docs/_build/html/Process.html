@@ -86,19 +86,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-module.src.Source.characterization.Process.process">
-<span id="process"></span><h1>Process<a class="headerlink" href="#module-module.src.Source.characterization.Process.process" title="Permalink to this heading"></a></h1>
+  <section id="module-src.Source.characterization.Process.process">
+<span id="process"></span><h1>Process<a class="headerlink" href="#module-src.Source.characterization.Process.process" title="Permalink to this heading"></a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">module.src.Source.characterization.Process.process.</span></span><span class="sig-name descname"><span class="pre">Process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.Source.characterization.Process.process.</span></span><span class="sig-name descname"><span class="pre">Process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">KB</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/Source/characterization/Process/process.html#Process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.Source.characterization.Process.process.Process" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Create Process object and characterize its process components (Inflow/Outflow/Maintenance/Evaporation).</p>
 <p>A process is sequencing of actions, in continuous or batch, which includes heating/cooling of streams.
 Regarding the types of streams: Inflow - going in stream -, Outflow - going out stream - , Maintenance/
 Evaporation - energy demand for a specific temperature. The process can be continuous or in batch.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.id" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#src.Source.characterization.Process.process.Process.id" title="Permalink to this definition"></a></dt>
 <dd><p>Process ID</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -108,8 +108,8 @@ Evaporation - energy demand for a specific temperature. The process can be conti
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.object_type">
-<span class="sig-name descname"><span class="pre">object_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.object_type" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.object_type">
+<span class="sig-name descname"><span class="pre">object_type</span></span><a class="headerlink" href="#src.Source.characterization.Process.process.Process.object_type" title="Permalink to this definition"></a></dt>
 <dd><p>DEFAULT = “process”</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -119,8 +119,8 @@ Evaporation - energy demand for a specific temperature. The process can be conti
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.streams">
-<span class="sig-name descname"><span class="pre">streams</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.streams" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.streams">
+<span class="sig-name descname"><span class="pre">streams</span></span><a class="headerlink" href="#src.Source.characterization.Process.process.Process.streams" title="Permalink to this definition"></a></dt>
 <dd><p>Data of the streams associated to this equipment</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -130,8 +130,8 @@ Evaporation - energy demand for a specific temperature. The process can be conti
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.equipment_id">
-<span class="sig-name descname"><span class="pre">equipment_id</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.equipment_id" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.equipment_id">
+<span class="sig-name descname"><span class="pre">equipment_id</span></span><a class="headerlink" href="#src.Source.characterization.Process.process.Process.equipment_id" title="Permalink to this definition"></a></dt>
 <dd><p>Equipment ID associated</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -141,8 +141,8 @@ Evaporation - energy demand for a specific temperature. The process can be conti
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.operation_temperature">
-<span class="sig-name descname"><span class="pre">operation_temperature</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.operation_temperature" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.operation_temperature">
+<span class="sig-name descname"><span class="pre">operation_temperature</span></span><a class="headerlink" href="#src.Source.characterization.Process.process.Process.operation_temperature" title="Permalink to this definition"></a></dt>
 <dd><p>Operation temperature [ºC]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -152,8 +152,8 @@ Evaporation - energy demand for a specific temperature. The process can be conti
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.schedule_type">
-<span class="sig-name descname"><span class="pre">schedule_type</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.schedule_type" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.schedule_type">
+<span class="sig-name descname"><span class="pre">schedule_type</span></span><a class="headerlink" href="#src.Source.characterization.Process.process.Process.schedule_type" title="Permalink to this definition"></a></dt>
 <dd><p>Process schedule type; batch (1) or continuous (0)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -163,8 +163,8 @@ Evaporation - energy demand for a specific temperature. The process can be conti
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.example_of_daily_period">
-<span class="sig-name descname"><span class="pre">example_of_daily_period</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.example_of_daily_period" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.example_of_daily_period">
+<span class="sig-name descname"><span class="pre">example_of_daily_period</span></span><a class="headerlink" href="#src.Source.characterization.Process.process.Process.example_of_daily_period" title="Permalink to this definition"></a></dt>
 <dd><p>Hours in a daily period [h]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -174,8 +174,8 @@ Evaporation - energy demand for a specific temperature. The process can be conti
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.eff_equipment">
-<span class="sig-name descname"><span class="pre">eff_equipment</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.eff_equipment" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.eff_equipment">
+<span class="sig-name descname"><span class="pre">eff_equipment</span></span><a class="headerlink" href="#src.Source.characterization.Process.process.Process.eff_equipment" title="Permalink to this definition"></a></dt>
 <dd><p>Efficiency of the equipment associated []</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -185,8 +185,8 @@ Evaporation - energy demand for a specific temperature. The process can be conti
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.fuel">
-<span class="sig-name descname"><span class="pre">fuel</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.fuel" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.fuel">
+<span class="sig-name descname"><span class="pre">fuel</span></span><a class="headerlink" href="#src.Source.characterization.Process.process.Process.fuel" title="Permalink to this definition"></a></dt>
 <dd><p>Fuel of the equipment associated</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -196,8 +196,8 @@ Evaporation - energy demand for a specific temperature. The process can be conti
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.cycle_time_percentage">
-<span class="sig-name descname"><span class="pre">cycle_time_percentage</span></span><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.cycle_time_percentage" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.cycle_time_percentage">
+<span class="sig-name descname"><span class="pre">cycle_time_percentage</span></span><a class="headerlink" href="#src.Source.characterization.Process.process.Process.cycle_time_percentage" title="Permalink to this definition"></a></dt>
 <dd><p>Process cycle time percentage []</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -354,23 +354,23 @@ fluid and inflow, and last 10%/6min for the outflow discharge.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.generate_inflow">
-<span class="sig-name descname"><span class="pre">generate_inflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process.generate_inflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.generate_inflow" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.generate_inflow">
+<span class="sig-name descname"><span class="pre">generate_inflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/Source/characterization/Process/process.html#Process.generate_inflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.Source.characterization.Process.process.Process.generate_inflow" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.generate_maintenance_and_evaporation">
-<span class="sig-name descname"><span class="pre">generate_maintenance_and_evaporation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process.generate_maintenance_and_evaporation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.generate_maintenance_and_evaporation" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.generate_maintenance_and_evaporation">
+<span class="sig-name descname"><span class="pre">generate_maintenance_and_evaporation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/Source/characterization/Process/process.html#Process.generate_maintenance_and_evaporation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.Source.characterization.Process.process.Process.generate_maintenance_and_evaporation" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.generate_outflow">
-<span class="sig-name descname"><span class="pre">generate_outflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outflow_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process.generate_outflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.generate_outflow" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.generate_outflow">
+<span class="sig-name descname"><span class="pre">generate_outflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outflow_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/Source/characterization/Process/process.html#Process.generate_outflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.Source.characterization.Process.process.Process.generate_outflow" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="module.src.Source.characterization.Process.process.Process.schedule">
-<span class="sig-name descname"><span class="pre">schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/module/src/Source/characterization/Process/process.html#Process.schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#module.src.Source.characterization.Process.process.Process.schedule" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="src.Source.characterization.Process.process.Process.schedule">
+<span class="sig-name descname"><span class="pre">schedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/Source/characterization/Process/process.html#Process.schedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.Source.characterization.Process.process.Process.schedule" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

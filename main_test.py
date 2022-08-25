@@ -9,14 +9,14 @@ from module.Tests.Sources.simulation.ConvertOrc import testConvertORC
 from module.Tests.Sources.simulation.ConvertPinch import testConvertPinch
 from module.Tests.Sources.simulation.ConvertPinchIsolated import testConvertPinchIsolated
 
-testSinkSimpleUser()
-testSourceSimpleUser()
-testBuilding()
-testGreenhouse()
-testConvertSink()
-testSourceDetailedUser()
-testConvertSource()
-testConvertORC()
-testConvertPinch()
-testConvertPinchIsolated()
+#testSinkSimpleUser()
+#testSourceSimpleUser()
+#testBuilding()
+#testGreenhouse()
+#testConvertSink()
+#testSourceDetailedUser()
+#testConvertSource()
+#testConvertORC()
+#testConvertPinch()
+#testConvertPinchIsolated()
 

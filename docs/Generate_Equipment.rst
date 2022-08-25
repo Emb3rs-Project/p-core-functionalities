@@ -4,7 +4,7 @@ Generate Equipment
 Boiler
 --------------------------------------------------------------------------
 
-.. automodule:: module.src.Source.characterization.Generate_Equipment.generate_boiler
+.. automodule:: src.Source.characterization.Generate_Equipment.generate_boiler
    :members:
    :undoc-members:
    :show-inheritance:
@@ -12,7 +12,7 @@ Boiler
 Burner
 --------------------------------------------------------------------------
 
-.. automodule:: module.src.Source.characterization.Generate_Equipment.generate_burner
+.. automodule:: src.Source.characterization.Generate_Equipment.generate_burner
    :members:
    :undoc-members:
    :show-inheritance:
@@ -20,7 +20,7 @@ Burner
 CHP
 -----------------------------------------------------------------------
 
-.. automodule:: module.src.Source.characterization.Generate_Equipment.generate_chp
+.. automodule:: src.Source.characterization.Generate_Equipment.generate_chp
    :members:
    :undoc-members:
    :show-inheritance:
@@ -28,7 +28,7 @@ CHP
 Cooling Equipment
 --------------------------------------------------------------------------------------
 
-.. automodule:: module.src.Source.characterization.Generate_Equipment.generate_cooling_equipment
+.. automodule:: src.Source.characterization.Generate_Equipment.generate_cooling_equipment
    :members:
    :undoc-members:
    :show-inheritance:
