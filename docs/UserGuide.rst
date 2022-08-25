@@ -38,7 +38,7 @@ the "standalone" folder. Check `here <https://github.com/Emb3rs-Project/p-core-f
 Below, you can find a step-by-step for each simulation.
 
 District Heating Network
---------------------------------------------
+-------------------------------------------------------------------------------
 INPUTS -> user provides excel file
     1. Sources characterization - Simple Characterization
     2. Sinks characterization - Simple Characterization, Building and Greenhouse
@@ -50,7 +50,8 @@ OUTPUT -> user can fetch the data
     6. User can get the outputs of the simulations (Convert Sources and Convert Sinks)
 
 Pinch Analysis - Isolated Streams (QUICK INPUTS)
---------------------------------------------
+-------------------------------------------------------------------------------
+
 INPUTS -> user provides excel file
     1. Source and streams characterization
     2. Pinch analysis data
