@@ -58,4 +58,4 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 
-autodoc_mock_imports = ['numpy','bs4','pandas','pydantic']
+autodoc_mock_imports = ['numpy','bs4','pandas','pydantic','pvlib','geopy','matplotlib','mpld3','openpyxl']
