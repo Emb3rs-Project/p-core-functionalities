@@ -112,7 +112,7 @@ class Process:
                         Outflow initIal temperature [ºC]
 
             - maintenance_data : list
-                Maintenance/Eavporation data dicts, with the following keys:
+                Maintenance/Evaporation data dicts, with the following keys:
 
                     - name: str
                         Name

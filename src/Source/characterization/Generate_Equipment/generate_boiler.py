@@ -83,7 +83,7 @@ class Boiler:
                 Equipment working fluid return temperature [ºC]
 
             boiler_supply_flowrate : float, optional
-                Equipment working fluid mass flowrate. Only for steam boilers.
+                Equipment working fluid mass flowrate. Only for steam boilers. [kg/h]
 
     kb : dict
         Knowledge Base data
