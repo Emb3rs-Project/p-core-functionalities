@@ -68,7 +68,7 @@ def greenhouse(in_var):
                      Fuel type associated; e.g. "natural_gas","electricity","biomass","fuel_oil","none"
 
                  - ref_system_eff_equipment: float, optional
-                     COP of the cooling equipment;
+                     heating equipment efficiency;
 
                  - real_monthly_capacity: dict, optional
                      Real monthly data - for each month of the year
