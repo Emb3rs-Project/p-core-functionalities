@@ -118,17 +118,15 @@ def aggregate_technologies_info(object_id, technologies, power_fraction, max_pow
         else:
             output_fuel = 'dhnwatersupply'
 
-
     for technology in technologies:
-
         technologies_dict.append(technology.__dict__)
-
         all_equipment.append(technology.data_teo['equipment'])
 
-        if technology.data_teo['equipment'] == 'fresnel' or technology.data_teo['equipment'] == 'evacuated_tube' or technology.data_teo['equipment'] == 'flat_plate':
-            max_supply_capacity_val = technology.data_teo['max_average_supply_capacity']
-        else:
-            max_supply_capacity_val = technology.data_teo['max_input_capacity']
+        max_supply_capacity_val = (
+            technology.data_teo['max_average_supply_capacity']
+            if technology.data_teo['equipment'] in ('fresnel', 'evacuated_tube', 'flat_plate')
+            else technology.data_teo['max_input_capacity']
+        )
 
         turnkey_max_power += max_supply_capacity_val * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
         turnkey_power_fraction += max_supply_capacity_val * power_fraction * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
@@ -137,29 +135,17 @@ def aggregate_technologies_info(object_id, technologies, power_fraction, max_pow
         om_var += technology.data_teo['om_var'] * max_supply_capacity_val
         emissions += technology.data_teo['emissions'] * max_supply_capacity_val
 
-
     power_fraction_supply_capacity = max_power_available * power_fraction
     conversion_efficiency = max_power_convertible/max_power_available
     turnkey_a, turnkey_b = linearize_values(turnkey_max_power, turnkey_power_fraction, max_power_available, power_fraction_supply_capacity)
 
-
-
-
     # TEO CHANGES FOR THE NAMES
-    if object_type == 'sink':
-        if object_id == 'grid_specific':
-            teo_equipment_name = 'grid_specific' + '_' + str(teo_equipment_name)
-        else:
-            teo_equipment_name = str(object_type) + '_' + str(object_id) + '_' + 'str' + str(stream_id) + '_' + str(teo_equipment_name)
-    else:
-        teo_equipment_name = str(object_type) + '_' + str(object_id) + '_' + 'str' + str(stream_id) + '_' + str(teo_equipment_name)
-
-
-    teo_equipment_name = teo_equipment_name.replace('_','')
-    teo_equipment_name = teo_equipment_name.replace('-','')
-
-
-
+    teo_equipment_name = (
+        f'grid_specific_{teo_equipment_name}'
+        if object_type == 'sink' and object_id == 'grid_specific'
+        else f'{object_type}_{object_id}_str{stream_id}_{teo_equipment_name}'
+    )
+    teo_equipment_name = teo_equipment_name.replace('_', '')
 
     if object_id == 'grid_specific':
         gs_cost = 10 ** 6
@@ -174,49 +160,33 @@ def aggregate_technologies_info(object_id, technologies, power_fraction, max_pow
             'turnkey_b': round(turnkey_b, 3),  # [€]
             'conversion_efficiency': round(conversion_efficiency, 3),  # []
             'om_fix': round(om_fix / max_power_convertible, 3) * gs_cost,  # [€/year.kW]
-            'om_var': round(om_var / max_power_convertible, 3) * gs_cost,  # [€/kWh]
+            'om_var': (om_var / max_power_convertible) * gs_cost,  # [€/kWh]
             'emissions': round(emissions / max_power_convertible, 3),  # [kg.CO2/kWh]
             'technologies': technologies_dict,
         }
+        return data_teo
 
-    else:
-        if 'orc' in teo_equipment_name:
-            for technology in technologies:
-                if technology.data_teo['equipment'] == 'orc':
-                    electrical_conversion_efficiency = technology.data_teo['electrical_conversion_efficiency']
+    data_teo = {
+        'teo_equipment_name': teo_equipment_name,
+        'output': 1,
+        'input_fuel': input_fuel,
+        'output_fuel': output_fuel,
+        'equipment': all_equipment,
+        'max_capacity': max_power_convertible,  # [kW]
+        'turnkey_a': round(turnkey_a, 3),  # [€/kW]
+        'turnkey_b': round(turnkey_b, 3),  # [€]
+        'conversion_efficiency': round(conversion_efficiency, 3),  # []
+        'om_fix': round(om_fix / max_power_convertible, 3),  # [€/year.kW]
+        'om_var': om_var / max_power_convertible,  # [€/kWh]
+        'emissions': round(emissions / max_power_convertible, 3),  # [kg.CO2/kWh]
+        'technologies': technologies_dict,
+    }
 
-            data_teo = {
-                'teo_equipment_name': teo_equipment_name,
-                'output': 1,
-                'input_fuel': input_fuel,
-                'output_fuel': output_fuel,
-                'equipment': all_equipment,
-                'max_capacity': max_power_convertible,  # [kW]
-                'turnkey_a': round(turnkey_a, 3),  # [€/kW]
-                'turnkey_b': round(turnkey_b, 3),  # [€]
-                'conversion_efficiency': round(conversion_efficiency, 3),  # []
-                'electrical_conversion_efficiency': round(electrical_conversion_efficiency, 3),
-                'om_fix': round(om_fix / max_power_convertible, 3),  # [€/year.kW]
-                'om_var': round(om_var / max_power_convertible, 3),  # [€/kWh]
-                'emissions': round(emissions / max_power_convertible, 3),  # [kg.CO2/kWh]
-                'technologies': technologies_dict,
-            }
-        else:
-            data_teo = {
-                'teo_equipment_name': teo_equipment_name,
-                'output': 1,
-                'input_fuel': input_fuel,
-                'output_fuel': output_fuel,
-                'equipment': all_equipment,
-                'max_capacity': max_power_convertible,  # [kW]
-                'turnkey_a': round(turnkey_a, 3),  # [€/kW]
-                'turnkey_b': round(turnkey_b, 3),  # [€]
-                'conversion_efficiency': round(conversion_efficiency, 3),  # []
-                'om_fix': round(om_fix / max_power_convertible, 3),  # [€/year.kW]
-                'om_var': round(om_var / max_power_convertible, 3),  # [€/kWh]
-                'emissions': round(emissions / max_power_convertible, 3),  # [kg.CO2/kWh]
-                'technologies': technologies_dict,
-            }
+    if 'orc' in teo_equipment_name:
+        for technology in technologies:
+            if technology.data_teo['equipment'] == 'orc':
+                electrical_conversion_efficiency = technology.data_teo.get('electrical_conversion_efficiency', 0)
+                data_teo['electrical_conversion_efficiency'] = round(electrical_conversion_efficiency, 3)
 
     return data_teo
 
