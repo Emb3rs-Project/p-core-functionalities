@@ -102,7 +102,7 @@
         <h2 id="user_streams" style="margin: 30px 0px 20px 0px;"><u>1. User Streams</u></h2>
         <p>Here you can find data regarding all the streams your considered for the pinch analysis and respective
             details.</p>
-        <table class="table">
+        <table class="table" id = "cf_datatable_1">
             <caption>
                 <center>Table 1. Stream Table</center>
             </caption>
@@ -167,7 +167,7 @@
         {% if best_options[item] != []%}
 
 
-        <table class="table">
+        <table class="table" id = "cf_datatable_2">
             <caption>
                 <center>Table {{table_number.val}}. Best Design Solutions - {{designed_solutions[item]["name"]}}</center>
             </caption>
@@ -318,7 +318,7 @@
                             </div>
                         </div>
 
-                        <table class="table">
+                        <table class="table" id = "cf_datatable_3">
                             <caption>
                                 <center>Table 2. Heat Exchangers Technical Data</center>
                             </caption>
@@ -354,7 +354,7 @@
                             </div>
                         </div>
 
-                        <table class="table">
+                        <table class="table"  id ="cf_datatable_4">
                             <caption>
                                 <center>Table 3. Heat Exchangers Economic Data</center>
                             </caption>
@@ -395,7 +395,7 @@
                                 </div>
                             </div>
 
-                            <table class="table">
+                            <table class="table" id ="cf_datatable_5">
                                 <caption>
                                     <center>Table 4. Heat Exchangers' Storage Data</center>
                                 </caption>
