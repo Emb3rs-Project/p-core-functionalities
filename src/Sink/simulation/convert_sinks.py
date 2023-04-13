@@ -880,9 +880,11 @@ def convert_sinks(in_var, kb):
 
             gis_capacity = conversion_technologies[0]['max_capacity']
             teo_id = 'sink' + str(sink['id']) + 'str' + str(stream['id']) + 'dem' # 'sink' + str(sink['id']) + 'stream' + str(stream['id'])
-
+            teo_sink_stream_id = 'sink' + str(sink['id']) + 'str' + str(stream['id'])
+            
             output_converted.append({
                 'stream_id': stream['id'],
+                'teo_sink_stream_id': teo_sink_stream_id,
                 'demand_fuel': teo_id,
                 'gis_capacity': gis_capacity,  # [kW]
                 'hourly_stream_capacity': hourly_stream_capacity,  # [kWh]
