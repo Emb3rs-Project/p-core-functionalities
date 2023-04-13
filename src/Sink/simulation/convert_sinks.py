@@ -13,6 +13,7 @@ from ...General.Convert_Equipments.Auxiliary.coef_solar_thermal_backup import co
 from ...Error_Handling.error_convert_sinks import PlatformConvertSinks
 from ...Error_Handling.runtime_error import ModuleRuntimeException
 from ...KB_General.fuel_properties import FuelProperties
+from ...KB_General.equipment_details import EquipmentDetails
 from ...General.Auxiliary_General.get_country import get_country
 
 def convert_sinks(in_var, kb):
@@ -189,6 +190,9 @@ def convert_sinks(in_var, kb):
 
                             - location : list
                                 [latitude, longitude] [º]
+                            
+                            - fuels_data : dict
+                                dict with fuel and respective "price" and "co2_emissions; e.g. {"natural_gas":{"price":xx, "co2_emissions":xx},...}
 
                             - streams : list with dict
                                 Each stream of the sink, with the following keys:
@@ -214,7 +218,19 @@ def convert_sinks(in_var, kb):
                                     - conversion_technologies : list
                                         List with multiple dictionaries with the solution of technologies possible to
                                         implement; same keys as the "grid_specific" technologies
-
+                                    
+                                    - ref_fuel : float
+                                        Reference system fuel; e.g. natural_gas, electricity, biomass, fuel_oil, none
+                                    
+                                    - ref_eff_equipment : float
+                                        Reference system efficiency []                                    
+                          
+                                    - ref_fuel_emissions
+                                        Reference system fuel emissions [kg CO2/kWh]
+                                    
+                                    - ref_fuel_price
+                                        Reference system fuel price  [€/kWh]
+                                        
             - n_demand_list : list with dicts
                 Sinks data for GIS, with the following keys:
 
@@ -309,9 +325,8 @@ def convert_sinks(in_var, kb):
     thermal_chiller_generator_T_cold = 70  # [ºC]
     thermal_chiller_generator_T_hot = 85  # [ºC]
     thermal_chiller_supply_temperature = 7  # [ºC]
-    thermal_chiller_efficiency = 0.71  # COP
-    boiler_efficiency = 0.95
-
+    thermal_chiller_thermal_efficiency = 0.7496  # COP - same as KB
+    
     for sink_index, sink in enumerate(group_of_sinks):
         for stream_index, stream in enumerate(sink['streams']):
             hourly_stream_capacity = stream['hourly_generation']
@@ -698,11 +713,6 @@ def convert_sinks(in_var, kb):
 
                 # get cooling technologies
                 else:
-                    if grid_supply_temperature < thermal_chiller_generator_T_hot:
-                        after_hx_global_conversion_efficiency = boiler_efficiency * thermal_chiller_efficiency
-                    else:
-                        after_hx_global_conversion_efficiency = thermal_chiller_efficiency
-
                     # add electric chiller IF stream target temperature inferior to absorption chiller supply temperature
                     if stream['target_temperature'] < thermal_chiller_supply_temperature:
                         electric_chiller_supply_capacity = stream_nominal_capacity * (
@@ -731,7 +741,7 @@ def convert_sinks(in_var, kb):
                         hx_power_supply = 0
                         hx_power = 0
                     else:
-                        hx_power_supply = thermal_chiller_supply_capacity / (
+                        hx_power_supply = (thermal_chiller_supply_capacity/ thermal_chiller_thermal_efficiency) / (
                             abs(thermal_chiller_generator_T_hot - thermal_chiller_generator_T_cold)) * abs(
                             hx_grid_supply_temperature - hx_grid_return_temperature)
                         hx_power = hx_power_supply / hx_efficiency
@@ -756,7 +766,7 @@ def convert_sinks(in_var, kb):
                                               hx_sink_supply_temperature)
 
                     # grid may not supply enough heat to the sink
-                    needed_supply_capacity = stream_nominal_capacity / after_hx_global_conversion_efficiency - hx_power_supply  # [kW]
+                    needed_supply_capacity = thermal_chiller_supply_capacity / thermal_chiller_thermal_efficiency - hx_power_supply  # [kW]
 
                     # add absorption chiller
                     info_technology = Add_Thermal_Chiller(kb,
@@ -879,6 +889,9 @@ def convert_sinks(in_var, kb):
                 'teo_demand_factor': teo_demand_factor,
                 'teo_yearly_demand': yearly_demand,
                 'conversion_technologies': conversion_technologies,  # [€/kW]
+                'ref_eff_equipment': stream['eff_equipment'],
+                'ref_fuel_emissions': sink['fuels_data'][stream['fuel']]["co2_emissions"],
+                'ref_fuel_price': sink['fuels_data'][stream['fuel']]["price"]
             })
 
             for index, i in enumerate(teo_group_of_sinks_demand_factor):

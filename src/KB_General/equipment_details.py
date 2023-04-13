@@ -24,7 +24,7 @@ class EquipmentDetails:
         Returns
         -------
         global_conversion_efficiency : float
-            Equipment efficiency []; NOTE: for "chp" -> global_conversion_efficiency = [global_conversion_efficiency,
+            Equipment efficiency []; NOTE: for "chp/thermal_chiller" -> global_conversion_efficiency = [global_conversion_efficiency,
              electrical_conversion_efficiency]
 
         om_fix : float
@@ -52,7 +52,7 @@ class EquipmentDetails:
             raise Exception("Equipment not in the Knowledge Base." )
 
         # special case CHP
-        if equipment == 'chp_gas_engine' or equipment == 'chp_gas_turbine':
-            global_conversion_efficiency = [global_conversion_efficiency, electrical_conversion_efficiency]  # thermal and electrical efficiency
+        if equipment == 'chp_gas_engine' or equipment == 'chp_gas_turbine' or equipment == 'thermal_chiller':
+            global_conversion_efficiency = [global_conversion_efficiency, electrical_conversion_efficiency]  # thermal and electrical efficiency     
 
         return global_conversion_efficiency, om_fix, turnkey

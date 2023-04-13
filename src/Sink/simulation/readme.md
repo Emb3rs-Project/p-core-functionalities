@@ -27,8 +27,8 @@ Where in sinks:
 Where in streams:
 
 1. stream_id
-1. hourly_stream_capacity [kWh]
-1. conversion_technologies - multiple dictionaries with technologies possible to implement
+2. hourly_stream_capacity [kWh]
+3. conversion_technologies - multiple dictionaries with technologies possible to implement
     - 'equipment' - group of equipment installed
     - 'max_capacity'  - conversion maximum designed capacity[kW]
     - 'turnkey_a' - conversion turnkey linear coefficient [€/kW]
@@ -38,3 +38,5 @@ Where in streams:
     - 'om_var' - conversion variable costs (accounting fuel costs) [€/kWh]
     - 'emissions' - conversion direct or indirect CO2 emissions [kg.CO2/kWh]
     - tecnhologies' - technologies info in details,
+4. ref_fuel
+5. ref_eff_equipment

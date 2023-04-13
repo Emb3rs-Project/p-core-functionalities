@@ -31,8 +31,8 @@
         "streams": [
           {
             "id": 50169,
-            "eff_equipment": null,
-            "fuel": "none",
+            "eff_equipment": 0.95,
+            "fuel": "natural_gas",
             "object_type": "stream",
             "object_id": null,
             "stream_type": "inflow",
@@ -17644,8 +17644,8 @@
         "streams": [
           {
             "id": 14803,
-             "eff_equipment": null,
-            "fuel": "none",
+             "eff_equipment": 0.95,
+            "fuel": "natural_gas",
             "object_type": "stream",
             "object_id": null,
             "stream_type": "inflow",

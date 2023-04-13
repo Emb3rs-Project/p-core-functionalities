@@ -66,15 +66,18 @@ class Add_Thermal_Chiller():
         self.object_type = 'equipment'
         self.equipment_sub_type = 'thermal_chiller'
         self.fuel_type = 'electricity'
-        self.supply_temperature = 7  # equipment directly supplies grid/sink/source [ºC]
+        self.supply_temperature = 7  # equipment supplies grid/sink/source [ºC]
         self.return_temperature = 12  # [ºC]
 
         # get equipment characteristics
         self.fuel_properties = fuels_data[self.fuel_type]
-        self.supply_capacity = supply_capacity  # equipment directly supplies grid
+        self.supply_capacity = supply_capacity  # equipment supplies 
         equipment_details = EquipmentDetails(kb)
-        self.global_conversion_efficiency, om_fix_total, turnkey_total = equipment_details.get_values(self.equipment_sub_type,
-                                                                                           self.supply_capacity)  # get COP
+        all_conversion_efficiency, om_fix_total, turnkey_total = equipment_details.get_values(self.equipment_sub_type,
+                                                                                              self.supply_capacity)  # get COP
+
+        self.thermal_conversion_efficiency = all_conversion_efficiency[0]
+        self.electrical_conversion_efficiency = all_conversion_efficiency[1]
 
         # Design Equipment
         # 100% power
@@ -84,20 +87,20 @@ class Add_Thermal_Chiller():
 
         turnkey_a, turnkey_b = linearize_values(info_max_power['turnkey'],
                                                 info_power_fraction['turnkey'],
-                                                info_max_power['supply_capacity'] / self.global_conversion_efficiency,
-                                                info_power_fraction['supply_capacity'] / self.global_conversion_efficiency
+                                                info_max_power['supply_capacity'] / self.thermal_conversion_efficiency,
+                                                info_power_fraction['supply_capacity'] / self.thermal_conversion_efficiency
                                                 )
 
         self.data_teo = {
             'equipment': self.equipment_sub_type,
             'fuel_type': self.fuel_type,
-            'max_input_capacity': info_max_power['supply_capacity'] / self.global_conversion_efficiency,  # [kW]
+            'max_input_capacity': info_max_power['supply_capacity'] / self.thermal_conversion_efficiency,  # [kW]
             'turnkey_a': turnkey_a,  # [€/kW]
             'turnkey_b': turnkey_b,  # [€]
-            'conversion_efficiency': self.global_conversion_efficiency,  # []
-            'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/year.kW]
-            'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency), # [€/kWh]
-            'emissions': self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh thermal]
+            'conversion_efficiency': self.thermal_conversion_efficiency,  # []
+            'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] / self.thermal_conversion_efficiency),  # [€/year.kW]
+            'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity'] / self.thermal_conversion_efficiency), # [€/kWh]
+            'emissions': self.fuel_properties['co2_emissions'] * self.electrical_conversion_efficiency # [kg.CO2/kWh thermal]; thermal chiller electrical power represents 5-10% percent of thermal power 
 
             }
 
@@ -123,7 +126,7 @@ class Add_Thermal_Chiller():
         supply_capacity = self.supply_capacity * power_fraction  # thermal power supplied [kWh]
         equipment_details = EquipmentDetails(kb)
         global_conversion_efficiency, om_fix_total, turnkey_total = equipment_details.get_values(self.equipment_sub_type, supply_capacity)  # [€]
-        electric_power = supply_capacity / self.global_conversion_efficiency  # equipment needed electric power [kW]
+        electric_power = (supply_capacity / self.thermal_conversion_efficiency) * self.electrical_conversion_efficiency  # equipment needed electric power [kW]
         om_var_total = self.fuel_properties['price'] * electric_power  # [€/year]
 
         info = {
