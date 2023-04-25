@@ -293,7 +293,6 @@ def convert_sinks(in_var, kb):
 
             sink["fuels_data"] = fuels_data
 
-
     for sink in group_of_sinks:
         sink['streams'] = [vars(stream) for stream in sink['streams']]
 

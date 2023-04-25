@@ -4,29 +4,13 @@
     "grid_return_temperature": 60,
     "group_of_sinks": [
       {
-        "fuels_data": {
-          "natural_gas": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          },
-          "biomass": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          },
-          "fuel_oil": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          },
-          "electricity": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          }
-        },
+        
+       
         "name": "sink_1",
         "id": 3,
         "location": [
-          38.718564,
-          -9.160197
+          55.86983933236485,
+          12.880600690841677
         ],
         "streams": [
           {
@@ -17638,8 +17622,8 @@
         "id": 4,
         "name": "sink_2",
         "location": [
-          38.718564,
-          -9.160197
+          55.86983933236485,
+          12.880600690841677
         ],
         "streams": [
           {

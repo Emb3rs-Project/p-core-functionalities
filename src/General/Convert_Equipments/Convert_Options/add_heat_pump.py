@@ -85,15 +85,16 @@ class Add_Heat_Pump():
         self.supply_temperature = supply_temperature
         self.return_temperature = return_temperature
 
-        self.global_conversion_efficiency = compute_cop_eer(self.equipment_sub_type, condenser_temperature=self.supply_temperature, evaporator_temperature=evaporator_temperature)  # get ERR
+        self.cop = compute_cop_eer(self.equipment_sub_type, condenser_temperature=self.supply_temperature, evaporator_temperature=evaporator_temperature)  # get ERR
 
         try:
-            self.supply_capacity = evap_capacity/(1-1/self.global_conversion_efficiency)  # heat supply capacity [kW]
+            self.supply_capacity = evap_capacity/(1-1/self.cop)  # heat supply capacity [kW]
             self.evap_capacity = evap_capacity
         except:
             self.supply_capacity = supply_capacity
-            self.evap_capacity = self.supply_capacity * (1 - 1 / self.global_conversion_efficiency)
+            self.evap_capacity = self.supply_capacity * (1 - 1 / self.cop)
 
+        self.global_conversion_efficiency = self.supply_capacity/self.evap_capacity # actually this is heat output/heat_input so that every equipment is the same
 
         # Design Equipment
         # 100% power
@@ -106,19 +107,18 @@ class Add_Heat_Pump():
                                                 info_max_power['supply_capacity'] / self.global_conversion_efficiency,
                                                 info_power_fraction['supply_capacity'] / self.global_conversion_efficiency
                                                 )
-
+        
         self.data_teo = {
             'equipment': self.equipment_sub_type,
             'fuel_type': self.fuel_type,
             'max_input_capacity': self.evap_capacity,  # [kW]
             'turnkey_a': turnkey_a,  # [€/kW]
             'turnkey_b': turnkey_b,  # [€]
-            'conversion_efficiency': self.global_conversion_efficiency,  # []
+            'conversion_efficiency': self.global_conversion_efficiency,  # actually this is heat output/heat_input so that every equipment is the same
             'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/year.kW]
             'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/kWh]
-            'emissions': self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh electric]
+            'emissions': (self.fuel_properties['co2_emissions'] / self.cop) / self.global_conversion_efficiency   # [kg.CO2/kWh thermal]
         }
-
 
     def design_equipment(self,kb,power_fraction):
         """Get equipment economic data for a specific power fraction
@@ -138,7 +138,7 @@ class Add_Heat_Pump():
 
         """
         supply_capacity = self.supply_capacity * power_fraction  # thermal power supplied [kW]
-        electric_power_equipment = supply_capacity / self.global_conversion_efficiency
+        electric_power_equipment = supply_capacity / self.cop
 
         equipment_details = EquipmentDetails(kb)
         global_conversion_efficiency_equipment, om_fix_total, turnkey_equipment = equipment_details.get_values(self.equipment_sub_type, supply_capacity)

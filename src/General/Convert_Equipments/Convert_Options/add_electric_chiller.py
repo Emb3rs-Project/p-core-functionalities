@@ -81,7 +81,9 @@ class Add_Electric_Chiller():
         self.supply_temperature = supply_temperature  # equipment directly supplies grid/sink/source [ºC]
         self.return_temperature = return_temperature
         self.supply_capacity = supply_capacity  # heat supply capacity [kW]
-        self.global_conversion_efficiency = compute_cop_eer(self.equipment_sub_type,evaporator_temperature=self.supply_temperature)  # COP
+        self.cop = compute_cop_eer(self.equipment_sub_type,evaporator_temperature=self.supply_temperature)  # COP
+        self.evap_capacity = self.supply_capacity * (1 - 1 / self.cop)
+        self.global_conversion_efficiency = self.supply_capacity/self.evap_capacity # actually this is heat output/heat_input so that every equipment is the same
 
         # Design Equipment
         # 100% power
@@ -104,7 +106,7 @@ class Add_Electric_Chiller():
             'conversion_efficiency': self.global_conversion_efficiency,  # []
             'om_fix': info_max_power['om_fix'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/year.kW]
             'om_var': info_max_power['om_var'] / (info_max_power['supply_capacity'] / self.global_conversion_efficiency),  # [€/kWh]
-            'emissions': self.fuel_properties['co2_emissions'] / self.global_conversion_efficiency  # [kg.CO2/kWh electric]
+            'emissions': (self.fuel_properties['co2_emissions']/self.cop) / self.global_conversion_efficiency  # [kg.CO2/kWh electric]
         }
 
 
@@ -127,7 +129,7 @@ class Add_Electric_Chiller():
         """
 
         supply_capacity = self.supply_capacity * power_fraction  # thermal power supplied [kW]
-        electric_power_equipment = supply_capacity / self.global_conversion_efficiency  # equipment needed electric power [kW]
+        electric_power_equipment = supply_capacity / self.cop  # equipment needed electric power [kW]
         equipment_details = EquipmentDetails(kb)
         global_conversion_efficiency_equipment, om_fix_total, turnkey_equipment = equipment_details.get_values(self.equipment_sub_type, supply_capacity)
         om_var_total = self.fuel_properties['price'] * electric_power_equipment  # [€]

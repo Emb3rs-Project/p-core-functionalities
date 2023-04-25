@@ -1,6 +1,6 @@
 # default values for compression chiller
 def compute_cop_eer(type, condenser_temperature=45,evaporator_temperature=2):
-    """Compute electric chiller COP and heat pump ERR according to given temperatures
+    """Compute electric chiller COP and heat pump EER according to given temperatures
 
     Parameters
     ----------
@@ -16,7 +16,7 @@ def compute_cop_eer(type, condenser_temperature=45,evaporator_temperature=2):
 
     Returns
     -------
-    cop/err : float
+    cop/eer : float
         Cop/Err of chiller/heat pump []
 
     """
@@ -26,5 +26,5 @@ def compute_cop_eer(type, condenser_temperature=45,evaporator_temperature=2):
         return cop
 
     else:
-        err = 0.55 * (condenser_temperature + 273) / (condenser_temperature - evaporator_temperature)
-        return err
+        eer = 0.55 * (condenser_temperature + 273) / (condenser_temperature - evaporator_temperature)
+        return eer

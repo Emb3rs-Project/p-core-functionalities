@@ -2,25 +2,7 @@
   "platform": {
     "group_of_sources": [
       {
-        "id": 1,
-        "fuels_data": {
-          "natural_gas": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          },
-          "biomass": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          },
-          "fuel_oil": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          },
-          "electricity": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          }
-        },
+        "id": 1,        
         "name": "source_1",
         "location": [
           38.759074,
@@ -17617,24 +17599,7 @@
       {
         "id": 2,
         "name": "source_2",
-        "fuels_data": {
-          "natural_gas": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          },
-          "biomass": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          },
-          "fuel_oil": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          },
-          "electricity": {
-            "co2_emissions": 0.2,
-            "price": 0.055
-          }
-        },
+        
         "location": [
           38.743627,
           -9.1171

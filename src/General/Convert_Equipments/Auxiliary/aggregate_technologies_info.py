@@ -19,11 +19,13 @@ def aggregate_technologies_info(object_id, technologies, power_fraction, max_pow
 
 
     max_power_available : float
-        Stream max power available before conversion [kW]
+        Stream max power available before conversion (source-wise) [kW]
+        This is the power before any conversion
 
     max_power_convertible : float
-        Stream power given to the the DHN after conversion  [kW]
-
+        Stream power given to the the DHN after conversion (source-wise) [kW]
+        This is the power after all conversion
+            
     object_type : str
         'sink' or 'source'
 
@@ -125,15 +127,15 @@ def aggregate_technologies_info(object_id, technologies, power_fraction, max_pow
         max_supply_capacity_val = (
             technology.data_teo['max_average_supply_capacity']
             if technology.data_teo['equipment'] in ('fresnel', 'evacuated_tube', 'flat_plate')
-            else technology.data_teo['max_input_capacity']
+            else technology.data_teo['max_input_capacity'] 
         )
 
         turnkey_max_power += max_supply_capacity_val * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
         turnkey_power_fraction += max_supply_capacity_val * power_fraction * technology.data_teo['turnkey_a'] + technology.data_teo['turnkey_b']
 
-        om_fix += technology.data_teo['om_fix'] * max_supply_capacity_val
-        om_var += technology.data_teo['om_var'] * max_supply_capacity_val
-        emissions += technology.data_teo['emissions'] * max_supply_capacity_val
+        om_fix += technology.data_teo['om_fix'] * max_supply_capacity_val  
+        om_var += technology.data_teo['om_var'] * max_supply_capacity_val  
+        emissions += technology.data_teo['emissions'] * max_supply_capacity_val  
 
     power_fraction_supply_capacity = max_power_available * power_fraction
     conversion_efficiency = max_power_convertible/max_power_available
