@@ -273,26 +273,43 @@ def convert_sinks(in_var, kb):
     group_of_sinks = platform_data.group_of_sinks  # e.g. building, greenhouse, streams
     group_of_sinks = [vars(sink) for sink in group_of_sinks]
 
+    
+    fuels_kb = ["natural_gas", "biomass", "electricity", "fuel_oil", "none"]
+    
     try:
         for sink in group_of_sinks:
             sink["fuels_data"] = vars(sink["fuels_data"])
+            latitude, longitude = sink['location']
+            
             for fuel in sink["fuels_data"].keys():
                 sink["fuels_data"][fuel] = vars(sink["fuels_data"][fuel])
+
+            for fuel_kb in fuels_kb: 
+                if fuel_kb not in list(sink["fuels_data"].keys()):
+                    fuel_properties = FuelProperties(kb)
+                    country = get_country(latitude, longitude)
+                    fuel_data = fuel_properties.get_values(country, fuel_kb, consumer_type="household")
+                    sink["fuels_data"][fuel_kb] = {
+                        "price": fuel_data["price"],
+                        "co2_emissions": fuel_data["co2_emissions"]}
+            
     except:
-        fuels = ["natural_gas", "biomass", "electricity", "fuel_oil"]
         fuels_data = {}
         for sink in group_of_sinks:
             latitude, longitude = sink['location']
-            for fuel in fuels:
+            for fuel in fuels_kb:
                 fuel_properties = FuelProperties(kb)
                 country = get_country(latitude, longitude)
                 fuel_data = fuel_properties.get_values(country, fuel, consumer_type="household")
                 fuels_data[fuel] = {
                     "price": fuel_data["price"],
                     "co2_emissions": fuel_data["co2_emissions"]}
-
+                
             sink["fuels_data"] = fuels_data
+    
+     
 
+        
     for sink in group_of_sinks:
         sink['streams'] = [vars(stream) for stream in sink['streams']]
 

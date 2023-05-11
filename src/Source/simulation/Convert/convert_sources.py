@@ -333,6 +333,8 @@ def convert_sources(in_var, kb):
 
     ############################################################################################################
     # ROUTINE
+    fuels_kb = ["natural_gas", "biomass", "electricity", "fuel_oil", "none"]
+
     try:
         for source_index, source in enumerate(group_of_sources):
             output_converted = []
@@ -340,10 +342,18 @@ def convert_sources(in_var, kb):
 
             try:
                 fuels_data = source['fuels_data']
+                
+                for fuel_kb in fuels_kb: 
+                    if fuel_kb not in list(source["fuels_data"].keys()):
+                        fuel_properties = FuelProperties(kb)
+                        country = get_country(latitude, longitude)
+                        fuel_data = fuel_properties.get_values(country, fuel_kb, consumer_type="household")
+                        source["fuels_data"][fuel_kb] = {
+                            "price": fuel_data["price"],
+                            "co2_emissions": fuel_data["co2_emissions"]}
             except:
-                fuels = ["natural_gas","biomass","electricity","fuel_oil"]
                 fuels_data = {}
-                for fuel in fuels:
+                for fuel in fuels_kb:
                     fuel_properties = FuelProperties(kb)
                     country = get_country(latitude, longitude)
                     fuel_data = fuel_properties.get_values(country, fuel, consumer_type="household")

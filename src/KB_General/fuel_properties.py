@@ -60,109 +60,119 @@ class FuelProperties:
             Fuel properties: price, lhv_fuel, excess_air_fuel, air_to_fuel_ratio, co2_emissions, density
 
         """
-        context = ssl._create_unverified_context()
-
-        # get KB data
-        data_eu_countries = self.kb_data.get('eu_country_acronym')
-        data_electricity_ghg_and_fuel_cost_per_country = self.kb_data.get(
-            'electricity_ghg_fuel_costs_per_country')
-        data_fuel_properties = self.kb_data.get('fuel_properties')
-
-        # get country acronym
-        try:
-            country_acronyms = data_eu_countries[country]
-        except:
-            country_acronyms = data_eu_countries['Portugal']
-
-        # get price
-        if consumer_type == 'non-household':
-            consumer_type = '1'  # Non Household
+        if fuel_type == 'none':
+            fuel_data = {
+                'price': 0,  # [€/kWh]
+                'lhv_fuel': 0,  # [kWh/kg]
+                'excess_air_fuel': 0,  #
+                'air_to_fuel_ratio': 0,  # [kg air/kg fuel]
+                'co2_emissions': 0,  # [kg CO2/kWh]
+                'density': 0  # [kg/m3]
+            }
         else:
-            consumer_type = '0'  # Household
+            context = ssl._create_unverified_context()
 
+            # get KB data
+            data_eu_countries = self.kb_data.get('eu_country_acronym')
+            data_electricity_ghg_and_fuel_cost_per_country = self.kb_data.get(
+                'electricity_ghg_fuel_costs_per_country')
+            data_fuel_properties = self.kb_data.get('fuel_properties')
 
-        urlelec = 'https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/ten00117/?time=2021&geo='
-        urlgas = 'https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/ten00118/?time=2021&geo='
-        urlelec = urlelec + country_acronyms
-        urlgas = urlgas + country_acronyms
-
-        if fuel_type == 'electricity':
+            # get country acronym
             try:
-                info = json.loads(BeautifulSoup(
-                    urlopen(urlelec, context=context), "html.parser").text)
-                price = info['value'][consumer_type]  # [€/kWh]
+                country_acronyms = data_eu_countries[country]
             except:
+                country_acronyms = data_eu_countries['Portugal']
+
+            # get price
+            if consumer_type == 'non-household':
+                consumer_type = '1'  # Non Household
+            else:
+                consumer_type = '0'  # Household
+
+
+            urlelec = 'https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/ten00117/?time=2021&geo='
+            urlgas = 'https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/ten00118/?time=2021&geo='
+            urlelec = urlelec + country_acronyms
+            urlgas = urlgas + country_acronyms
+
+            if fuel_type == 'electricity':
                 try:
-                    country_acronyms = "EU27_2020"
-                    urlelec = urlelec + country_acronyms
                     info = json.loads(BeautifulSoup(
                         urlopen(urlelec, context=context), "html.parser").text)
                     price = info['value'][consumer_type]  # [€/kWh]
                 except:
-                    price = 0.23  # [€/kWh]
+                    try:
+                        country_acronyms = "EU27_2020"
+                        urlelec = urlelec + country_acronyms
+                        info = json.loads(BeautifulSoup(
+                            urlopen(urlelec, context=context), "html.parser").text)
+                        price = info['value'][consumer_type]  # [€/kWh]
+                    except:
+                        price = 0.23  # [€/kWh]
 
-        elif fuel_type == "natural_gas":
-            try:
-                info = json.loads(BeautifulSoup(
-                    urlopen(urlgas, context=context), "html.parser").text)
-                price = info['value'][consumer_type] / 277.78  # [€/kWh]
-            except:
+            elif fuel_type == "natural_gas":
                 try:
-                    country_acronyms = "EU27_2020"
-                    urlgas = urlgas + country_acronyms
                     info = json.loads(BeautifulSoup(
                         urlopen(urlgas, context=context), "html.parser").text)
                     price = info['value'][consumer_type] / 277.78  # [€/kWh]
                 except:
-                    price = 0.065  # [€/kWh]
+                    try:
+                        country_acronyms = "EU27_2020"
+                        urlgas = urlgas + country_acronyms
+                        info = json.loads(BeautifulSoup(
+                            urlopen(urlgas, context=context), "html.parser").text)
+                        price = info['value'][consumer_type] / 277.78  # [€/kWh]
+                    except:
+                        price = 0.065  # [€/kWh]
 
 
-        else:
-            fuel_type_cost = fuel_type + '_cost'
-            try:
-                price = float(
-                    data_electricity_ghg_and_fuel_cost_per_country[country][fuel_type_cost])  # [€/kWh]
+            else:
+                fuel_type_cost = fuel_type + '_cost'
+                try:
+                    price = float(
+                        data_electricity_ghg_and_fuel_cost_per_country[country][fuel_type_cost])  # [€/kWh]
 
-            except:
-                price = float(
-                    data_electricity_ghg_and_fuel_cost_per_country['Portugal'][fuel_type_cost])  # [€/kWh]
+                except:
+                    price = float(
+                        data_electricity_ghg_and_fuel_cost_per_country['Portugal'][fuel_type_cost])  # [€/kWh]
 
-        # get properties
-        if fuel_type == 'natural_gas' or fuel_type == 'biomass' or fuel_type == 'fuel_oil':
-            density = float(data_fuel_properties[fuel_type]['density'])
-            lhv_fuel = float(
-                data_fuel_properties[fuel_type]['lhv'])  # [kWh/kg]
-            excess_air_fuel = (float(data_fuel_properties[fuel_type]['excess_air_ratio_min']) + float(
-                data_fuel_properties[fuel_type]['excess_air_ratio_max'])) / 2  # average
-            air_to_fuel_ratio = float(
-                data_fuel_properties[fuel_type]['air_to_fuel_ratio'])
-            co2_emissions = float(
-                data_fuel_properties[fuel_type]['co2_emissions'])  # [kg/kWh]
-            lhv_fuel = lhv_fuel / density
+            # get properties
+            if fuel_type == 'natural_gas' or fuel_type == 'biomass' or fuel_type == 'fuel_oil':
+                density = float(data_fuel_properties[fuel_type]['density'])
+                lhv_fuel = float(
+                    data_fuel_properties[fuel_type]['lhv'])  # [kWh/kg]
+                excess_air_fuel = (float(data_fuel_properties[fuel_type]['excess_air_ratio_min']) + float(
+                    data_fuel_properties[fuel_type]['excess_air_ratio_max'])) / 2  # average
+                air_to_fuel_ratio = float(
+                    data_fuel_properties[fuel_type]['air_to_fuel_ratio'])
+                co2_emissions = float(
+                    data_fuel_properties[fuel_type]['co2_emissions'])  # [kg/kWh]
+                lhv_fuel = lhv_fuel / density
 
-        elif fuel_type == 'electricity':
-            density = 'none'
-            lhv_fuel = 'none'
-            excess_air_fuel = 'none'
-            air_to_fuel_ratio = 'none'
+            elif fuel_type == 'electricity':
+                density = 'none'
+                lhv_fuel = 'none'
+                excess_air_fuel = 'none'
+                air_to_fuel_ratio = 'none'
 
-            try:
-                co2_emissions = float(data_electricity_ghg_and_fuel_cost_per_country[country]['electricity_emissions']) \
-                    / 1000  # [kg CO2/kW]
-            except:
-                co2_emissions = float(data_electricity_ghg_and_fuel_cost_per_country['Portugal'][
-                    'electricity_emissions']) / 1000  # [kg CO2/kW]
+                try:
+                    co2_emissions = float(data_electricity_ghg_and_fuel_cost_per_country[country]['electricity_emissions']) \
+                        / 1000  # [kg CO2/kW]
+                except:
+                    co2_emissions = float(data_electricity_ghg_and_fuel_cost_per_country['Portugal'][
+                        'electricity_emissions']) / 1000  # [kg CO2/kW]
 
-        else:
-            raise Exception("Fuel data not in the Knowledge Base.")
+            else:
+                raise Exception("Fuel data not in the Knowledge Base.")
 
-        fuel_data = {
-            'price': price,  # [€/kWh]
-            'lhv_fuel': lhv_fuel,  # [kWh/kg]
-            'excess_air_fuel': excess_air_fuel,  #
-            'air_to_fuel_ratio': air_to_fuel_ratio,  # [kg air/kg fuel]
-            'co2_emissions': co2_emissions,  # [kg CO2/kWh]
-            'density': density  # [kg/m3]
-        }
+            fuel_data = {
+                'price': price,  # [€/kWh]
+                'lhv_fuel': lhv_fuel,  # [kWh/kg]
+                'excess_air_fuel': excess_air_fuel,  #
+                'air_to_fuel_ratio': air_to_fuel_ratio,  # [kg air/kg fuel]
+                'co2_emissions': co2_emissions,  # [kg CO2/kWh]
+                'density': density  # [kg/m3]
+            }
 
         return fuel_data
