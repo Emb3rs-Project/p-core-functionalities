@@ -1,25 +1,25 @@
 # Contributing to Core Functionalities (CF) module of the EMB3RS project
-We are very grateful that you are looking into how you can contribute to CF module of the EMB3RS project. 
+We are very grateful that you are looking into how you can contribute to CF module of the EMB3Rs project. 
 
 Contributing to the CF module is open to everyone who is interested, and we adopt an inclusive and open policy which is described in our code of conduct
 
 ## Some resources:
 
-The main EMB3RS website is a good place to get started with EMB3RS
-You can find information on how to donwload the moduel and run it in the read me file on the repository or in the documentation. 
+The main EMB3Rs website is a good place to get started with EMB3Rs
+You can find information on how to download the module and run it in the read me file on the repository or in the documentation. 
 
 
 ## Bugs
 If you find a programming error in  the CF Module implementations, please submit an Issue in the  repository. Follow the issue template for submitting a bug.
 
 
-If you find a more fundamental issue which you think is related with the formulation of CF please submit the issue at the repository and specify the .
+If you find a more fundamental issue which you think is related with the formulation of CF please submit the issue at the repository and specify the:
 
-Errors, typos or spelling mistakes in the documentation
+-Errors, typos or spelling mistakes in the documentation
 
 
 ## Ideas and Suggestions
-If you have a great idea for how the CF could be improved, or to suggest a useful addition to the model, please submit a feature request.
+If you have a great idea for how the CF could be improved, or would like to suggest a useful addition to the model, please submit a feature request.
 
 ## Git Workflow
 To work with the CF code bases, please follow the forking workflow recommended for contributing to open-source projects. The steps below assume you have a Github account.
