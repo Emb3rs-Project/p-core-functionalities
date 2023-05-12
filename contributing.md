@@ -1,5 +1,5 @@
 # Contributing to Core Functionalities (CF) module of the EMB3RS project
-We are very grateful that you are looking into how you can contribute to BM module of the EMB3RS project. 
+We are very grateful that you are looking into how you can contribute to CF module of the EMB3RS project. 
 
 Contributing to the CF module is open to everyone who is interested, and we adopt an inclusive and open policy which is described in our code of conduct
 
